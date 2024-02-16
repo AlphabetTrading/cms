@@ -1,0 +1,469 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+  userId: String!
+}
+
+input CreateMaterialIssueInput {
+  approvedById: String!
+  date: DateTime!
+  issuedToId: String!
+  items: [CreateMaterialIssueItemInput!]!
+  preparedById: String!
+  projectDetails: String
+  receivedById: String
+  requisitionNumber: String
+}
+
+input CreateMaterialIssueItemInput {
+  description: String
+  listNo: Float!
+  quantity: Float!
+  remark: String
+  totalCost: Float!
+  unitCost: Float!
+  unitOfMeasure: String!
+}
+
+input CreateMaterialReceiveInput {
+  approvedById: String!
+  date: DateTime!
+  invoiceId: String!
+  items: [CreateMaterialReceiveItemInput!]!
+  materialRequestId: String!
+  projectDetails: String
+  purchaseOrderId: String!
+  purchasedById: String!
+  receivedById: String
+  supplierName: String!
+}
+
+input CreateMaterialReceiveItemInput {
+  description: String
+  listNo: Float!
+  quantity: Float!
+  totalCost: Float!
+  unitCost: Float!
+  unitOfMeasure: String!
+}
+
+input CreateMaterialRequestInput {
+  approvedById: String!
+  date: DateTime!
+  from: String!
+  items: [CreateMaterialRequestItemInput!]!
+  requestedById: String!
+  to: String!
+}
+
+input CreateMaterialRequestItemInput {
+  description: String
+  inStockQuantity: Float
+  listNo: Float!
+  materialRequestVoucherId: String!
+  quantity: Float!
+  remark: String
+  toBePurchasedQuantity: Float
+  unitOfMeasure: String!
+}
+
+input CreateMaterialReturnInput {
+  date: DateTime!
+  from: String!
+  items: [CreateMaterialReturnItemInput!]!
+  receivedById: String!
+  receivingStore: String!
+  returnedById: String!
+}
+
+input CreateMaterialReturnItemInput {
+  description: String
+  issueVoucherId: String!
+  listNo: Float!
+  materialReturnVoucherId: String!
+  quantityReturned: Float!
+  remark: String
+  totalCost: Float!
+  unitCost: Float!
+  unitOfMeasure: String!
+}
+
+input CreatePurchaseOrderInput {
+  approvedById: String!
+  date: DateTime!
+  dateOfReceiving: DateTime
+  grandTotal: Float
+  items: [CreatePurchaseOrderItemInput!]!
+  materialRequestId: String!
+  preparedById: String!
+  projectDetails: String
+  purchaseNumber: String!
+  subTotal: Float!
+  supplierName: String!
+  vat: Float
+}
+
+input CreatePurchaseOrderItemInput {
+  description: String
+  listNo: Float!
+  purchaseOrderId: String!
+  quantityRequested: Float!
+  remark: String
+  totalPrice: Float!
+  unitOfMeasure: String!
+  unitPrice: Float!
+}
+
+input CreateUserInput {
+  confirmPassword: String!
+  email: String!
+  fullName: String!
+  password: String!
+  role: UserRole!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""
+A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
+"""
+scalar JWT
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type MaterialIssueItem {
+  description: String
+  id: ID!
+  listNo: Float!
+  materialIssueVoucherId: String!
+  quantity: Float!
+  remark: String
+  totalCost: Float!
+  unitCost: Float!
+  unitOfMeasure: String!
+}
+
+type MaterialIssueVoucher {
+  approvedById: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  date: DateTime!
+  id: ID!
+  issuedToId: String!
+  items: [MaterialIssueItem!]!
+  preparedById: String!
+  projectDetails: String
+  receivedById: String
+  requisitionNumber: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type MaterialReceiveVoucher {
+  approvedById: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  date: DateTime!
+  id: ID!
+  invoiceId: String!
+  materialRequestId: String!
+  projectDetails: String
+  purchaseOrderId: String!
+  purchasedById: String!
+  receivedById: String
+  supplierName: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type MaterialRequestItem {
+  description: String
+  id: ID!
+  inStockQuantity: Float
+  listNo: Float!
+  materialRequestVoucherId: String!
+  quantity: Float!
+  remark: String
+  toBePurchasedQuantity: Float
+  unitOfMeasure: String!
+}
+
+type MaterialRequestVoucher {
+  approvedById: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  date: DateTime!
+  from: String!
+  id: ID!
+  items: [MaterialRequestItem!]!
+  requestedById: String!
+  to: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type MaterialReturnItem {
+  description: String
+  id: ID!
+  issueVoucherId: String!
+  listNo: Float!
+  materialReturnVoucherId: String!
+  quantityReturned: Float!
+  remark: String
+  totalCost: Float!
+  unitCost: Float!
+  unitOfMeasure: String!
+}
+
+type MaterialReturnVoucher {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  date: DateTime!
+  from: String!
+  id: ID!
+  items: [MaterialReturnItem!]!
+  receivedById: String!
+  receivingStore: String!
+  returnedById: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type Mutation {
+  createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
+  createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
+  createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
+  createMaterialReturn(createMaterialReturnInput: CreateMaterialReturnInput!): MaterialReturnVoucher!
+  createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
+  createUser(createUser: CreateUserInput!): User!
+  deleteMaterialIssue(id: String!): MaterialIssueVoucher!
+  deleteMaterialReceive(id: String!): MaterialReceiveVoucher!
+  deleteMaterialRequest(id: String!): MaterialRequestVoucher!
+  deleteMaterialReturn(id: String!): MaterialReturnVoucher!
+  deletePurchaseOrder(id: String!): PurchaseOrderVoucher!
+  deleteUser(email: String!): User!
+  login(data: LoginInput!): Auth!
+  refreshToken(refreshToken: JWT!): Token!
+  updateMaterialIssue(id: String!, updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
+  updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
+  updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
+  updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
+  updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
+  updateUser(email: String!, updateUser: UpdateUserInput!): User!
+}
+
+type PurchaseOrderItem {
+  description: String
+  id: ID!
+  listNo: Float!
+  purchaseOrderId: String!
+  quantityRequested: Float!
+  remark: String
+  totalPrice: Float!
+  unitOfMeasure: String!
+  unitPrice: Float!
+}
+
+type PurchaseOrderVoucher {
+  approvedById: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  date: DateTime!
+  dateOfReceiving: DateTime
+  grandTotal: Float
+  id: ID!
+  items: [PurchaseOrderItem!]!
+  materialRequestId: String!
+  preparedById: String!
+  projectDetails: String
+  purchaseNumber: String!
+  subTotal: Float!
+  supplierName: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  vat: Float
+}
+
+type Query {
+  findUserByEmail(email: String!): User!
+  findUsers: [User!]!
+  getMaterialIssueById(id: String!): MaterialIssueVoucher!
+  getMaterialIssues: [MaterialIssueVoucher!]!
+  getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
+  getMaterialReceives: [MaterialReceiveVoucher!]!
+  getMaterialRequestById(id: String!): MaterialRequestVoucher!
+  getMaterialRequests: [MaterialRequestVoucher!]!
+  getMaterialReturnById(id: String!): MaterialReturnVoucher!
+  getMaterialReturns: [MaterialReturnVoucher!]!
+  getPurchaseOrderById(id: String!): PurchaseOrderVoucher!
+  getPurchaseOrders: [PurchaseOrderVoucher!]!
+}
+
+type Token {
+  """JWT access token"""
+  accessToken: JWT!
+
+  """JWT refresh token"""
+  refreshToken: JWT!
+}
+
+input UpdateMaterialIssueInput {
+  approvedById: String
+  date: DateTime
+  issuedToId: String
+  items: [UpdateMaterialIssueItemInput!]
+  preparedById: String
+  projectDetails: String
+  receivedById: String
+  requisitionNumber: String
+}
+
+input UpdateMaterialIssueItemInput {
+  description: String
+  listNo: Float
+  quantity: Float
+  remark: String
+  totalCost: Float
+  unitCost: Float
+  unitOfMeasure: String
+}
+
+input UpdateMaterialReceiveInput {
+  approvedById: String
+  date: DateTime
+  invoiceId: String
+  items: [UpdateMaterialReceiveItemInput!]
+  materialRequestId: String
+  projectDetails: String
+  purchaseOrderId: String
+  purchasedById: String
+  receivedById: String
+  supplierName: String
+}
+
+input UpdateMaterialReceiveItemInput {
+  description: String
+  listNo: Float
+  quantity: Float
+  totalCost: Float
+  unitCost: Float
+  unitOfMeasure: String
+}
+
+input UpdateMaterialRequestInput {
+  approvedById: String
+  date: DateTime
+  from: String
+  items: [UpdateMaterialRequestItemInput!]
+  requestedById: String
+  to: String
+}
+
+input UpdateMaterialRequestItemInput {
+  description: String
+  inStockQuantity: Float
+  listNo: Float!
+  materialRequestVoucherId: String
+  quantity: Float
+  remark: String
+  toBePurchasedQuantity: Float
+  unitOfMeasure: String
+}
+
+input UpdateMaterialReturnInput {
+  date: DateTime
+  from: String
+  items: [UpdateMaterialReturnItemInput!]
+  receivedById: String
+  receivingStore: String
+  returnedById: String
+}
+
+input UpdateMaterialReturnItemInput {
+  description: String
+  issueVoucherId: String
+  listNo: Float!
+  materialReturnVoucherId: String
+  quantityReturned: Float
+  remark: String
+  totalCost: Float
+  unitCost: Float
+  unitOfMeasure: String
+}
+
+input UpdatePurchaseOrderInput {
+  approvedById: String
+  date: DateTime
+  dateOfReceiving: DateTime
+  grandTotal: Float
+  items: [UpdatePurchaseOrderItemInput!]!
+  materialRequestId: String
+  preparedById: String
+  projectDetails: String
+  purchaseNumber: String
+  subTotal: Float
+  supplierName: String
+  vat: Float
+}
+
+input UpdatePurchaseOrderItemInput {
+  description: String
+  listNo: Float
+  purchaseOrderId: String
+  quantityRequested: Float
+  remark: String
+  totalPrice: Float
+  unitOfMeasure: String
+  unitPrice: Float
+}
+
+input UpdateUserInput {
+  confirmPassword: String
+  email: String
+  fullName: String
+  password: String
+  role: UserRole
+}
+
+type User {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  email: String!
+  fullName: String!
+  id: ID!
+  role: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+enum UserRole {
+  CLIENT
+  CONSULTANT
+  PROJECT_MANAGER
+  PURCHASER
+  SITE_MANAGER
+  STORE_MANAGER
+}

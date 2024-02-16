@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  ps_db:
+    container_name: cms_db
+    image: cms_db
+    build:
+      context: .
+      dockerfile:
+        Dockerfile
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_USER=${DB_USER}
+    ports:
+      - "5433:5432"

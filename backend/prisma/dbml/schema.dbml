@@ -1,0 +1,243 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  fullName String [not null]
+  email String [unique, not null]
+  password String [not null]
+  role UserRole [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  PurchaseOrdersPrepared PurchaseOrder [not null]
+  PurchaseOrdersApproved PurchaseOrder [not null]
+  MaterialReturnVouchers MaterialReturnVoucher [not null]
+  MaterialIssueVouchers MaterialIssueVoucher [not null]
+  MaterialIssueVouchersPrepared MaterialIssueVoucher [not null]
+  MaterialIssueVouchersApproved MaterialIssueVoucher [not null]
+  MaterialIssueVouchersReceived MaterialIssueVoucher [not null]
+  MaterialReceiveVouchers MaterialReceiveVoucher [not null]
+  MaterialReceiveVouchersReceived MaterialReceiveVoucher [not null]
+  MaterialReceiveVouchersApproved MaterialReceiveVoucher [not null]
+  MaterialRequestVouchersRequested MaterialRequestVoucher [not null]
+  MaterialRequestVouchersApproved MaterialRequestVoucher [not null]
+}
+
+Table PurchaseOrder {
+  id String [pk]
+  date DateTime [not null]
+  purchaseNumber String [not null]
+  projectDetails String
+  supplierName String [not null]
+  materialRequestId String [not null]
+  materialRequest MaterialRequestVoucher [not null]
+  items PurchaseOrderItem [not null]
+  subtotal Float [not null]
+  vat Float
+  grandTotal Float
+  preparerById String [not null]
+  preparedBy User [not null]
+  approvedById String [not null]
+  approvedBy User [not null]
+  dateOfReceiving DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  MaterialReceiveVouchers MaterialReceiveVoucher [not null]
+}
+
+Table PurchaseOrderItem {
+  id String [pk]
+  description String
+  unitOfMeasure String [not null]
+  quantityRequested Int [not null]
+  unitPrice Float [not null]
+  totalPrice Float [not null]
+  remark String
+  PurchaseOrder PurchaseOrder [not null]
+  purchaseOrderId String [not null]
+}
+
+Table MaterialReturnVoucher {
+  id String [pk]
+  date DateTime [not null]
+  returnNumber String [not null]
+  from String [not null]
+  receivingStore String [not null]
+  items ReturnVoucherItem [not null]
+  returnedById String [not null]
+  returnedBy User [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ReturnVoucherItem {
+  id String [pk]
+  description String
+  issueVoucherId String [not null]
+  issueVoucher MaterialIssueVoucher [not null]
+  unitOfMeasure String [not null]
+  quantityReturned Int [not null]
+  unitCost Float [not null]
+  totalCost Float [not null]
+  remark String
+  materialReturnVoucherId String [not null]
+  MaterialReturnVoucher MaterialReturnVoucher [not null]
+}
+
+Table MaterialIssueVoucher {
+  id String [pk]
+  date DateTime [not null]
+  projectDetails String
+  issuedToId String [not null]
+  issuedTo User [not null]
+  requisitionNumber String
+  items IssueVoucherItem [not null]
+  preparedById String [not null]
+  preparedBy User [not null]
+  approvedById String [not null]
+  approvedBy User [not null]
+  receivedById String [not null]
+  receivedBy User [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  ReturnVoucherItem ReturnVoucherItem [not null]
+}
+
+Table IssueVoucherItem {
+  id String [pk]
+  description String
+  unitOfMeasure String [not null]
+  quantity Int [not null]
+  unitCost Float [not null]
+  totalCost Float [not null]
+  remark String
+  materialIssueVoucherId String [not null]
+  MaterialIssueVoucher MaterialIssueVoucher [not null]
+}
+
+Table MaterialReceiveVoucher {
+  id String [pk]
+  date DateTime [not null]
+  projectDetails String [not null]
+  supplierName String [not null]
+  invoiceId Int [not null]
+  materialRequestId String [not null]
+  materialRequest MaterialRequestVoucher [not null]
+  purchaseOrderId String [not null]
+  purchaseOrder PurchaseOrder [not null]
+  items MaterialReceiveItem [not null]
+  purchasedById String [not null]
+  purchasedBy User [not null]
+  receivedById String [not null]
+  receivedBy User [not null]
+  approvedById String [not null]
+  approvedBy User [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table MaterialReceiveItem {
+  id String [pk]
+  description String [not null]
+  unitOfMeasure String [not null]
+  quantity Int [not null]
+  unitCost Float [not null]
+  totalCost Float [not null]
+  materialReceiveVoucherId String [not null]
+  MaterialReceiveVoucher MaterialReceiveVoucher [not null]
+}
+
+Table MaterialRequestVoucher {
+  id String [pk]
+  date DateTime [not null]
+  from String [not null]
+  to String [not null]
+  items MaterialRequestItem [not null]
+  requestedById String [not null]
+  requestedBy User [not null]
+  approvedById String [not null]
+  approvedBy User [not null]
+  PurchaseOrders PurchaseOrder [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  MaterialReceiveVouchers MaterialReceiveVoucher [not null]
+}
+
+Table MaterialRequestItem {
+  id String [pk]
+  description String [not null]
+  unitOfMeasure String [not null]
+  quantity Int [not null]
+  inStockQuantity Int
+  toBePurchasedQuantity Int
+  remark String
+  materialRequestVoucherId String [not null]
+  MaterialRequestVoucher MaterialRequestVoucher [not null]
+}
+
+Enum UserRole {
+  CLIENT
+  PROJECT_MANAGER
+  CONSULTANT
+  SITE_MANAGER
+  PURCHASER
+  STORE_MANAGER
+}
+
+Enum DocumentType {
+  MATERIAL_REQUEST
+  MATERIAL_ISSUE
+  MATERIAL_RECEIVING
+  MATERIAL_RETURN
+  PURCHASE_ORDER
+}
+
+Enum ProgressStatus {
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  DENIED
+}
+
+Ref: PurchaseOrder.materialRequestId > MaterialRequestVoucher.id [delete: Cascade]
+
+Ref: PurchaseOrder.preparerById > User.id
+
+Ref: PurchaseOrder.approvedById > User.id
+
+Ref: PurchaseOrderItem.purchaseOrderId > PurchaseOrder.id
+
+Ref: MaterialReturnVoucher.returnedById > User.id
+
+Ref: ReturnVoucherItem.issueVoucherId > MaterialIssueVoucher.id [delete: Cascade]
+
+Ref: ReturnVoucherItem.materialReturnVoucherId > MaterialReturnVoucher.id
+
+Ref: MaterialIssueVoucher.issuedToId > User.id
+
+Ref: MaterialIssueVoucher.preparedById > User.id
+
+Ref: MaterialIssueVoucher.approvedById > User.id
+
+Ref: MaterialIssueVoucher.receivedById > User.id
+
+Ref: IssueVoucherItem.materialIssueVoucherId > MaterialIssueVoucher.id
+
+Ref: MaterialReceiveVoucher.materialRequestId > MaterialRequestVoucher.id [delete: Cascade]
+
+Ref: MaterialReceiveVoucher.purchaseOrderId > PurchaseOrder.id [delete: Cascade]
+
+Ref: MaterialReceiveVoucher.purchasedById > User.id
+
+Ref: MaterialReceiveVoucher.receivedById > User.id
+
+Ref: MaterialReceiveVoucher.approvedById > User.id
+
+Ref: MaterialReceiveItem.materialReceiveVoucherId > MaterialReceiveVoucher.id
+
+Ref: MaterialRequestVoucher.requestedById > User.id
+
+Ref: MaterialRequestVoucher.approvedById > User.id
+
+Ref: MaterialRequestItem.materialRequestVoucherId > MaterialRequestVoucher.id
