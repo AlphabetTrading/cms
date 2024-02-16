@@ -22,4 +22,7 @@ export class UpdateMaterialRequestInput {
 
   @Field(() => String, { nullable: true })
   approvedById?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  approved?: boolean;
 }

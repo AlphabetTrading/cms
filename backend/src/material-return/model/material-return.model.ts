@@ -1,10 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { BaseModel } from 'src/common/models/Base.model';
+import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class MaterialReturnVoucher extends BaseModel {
   @Field(() => Date)
   date: Date;
+
+  @Field(() => String, { nullable: true })
+  serialNumber?: string;
 
   @Field(() => String)
   from: string;
@@ -20,6 +23,9 @@ export class MaterialReturnVoucher extends BaseModel {
 
   @Field(() => String)
   receivedById: string;
+
+  @Field(() => Boolean, { nullable: true })
+  received?: boolean;
 }
 
 @ObjectType()

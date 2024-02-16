@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialRequestInput } from './dto/create-material-request.input';
 import { MaterialRequestVoucher } from './model/material-request.model';
 import { UpdateMaterialRequestInput } from './dto/update-material-request.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MaterialRequestService {
@@ -11,14 +12,16 @@ export class MaterialRequestService {
   async createMaterialRequest(
     createMaterialRequest: CreateMaterialRequestInput,
   ): Promise<MaterialRequestVoucher> {
+    const currentSerialNumber =
+      await this.prisma.materialRequestVoucher.count();
+    const serialNumber =
+      'MRQ/' + currentSerialNumber.toString().padStart(3, '0');
+
     const createdMaterialRequest =
       await this.prisma.materialRequestVoucher.create({
         data: {
-          date: createMaterialRequest.date,
-          from: createMaterialRequest.from,
-          to: createMaterialRequest.to,
-          requestedById: createMaterialRequest.requestedById,
-          approvedById: createMaterialRequest.approvedById,
+          ...createMaterialRequest,
+          serialNumber: serialNumber,
           items: {
             create: createMaterialRequest.items.map((item) => ({
               listNo: item.listNo,
@@ -38,8 +41,22 @@ export class MaterialRequestService {
     return createdMaterialRequest;
   }
 
-  async getMaterialRequests(): Promise<MaterialRequestVoucher[]> {
+  async getMaterialRequests({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.MaterialRequestVoucherWhereInput;
+    orderBy?: Prisma.MaterialRequestVoucherOrderByWithRelationInput;
+  }): Promise<MaterialRequestVoucher[]> {
     const materialRequests = await this.prisma.materialRequestVoucher.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: {
         items: true,
       },
@@ -112,5 +129,11 @@ export class MaterialRequestService {
     await this.prisma.materialRequestVoucher.delete({
       where: { id: materialRequestId },
     });
+  }
+
+  async count(
+    where?: Prisma.MaterialRequestVoucherWhereInput,
+  ): Promise<number> {
+    return this.prisma.materialRequestVoucher.count({ where });
   }
 }

@@ -7,6 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateTaskInput } from './dto/create-task.input';
 import { Task } from './model/task.model';
 import { UpdateTaskInput } from './dto/update-task.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TaskService {
@@ -35,8 +36,22 @@ export class TaskService {
     return newTask;
   }
 
-  async findAll(): Promise<Task[]> {
+  async findAll({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.TaskWhereInput;
+    orderBy?: Prisma.TaskOrderByWithRelationInput;
+  }): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: {
         Milestone: true,
         assignedTo: true,
@@ -89,5 +104,9 @@ export class TaskService {
     await this.prisma.materialReturnVoucher.delete({
       where: { id },
     });
+  }
+
+  async count(where?: Prisma.TaskWhereInput): Promise<number> {
+    return this.prisma.task.count({ where });
   }
 }

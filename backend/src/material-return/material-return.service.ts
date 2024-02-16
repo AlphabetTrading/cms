@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialReturnInput } from './dto/create-material-return.input';
 import { MaterialReturnVoucher } from './model/material-return.model';
 import { UpdateMaterialReturnInput } from './dto/update-material-return.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MaterialReturnService {
@@ -11,14 +12,15 @@ export class MaterialReturnService {
   async createMaterialReturn(
     createMaterialReturn: CreateMaterialReturnInput,
   ): Promise<MaterialReturnVoucher> {
+    const currentSerialNumber = await this.prisma.materialReturnVoucher.count();
+    const serialNumber =
+      'RTN/' + currentSerialNumber.toString().padStart(3, '0');
+
     const createdMaterialReturn =
       await this.prisma.materialReturnVoucher.create({
         data: {
-          date: createMaterialReturn.date,
-          from: createMaterialReturn.from,
-          receivingStore: createMaterialReturn.receivingStore,
-          receivedById: createMaterialReturn.receivedById,
-          returnedById: createMaterialReturn.returnedById,
+          ...createMaterialReturn,
+          serialNumber: serialNumber,
           items: {
             create: createMaterialReturn.items.map((item) => ({
               listNo: item.listNo,
@@ -38,8 +40,22 @@ export class MaterialReturnService {
     return createdMaterialReturn;
   }
 
-  async getMaterialReturns(): Promise<MaterialReturnVoucher[]> {
+  async getMaterialReturns({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.MaterialReturnVoucherWhereInput;
+    orderBy?: Prisma.MaterialReturnVoucherOrderByWithRelationInput;
+  }): Promise<MaterialReturnVoucher[]> {
     const materialReturns = await this.prisma.materialReturnVoucher.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: {
         items: true,
       },
@@ -110,5 +126,9 @@ export class MaterialReturnService {
     await this.prisma.materialReturnVoucher.delete({
       where: { id: materialReturnId },
     });
+  }
+
+  async count(where?: Prisma.MaterialReturnVoucherWhereInput): Promise<number> {
+    return this.prisma.materialReturnVoucher.count({ where });
   }
 }

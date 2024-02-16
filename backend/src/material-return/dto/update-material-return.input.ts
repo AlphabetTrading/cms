@@ -22,4 +22,7 @@ export class UpdateMaterialReturnInput {
 
   @Field(() => String, { nullable: true })
   receivedById?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  received?: boolean;
 }

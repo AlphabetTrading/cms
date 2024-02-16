@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreatePurchaseOrderInput } from './dto/create-purchase-order.input';
 import { PurchaseOrderVoucher } from './model/purchase-order.model';
 import { UpdatePurchaseOrderInput } from './dto/update-purchase-order.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -11,21 +12,16 @@ export class PurchaseOrderService {
   async createPurchaseOrder(
     createPurchaseOrder: CreatePurchaseOrderInput,
   ): Promise<PurchaseOrderVoucher> {
+    const currentSerialNumber = await this.prisma.purchaseOrder.count();
+    const serialNumber =
+      'PO/' + currentSerialNumber.toString().padStart(3, '0');
+
     const createdPurchaseOrder = await this.prisma.purchaseOrder.create({
       data: {
-        date: createPurchaseOrder.date,
-        purchaseNumber: createPurchaseOrder.purchaseNumber,
-        projectDetails: createPurchaseOrder.projectDetails,
-        supplierName: createPurchaseOrder.supplierName,
-        materialRequestId: createPurchaseOrder.materialRequestId,
-        subTotal: createPurchaseOrder.subTotal,
-        vat: createPurchaseOrder.vat,
-        grandTotal: createPurchaseOrder.grandTotal,
-        preparedById: createPurchaseOrder.preparedById,
-        approvedById: createPurchaseOrder.approvedById,
-        dateOfReceiving: createPurchaseOrder.dateOfReceiving,
+        ...createPurchaseOrder,
+        serialNumber: serialNumber,
         items: {
-          create: createPurchaseOrder.items.map(item => ({
+          create: createPurchaseOrder.items.map((item) => ({
             listNo: item.listNo,
             description: item.description,
             quantityRequested: item.quantityRequested,
@@ -43,8 +39,22 @@ export class PurchaseOrderService {
     return createdPurchaseOrder;
   }
 
-  async getPurchaseOrders(): Promise<PurchaseOrderVoucher[]> {
+  async getPurchaseOrders({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.PurchaseOrderWhereInput;
+    orderBy?: Prisma.PurchaseOrderOrderByWithRelationInput;
+  }): Promise<PurchaseOrderVoucher[]> {
     const purchaseOrders = await this.prisma.purchaseOrder.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: {
         items: true,
       },
@@ -112,5 +122,9 @@ export class PurchaseOrderService {
     await this.prisma.purchaseOrder.delete({
       where: { id: purchaseOrderId },
     });
+  }
+
+  async count(where?: Prisma.PurchaseOrderWhereInput): Promise<number> {
+    return this.prisma.purchaseOrder.count({ where });
   }
 }

@@ -24,9 +24,7 @@ model User {
   MaterialIssueVouchers            MaterialIssueVoucher[]   @relation("IssuedTo")
   MaterialIssueVouchersPrepared    MaterialIssueVoucher[]   @relation("PreparedByIssue")
   MaterialIssueVouchersApproved    MaterialIssueVoucher[]   @relation("ApprovedByIssue")
-  MaterialIssueVouchersReceived    MaterialIssueVoucher[]   @relation("ReceivedByIssue")
   MaterialReceiveVouchers          MaterialReceiveVoucher[] @relation("PurchasedBy")
-  MaterialReceiveVouchersReceived  MaterialReceiveVoucher[] @relation("ReceivedByReceive")
   MaterialReceiveVouchersApproved  MaterialReceiveVoucher[] @relation("ApprovedByReceive")
   MaterialRequestVouchersRequested MaterialRequestVoucher[] @relation("RequestedBy")
   MaterialRequestVouchersApproved  MaterialRequestVoucher[] @relation("ApprovedByRequest")
@@ -41,6 +39,7 @@ model User {
 
 model PurchaseOrder {
   id                      String                   @id @default(uuid())
+  serialNumber            String                   @unique
   date                    DateTime
   purchaseNumber          String
   projectDetails          String?
@@ -55,6 +54,7 @@ model PurchaseOrder {
   preparedBy              User                     @relation(fields: [preparedById], references: [id], name: "PreparedBy")
   approvedById            String
   approvedBy              User                     @relation(fields: [approvedById], references: [id], name: "ApprovedBy")
+  approved                Boolean                  @default(false)
   dateOfReceiving         DateTime?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
@@ -78,6 +78,7 @@ model PurchaseOrderItem {
 
 model MaterialReturnVoucher {
   id             String              @id @default(uuid())
+  serialNumber   String              @unique
   date           DateTime
   from           String
   receivingStore String
@@ -86,6 +87,7 @@ model MaterialReturnVoucher {
   returnedBy     User                @relation(fields: [returnedById], references: [id], name: "ReturnedByReturn")
   receivedById   String
   receivedBy     User                @relation(fields: [receivedById], references: [id], name: "ReceivedByReturn")
+  received       Boolean             @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -112,6 +114,7 @@ model ReturnVoucherItem {
 
 model MaterialIssueVoucher {
   id                String              @id @default(uuid())
+  serialNumber      String              @unique
   date              DateTime
   projectDetails    String?
   issuedToId        String
@@ -122,8 +125,7 @@ model MaterialIssueVoucher {
   preparedBy        User                @relation(fields: [preparedById], references: [id], name: "PreparedByIssue")
   approvedById      String
   approvedBy        User                @relation(fields: [approvedById], references: [id], name: "ApprovedByIssue")
-  receivedById      String?
-  receivedBy        User?               @relation(fields: [receivedById], references: [id], name: "ReceivedByIssue")
+  approved          Boolean             @default(false)
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   ReturnVoucherItem ReturnVoucherItem[]
@@ -148,6 +150,7 @@ model IssueVoucherItem {
 
 model MaterialReceiveVoucher {
   id                String                 @id @default(uuid())
+  serialNumber      String                 @unique
   date              DateTime
   projectDetails    String?
   supplierName      String
@@ -159,10 +162,9 @@ model MaterialReceiveVoucher {
   items             MaterialReceiveItem[]
   purchasedById     String
   purchasedBy       User                   @relation(fields: [purchasedById], references: [id], name: "PurchasedBy")
-  receivedById      String?
-  receivedBy        User?                  @relation(fields: [receivedById], references: [id], name: "ReceivedByReceive")
   approvedById      String
   approvedBy        User                   @relation(fields: [approvedById], references: [id], name: "ApprovedByReceive")
+  approved          Boolean                @default(false)
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
 }
@@ -183,6 +185,7 @@ model MaterialReceiveItem {
 
 model MaterialRequestVoucher {
   id                      String                   @id @default(uuid())
+  serialNumber            String                   @unique
   date                    DateTime
   from                    String
   to                      String
@@ -191,6 +194,7 @@ model MaterialRequestVoucher {
   requestedBy             User                     @relation(fields: [requestedById], references: [id], name: "RequestedBy")
   approvedById            String
   approvedBy              User                     @relation(fields: [approvedById], references: [id], name: "ApprovedByRequest")
+  approved                Boolean                  @default(false)
   PurchaseOrders          PurchaseOrder[]
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
