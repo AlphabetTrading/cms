@@ -12,6 +12,9 @@ import { MaterialRequestModule } from './material-request/material-request.modul
 import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
 import { PrismaModule } from './prisma.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { MilestoneModule } from './milestone/milestone.module';
+import { ProjectModule } from './project/project.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     MaterialReceiveModule,
     MaterialRequestModule,
     PurchaseOrderModule,
+    MilestoneModule,
+    ProjectModule,
+    TaskModule,
   ],
 })
 export class AppModule {}

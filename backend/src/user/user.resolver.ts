@@ -21,12 +21,12 @@ export class UserResolver {
   }
 
   @Query(() => [User])
-  async findUsers() {
+  async getUsers() {
     return this.userService.findUsers();
   }
 
   @Query(() => User)
-  async findUserByEmail(@Args('email') email: string) {
+  async getUserByEmail(@Args('email') email: string) {
     return this.userService.findUserByEmail(email);
   }
 

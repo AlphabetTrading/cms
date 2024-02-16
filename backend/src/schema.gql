@@ -95,6 +95,24 @@ input CreateMaterialReturnItemInput {
   unitOfMeasure: String!
 }
 
+input CreateMilestoneInput {
+  description: String
+  dueDate: DateTime!
+  name: String!
+  projectId: String!
+  status: String!
+}
+
+input CreateProjectInput {
+  budget: Float!
+  clientId: String!
+  endDate: DateTime
+  name: String!
+  projectManagerId: String!
+  startDate: DateTime!
+  status: String!
+}
+
 input CreatePurchaseOrderInput {
   approvedById: String!
   date: DateTime!
@@ -119,6 +137,17 @@ input CreatePurchaseOrderItemInput {
   totalPrice: Float!
   unitOfMeasure: String!
   unitPrice: Float!
+}
+
+input CreateTaskInput {
+  assignedToId: String!
+  description: String
+  dueDate: DateTime!
+  milestoneId: String!
+  name: String!
+  priority: String!
+  startDate: DateTime!
+  status: String!
 }
 
 input CreateUserInput {
@@ -249,18 +278,38 @@ type MaterialReturnVoucher {
   updatedAt: DateTime!
 }
 
+type Milestone {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String
+  dueDate: DateTime!
+  id: ID!
+  name: String!
+  projectId: String!
+  status: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
 type Mutation {
   createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
   createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
   createMaterialReturn(createMaterialReturnInput: CreateMaterialReturnInput!): MaterialReturnVoucher!
+  createMilestone(createMilestoneInput: CreateMilestoneInput!): Milestone!
+  createProject(createProjectInput: CreateProjectInput!): Project!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
+  createTask(createTaskInput: CreateTaskInput!): Task!
   createUser(createUser: CreateUserInput!): User!
   deleteMaterialIssue(id: String!): MaterialIssueVoucher!
   deleteMaterialReceive(id: String!): MaterialReceiveVoucher!
   deleteMaterialRequest(id: String!): MaterialRequestVoucher!
   deleteMaterialReturn(id: String!): MaterialReturnVoucher!
+  deleteMilestone(id: String!): Milestone!
+  deleteProject(id: String!): Project!
   deletePurchaseOrder(id: String!): PurchaseOrderVoucher!
+  deleteTask(id: String!): Task!
   deleteUser(email: String!): User!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
@@ -268,8 +317,28 @@ type Mutation {
   updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
+  updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
+  updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
+  updateTask(id: String!, updateTaskInput: UpdateTaskInput!): Task!
   updateUser(email: String!, updateUser: UpdateUserInput!): User!
+}
+
+type Project {
+  budget: Float!
+  clientId: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  endDate: DateTime
+  id: ID!
+  name: String!
+  projectManagerId: String!
+  startDate: DateTime!
+  status: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type PurchaseOrderItem {
@@ -307,8 +376,6 @@ type PurchaseOrderVoucher {
 }
 
 type Query {
-  findUserByEmail(email: String!): User!
-  findUsers: [User!]!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues: [MaterialIssueVoucher!]!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -317,8 +384,34 @@ type Query {
   getMaterialRequests: [MaterialRequestVoucher!]!
   getMaterialReturnById(id: String!): MaterialReturnVoucher!
   getMaterialReturns: [MaterialReturnVoucher!]!
+  getMilestone(id: String!): Milestone!
+  getMilestones: [Milestone!]!
+  getProject(id: String!): Project!
+  getProjects: [Project!]!
   getPurchaseOrderById(id: String!): PurchaseOrderVoucher!
   getPurchaseOrders: [PurchaseOrderVoucher!]!
+  getTask(id: String!): Task!
+  getTasks: [Task!]!
+  getUserByEmail(email: String!): User!
+  getUsers: [User!]!
+}
+
+type Task {
+  assignedToId: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String
+  dueDate: DateTime!
+  id: ID!
+  milestoneId: String!
+  name: String!
+  priority: String!
+  startDate: DateTime!
+  status: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type Token {
@@ -413,6 +506,24 @@ input UpdateMaterialReturnItemInput {
   unitOfMeasure: String
 }
 
+input UpdateMilestoneInput {
+  description: String
+  dueDate: DateTime
+  name: String
+  projectId: String
+  status: String
+}
+
+input UpdateProjectInput {
+  budget: Float
+  clientId: String
+  endDate: DateTime
+  name: String
+  projectManagerId: String
+  startDate: DateTime
+  status: String
+}
+
 input UpdatePurchaseOrderInput {
   approvedById: String
   date: DateTime
@@ -437,6 +548,17 @@ input UpdatePurchaseOrderItemInput {
   totalPrice: Float
   unitOfMeasure: String
   unitPrice: Float
+}
+
+input UpdateTaskInput {
+  assignedToId: String
+  description: String
+  dueDate: DateTime
+  milestoneId: String
+  name: String
+  priority: String
+  startDate: DateTime
+  status: String
 }
 
 input UpdateUserInput {
