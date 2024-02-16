@@ -1,5 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { CreateMaterialReceiveItemInput } from './create-material-receive-item.input';
 
 @InputType()
@@ -22,7 +27,7 @@ export class CreateMaterialReceiveInput {
 
   @IsNotEmpty()
   @Field(() => String)
-  materialRequestId?: string;
+  materialRequestId: string;
 
   @ValidateNested({ each: true })
   @Field(() => [CreateMaterialReceiveItemInput])
@@ -43,4 +48,8 @@ export class CreateMaterialReceiveInput {
   @IsNotEmpty()
   @Field(() => String)
   approvedById: string;
+
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  approved?: boolean;
 }

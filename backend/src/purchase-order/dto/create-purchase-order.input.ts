@@ -1,5 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { CreatePurchaseOrderItemInput } from './create-purchase-order-item.input';
 
 @InputType()
@@ -51,4 +56,8 @@ export class CreatePurchaseOrderInput {
   @IsNotEmpty()
   @Field(() => String)
   approvedById: string;
+
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  approved?: boolean;
 }

@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialIssueInput } from './dto/create-material-issue.input';
 import { UpdateMaterialIssueInput } from './dto/update-material-issue.input';
 import { MaterialIssueVoucher } from './model/material-issue.model';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MaterialIssueService {
@@ -11,17 +12,16 @@ export class MaterialIssueService {
   async createMaterialIssue(
     createMaterialIssueInput: CreateMaterialIssueInput,
   ): Promise<MaterialIssueVoucher> {
+    const currentSerialNumber = await this.prisma.materialIssueVoucher.count();
+    const serialNumber =
+      'ISS/' + currentSerialNumber.toString().padStart(3, '0');
+
     const createdMaterialIssue = await this.prisma.materialIssueVoucher.create({
       data: {
-        date: createMaterialIssueInput.date,
-        projectDetails: createMaterialIssueInput.projectDetails,
-        issuedToId: createMaterialIssueInput.issuedToId,
-        requisitionNumber: createMaterialIssueInput.requisitionNumber,
-        preparedById: createMaterialIssueInput.preparedById,
-        approvedById: createMaterialIssueInput.approvedById,
-        receivedById: createMaterialIssueInput.receivedById,
+        ...createMaterialIssueInput,
+        serialNumber: serialNumber,
         items: {
-          create: createMaterialIssueInput.items.map(item => ({
+          create: createMaterialIssueInput.items.map((item) => ({
             listNo: item.listNo,
             description: item.description,
             unitOfMeasure: item.unitOfMeasure,
@@ -39,8 +39,22 @@ export class MaterialIssueService {
     return createdMaterialIssue;
   }
 
-  async getMaterialIssues(): Promise<MaterialIssueVoucher[]> {
+  async getMaterialIssues({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.MaterialIssueVoucherWhereInput;
+    orderBy?: Prisma.MaterialIssueVoucherOrderByWithRelationInput;
+  }): Promise<MaterialIssueVoucher[]> {
     const materialIssues = await this.prisma.materialIssueVoucher.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: { items: true },
     });
     return materialIssues;
@@ -108,5 +122,9 @@ export class MaterialIssueService {
     await this.prisma.materialIssueVoucher.delete({
       where: { id: materialIssueId },
     });
+  }
+
+  async count(where?: Prisma.MaterialIssueVoucherWhereInput): Promise<number> {
+    return this.prisma.materialIssueVoucher.count({ where });
   }
 }

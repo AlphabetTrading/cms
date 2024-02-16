@@ -7,6 +7,9 @@ export class MaterialReceiveVoucher extends BaseModel {
   date: Date;
 
   @Field(() => String, { nullable: true })
+  serialNumber?: string;
+
+  @Field(() => String, { nullable: true })
   projectDetails?: string;
 
   @Field(() => String)
@@ -29,6 +32,9 @@ export class MaterialReceiveVoucher extends BaseModel {
 
   @Field(() => String)
   approvedById: string;
+
+  @Field(() => Boolean, { nullable: true })
+  approved?: boolean;
 }
 
 @ObjectType()

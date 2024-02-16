@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNotEmpty, ValidateNested } from 'class-validator';
 import { CreateMaterialReturnItemInput } from './create-material-return-item.input';
 
 @InputType()
@@ -27,4 +27,8 @@ export class CreateMaterialReturnInput {
   @IsNotEmpty()
   @Field(() => String)
   receivedById: string;
+
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true})
+  received?: boolean;
 }

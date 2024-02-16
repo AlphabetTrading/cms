@@ -7,6 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMilestoneInput } from './dto/create-milestone.input';
 import { Milestone } from './model/milestone.model';
 import { UpdateMilestoneInput } from './dto/update-milestone.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MilestoneService {
@@ -35,8 +36,22 @@ export class MilestoneService {
     return newMilestone;
   }
 
-  async findAll(): Promise<Milestone[]> {
+  async findAll({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.MilestoneWhereInput;
+    orderBy?: Prisma.MilestoneOrderByWithRelationInput;
+  }): Promise<Milestone[]> {
     const milestones = await this.prisma.milestone.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: {
         Tasks: true,
         Project: true,
@@ -58,7 +73,10 @@ export class MilestoneService {
     return milestone;
   }
 
-  async update(id: string, updateData: UpdateMilestoneInput): Promise<Milestone> {
+  async update(
+    id: string,
+    updateData: UpdateMilestoneInput,
+  ): Promise<Milestone> {
     const existingMilestone = await this.prisma.milestone.findUnique({
       where: { id: id },
     });
@@ -89,5 +107,9 @@ export class MilestoneService {
     await this.prisma.materialReturnVoucher.delete({
       where: { id },
     });
+  }
+
+  async count(where?: Prisma.MilestoneWhereInput): Promise<number> {
+    return this.prisma.milestone.count({ where });
   }
 }

@@ -7,6 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateProjectInput } from './dto/create-project.input';
 import { Project } from './model/project.model';
 import { UpdateProjectInput } from './dto/update-project.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
@@ -30,8 +31,22 @@ export class ProjectService {
     return newProject;
   }
 
-  async findAll(): Promise<Project[]> {
+  async findAll({
+    skip,
+    take,
+    where,
+    orderBy,
+  }: {
+    skip?: number;
+    take?: number;
+    where?: Prisma.ProjectWhereInput;
+    orderBy?: Prisma.ProjectOrderByWithRelationInput;
+  }): Promise<Project[]> {
     const projects = await this.prisma.project.findMany({
+      skip,
+      take,
+      where,
+      orderBy,
       include: {
         client: true,
         projectManager: true,
@@ -86,5 +101,9 @@ export class ProjectService {
     await this.prisma.materialReturnVoucher.delete({
       where: { id },
     });
+  }
+
+  async count(where?: Prisma.ProjectWhereInput): Promise<number> {
+    return this.prisma.project.count({ where });
   }
 }

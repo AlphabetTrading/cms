@@ -3,19 +3,101 @@ import { PurchaseOrderService } from './purchase-order.service';
 import { PurchaseOrderVoucher } from './model/purchase-order.model';
 import { CreatePurchaseOrderInput } from './dto/create-purchase-order.input';
 import { UpdatePurchaseOrderInput } from './dto/update-purchase-order.input';
+import { PaginationInput } from 'src/common/pagination/pagination.input';
+import { FilterPurchaseOrderInput } from './dto/filter-purchase-order.input';
+import { OrderByPurchaseOrderInput } from './dto/order-by-purchase-order.input';
+import { PaginationPurchaseOrders } from 'src/common/pagination/pagination-info';
+import { Prisma } from '@prisma/client';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver('PurchaseOrder')
 export class PurchaseOrderResolver {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
-  @Query(() => [PurchaseOrderVoucher])
-  async getPurchaseOrders() {
-    return this.purchaseOrderService.getPurchaseOrders();
+  @Query(() => PaginationPurchaseOrders)
+  async getPurchaseOrders(
+    @Args('filterPurchaseOrderInput', {
+      type: () => FilterPurchaseOrderInput,
+      nullable: true,
+    })
+    filterPurchaseOrderInput?: FilterPurchaseOrderInput,
+    @Args('orderBy', {
+      type: () => OrderByPurchaseOrderInput,
+      nullable: true,
+    })
+    orderBy?: OrderByPurchaseOrderInput,
+    @Args('paginationInput', { type: () => PaginationInput, nullable: true })
+    paginationInput?: PaginationInput,
+  ): Promise<PaginationPurchaseOrders> {
+    const where: Prisma.PurchaseOrderWhereInput = {
+      AND: [
+        {
+          id: filterPurchaseOrderInput?.id,
+        },
+        {
+          OR: [
+            {
+              dateOfReceiving: filterPurchaseOrderInput?.dateOfReceiving,
+            },
+            {
+              materialRequestId: filterPurchaseOrderInput?.materialRequestId,
+            },
+            {
+              purchaseNumber: filterPurchaseOrderInput?.purchaseNumber,
+            },
+            {
+              supplierName: filterPurchaseOrderInput?.supplierName,
+            },
+            {
+              subTotal: filterPurchaseOrderInput?.subTotal,
+            },
+            {
+              preparedById: filterPurchaseOrderInput?.preparedById,
+            },
+            {
+              approvedById: filterPurchaseOrderInput?.approvedById,
+            },
+            {
+              approved: filterPurchaseOrderInput?.approved,
+            },
+          ],
+        },
+        {
+          createdAt: filterPurchaseOrderInput?.createdAt,
+        },
+      ],
+    };
+
+    try {
+      const purchaseOrders = await this.purchaseOrderService.getPurchaseOrders({
+        where,
+        orderBy,
+        skip: paginationInput?.skip,
+        take: paginationInput?.take,
+      });
+
+      const count = await this.purchaseOrderService.count(where);
+
+      return {
+        items: purchaseOrders,
+        meta: {
+          page: paginationInput?.skip,
+          limit: paginationInput?.take,
+          count,
+        },
+      };
+    } catch (e) {
+      throw new BadRequestException('Error loading purchase orders!');
+    }
   }
 
   @Query(() => PurchaseOrderVoucher)
   async getPurchaseOrderById(@Args('id') purchaseOrderId: string) {
-    return this.purchaseOrderService.getPurchaseOrderById(purchaseOrderId);
+    try {
+      return this.purchaseOrderService.getPurchaseOrderById(purchaseOrderId);
+    } catch (e) {
+      throw new BadRequestException('Error loading purchase order!');
+    }
   }
 
   @Mutation(() => PurchaseOrderVoucher)
@@ -28,8 +110,7 @@ export class PurchaseOrderResolver {
         createPurchaseOrder,
       );
     } catch (e) {
-      console.log(e);
-      return e;
+      throw new BadRequestException('Error creating purchase order!');
     }
   }
 
@@ -39,14 +120,22 @@ export class PurchaseOrderResolver {
     @Args('updatePurchaseOrderInput')
     updatePurchaseOrderInput: UpdatePurchaseOrderInput,
   ) {
-    return this.purchaseOrderService.updatePurchaseOrder(
-      purchaseOrderId,
-      updatePurchaseOrderInput,
-    );
+    try {
+      return this.purchaseOrderService.updatePurchaseOrder(
+        purchaseOrderId,
+        updatePurchaseOrderInput,
+      );
+    } catch (e) {
+      throw new BadRequestException('Error updating purchase order!');
+    }
   }
 
   @Mutation(() => PurchaseOrderVoucher)
   async deletePurchaseOrder(@Args('id') purchaseOrderId: string) {
-    return this.purchaseOrderService.deletePurchaseOrder(purchaseOrderId);
+    try {
+      return this.purchaseOrderService.deletePurchaseOrder(purchaseOrderId);
+    } catch (e) {
+      throw new BadRequestException('Error deleting purchase order!');
+    }
   }
 }

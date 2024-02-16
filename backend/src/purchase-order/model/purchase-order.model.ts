@@ -6,6 +6,9 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => Date)
   date: Date;
 
+  @Field(() => String, { nullable: true })
+  serialNumber?: string;
+
   @Field(() => Date, { nullable: true })
   dateOfReceiving?: Date;
 
@@ -38,6 +41,9 @@ export class PurchaseOrderVoucher extends BaseModel {
 
   @Field(() => String)
   approvedById: string;
+
+  @Field(() => Boolean, { nullable: true })
+  approved?: boolean;
 }
 
 @ObjectType()

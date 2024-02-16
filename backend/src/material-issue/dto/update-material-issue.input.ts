@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { UpdateMaterialIssueItemInput } from './update-material-issue-item.input';
 
@@ -33,6 +33,10 @@ export class UpdateMaterialIssueInput {
   @IsString()
   @Field(() => String, { nullable: true })
   approvedById?: string;
+
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  approved?: boolean;
 
   @IsString()
   @Field(() => String, { nullable: true })
