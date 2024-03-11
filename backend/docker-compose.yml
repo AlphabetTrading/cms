@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  ps_db:
+  cms_db:
     container_name: cms_db
     image: cms_db
     build:
