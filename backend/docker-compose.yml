@@ -1,14 +1,12 @@
-version: "3.9"
+version: '3.9'
 services:
-  cms_db:
-    container_name: cms_db
-    image: cms_db
+  cms_app:
+    container_name: cms_app
+    image: cms_app
     build:
       context: .
-      dockerfile:
-        Dockerfile
-    environment:
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_USER=${DB_USER}
+      dockerfile: Dockerfile
     ports:
-      - "5433:5432"
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}

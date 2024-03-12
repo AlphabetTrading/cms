@@ -1,17 +1,21 @@
-# version: '3.8'
-# services:
-#   postgres:
-#     image: postgres:latest
-#     container_name: postgres_db
-#     restart: always
-#     ports:
-#       - "6544:5432"
-#     env_file:
-#       - .env
+version: "3.9"
+services:
+  ps_db:
+    container_name: cms_db
+    image: cms_db
+    restart: always
+    build:
+      context: .
+      dockerfile:
+        Dockerfile-db
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_USER=${DB_USER}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
-#     volumes:
-#       - postgres:/var/lib/postgresql/data
-
-# volumes:
-#   postgres:
-#     name: nest-db
+volumes:
+  postgres:
+    name: cms-db
