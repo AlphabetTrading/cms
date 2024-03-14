@@ -97,9 +97,38 @@ flutter:
   # example:
   assets:
     - assets/
-    - assets/images 
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+    - assets/translations/
 
-  # fonts:
+  fonts:
+    - family: Miama
+      fonts:
+        - asset: assets/fonts/Miama.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+        - asset: assets/fonts/Poppins-ExtraLight.ttf
+        - asset: assets/fonts/Poppins-Light.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+        - asset: assets/fonts/Poppins-Thin.ttf
+
+    - family: NotoSansEthiopic
+      fonts:
+        - asset: assets/fonts/NotoSansEthiopic-Regular.ttf
+        - asset: assets/fonts/NotoSansEthiopic-Bold.ttf
+        - asset: assets/fonts/NotoSansEthiopic-Black.ttf
+        - asset: assets/fonts/NotoSansEthiopic-ExtraBold.ttf
+        - asset: assets/fonts/NotoSansEthiopic-ExtraLight.ttf
+        - asset: assets/fonts/NotoSansEthiopic-Light.ttf
+        - asset: assets/fonts/NotoSansEthiopic-Medium.ttf
+        - asset: assets/fonts/NotoSansEthiopic-SemiBold.ttf
+        - asset: assets/fonts/NotoSansEthiopic-Thin.ttf
+
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

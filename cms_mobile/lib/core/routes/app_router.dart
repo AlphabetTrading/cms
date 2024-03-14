@@ -1,47 +1,90 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
+import 'package:cms_mobile/features/dashboard/presentation/pages/HomePage.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter extends StatelessWidget {
   late final GoRouter _router;
 
   AppRouter({Key? key}) : super(key: key) {
-    _router = GoRouter(initialLocation: RouteNames.homePage, routes: routes);
+    _router = GoRouter(
+        initialLocation: RouteNames.homePage,
+        routes: routes,
+        redirect: (context, state) {
+          final authState = context.read<AuthBloc>().state.status;
+          final isAuthenticated = authState == AuthStatus.signedIn;
+          if (isAuthenticated &&
+              (state.matchedLocation == RouteNames.loginRoute ||
+                  state.matchedLocation == RouteNames.forgotPasswordRoute ||
+                  state.matchedLocation == RouteNames.resetPasswordRoute ||
+                  state.matchedLocation == RouteNames.signupRoute)) {
+            return RouteNames.homePage;
+          }
+          if (!isAuthenticated && state.path == RouteNames.loginRoute ||
+              state.matchedLocation == RouteNames.forgotPasswordRoute ||
+              state.matchedLocation == RouteNames.resetPasswordRoute ||
+              state.matchedLocation == RouteNames.signupRoute) {
+            return state.matchedLocation;
+          }
+
+          if (!isAuthenticated) {
+            return RouteNames.loginRoute;
+          }
+
+          if (isAuthenticated) {
+            return state.matchedLocation;
+          }
+
+          return RouteNames.homePage;
+        });
   }
 
   final routes = <GoRoute>[
     GoRoute(
-      path: RouteNames.signupRoute,
-      builder: (BuildContext context, GoRouterState state) =>
-          const LoginPage(),
+      path: RouteNames.homePage,
+      builder: (BuildContext context, GoRouterState state) => const HomePage(),
+    ),
+    GoRoute(
+      path: RouteNames.loginRoute,
+      builder: (BuildContext context, GoRouterState state) => const LoginPage(),
     )
   ];
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a purple toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        debugShowCheckedModeBanner: false,
-        routeInformationProvider: _router.routeInformationProvider,
-        routeInformationParser: _router.routeInformationParser,
-        routerDelegate: _router.routerDelegate,
-      );
+  Widget build(BuildContext context) {
+    String fontFamily;
+    if (context.locale.languageCode == 'en') {
+      fontFamily = 'Poppins';
+    } else if (context.locale.languageCode == 'am') {
+      fontFamily = 'NotoSansEthiopic';
+    } else {
+      fontFamily = 'Miama';
+    }
+
+    return MaterialApp.router(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        fontFamily: fontFamily,
+      ),
+      debugShowCheckedModeBanner: false,
+      routeInformationProvider: _router.routeInformationProvider,
+      routeInformationParser: _router.routeInformationParser,
+      routerDelegate: _router.routerDelegate,
+    );
+  }
+}
+
+String getAuthenticationRouteName(String route) {
+  debugPrint('Route: $route');
+  return switch (route) {
+    RouteNames.loginRoute => RouteNames.loginRoute,
+    RouteNames.forgotPasswordRoute => RouteNames.forgotPasswordRoute,
+    RouteNames.resetPasswordRoute => RouteNames.resetPasswordRoute,
+    _ => RouteNames.signupRoute
+  };
 }

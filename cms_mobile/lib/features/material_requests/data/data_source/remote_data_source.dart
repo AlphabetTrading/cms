@@ -1,16 +1,9 @@
+import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_requests/data/models/material_request.dart';
-import 'package:cms_mobile/features/material_requests/domain/entities/material_request.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialReceivingDataSource {
-  Future<List<MaterialRequestModel>> fetchMaterialRequests();
-}
-
-class DataState<T> {
-  final T? data;
-  final String? error;
-
-  DataState({this.data, this.error});
+  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests();
 }
 
 class MaterialReceivingDataSourceImpl extends MaterialReceivingDataSource {
@@ -21,7 +14,7 @@ class MaterialReceivingDataSourceImpl extends MaterialReceivingDataSource {
   }
 
   @override
-  Future<List<MaterialRequestModel>> fetchMaterialRequests() async {
+  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests() async {
     String fetchMaterialRequestsQuery;
 
     fetchMaterialRequestsQuery = r'''
@@ -37,13 +30,16 @@ class MaterialReceivingDataSourceImpl extends MaterialReceivingDataSource {
     ));
 
     if (response.hasException) {
-      throw response.exception!;
+      return DataFailed(
+        ServerFailure(
+          errorMessage: response.exception.toString(),
+        ),
+      );
     }
 
     final requests = response.data!['requests'] as List;
 
-    return requests
-        .map((request) => MaterialRequestModel.fromJson(request))
-        .toList();
+    return DataSuccess(
+        requests.map((e) => MaterialRequestModel.fromJson(e)).toList());
   }
 }

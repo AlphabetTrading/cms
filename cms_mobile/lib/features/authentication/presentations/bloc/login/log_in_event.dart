@@ -11,3 +11,4 @@ class LoginEvent extends LoginFormEvent {
     required this.loginParams,
   });
 }
+
