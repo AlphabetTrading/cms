@@ -6,7 +6,8 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: '127.0.0.1:3000/graphql',
+    origin: '*',
+    // origin: '127.0.0.1:3000/graphql',
     credentials: true,
     allowedHeaders: [
       'Accept',

@@ -73,6 +73,7 @@ export class AuthService {
   private generateAccessToken(userId: string): string {
     const payload = { sub: userId };
     return this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_SECRET'),
       expiresIn: this.configService.get('EXPIRE_IN'),
     });
   }
@@ -80,6 +81,7 @@ export class AuthService {
   private generateRefreshToken(userId: string): string {
     const payload = { sub: userId };
     return this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn: this.configService.get('REFRESH_IN'),
     });
   }
