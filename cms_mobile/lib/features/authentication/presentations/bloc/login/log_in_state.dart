@@ -6,20 +6,20 @@ enum LoginStatus {
   error,
 }
 
-// abstract class LoginFormState extends Equatable {
-//   const LoginFormState({required LoginEntity login});
+// abstract class LoginState extends Equatable {
+//   const LoginState({required LoginEntity login});
 
 //   @override
 //   List<Object> get props => [];
 // }
 
-// class LoginInitial extends LoginFormState {}
+// class LoginInitial extends LoginState {}
 
-// class LoginLoading extends LoginFormState {}
+// class LoginLoading extends LoginState {}
 
-// class LoginSuccess extends LoginFormState {}
+// class LoginSuccess extends LoginState {}
 
-// class LoginFailed extends LoginFormState {
+// class LoginFailed extends LoginState {
 //   final String errorMessage;
 //   const LoginFailed({
 //     required this.errorMessage,
@@ -27,30 +27,30 @@ enum LoginStatus {
 
 // }
 
-abstract class LoginFormState extends Equatable {
+abstract class LoginState extends Equatable {
   final LoginEntity? login;
   final Failure? error;
   final LoginStatus? status;
 
-  const LoginFormState({this.login, this.error, this.status});
+  const LoginState({this.login, this.error, this.status});
 
   @override
   List<Object?> get props => [login, error, status];
 }
 
-class LoginInitial extends LoginFormState {
+class LoginInitial extends LoginState {
   const LoginInitial();
 }
 
-class LoginLoading extends LoginFormState {
+class LoginLoading extends LoginState {
   const LoginLoading();
 }
 
-class LoginSuccess extends LoginFormState {
+class LoginSuccess extends LoginState {
   const LoginSuccess({required LoginEntity loginEntity})
       : super(login: loginEntity);
 }
 
-class LoginFailed extends LoginFormState {
+class LoginFailed extends LoginState {
   const LoginFailed({required Failure error}) : super(error: error);
 }

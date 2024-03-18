@@ -1,7 +1,7 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
-import 'package:cms_mobile/features/dashboard/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,29 +15,29 @@ class AppRouter extends StatelessWidget {
         initialLocation: RouteNames.homePage,
         routes: routes,
         redirect: (context, state) {
-          final authState = context.read<AuthBloc>().state.status;
-          final isAuthenticated = authState == AuthStatus.signedIn;
-          if (isAuthenticated &&
-              (state.matchedLocation == RouteNames.loginRoute ||
-                  state.matchedLocation == RouteNames.forgotPasswordRoute ||
-                  state.matchedLocation == RouteNames.resetPasswordRoute ||
-                  state.matchedLocation == RouteNames.signupRoute)) {
-            return RouteNames.homePage;
-          }
-          if (!isAuthenticated && state.path == RouteNames.loginRoute ||
-              state.matchedLocation == RouteNames.forgotPasswordRoute ||
-              state.matchedLocation == RouteNames.resetPasswordRoute ||
-              state.matchedLocation == RouteNames.signupRoute) {
-            return state.matchedLocation;
-          }
+          // final authState = context.read<AuthBloc>().state.status;
+          // final isAuthenticated = authState == AuthStatus.signedIn;
+          // if (isAuthenticated &&
+          //     (state.matchedLocation == RouteNames.loginRoute ||
+          //         state.matchedLocation == RouteNames.forgotPasswordRoute ||
+          //         state.matchedLocation == RouteNames.resetPasswordRoute ||
+          //         state.matchedLocation == RouteNames.signupRoute)) {
+          //   return RouteNames.homePage;
+          // }
+          // if (!isAuthenticated && state.path == RouteNames.loginRoute ||
+          //     state.matchedLocation == RouteNames.forgotPasswordRoute ||
+          //     state.matchedLocation == RouteNames.resetPasswordRoute ||
+          //     state.matchedLocation == RouteNames.signupRoute) {
+          //   return state.matchedLocation;
+          // }
 
-          if (!isAuthenticated) {
-            return RouteNames.loginRoute;
-          }
+          // if (!isAuthenticated) {
+          //   return RouteNames.loginRoute;
+          // }
 
-          if (isAuthenticated) {
-            return state.matchedLocation;
-          }
+          // if (isAuthenticated) {
+          //   return state.matchedLocation;
+          // }
 
           return RouteNames.homePage;
         });

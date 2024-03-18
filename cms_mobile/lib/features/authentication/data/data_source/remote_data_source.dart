@@ -45,8 +45,10 @@ class AuthenticationRemoteDataSourceImpl
       document: gql(loginQuery),
       variables: {
         "data": {
-          "email": loginParams.phoneNumber,
-          "password": loginParams.password,
+          "email": "bekele.petros@gmail.com",
+          "password": "Password@1"
+          // "email": loginParams.phoneNumber,
+          // "password": loginParams.password,
         }
       },
     ));

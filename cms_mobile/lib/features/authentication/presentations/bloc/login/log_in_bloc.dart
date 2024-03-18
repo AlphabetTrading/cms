@@ -8,13 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'log_in_event.dart';
 part 'log_in_state.dart';
 
-class LoginBloc extends Bloc<LoginFormEvent, LoginFormState> {
+class LoginBloc extends Bloc<LoginFormEvent, LoginState> {
   LoginUseCase logInUseCase;
   LoginBloc(this.logInUseCase) : super(const LoginInitial()) {
     on<LoginEvent>(_onLogin);
   }
 
-  void _onLogin(LoginEvent event, Emitter<LoginFormState> emit) async {
+  void _onLogin(LoginEvent event, Emitter<LoginState> emit) async {
     emit(const LoginLoading());
     debugPrint('DataState: started');
 

@@ -8,6 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,19 +46,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        if (state.status == AuthStatus.loading) {
-          return const CircularProgressIndicator();
-        }
-        return MaterialApp(
-          title: 'CMS',
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          debugShowCheckedModeBanner: false,
-          home: AppRouter(),
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            if (state.status == AuthStatus.loading) {
+              return const CircularProgressIndicator();
+            }
+            return MaterialApp(
+              title: 'CMS',
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              debugShowCheckedModeBanner: false,
+              home: AppRouter(),
+            );
+          },
         );
       },
     );
