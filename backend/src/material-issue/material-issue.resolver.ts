@@ -49,7 +49,7 @@ export class MaterialIssueResolver {
               approvedById: filterMaterialIssueInput?.approvedById,
             },
             {
-              approved: filterMaterialIssueInput?.approved,
+              status: filterMaterialIssueInput?.status,
             },
           ],
         },

@@ -15,6 +15,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { MilestoneModule } from './milestone/milestone.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
+import { DocumentTransactionModule } from './document-transaction/document-transaction.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { TaskModule } from './task/task.module';
     MilestoneModule,
     ProjectModule,
     TaskModule,
+    DocumentTransactionModule,
   ],
 })
 export class AppModule {}

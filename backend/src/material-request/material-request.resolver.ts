@@ -54,7 +54,7 @@ export class MaterialRequestResolver {
               approvedById: filterMaterialRequestInput?.approvedById,
             },
             {
-              approved: filterMaterialRequestInput?.approved,
+              status: filterMaterialRequestInput?.status,
             },
           ],
         },

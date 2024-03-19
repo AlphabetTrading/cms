@@ -51,6 +51,9 @@ export class MaterialReturnResolver {
             {
               returnedById: filterMaterialReturnInput?.returnedById,
             },
+            {
+              status: filterMaterialReturnInput?.status,
+            }
           ],
         },
         {

@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { CreateMaterialRequestItemInput } from './create-material-request-item.input';
+import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class CreateMaterialRequestInput {
@@ -28,7 +29,6 @@ export class CreateMaterialRequestInput {
   @Field(() => String)
   approvedById: string;
 
-  @IsBoolean()
-  @Field(() => Boolean, { nullable: true })
-  approved?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  approved?: ApprovalStatus;
 }

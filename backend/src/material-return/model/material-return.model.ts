@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
@@ -24,8 +25,8 @@ export class MaterialReturnVoucher extends BaseModel {
   @Field(() => String)
   receivedById: string;
 
-  @Field(() => Boolean, { nullable: true })
-  received?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  approved?: ApprovalStatus;
 }
 
 @ObjectType()

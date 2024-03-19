@@ -56,6 +56,7 @@ model PurchaseOrder {
   approvedById            String
   approvedBy              User                     @relation(fields: [approvedById], references: [id], name: "ApprovedBy")
   approved                Boolean                  @default(false)
+  status                  ApprovalStatus           @default(PENDING)
   dateOfReceiving         DateTime?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
@@ -88,7 +89,7 @@ model MaterialReturnVoucher {
   returnedBy     User                @relation(fields: [returnedById], references: [id], name: "ReturnedByReturn")
   receivedById   String
   receivedBy     User                @relation(fields: [receivedById], references: [id], name: "ReceivedByReturn")
-  received       Boolean             @default(false)
+  status         ApprovalStatus      @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -126,7 +127,7 @@ model MaterialIssueVoucher {
   preparedBy        User                @relation(fields: [preparedById], references: [id], name: "PreparedByIssue")
   approvedById      String
   approvedBy        User                @relation(fields: [approvedById], references: [id], name: "ApprovedByIssue")
-  approved          Boolean             @default(false)
+  status            ApprovalStatus      @default(PENDING)
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   ReturnVoucherItem ReturnVoucherItem[]
@@ -165,7 +166,7 @@ model MaterialReceiveVoucher {
   purchasedBy       User                   @relation(fields: [purchasedById], references: [id], name: "PurchasedBy")
   approvedById      String
   approvedBy        User                   @relation(fields: [approvedById], references: [id], name: "ApprovedByReceive")
-  approved          Boolean                @default(false)
+  status            ApprovalStatus         @default(PENDING)
   createdAt         DateTime               @default(now())
   updatedAt         DateTime               @updatedAt
 }
@@ -195,7 +196,7 @@ model MaterialRequestVoucher {
   requestedBy             User                     @relation(fields: [requestedById], references: [id], name: "RequestedBy")
   approvedById            String
   approvedBy              User                     @relation(fields: [approvedById], references: [id], name: "ApprovedByRequest")
-  approved                Boolean                  @default(false)
+  status                  ApprovalStatus           @default(PENDING)
   PurchaseOrders          PurchaseOrder[]
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
@@ -288,4 +289,10 @@ enum ProgressStatus {
   IN_PROGRESS
   APPROVED
   DENIED
+}
+
+enum ApprovalStatus {
+  PENDING
+  COMPLETED
+  DECLINED
 }

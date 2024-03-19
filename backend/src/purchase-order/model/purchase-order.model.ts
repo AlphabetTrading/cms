@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
@@ -42,8 +43,8 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => String)
   approvedById: string;
 
-  @Field(() => Boolean, { nullable: true })
-  approved?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  approved?: ApprovalStatus;
 }
 
 @ObjectType()

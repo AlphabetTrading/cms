@@ -58,7 +58,7 @@ export class PurchaseOrderResolver {
               approvedById: filterPurchaseOrderInput?.approvedById,
             },
             {
-              approved: filterPurchaseOrderInput?.approved,
+              status: filterPurchaseOrderInput?.status,
             },
           ],
         },

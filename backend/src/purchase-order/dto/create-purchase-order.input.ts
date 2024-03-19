@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import {
-  IsBoolean,
   IsNotEmpty,
   IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { CreatePurchaseOrderItemInput } from './create-purchase-order-item.input';
+import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class CreatePurchaseOrderInput {
@@ -57,7 +57,6 @@ export class CreatePurchaseOrderInput {
   @Field(() => String)
   approvedById: string;
 
-  @IsBoolean()
-  @Field(() => Boolean, { nullable: true })
-  approved?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  approved?: ApprovalStatus;
 }

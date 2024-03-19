@@ -1,7 +1,13 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { ApprovalStatus } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { NumberFilter } from 'src/common/filter/number-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
+
+registerEnumType(ApprovalStatus, {
+  name: 'ApprovalStatus',
+  description: 'Possible options for Approval Status',
+});
 
 @InputType()
 export class FilterPurchaseOrderInput {
@@ -29,8 +35,8 @@ export class FilterPurchaseOrderInput {
   @Field(() => StringFilter, { nullable: true })
   approvedById?: StringFilter;
 
-  @Field({ nullable: true })
-  approved?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  status?: ApprovalStatus;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

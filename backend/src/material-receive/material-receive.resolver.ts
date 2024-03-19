@@ -60,7 +60,7 @@ export class MaterialReceiveResolver {
               approvedById: filterMaterialReceiveInput?.approvedById,
             },
             {
-              approved: filterMaterialReceiveInput?.approved,
+              status: filterMaterialReceiveInput?.status,
             },
           ],
         },

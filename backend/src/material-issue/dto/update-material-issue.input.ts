@@ -1,7 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { UpdateMaterialIssueItemInput } from './update-material-issue-item.input';
+import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class UpdateMaterialIssueInput {
@@ -34,9 +35,8 @@ export class UpdateMaterialIssueInput {
   @Field(() => String, { nullable: true })
   approvedById?: string;
 
-  @IsBoolean()
-  @Field(() => Boolean, { nullable: true })
-  approved?: boolean;
+  @Field(() => ApprovalStatus, { nullable: true })
+  approved?: ApprovalStatus;
 
   @IsString()
   @Field(() => String, { nullable: true })
