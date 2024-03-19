@@ -15,5 +15,8 @@ export class User extends BaseModel {
   email: string;
 
   @Field()
+  phoneNumber: string;
+
+  @Field()
   role: UserRole;
 }

@@ -24,7 +24,7 @@ export class AuthService {
 
   async login(loginInput: LoginInput): Promise<Auth> {
     try {
-      const user = await this.userService.findUserByEmail(loginInput.email);
+      const user = await this.userService.findUserByPhoneNumber(loginInput.phone_number);
       if (
         user &&
         (await this.passwordService.comparePasswords(

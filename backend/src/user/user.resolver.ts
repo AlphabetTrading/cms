@@ -30,6 +30,11 @@ export class UserResolver {
     return this.userService.findUserByEmail(email);
   }
 
+  @Query(() => User)
+  async getUserByPhoneNumber(@Args('phone_number') phone_number: string) {
+    return this.userService.findUserByPhoneNumber(phone_number);
+  }
+
   @Mutation(() => User)
   async updateUser(
     // @UserEntity() user: User,

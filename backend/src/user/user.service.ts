@@ -19,7 +19,10 @@ export class UserService {
   async createUser(createUser: CreateUserInput): Promise<any | null> {
     try {
       const existingUser = await this.prisma.user.findUnique({
-        where: { email: createUser.email },
+        where: {
+          email: createUser.email,
+          phoneNumber: createUser.phoneNumber,
+        },
       });
 
       if (createUser.password !== createUser.confirmPassword) {
@@ -54,6 +57,13 @@ export class UserService {
   async findUserByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
+    });
+    return user;
+  }
+
+  async findUserByPhoneNumber(phoneNumber: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { phoneNumber },
     });
     return user;
   }

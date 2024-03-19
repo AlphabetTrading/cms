@@ -3,6 +3,7 @@ import { UserRole } from '@prisma/client';
 import {
   IsEmail,
   IsNotEmpty,
+  IsPhoneNumber,
   IsStrongPassword,
   MaxLength,
 } from 'class-validator';
@@ -18,6 +19,12 @@ export class CreateUserInput {
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail({}, { message: 'Email must be valid' })
   email: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'Phone Number is required' })
+  @IsPhoneNumber('ET', { message: 'Phone Number must be valid' })
+  phoneNumber: string;
+
 
   @Field()
   @IsNotEmpty({ message: 'Password is required' })

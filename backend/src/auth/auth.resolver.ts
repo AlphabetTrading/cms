@@ -17,7 +17,6 @@ export class AuthResolver {
   async login(@Args('data') loginInput: LoginInput) {
     try {
       const user = await this.auth.login(loginInput);
-      console.log(user)
       return user
     } catch (error) {
       return error;

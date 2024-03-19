@@ -160,6 +160,7 @@ input CreateUserInput {
   email: String!
   fullName: String!
   password: String!
+  phoneNumber: String!
   role: UserRole!
 }
 
@@ -274,8 +275,8 @@ A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 scalar JWT
 
 input LoginInput {
-  email: String!
   password: String!
+  phone_number: String!
 }
 
 type MaterialIssueItem {
@@ -628,6 +629,7 @@ type Query {
   getTask(id: String!): Task!
   getTasks(filterTaskInput: FilterTaskInput, orderBy: OrderByTaskInput, paginationInput: PaginationInput): PaginationTasks!
   getUserByEmail(email: String!): User!
+  getUserByPhoneNumber(phone_number: String!): User!
   getUsers: [User!]!
 }
 
@@ -815,6 +817,7 @@ input UpdateUserInput {
   email: String
   fullName: String
   password: String
+  phoneNumber: String
   role: UserRole
 }
 
@@ -824,6 +827,7 @@ type User {
   email: String!
   fullName: String!
   id: ID!
+  phoneNumber: String!
   role: String!
 
   """Identifies the date and time when the object was last updated."""

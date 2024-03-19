@@ -14,6 +14,9 @@ export class FilterUserDocumentsInput {
   email?: StringFilter;
 
   @Field(() => StringFilter, { nullable: true })
+  phoneNumber?: StringFilter;
+
+  @Field(() => StringFilter, { nullable: true })
   role: StringFilter;
 
   @Field(() => DateTimeFilter, { nullable: true })
