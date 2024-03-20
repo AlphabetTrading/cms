@@ -1,12 +1,11 @@
-import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
-import 'package:cms_mobile/features/home/presentation/tabs/requests.dart';
+import 'package:cms_mobile/features/home/presentation/tabs/store_tab.dart';
+import 'package:cms_mobile/features/home/presentation/tabs/material-transactions_tab.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/settings.dart';
-import 'package:cms_mobile/features/home/presentation/tabs/warehouse.dart';
+import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
+import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:sizer/sizer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -33,46 +32,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // drawer: BlurredDrawer(),
-      appBar: AppBar(
-        title: const Text('CMS Mobile'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {
-              // do something
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // do something
-            },
-          ),
-          // settings popup menu
-          PopupMenuButton<String>(
-            onSelected: (String result) {
-              if (result == 'Logout') {
-                // do something
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              // settings menu item
-              const PopupMenuItem<String>(
-                value: 'Settings',
-                child: Text('Settings'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Logout',
-                child: Text('Logout'),
-              ),
-            ],
-          ),
-        ],
-
-        // styling
-        backgroundColor: Colors.white,
-        elevation: 1,
-      ),
+      appBar: CustomAppBar(_scaffoldKey),
       drawerDragStartBehavior: DragStartBehavior.start,
       key: _scaffoldKey,
 
@@ -110,7 +70,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
 Widget _buildScreen({
   required int selectedIndex,
 }) {
@@ -118,9 +77,9 @@ Widget _buildScreen({
     case 0:
       return const DashboardTabScreen();
     case 1:
-      return const WarehouseTabScreen();
+      return const StoreTabScreen();
     case 2:
-      return const RequestsTabScreen();
+      return const MaterialTransactionsTabScreen();
     case 3:
       return const SettingsTabScreen();
     default:

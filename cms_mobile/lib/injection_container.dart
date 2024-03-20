@@ -6,11 +6,17 @@ import 'package:cms_mobile/features/authentication/domain/repository/authenticat
 import 'package:cms_mobile/features/authentication/domain/usecases/authentication_usecase.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
-import 'package:cms_mobile/features/material_requests/data/data_source/remote_data_source.dart';
-import 'package:cms_mobile/features/material_requests/data/repository/material_receiving_repository_impl.dart';
-import 'package:cms_mobile/features/material_requests/domain/repository/material_request_repository.dart';
-import 'package:cms_mobile/features/material_requests/domain/usecases/get_material_requests.dart';
-import 'package:cms_mobile/features/material_requests/presentations/bloc/material_requests/material_receiving_bloc.dart';
+import 'package:cms_mobile/features/home/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/home/data/repository/material_transactions_repository_impl.dart';
+import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
+import 'package:cms_mobile/features/home/domain/usecases/get_material_transactions.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_event.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/repository/material_receiving_repository_impl.dart';
+import 'package:cms_mobile/features/material_transactions/domain/repository/material_request_repository.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -35,8 +41,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<MaterialTransactionsDataSource>(
+    () => MaterialTransactionsDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
   // repository
-
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(
             dataSource: sl<AuthenticationRemoteDataSource>(),
@@ -44,7 +54,13 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<MaterialReceivingRepository>(
     () => MaterialReceivingRepositoryImpl(
-      dataSource: sl<MaterialReceivingDataSourceImpl>(),
+      dataSource: sl<MaterialReceivingDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton<MaterialTransactionRepository>(
+    () => MaterialTransactionRepositoryImpl(
+      dataSource: sl<MaterialTransactionsDataSource>(),
     ),
   );
 
@@ -80,6 +96,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetMaterialTransactionUseCase>(
+    () => GetMaterialTransactionUseCase(
+      sl<MaterialTransactionRepository>(),
+    ),
+  );
+
   // bloc
 
   sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
@@ -94,8 +116,10 @@ Future<void> initializeDependencies() async {
       () => MaterialRequestBloc(sl<GetMaterialRequestUseCase>()));
 
   sl.registerFactory<LoginBloc>(
-    () => LoginBloc(
-      sl<LoginUseCase>()
-    ),
+    () => LoginBloc(sl<LoginUseCase>()),
+  );
+
+  sl.registerFactory<MaterialTransactionBloc>(
+    () => MaterialTransactionBloc(sl<GetMaterialTransactionUseCase>()),
   );
 }

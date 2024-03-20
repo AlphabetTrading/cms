@@ -1,7 +1,18 @@
 class RouteNames {
-  static const String signupRoute = '/signup';
-  static const String loginRoute = '/login';
-  static const String forgotPasswordRoute = '/forgotPassword';
-  static const String resetPasswordRoute = '/resetPassword';
-  static const String homePage = '/homepage';
+  static const String signup = '/signup';
+  static const String login = '/login';
+  static const String forgotPassword = '/forgotPassword';
+  static const String resetPassword = '/resetPassword';
+  static const String home = '/';
+  static const String materialRequests = 'material-requests';
+}
+
+class RoutePaths {
+  static const String home = '/';
+  static const String materialRequests = 'material-requests/:itemId';
+  static const String details = 'details';
+  static const String login = 'login';
+  static const String signup = 'signup';
+  static const String forgotPassword = 'forgotPassword';
+  static const String resetPassword = 'resetPassword';
 }
