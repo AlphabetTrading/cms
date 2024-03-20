@@ -5,6 +5,8 @@ import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
 import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,6 +32,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeBloc = BlocProvider.of<ThemeBloc>(context);
+
     return Scaffold(
       // drawer: BlurredDrawer(),
       appBar: CustomAppBar(_scaffoldKey),
