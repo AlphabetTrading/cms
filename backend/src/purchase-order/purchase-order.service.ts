@@ -4,6 +4,8 @@ import { CreatePurchaseOrderInput } from './dto/create-purchase-order.input';
 import { PurchaseOrderVoucher } from './model/purchase-order.model';
 import { UpdatePurchaseOrderInput } from './dto/update-purchase-order.input';
 import { Prisma } from '@prisma/client';
+import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
+import { DocumentType } from 'src/common/enums/document-type';
 
 @Injectable()
 export class PurchaseOrderService {
@@ -60,6 +62,35 @@ export class PurchaseOrderService {
       },
     });
     return purchaseOrders;
+  }
+
+  async getPurchaseOrderCountByStatus({
+    where,
+  }: {
+    where?: Prisma.PurchaseOrderWhereInput;
+  }): Promise<any> {
+    const statusCounts = await this.prisma.purchaseOrder.groupBy({
+      by: ['status'],
+      where,
+      _count: {
+        status: true,
+      },
+    });
+
+    let counts = { approved: 0, declined: 0, pending: 0 };
+
+    counts = statusCounts.reduce((acc, { status, _count }) => {
+      acc[status] = _count.status;
+      return acc;
+    }, counts);
+
+    const documentTransaction = new DocumentTransaction();
+    documentTransaction.approvedCount = counts.approved;
+    documentTransaction.declinedCount = counts.declined;
+    documentTransaction.pendingCount = counts.pending;
+    documentTransaction.type = DocumentType.PURCHASE_ORDER;
+
+    return documentTransaction;
   }
 
   async getPurchaseOrderById(

@@ -4,6 +4,8 @@ import { CreateMaterialRequestInput } from './dto/create-material-request.input'
 import { MaterialRequestVoucher } from './model/material-request.model';
 import { UpdateMaterialRequestInput } from './dto/update-material-request.input';
 import { Prisma } from '@prisma/client';
+import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
+import { DocumentType } from 'src/common/enums/document-type';
 
 @Injectable()
 export class MaterialRequestService {
@@ -62,6 +64,35 @@ export class MaterialRequestService {
       },
     });
     return materialRequests;
+  }
+
+  async getMaterialRequestCountByStatus({
+    where,
+  }: {
+    where?: Prisma.MaterialRequestVoucherWhereInput;
+  }): Promise<any> {
+    const statusCounts = await this.prisma.materialRequestVoucher.groupBy({
+      by: ['status'],
+      where,
+      _count: {
+        status: true,
+      },
+    });
+
+    let counts = { approved: 0, declined: 0, pending: 0 };
+
+    counts = statusCounts.reduce((acc, { status, _count }) => {
+      acc[status] = _count.status;
+      return acc;
+    }, counts);
+
+    const documentTransaction = new DocumentTransaction();
+    documentTransaction.approvedCount = counts.approved;
+    documentTransaction.declinedCount = counts.declined;
+    documentTransaction.pendingCount = counts.pending;
+    documentTransaction.type = DocumentType.MATERIAL_REQUEST;
+
+    return documentTransaction;
   }
 
   async getMaterialRequestById(

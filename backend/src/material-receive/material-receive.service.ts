@@ -4,6 +4,8 @@ import { CreateMaterialReceiveInput } from './dto/create-material-receive.input'
 import { UpdateMaterialReceiveInput } from './dto/update-material-receive.input';
 import { MaterialReceiveVoucher } from './model/material-receive.model';
 import { Prisma } from '@prisma/client';
+import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
+import { DocumentType } from 'src/common/enums/document-type';
 
 @Injectable()
 export class MaterialReceiveService {
@@ -62,6 +64,35 @@ export class MaterialReceiveService {
       },
     });
     return materialReceives;
+  }
+
+  async getMaterialReceiveCountByStatus({
+    where,
+  }: {
+    where?: Prisma.MaterialReceiveVoucherWhereInput;
+  }): Promise<any> {
+    const statusCounts = await this.prisma.materialReceiveVoucher.groupBy({
+      by: ['status'],
+      where,
+      _count: {
+        status: true,
+      },
+    });
+
+    let counts = { approved: 0, declined: 0, pending: 0 };
+
+    counts = statusCounts.reduce((acc, { status, _count }) => {
+      acc[status] = _count.status;
+      return acc;
+    }, counts);
+
+    const documentTransaction = new DocumentTransaction();
+    documentTransaction.approvedCount = counts.approved;
+    documentTransaction.declinedCount = counts.declined;
+    documentTransaction.pendingCount = counts.pending;
+    documentTransaction.type = DocumentType.MATERIAL_RECEIVING;
+
+    return documentTransaction;
   }
 
   async getMaterialReceiveById(

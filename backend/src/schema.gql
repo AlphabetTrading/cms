@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Possible options for Approval Status"""
+enum ApprovalStatus {
+  COMPLETED
+  DECLINED
+  PENDING
+}
+
 type Auth {
   """JWT access token"""
   accessToken: JWT!
@@ -12,7 +19,6 @@ type Auth {
 }
 
 input CreateMaterialIssueInput {
-  approved: Boolean
   approvedById: String!
   date: DateTime!
   issuedToId: String!
@@ -34,7 +40,6 @@ input CreateMaterialIssueItemInput {
 }
 
 input CreateMaterialReceiveInput {
-  approved: Boolean
   approvedById: String!
   date: DateTime!
   invoiceId: String!
@@ -57,7 +62,7 @@ input CreateMaterialReceiveItemInput {
 }
 
 input CreateMaterialRequestInput {
-  approved: Boolean
+  approved: ApprovalStatus
   approvedById: String!
   date: DateTime!
   from: String!
@@ -78,10 +83,10 @@ input CreateMaterialRequestItemInput {
 }
 
 input CreateMaterialReturnInput {
+  approved: ApprovalStatus
   date: DateTime!
   from: String!
   items: [CreateMaterialReturnItemInput!]!
-  received: Boolean
   receivedById: String!
   receivingStore: String!
   returnedById: String!
@@ -118,7 +123,6 @@ input CreateProjectInput {
 }
 
 input CreatePurchaseOrderInput {
-  approved: Boolean
   approvedById: String!
   date: DateTime!
   dateOfReceiving: DateTime
@@ -128,6 +132,7 @@ input CreatePurchaseOrderInput {
   preparedById: String!
   projectDetails: String
   purchaseNumber: String!
+  status: ApprovalStatus
   subTotal: Float!
   supplierName: String!
   vat: Float
@@ -177,8 +182,22 @@ input DateTimeFilter {
   lte: DateTime
 }
 
+type DocumentTransaction {
+  approvedCount: Float!
+  declinedCount: Float!
+  pendingCount: Float!
+  type: DocumentType!
+}
+
+enum DocumentType {
+  MATERIAL_ISSUE
+  MATERIAL_RECEIVING
+  MATERIAL_REQUEST
+  MATERIAL_RETURN
+  PURCHASE_ORDER
+}
+
 input FilterMaterialIssueInput {
-  approved: Boolean
   approvedById: StringFilter
   createdAt: DateTimeFilter
   date: DateTimeFilter
@@ -186,10 +205,10 @@ input FilterMaterialIssueInput {
   issuedToId: StringFilter
   preparedById: StringFilter
   receivedById: StringFilter
+  status: String
 }
 
 input FilterMaterialReceiveInput {
-  approved: Boolean
   approvedById: StringFilter
   createdAt: DateTimeFilter
   date: DateTimeFilter
@@ -198,17 +217,18 @@ input FilterMaterialReceiveInput {
   materialRequestId: StringFilter
   purchaseOrderId: StringFilter
   purchasedById: StringFilter
+  status: String
   supplierName: StringFilter
 }
 
 input FilterMaterialRequestInput {
-  approved: Boolean
   approvedById: StringFilter
   createdAt: DateTimeFilter
   date: DateTimeFilter
   from: StringFilter
   id: String
   requestedById: StringFilter
+  status: String
   to: StringFilter
 }
 
@@ -217,10 +237,10 @@ input FilterMaterialReturnInput {
   date: DateTimeFilter
   from: StringFilter
   id: String
-  received: Boolean
   receivedById: StringFilter
   receivingStore: StringFilter
   returnedById: StringFilter
+  status: ApprovalStatus
 }
 
 input FilterMilestoneInput {
@@ -245,7 +265,6 @@ input FilterProjectInput {
 }
 
 input FilterPurchaseOrderInput {
-  approved: Boolean
   approvedById: StringFilter
   createdAt: DateTimeFilter
   dateOfReceiving: DateTimeFilter
@@ -253,6 +272,7 @@ input FilterPurchaseOrderInput {
   materialRequestId: StringFilter
   preparedById: StringFilter
   purchaseNumber: StringFilter
+  status: ApprovalStatus
   subTotal: NumberFilter
   supplierName: StringFilter
 }
@@ -292,7 +312,7 @@ type MaterialIssueItem {
 }
 
 type MaterialIssueVoucher {
-  approved: Boolean
+  approved: ApprovalStatus
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
@@ -312,7 +332,7 @@ type MaterialIssueVoucher {
 }
 
 type MaterialReceiveVoucher {
-  approved: Boolean
+  approved: ApprovalStatus
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
@@ -345,7 +365,7 @@ type MaterialRequestItem {
 }
 
 type MaterialRequestVoucher {
-  approved: Boolean
+  approved: ApprovalStatus
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
@@ -376,13 +396,14 @@ type MaterialReturnItem {
 }
 
 type MaterialReturnVoucher {
+  approved: ApprovalStatus
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   date: DateTime!
   from: String!
   id: ID!
   items: [MaterialReturnItem!]!
-  received: Boolean
   receivedById: String!
   receivingStore: String!
   returnedById: String!
@@ -588,7 +609,6 @@ type PurchaseOrderItem {
 }
 
 type PurchaseOrderVoucher {
-  approved: Boolean
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
@@ -603,6 +623,7 @@ type PurchaseOrderVoucher {
   projectDetails: String
   purchaseNumber: String!
   serialNumber: String
+  status: ApprovalStatus
   subTotal: Float!
   supplierName: String!
 
@@ -612,6 +633,7 @@ type PurchaseOrderVoucher {
 }
 
 type Query {
+  getAllDocumentsStatus: [DocumentTransaction!]!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -669,7 +691,7 @@ type Token {
 }
 
 input UpdateMaterialIssueInput {
-  approved: Boolean
+  approved: ApprovalStatus
   approvedById: String
   date: DateTime
   issuedToId: String
@@ -691,7 +713,6 @@ input UpdateMaterialIssueItemInput {
 }
 
 input UpdateMaterialReceiveInput {
-  approved: Boolean
   approvedById: String
   date: DateTime
   invoiceId: String
@@ -701,6 +722,7 @@ input UpdateMaterialReceiveInput {
   purchaseOrderId: String
   purchasedById: String
   receivedById: String
+  status: ApprovalStatus
   supplierName: String
 }
 
@@ -714,12 +736,12 @@ input UpdateMaterialReceiveItemInput {
 }
 
 input UpdateMaterialRequestInput {
-  approved: Boolean
   approvedById: String
   date: DateTime
   from: String
   items: [UpdateMaterialRequestItemInput!]
   requestedById: String
+  status: ApprovalStatus
   to: String
 }
 
@@ -738,10 +760,10 @@ input UpdateMaterialReturnInput {
   date: DateTime
   from: String
   items: [UpdateMaterialReturnItemInput!]
-  received: Boolean
   receivedById: String
   receivingStore: String
   returnedById: String
+  status: String
 }
 
 input UpdateMaterialReturnItemInput {
@@ -775,7 +797,6 @@ input UpdateProjectInput {
 }
 
 input UpdatePurchaseOrderInput {
-  approved: Boolean
   approvedById: String
   date: DateTime
   dateOfReceiving: DateTime
@@ -785,6 +806,7 @@ input UpdatePurchaseOrderInput {
   preparedById: String
   projectDetails: String
   purchaseNumber: String
+  status: ApprovalStatus
   subTotal: Float
   supplierName: String
   vat: Float

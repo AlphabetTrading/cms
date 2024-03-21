@@ -4,6 +4,8 @@ import { CreateMaterialReturnInput } from './dto/create-material-return.input';
 import { MaterialReturnVoucher } from './model/material-return.model';
 import { UpdateMaterialReturnInput } from './dto/update-material-return.input';
 import { Prisma } from '@prisma/client';
+import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
+import { DocumentType } from 'src/common/enums/document-type';
 
 @Injectable()
 export class MaterialReturnService {
@@ -61,6 +63,35 @@ export class MaterialReturnService {
       },
     });
     return materialReturns;
+  }
+
+  async getMaterialReturnCountByStatus({
+    where,
+  }: {
+    where?: Prisma.MaterialReturnVoucherWhereInput;
+  }): Promise<any> {
+    const statusCounts = await this.prisma.materialReturnVoucher.groupBy({
+      by: ['status'],
+      where,
+      _count: {
+        status: true,
+      },
+    });
+
+    let counts = { approved: 0, declined: 0, pending: 0 };
+
+    counts = statusCounts.reduce((acc, { status, _count }) => {
+      acc[status] = _count.status;
+      return acc;
+    }, counts);
+
+    const documentTransaction = new DocumentTransaction();
+    documentTransaction.approvedCount = counts.approved;
+    documentTransaction.declinedCount = counts.declined;
+    documentTransaction.pendingCount = counts.pending;
+    documentTransaction.type = DocumentType.MATERIAL_RETURN;
+
+    return documentTransaction;
   }
 
   async getMaterialReturnById(
