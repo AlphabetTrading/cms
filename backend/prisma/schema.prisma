@@ -276,21 +276,6 @@ enum UserRole {
   STORE_MANAGER
 }
 
-enum DocumentType {
-  MATERIAL_REQUEST
-  MATERIAL_ISSUE
-  MATERIAL_RECEIVING
-  MATERIAL_RETURN
-  PURCHASE_ORDER
-}
-
-enum ProgressStatus {
-  PENDING
-  IN_PROGRESS
-  APPROVED
-  DENIED
-}
-
 enum ApprovalStatus {
   PENDING
   COMPLETED

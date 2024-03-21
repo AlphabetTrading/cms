@@ -24,7 +24,9 @@ export class AuthService {
 
   async login(loginInput: LoginInput): Promise<Auth> {
     try {
-      const user = await this.userService.findUserByPhoneNumber(loginInput.phone_number);
+      const user = await this.userService.findUserByPhoneNumber(
+        loginInput.phone_number,
+      );
       if (
         user &&
         (await this.passwordService.comparePasswords(
@@ -45,16 +47,14 @@ export class AuthService {
     }
   }
 
-  async validateUser(email: string): Promise<User | null> {
-    const user = await this.userService.findUserByEmail(email);
-    if (user) return user;
-
-    return null;
+  async validateUser(userId: string): Promise<User> {
+    return this.prismaService.user.findUnique({
+      where: { id: userId },
+    });
   }
 
   getUserFromToken(token: string): Promise<User> {
     const id = this.jwtService.decode(token)['userId'];
-    console.log(id)
     return this.prismaService.user.findUnique({
       where: { id },
     });

@@ -58,5 +58,5 @@ export class CreatePurchaseOrderInput {
   approvedById: string;
 
   @Field(() => ApprovalStatus, { nullable: true })
-  approved?: ApprovalStatus;
+  status?: ApprovalStatus;
 }
