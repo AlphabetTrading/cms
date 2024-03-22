@@ -16,6 +16,7 @@ import { MilestoneModule } from './milestone/milestone.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { DocumentTransactionModule } from './document-transaction/document-transaction.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DocumentTransactionModule } from './document-transaction/document-trans
     ProjectModule,
     TaskModule,
     DocumentTransactionModule,
+    StorageModule,
   ],
 })
 export class AppModule {}
