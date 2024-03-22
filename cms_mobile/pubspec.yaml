@@ -101,7 +101,9 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/icons/
+    - assets/icons/dashboard/dark/
+    - assets/icons/dashboard/light/
+    - assets/icons/requests/
     - assets/icons/navigations/
     - assets/fonts/
     - assets/translations/

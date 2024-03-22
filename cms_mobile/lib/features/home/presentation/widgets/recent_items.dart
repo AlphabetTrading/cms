@@ -26,51 +26,36 @@ class RecentItems extends StatelessWidget {
 
   ListTile _buildRecentItem(context) {
     return ListTile(
-       
-        leading: Container(
-          width: 30,
-          height: 30,
-          decoration: ShapeDecoration(
-            color: const Color(0x110F4A84),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          padding: const EdgeInsets.all(3),
-          child: SvgPicture.asset(
-            '/icons/dashboard/analytics.svg',
+      leading: Container(
+        width: 30,
+        height: 30,
+        decoration: ShapeDecoration(
+          // color: const Color(0x110F4A84),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
-        title: const Text(
-          'Cement',
-          style: TextStyle(
-            color: Color(0xFF111416),
-            fontSize: 15,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-            height: 0.11,
-          ),
+        padding: const EdgeInsets.all(3),
+        child: SvgPicture.asset(
+          Theme.of(context).brightness == Brightness.dark
+              ? 'assets/icons/dashboard/dark/analytics.svg'
+              : 'assets/icons/dashboard/light/analytics.svg',
         ),
-        subtitle: const Text(
-          '10/02/2024',
-          style: TextStyle(
-            color: Color(0xFF637587),
-            fontSize: 12,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            height: 0.15,
-          ),
-        ),
-        trailing: const Text(
-          '-117,000',
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            color: Color(0xFF111416),
-            fontSize: 13,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-            height: 0.14,
-          ),
-        ));
+      ),
+      title: const Text(
+        'Cement',
+      ),
+      // titleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
+      subtitle: const Text(
+        '10/02/2024',
+      ),
+      // subtitleTextStyle: Theme.of(context).listTileTheme.subtitleTextStyle,
+      trailing: const Text(
+        '-117,000',
+        textAlign: TextAlign.left,
+      ),
+      // leadingAndTrailingTextStyle:
+      //     Theme.of(context).listTileTheme.leadingAndTrailingTextStyle,
+    );
   }
 }

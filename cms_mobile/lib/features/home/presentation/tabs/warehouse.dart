@@ -158,9 +158,9 @@ class _WarehouseTabScreenState extends State<WarehouseTabScreen> {
                                     borderRadius: BorderRadius.circular(5)),
                               ),
                               padding: EdgeInsets.all(3),
-                              // child: SvgPicture.asset(
-                              //   '/icons/dashboard/analytics.svg',
-                              // ),
+                              child: SvgPicture.asset(
+                                'assets/icons/dashboard/analytics.svg',
+                              ),
                             ),
                             Spacer(),
                             Text(
@@ -240,9 +240,9 @@ class _WarehouseTabScreenState extends State<WarehouseTabScreen> {
                                     borderRadius: BorderRadius.circular(5)),
                               ),
                               padding: EdgeInsets.all(3),
-                              // child: SvgPicture.asset(
-                              //   '/icons/dashboard/progress.svg',
-                              // ),
+                              child: SvgPicture.asset(
+                                'assets/icons/dashboard/progress.svg',
+                              ),
                             ),
                             Spacer(),
                             Text(
@@ -717,27 +717,17 @@ class _WarehouseTabScreenState extends State<WarehouseTabScreen> {
             ),
           ),
           padding: EdgeInsets.all(3),
-          // child: SvgPicture.asset(
-          //   '/icons/dashboard/analytics.svg',
-          // ),
+          child: SvgPicture.asset(
+            'assets/icons/dashboard/analytics.svg',
+          ),
         ),
         title: Text(
           'Cement',
-          style: TextStyle(
-            color: Color(0xFF111416),
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            height: 0.11,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         subtitle: Text(
           '10/02/2024',
-          style: TextStyle(
-            color: Color(0xFF637587),
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            height: 0.15,
-          ),
+          //  style: Theme.of(context).textTheme.la,
         ),
         trailing: Text(
           '-117,000',

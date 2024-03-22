@@ -115,8 +115,11 @@
 //   Size get preferredSize => const Size.fromHeight(64);
 // }
 
+import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
+import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomAppBar extends PreferredSize {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -136,16 +139,14 @@ class CustomAppBar extends PreferredSize {
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
-      backgroundColor: Colors.white,
       toolbarHeight: 64,
-      elevation: 0,
       leadingWidth: 200,
       actions: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(236, 220, 219, 219),
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(10),
           ),
           child: InkWell(
@@ -174,11 +175,8 @@ class CustomAppBar extends PreferredSize {
                     const SizedBox(width: 5),
                     Text(
                       'Bulbula'.toUpperCase(),
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 78, 79, 80),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800),
-                    ),
+                      style: Theme.of(context).textTheme.labelLarge,
+                    )
                   ],
                 ),
               ),
@@ -221,16 +219,18 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
   }
 
   // dark mode switch
-  bool _darkMode = false;
+  // bool _darkMode = false;
 
-  void _onDarkModeSwitch(bool value) {
-    setState(() {
-      _darkMode = value;
-    });
-  }
+  // void _onDarkModeSwitch(bool value) {
+  //   setState(() {
+  //     _darkMode = value;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final themeBloc = BlocProvider.of<ThemeBloc>(context);
+
     return Dialog(
       elevation: 0,
       backgroundColor: Colors.grey[300],
@@ -243,7 +243,7 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
         alignment: Alignment.topCenter,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
-          color: Colors.grey[300],
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -255,9 +255,9 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.close,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 )
               ],
@@ -268,21 +268,18 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surfaceVariant,
               ),
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Row(
+                  Row(
                     children: [
                       Text(
                         'Projects',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
                   ),
@@ -297,7 +294,7 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                       return Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: selected ? Colors.grey[200] : Colors.white,
+                          // color: selected ? Theme.of(context).colorScheme.surfaceVariant : Theme.of(context).colorScheme.surface,
                         ),
                         child: ListTile(
                           onTap: () {
@@ -311,8 +308,8 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                                   Text(project.substring(0, 1).toUpperCase())),
                           title: Text(
                             project.toUpperCase(),
-                            style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
+                            // style: const TextStyle(
+                            //     fontSize: 14, fontWeight: FontWeight.w600),
                           ),
                           trailing: selected
                               ? const Icon(Icons.check)
@@ -325,22 +322,30 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                     height: 30,
                   ),
                   const Divider(),
-                  ListTile(
-                    leading: Icon(
-                      _darkMode ? Icons.dark_mode : Icons.light_mode,
-                    ),
-                    title: Text('Switch to Dark Mode'),
-                    trailing: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Switch(
-                        splashRadius: 10,
-                        value: _darkMode,
-                        onChanged: (value) {
-                          _onDarkModeSwitch(value);
-                        },
+                  BlocBuilder<ThemeBloc, ThemeState>(builder: (context, state) {
+                    bool darkMode =
+                        state.themeData.brightness == Brightness.dark;
+                    return ListTile(
+                      leading: Icon(
+                        darkMode ? Icons.dark_mode : Icons.light_mode,
                       ),
-                    ),
-                  ),
+                      title: Text('Switch to Dark Mode'),
+                      trailing: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Switch(
+                          splashRadius: 10,
+                          value: darkMode,
+                          onChanged: (value) {
+                            if (value) {
+                              themeBloc.add(ThemeEvent.toggleDark);
+                            } else {
+                              themeBloc.add(ThemeEvent.toggleLight);
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  }),
                   const ListTile(
                     leading: Icon(Icons.settings),
                     title: Text('Settings'),
