@@ -16,6 +16,10 @@ import { MilestoneModule } from './milestone/milestone.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { DocumentTransactionModule } from './document-transaction/document-transaction.module';
+<<<<<<< HEAD
+=======
+import { ProformaModule } from './proforma/proforma.module';
+>>>>>>> 64f8cd9f87e53c2f0541824ea45f67370ec70acb
 import { StorageModule } from './storage/storage.module';
 
 @Module({
