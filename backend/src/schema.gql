@@ -112,6 +112,11 @@ input CreateMilestoneInput {
   status: String!
 }
 
+input CreateProformaInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateProjectInput {
   budget: Float!
   clientId: String!
@@ -433,6 +438,7 @@ type Mutation {
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
   createMaterialReturn(createMaterialReturnInput: CreateMaterialReturnInput!): MaterialReturnVoucher!
   createMilestone(createMilestoneInput: CreateMilestoneInput!): Milestone!
+  createProforma(createProformaInput: CreateProformaInput!): Proforma!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
   createTask(createTaskInput: CreateTaskInput!): Task!
@@ -449,11 +455,13 @@ type Mutation {
   deleteUser(email: String!): User!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
+  removeProforma(id: Int!): Proforma!
   updateMaterialIssue(id: String!, updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
   updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
+  updateProforma(updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(id: String!, updateTaskInput: UpdateTaskInput!): Task!
@@ -581,6 +589,11 @@ type PaginationTasks {
   meta: PaginationInfo
 }
 
+type Proforma {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Project {
   budget: Float!
   clientId: String!
@@ -655,6 +668,7 @@ type Query {
   getUserByEmail(email: String!): User!
   getUserByPhoneNumber(phone_number: String!): User!
   getUsers: [User!]!
+  proforma(id: Int!): Proforma!
 }
 
 input StringFilter {
@@ -786,6 +800,12 @@ input UpdateMilestoneInput {
   name: String
   projectId: String
   status: String
+}
+
+input UpdateProformaInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 input UpdateProjectInput {
