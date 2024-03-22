@@ -104,7 +104,9 @@ Future<void> initializeDependencies() async {
 
   // bloc
 
-  sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
+  // sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
+  sl.registerFactory(() => ThemeBloc());
+
 
   sl.registerFactory<AuthBloc>(() => AuthBloc(
         isSignedInUseCase: sl<IsSignedInUseCase>(),

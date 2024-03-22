@@ -49,7 +49,7 @@ class MaterialRequestsList extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(3),
           child: SvgPicture.asset(
-            '/icons/requests/material_issues.svg',
+            'assets/icons/requests/material_issues.svg',
           ),
         ),
         title: const Text(

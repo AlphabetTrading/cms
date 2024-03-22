@@ -25,7 +25,7 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                   width: double.infinity,
                   height: 120,
                   decoration: ShapeDecoration(
-                    color: const Color(0xFF1A80E5),
+                    color: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -157,63 +157,55 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                               width: 30,
                               height: 30,
                               decoration: ShapeDecoration(
-                                color: const Color(0x110F4A84),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)),
                               ),
                               padding: const EdgeInsets.all(3),
                               child: SvgPicture.asset(
-                                'assets/icons/dashboard/analytics.svg',
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? 'assets/icons/dashboard/dark/analytics.svg'
+                                    : 'assets/icons/dashboard/light/analytics.svg',
                               ),
                             ),
                             const Spacer(),
-                            const Text(
+                            Text(
                               'View Details',
-                              style: TextStyle(
-                                color: Color.fromARGB(237, 41, 137, 233),
-                                fontSize: 11,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
                             ),
                           ],
                         ),
                         const SizedBox(
                           height: 5,
                         ),
-                        const Text(
+                        Text(
                           'ANALYTICS',
-                          style: TextStyle(
-                            color: Color(0xFF637587),
-                            fontSize: 11,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: Theme.of(context).textTheme.labelMedium,
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
+                        Text(
                           'View a breakdown of your total expense',
-                          style: TextStyle(
-                            color: Color(0xFF637587),
-                            fontSize: 10,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w400,
-                            height: 0,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(
+                                  height: 0, fontWeight: FontWeight.normal),
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 143,
                           child: Text(
                             '3,047,664 ETB',
-                            style: TextStyle(
-                              color: Color(0xFF637587),
-                              fontSize: 13,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),
                       ],
@@ -229,7 +221,7 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                       height: 170,
                       padding: const EdgeInsets.all(20),
                       decoration: ShapeDecoration(
-                        color: const Color(0xFF111416),
+                        color: const Color(0x110F4A84),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -243,61 +235,52 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                               width: 30,
                               height: 30,
                               decoration: ShapeDecoration(
-                                color: Colors.white.withOpacity(0.15),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)),
                               ),
                               padding: const EdgeInsets.all(3),
                               child: SvgPicture.asset(
-                                'assets/icons/dashboard/progress.svg',
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? 'assets/icons/dashboard/dark/progress.svg'
+                                    : 'assets/icons/dashboard/light/progress.svg',
                               ),
                             ),
                             const Spacer(),
-                            const Text(
+                            Text(
                               'View Details',
-                              style: TextStyle(
-                                color: Color.fromARGB(237, 41, 137, 233),
-                                fontSize: 11,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
                             ),
                           ]),
                           const SizedBox(
                             height: 5,
                           ),
-                          const Text(
+                          Text(
                             'PROGRESS',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text(
+                          Text(
                             'View a breakdown of your total expense',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    height: 0, fontWeight: FontWeight.normal),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
+                          Text(
                             '68%',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           const CustomProgressBar(progress: 67),
                         ],
@@ -311,14 +294,9 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Recent Items',
-                  style: TextStyle(
-                    color: Color(0xFF111416),
-                    fontSize: 16,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(
                   width: 10,

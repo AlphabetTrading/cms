@@ -1,9 +1,12 @@
 import 'package:cms_mobile/core/routes/go_router.dart';
+import 'package:cms_mobile/core/routes/app_router.dart';
+import 'package:cms_mobile/core/theme/light_theme.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
+import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -59,20 +62,32 @@ class MyApp extends StatelessWidget {
               return const CircularProgressIndicator();
             }
             final appRouter = AppRouter().router;
-            return MaterialApp.router(
-              debugShowCheckedModeBanner: false,
-              title: 'CMS APP',
-              routerDelegate: appRouter.routerDelegate,
-              routeInformationParser: appRouter.routeInformationParser,
-              routeInformationProvider: appRouter.routeInformationProvider,
-              localizationsDelegates: context.localizationDelegates,
-              supportedLocales: context.supportedLocales,
-              locale: context.locale,
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-                useMaterial3: true,
-              ),
+            return BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, state) {
+                return MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    title: 'CMS APP',
+                    routerDelegate: appRouter.routerDelegate,
+                    routeInformationParser: appRouter.routeInformationParser,
+                    routeInformationProvider:
+                        appRouter.routeInformationProvider,
+                    localizationsDelegates: context.localizationDelegates,
+                    supportedLocales: context.supportedLocales,
+                    locale: context.locale,
+                    theme: state.themeData);
+              },
             );
+
+            // return MaterialApp(
+            //     title: 'CMS',
+            //     localizationsDelegates: context.localizationDelegates,
+            //     supportedLocales: context.supportedLocales,
+            //     locale: context.locale,
+            //     debugShowCheckedModeBanner: false,
+            //     home: AppRouter(),
+            //     // theme: lightTheme,
+            //     // themeMode: ThemeMode.light
+            //     );
           },
         );
       },
