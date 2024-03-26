@@ -51,7 +51,7 @@ class MaterialTransactionsList extends StatelessWidget {
           width: 45,
           height: 45,
           decoration: ShapeDecoration(
-            color: const Color(0x111A80E5),
+            color: Theme.of(context).colorScheme.surfaceVariant,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           ),
@@ -62,21 +62,11 @@ class MaterialTransactionsList extends StatelessWidget {
         ),
         title: Text(
           materialTransactionInfo['title'],
-          style: const TextStyle(
-            color: Color(0xFF111416),
-            fontSize: 15,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-          ),
+          // style: Theme.of(context).textTheme.bodyMedium,
         ),
         subtitle: Text(
           '${materialTransaction.pendingCount} Pending | ${materialTransaction.declinedCount! + materialTransaction.approvedCount!} Completed',
-          style: const TextStyle(
-            color: Color(0xFF637587),
-            fontSize: 10,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-          ),
+          // style: Theme.of(context).textTheme.labelSmall,
         ),
         trailing: IconButton(
           icon: const Icon(Icons.arrow_forward_ios),

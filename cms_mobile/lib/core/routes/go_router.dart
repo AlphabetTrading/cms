@@ -3,6 +3,7 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/materials/presentation/pages/MaterialsPage.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,6 +62,13 @@ class AppRouter {
                 return MaterialRequestsPage(
                   itemId: state.pathParameters['itemId']!,
                 );
+              },
+            ),
+            GoRoute(
+              name: RouteNames.materials,
+              path: RoutePaths.materials,
+              builder: (BuildContext context, GoRouterState state) {
+                return const MaterialsPage();
               },
             ),
           ],

@@ -17,6 +17,11 @@ import 'package:cms_mobile/features/material_transactions/data/repository/materi
 import 'package:cms_mobile/features/material_transactions/domain/repository/material_request_repository.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/materials/data/data_sources/remote_data_source.dart';
+import 'package:cms_mobile/features/materials/data/repository/material_repository_impl.dart';
+import 'package:cms_mobile/features/materials/domain/repository/material_repository.dart';
+import 'package:cms_mobile/features/materials/domain/usecases/get_materials.dart';
+import 'package:cms_mobile/features/materials/presentation/bloc/materials_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -46,6 +51,12 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
+
+  sl.registerLazySingleton<MaterialsDataSource>(
+    () => MaterialsDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
   // repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(
@@ -61,6 +72,12 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<MaterialTransactionRepository>(
     () => MaterialTransactionRepositoryImpl(
       dataSource: sl<MaterialTransactionsDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton<MaterialRepository>(
+    () => MaterialRepositoryImpl(
+      dataSource: sl<MaterialsDataSource>(),
     ),
   );
 
@@ -102,11 +119,16 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetMaterialsUseCase>(
+    () => GetMaterialsUseCase(
+      sl<MaterialRepository>(),
+    ),
+  );
+
   // bloc
 
   // sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
   sl.registerFactory(() => ThemeBloc());
-
 
   sl.registerFactory<AuthBloc>(() => AuthBloc(
         isSignedInUseCase: sl<IsSignedInUseCase>(),
@@ -123,5 +145,9 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<MaterialTransactionBloc>(
     () => MaterialTransactionBloc(sl<GetMaterialTransactionUseCase>()),
+  );
+
+  sl.registerFactory<MaterialBloc>(
+    () => MaterialBloc(sl<GetMaterialsUseCase>()),
   );
 }

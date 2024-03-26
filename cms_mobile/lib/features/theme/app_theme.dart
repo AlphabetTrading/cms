@@ -9,9 +9,10 @@ ThemeData baseTheme = ThemeData(
     subtitleTextStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
     leadingAndTrailingTextStyle: TextStyle(fontSize: 14),
   ),
+  
   textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-      bodyLarge: TextStyle(fontSize: 16),
+      displaySmall: TextStyle(fontSize: 28, fontWeight: FontWeight.bold,),
+      bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       bodyMedium: TextStyle(fontSize: 14),
       labelSmall: TextStyle(
         fontSize: 12,
@@ -31,11 +32,16 @@ ThemeData DARK_THEME = baseTheme.copyWith(
         .listTileTheme.leadingAndTrailingTextStyle
         ?.copyWith(color: Colors.white),
   ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Colors.black,
+    selectedItemColor: Color(0xFF1A80E5),
+    unselectedItemColor: Color(0xff637587),
+  ),
   textTheme: baseTheme.textTheme.copyWith(
-    displayLarge:
-        baseTheme.textTheme.displayLarge?.copyWith(color: Colors.black),
-    bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(color: Colors.black),
-    bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(color: Colors.black),
+    displaySmall:
+        baseTheme.textTheme.displaySmall?.copyWith(color: Colors.white),
+    bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(color: Colors.white),
+    bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(color: Colors.white),
     labelSmall: baseTheme.textTheme.labelSmall
         ?.copyWith(color: Color.fromARGB(255, 171, 191, 212)),
     labelMedium: baseTheme.textTheme.labelMedium
@@ -69,9 +75,24 @@ ThemeData DARK_THEME = baseTheme.copyWith(
 ThemeData LIGHT_THEME = baseTheme.copyWith(
   brightness: Brightness.light,
 
+  listTileTheme: baseTheme.listTileTheme.copyWith(
+    titleTextStyle:
+        baseTheme.listTileTheme.titleTextStyle?.copyWith(color: Colors.black),
+    subtitleTextStyle: baseTheme.listTileTheme.subtitleTextStyle
+        ?.copyWith(color: Color(0xFF637587)),
+    leadingAndTrailingTextStyle: baseTheme
+        .listTileTheme.leadingAndTrailingTextStyle
+        ?.copyWith(color: Colors.black),
+  ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Colors.white,
+    selectedItemColor: Colors.blue,
+    unselectedItemColor: Colors.grey,
+  ),
+
   textTheme: baseTheme.textTheme.copyWith(
-    displayLarge:
-        baseTheme.textTheme.displayLarge?.copyWith(color: Colors.black),
+    displaySmall:
+        baseTheme.textTheme.displaySmall?.copyWith(color: Colors.black),
     bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(color: Colors.black),
     bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(color: Colors.black),
     labelSmall:
@@ -82,15 +103,6 @@ ThemeData LIGHT_THEME = baseTheme.copyWith(
         baseTheme.textTheme.labelLarge?.copyWith(color: Color(0xFF637587)),
   ),
 
-  listTileTheme: baseTheme.listTileTheme.copyWith(
-    titleTextStyle:
-        baseTheme.listTileTheme.titleTextStyle?.copyWith(color: Colors.black),
-    subtitleTextStyle: baseTheme.listTileTheme.subtitleTextStyle
-        ?.copyWith(color: Color(0xFF637587)),
-    leadingAndTrailingTextStyle: baseTheme
-        .listTileTheme.leadingAndTrailingTextStyle
-        ?.copyWith(color: Colors.black),
-  ),
   appBarTheme: baseTheme.appBarTheme.copyWith(
     backgroundColor: Colors.white,
     iconTheme: IconThemeData(color: Color(0xFF637587)),
