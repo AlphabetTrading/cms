@@ -17,6 +17,7 @@ import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { DocumentTransactionModule } from './document-transaction/document-transaction.module';
 import { StorageModule } from './storage/storage.module';
+import { ProformaModule } from './proforma/proforma.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { StorageModule } from './storage/storage.module';
     ProjectModule,
     TaskModule,
     DocumentTransactionModule,
+    ProformaModule,
     StorageModule,
   ],
 })

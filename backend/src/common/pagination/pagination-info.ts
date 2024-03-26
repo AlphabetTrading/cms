@@ -4,6 +4,7 @@ import { MaterialReceiveVoucher } from 'src/material-receive/model/material-rece
 import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
 import { MaterialReturnVoucher } from 'src/material-return/model/material-return.model';
 import { Milestone } from 'src/milestone/model/milestone.model';
+import { Proforma } from 'src/proforma/model/proforma.model';
 import { Project } from 'src/project/model/project.model';
 import { PurchaseOrderVoucher } from 'src/purchase-order/model/purchase-order.model';
 import { Task } from 'src/task/model/task.model';
@@ -61,6 +62,15 @@ export class PaginationMaterialReceives {
 export class PaginationPurchaseOrders {
   @Field(() => [PurchaseOrderVoucher])
   items: PurchaseOrderVoucher[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
+}
+
+@ObjectType()
+export class PaginationProformas {
+  @Field(() => [Proforma])
+  items: Proforma[];
 
   @Field(() => PaginationInfo, { nullable: true })
   meta?: PaginationInfo;

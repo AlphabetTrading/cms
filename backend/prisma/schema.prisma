@@ -38,6 +38,18 @@ model User {
   Task                             Task[]
 }
 
+model Proforma {
+  id                String                 @id @default(uuid())
+  serialNumber      String                 @unique
+  vendor            String
+  description       String?
+  photos            String[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  materialRequestId String
+  materialRequest   MaterialRequestVoucher @relation(fields: [materialRequestId], references: [id], onDelete: Cascade)
+}
+
 model PurchaseOrder {
   id                      String                   @id @default(uuid())
   serialNumber            String                   @unique
@@ -201,6 +213,7 @@ model MaterialRequestVoucher {
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   MaterialReceiveVouchers MaterialReceiveVoucher[]
+  Proforma                Proforma[]
 }
 
 model MaterialRequestItem {
