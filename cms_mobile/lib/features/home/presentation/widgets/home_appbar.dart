@@ -144,7 +144,7 @@ class CustomAppBar extends PreferredSize {
       actions: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(10),
@@ -157,7 +157,7 @@ class CustomAppBar extends PreferredSize {
             child: Expanded(
               flex: 1,
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(
                   // color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -172,10 +172,10 @@ class CustomAppBar extends PreferredSize {
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 2),
                     Text(
                       'Bulbula'.toUpperCase(),
-                      style: Theme.of(context).textTheme.labelLarge,
+                      style: Theme.of(context).textTheme.labelMedium,
                     )
                   ],
                 ),

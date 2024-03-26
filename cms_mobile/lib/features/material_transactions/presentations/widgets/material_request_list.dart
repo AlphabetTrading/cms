@@ -33,7 +33,7 @@ class MaterialRequestsList extends StatelessWidget {
       alignment: Alignment.center,
       margin: const EdgeInsets.only(bottom: 10),
       decoration: ShapeDecoration(
-        color: const Color(0x110F4A84),
+        color: Color.fromARGB(0, 255, 0, 0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -43,7 +43,7 @@ class MaterialRequestsList extends StatelessWidget {
           width: 45,
           height: 45,
           decoration: ShapeDecoration(
-            color: const Color(0x111A80E5),
+            color: Color.fromARGB(255, 255, 0, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           ),
@@ -52,23 +52,13 @@ class MaterialRequestsList extends StatelessWidget {
             'assets/icons/requests/material_issues.svg',
           ),
         ),
-        title: const Text(
+        title: Text(
           'Material Return ',
-          style: TextStyle(
-            color: Color(0xFF111416),
-            fontSize: 15,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
-        subtitle: const Text(
+        subtitle:  Text(
           '3 Pending | 12 Completed',
-          style: TextStyle(
-            color: Color(0xFF637587),
-            fontSize: 10,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-          ),
+          style: Theme.of(context).textTheme.labelMedium,
         ),
         trailing: IconButton(
           icon: const Icon(Icons.arrow_forward_ios),

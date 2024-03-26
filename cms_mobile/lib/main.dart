@@ -5,6 +5,7 @@ import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/materials/presentation/bloc/materials_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
 import 'package:cms_mobile/injection_container.dart';
@@ -37,6 +38,10 @@ void main() async {
           BlocProvider<MaterialTransactionBloc>(
             create: (context) => sl<MaterialTransactionBloc>(),
           ),
+          BlocProvider<MaterialBloc>(
+            create: (context) => sl<MaterialBloc>(),
+          ),
+
         ],
         child: EasyLocalization(
           path: 'assets/translations',
