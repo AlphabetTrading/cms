@@ -35,6 +35,7 @@ export class DocumentTransactionService {
           ],
         },
       });
+
     const materialReceives =
       await this.materialReceiveService.getMaterialReceiveCountByStatus({
         where: {

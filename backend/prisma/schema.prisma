@@ -90,7 +90,6 @@ model Proforma {
 model PurchaseOrder {
   id                      String                   @id @default(uuid())
   serialNumber            String                   @unique
-  date                    DateTime
   purchaseNumber          String
   projectDetails          String?
   supplierName            String
@@ -111,7 +110,6 @@ model PurchaseOrder {
   MaterialReceiveVouchers MaterialReceiveVoucher[]
   WarehouseStore          WarehouseStore?          @relation(fields: [warehouseStoreId], references: [id])
   warehouseStoreId        String?
-
 }
 
 model PurchaseOrderItem {
@@ -125,6 +123,8 @@ model PurchaseOrderItem {
   remark            String?
   PurchaseOrder     PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], name: "items")
   purchaseOrderId   String
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@unique([id, listNo])
 }
@@ -132,7 +132,6 @@ model PurchaseOrderItem {
 model MaterialReturnVoucher {
   id             String              @id @default(uuid())
   serialNumber   String              @unique
-  date           DateTime
   from           String
   receivingStore String
   items          ReturnVoucherItem[]
@@ -161,6 +160,8 @@ model ReturnVoucherItem {
   remark                  String?
   materialReturnVoucherId String
   MaterialReturnVoucher   MaterialReturnVoucher @relation(fields: [materialReturnVoucherId], references: [id])
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
 
   @@unique([id, listNo])
 }
@@ -168,7 +169,6 @@ model ReturnVoucherItem {
 model MaterialIssueVoucher {
   id                String              @id @default(uuid())
   serialNumber      String              @unique
-  date              DateTime
   projectDetails    String?
   issuedToId        String
   issuedTo          User                @relation(fields: [issuedToId], references: [id], name: "IssuedTo")
@@ -197,6 +197,8 @@ model IssueVoucherItem {
   remark                 String?
   materialIssueVoucherId String
   MaterialIssueVoucher   MaterialIssueVoucher @relation(name: "items", fields: [materialIssueVoucherId], references: [id])
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
 
   @@unique([id, listNo])
 }
@@ -204,7 +206,6 @@ model IssueVoucherItem {
 model MaterialReceiveVoucher {
   id                String                 @id @default(uuid())
   serialNumber      String                 @unique
-  date              DateTime
   projectDetails    String?
   supplierName      String
   invoiceId         String
@@ -232,6 +233,8 @@ model MaterialReceiveItem {
   totalCost                Float
   materialReceiveVoucherId String
   MaterialReceiveVoucher   MaterialReceiveVoucher @relation(fields: [materialReceiveVoucherId], references: [id])
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
 
   @@unique([id, listNo])
 }
@@ -239,7 +242,6 @@ model MaterialReceiveItem {
 model MaterialRequestVoucher {
   id                      String                   @id @default(uuid())
   serialNumber            String                   @unique
-  date                    DateTime
   from                    String
   to                      String
   items                   MaterialRequestItem[]    @relation(name: "items")
@@ -266,6 +268,8 @@ model MaterialRequestItem {
   remark                   String?
   materialRequestVoucherId String
   MaterialRequestVoucher   MaterialRequestVoucher @relation(name: "items", fields: [materialRequestVoucherId], references: [id])
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
 
   @@unique([id, listNo])
 }

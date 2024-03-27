@@ -39,9 +39,6 @@ export class MaterialReceiveResolver {
         {
           OR: [
             {
-              date: filterMaterialReceiveInput?.date,
-            },
-            {
               supplierName: filterMaterialReceiveInput?.supplierName,
             },
             {

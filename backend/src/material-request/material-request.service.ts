@@ -15,7 +15,7 @@ export class MaterialRequestService {
     createMaterialRequest: CreateMaterialRequestInput,
   ): Promise<MaterialRequestVoucher> {
     const currentSerialNumber =
-      await this.prisma.materialRequestVoucher.count() + 1;
+      (await this.prisma.materialRequestVoucher.count()) + 1;
     const serialNumber =
       'MRQ/' + currentSerialNumber.toString().padStart(3, '0');
 
@@ -61,6 +61,8 @@ export class MaterialRequestService {
       orderBy,
       include: {
         items: true,
+        approvedBy: true,
+        requestedBy: true,
       },
     });
     return materialRequests;
@@ -101,7 +103,7 @@ export class MaterialRequestService {
     const materialRequest = await this.prisma.materialRequestVoucher.findUnique(
       {
         where: { id: materialRequestId },
-        include: { items: true },
+        include: { items: true, approvedBy: true, requestedBy: true },
       },
     );
 

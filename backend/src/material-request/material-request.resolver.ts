@@ -39,9 +39,6 @@ export class MaterialRequestResolver {
         {
           OR: [
             {
-              date: filterMaterialRequestInput?.date,
-            },
-            {
               from: filterMaterialRequestInput?.from,
             },
             {

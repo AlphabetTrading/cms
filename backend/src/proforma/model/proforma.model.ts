@@ -7,10 +7,10 @@ export class Proforma extends BaseModel {
   serialNumber?: string;
 
   @Field(() => String)
-  materialRequestId: string;
+  materialRequestId?: string;
 
   @Field(() => String)
-  vendor: string;
+  vendor?: string;
 
   @Field(() => [String])
   photos?: string[];

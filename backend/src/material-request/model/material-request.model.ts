@@ -1,53 +1,54 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ApprovalStatus, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { User as UserModel } from 'src/user/user.model';
 
 @ObjectType()
 export class MaterialRequestVoucher extends BaseModel {
-  @Field(() => Date)
-  date: Date;
-
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
   @Field(() => String)
-  from: string;
+  from?: string;
 
   @Field(() => String)
-  to: string;
+  to?: string;
 
   @Field(() => [MaterialRequestItem])
-  items: MaterialRequestItem[];
+  items?: MaterialRequestItem[];
 
   @Field(() => String)
-  requestedById: string;
+  requestedById?: string;
+
+  @Field(() => UserModel, { nullable: true })
+  requestedBy?: User;
 
   @Field(() => String)
-  approvedById: string;
+  approvedById?: string;
+
+  @Field(() => UserModel, { nullable: true })
+  approvedBy?: User;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,
     nullable: true,
   })
-  approved?: ApprovalStatus;
+  status?: ApprovalStatus;
 }
 
 @ObjectType()
-export class MaterialRequestItem {
-  @Field(() => ID)
-  id: string;
-
+export class MaterialRequestItem extends BaseModel {
   @Field(() => Number)
-  listNo: number;
+  listNo?: number;
 
   @Field(() => String, { nullable: true })
   description?: string;
 
   @Field(() => String)
-  unitOfMeasure: string;
+  unitOfMeasure?: string;
 
   @Field(() => Number)
-  quantity: number;
+  quantity?: number;
 
   @Field(() => Number, { nullable: true })
   inStockQuantity?: number;
@@ -59,5 +60,5 @@ export class MaterialRequestItem {
   remark?: string;
 
   @Field(() => String)
-  materialRequestVoucherId: string;
+  materialRequestVoucherId?: string;
 }

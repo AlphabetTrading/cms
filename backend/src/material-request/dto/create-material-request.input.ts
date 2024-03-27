@@ -5,10 +5,6 @@ import { CreateMaterialRequestItemInput } from './create-material-request-item.i
 @InputType()
 export class CreateMaterialRequestInput {
   @IsNotEmpty()
-  @Field(() => Date, {})
-  date: Date;
-
-  @IsNotEmpty()
   @Field(() => String)
   from: string;
 

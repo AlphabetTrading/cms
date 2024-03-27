@@ -15,7 +15,7 @@ export class MaterialReceiveService {
     createMaterialReceive: CreateMaterialReceiveInput,
   ): Promise<MaterialReceiveVoucher> {
     const currentSerialNumber =
-      await this.prisma.materialReceiveVoucher.count() + 1;
+      (await this.prisma.materialReceiveVoucher.count()) + 1;
     const serialNumber =
       'REC/' + currentSerialNumber.toString().padStart(3, '0');
 
@@ -61,6 +61,10 @@ export class MaterialReceiveService {
       orderBy,
       include: {
         items: true,
+        approvedBy: true,
+        purchasedBy: true,
+        materialRequest: true,
+        purchaseOrder: true,
       },
     });
     return materialReceives;
@@ -101,7 +105,13 @@ export class MaterialReceiveService {
     const materialReceive = await this.prisma.materialReceiveVoucher.findUnique(
       {
         where: { id: materialReceiveId },
-        include: { items: true },
+        include: {
+          items: true,
+          approvedBy: true,
+          purchasedBy: true,
+          materialRequest: true,
+          purchaseOrder: true,
+        },
       },
     );
 

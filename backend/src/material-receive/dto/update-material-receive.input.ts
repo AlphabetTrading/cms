@@ -6,10 +6,6 @@ import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class UpdateMaterialReceiveInput {
-  @Type(() => Date)
-  @Field(() => Date, { nullable: true })
-  date: Date;
-
   @IsString()
   @Field(() => String, { nullable: true })
   projectDetails?: string;

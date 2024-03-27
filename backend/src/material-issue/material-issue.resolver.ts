@@ -37,9 +37,6 @@ export class MaterialIssueResolver {
         {
           OR: [
             {
-              date: filterMaterialIssueInput?.date,
-            },
-            {
               issuedToId: filterMaterialIssueInput?.issuedToId,
             },
             {

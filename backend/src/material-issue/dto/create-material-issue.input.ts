@@ -8,10 +8,6 @@ import { CreateMaterialIssueItemInput } from './create-material-issue-item.input
 
 @InputType()
 export class CreateMaterialIssueInput {
-  @IsNotEmpty()
-  @Field(() => Date, {})
-  date: Date;
-
   @IsOptional()
   @Field(() => String, { nullable: true })
   projectDetails?: string;

@@ -8,10 +8,6 @@ import { CreatePurchaseOrderItemInput } from './create-purchase-order-item.input
 
 @InputType()
 export class CreatePurchaseOrderInput {
-  @IsNotEmpty()
-  @Field(() => Date)
-  date: Date;
-
   @IsOptional()
   @Field(() => Date, { nullable: true })
   dateOfReceiving?: Date;

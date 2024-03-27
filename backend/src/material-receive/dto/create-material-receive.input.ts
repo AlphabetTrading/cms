@@ -4,10 +4,6 @@ import { CreateMaterialReceiveItemInput } from './create-material-receive-item.i
 
 @InputType()
 export class CreateMaterialReceiveInput {
-  @IsNotEmpty()
-  @Field(() => Date, {})
-  date: Date;
-
   @IsOptional()
   @Field(() => String, { nullable: true })
   projectDetails?: string;

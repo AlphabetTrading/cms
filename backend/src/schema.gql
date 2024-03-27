@@ -20,7 +20,6 @@ type Auth {
 
 input CreateMaterialIssueInput {
   approvedById: String!
-  date: DateTime!
   issuedToId: String!
   items: [CreateMaterialIssueItemInput!]!
   preparedById: String!
@@ -41,7 +40,6 @@ input CreateMaterialIssueItemInput {
 
 input CreateMaterialReceiveInput {
   approvedById: String!
-  date: DateTime!
   invoiceId: String!
   items: [CreateMaterialReceiveItemInput!]!
   materialRequestId: String!
@@ -63,7 +61,6 @@ input CreateMaterialReceiveItemInput {
 
 input CreateMaterialRequestInput {
   approvedById: String!
-  date: DateTime!
   from: String!
   items: [CreateMaterialRequestItemInput!]!
   requestedById: String!
@@ -82,7 +79,6 @@ input CreateMaterialRequestItemInput {
 }
 
 input CreateMaterialReturnInput {
-  date: DateTime!
   from: String!
   items: [CreateMaterialReturnItemInput!]!
   receivedById: String!
@@ -129,7 +125,6 @@ input CreateProjectInput {
 
 input CreatePurchaseOrderInput {
   approvedById: String!
-  date: DateTime!
   dateOfReceiving: DateTime
   grandTotal: Float
   items: [CreatePurchaseOrderItemInput!]!
@@ -325,40 +320,45 @@ type MaterialIssueItem {
 }
 
 type MaterialIssueVoucher {
-  approved: ApprovalStatus
+  approvedBy: User!
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  date: DateTime!
   id: ID!
+  issuedTo: User!
   issuedToId: String!
   items: [MaterialIssueItem!]!
+  preparedBy: User!
   preparedById: String!
   projectDetails: String
+  receivedBy: User
   receivedById: String
   requisitionNumber: String
   serialNumber: String
+  status: ApprovalStatus
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }
 
 type MaterialReceiveVoucher {
-  approved: ApprovalStatus
+  approvedBy: User
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  date: DateTime!
   id: ID!
   invoiceId: String!
   materialRequestId: String!
   projectDetails: String
   purchaseOrderId: String!
+  purchasedBy: User
   purchasedById: String!
+  receivedBy: User
   receivedById: String
   serialNumber: String
+  status: ApprovalStatus
   supplierName: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -366,6 +366,8 @@ type MaterialReceiveVoucher {
 }
 
 type MaterialRequestItem {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   description: String
   id: ID!
   inStockQuantity: Float
@@ -375,20 +377,24 @@ type MaterialRequestItem {
   remark: String
   toBePurchasedQuantity: Float
   unitOfMeasure: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type MaterialRequestVoucher {
-  approved: ApprovalStatus
+  approvedBy: User
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  date: DateTime!
   from: String!
   id: ID!
   items: [MaterialRequestItem!]!
+  requestedBy: User
   requestedById: String!
   serialNumber: String
+  status: ApprovalStatus
   to: String!
 
   """Identifies the date and time when the object was last updated."""
@@ -396,6 +402,8 @@ type MaterialRequestVoucher {
 }
 
 type MaterialReturnItem {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   description: String
   id: ID!
   issueVoucherId: String!
@@ -406,21 +414,24 @@ type MaterialReturnItem {
   totalCost: Float!
   unitCost: Float!
   unitOfMeasure: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type MaterialReturnVoucher {
-  approved: ApprovalStatus
-
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  date: DateTime!
   from: String!
   id: ID!
   items: [MaterialReturnItem!]!
+  receivedBy: User
   receivedById: String!
   receivingStore: String!
+  returnedBy: User
   returnedById: String!
   serialNumber: String
+  status: ApprovalStatus
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -639,6 +650,8 @@ type Project {
 }
 
 type PurchaseOrderItem {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   description: String
   id: ID!
   listNo: Float!
@@ -648,15 +661,16 @@ type PurchaseOrderItem {
   totalPrice: Float!
   unitOfMeasure: String!
   unitPrice: Float!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type PurchaseOrderVoucher {
-  approved: ApprovalStatus
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  date: DateTime!
   dateOfReceiving: DateTime
   grandTotal: Float
   id: ID!
@@ -666,6 +680,7 @@ type PurchaseOrderVoucher {
   projectDetails: String
   purchaseNumber: String!
   serialNumber: String
+  status: ApprovalStatus
   subTotal: Float!
   supplierName: String!
 
@@ -737,7 +752,6 @@ type Token {
 input UpdateMaterialIssueInput {
   approved: ApprovalStatus
   approvedById: String
-  date: DateTime
   issuedToId: String
   items: [UpdateMaterialIssueItemInput!]
   preparedById: String
@@ -758,7 +772,6 @@ input UpdateMaterialIssueItemInput {
 
 input UpdateMaterialReceiveInput {
   approvedById: String
-  date: DateTime
   invoiceId: String
   items: [UpdateMaterialReceiveItemInput!]
   materialRequestId: String
@@ -781,7 +794,6 @@ input UpdateMaterialReceiveItemInput {
 
 input UpdateMaterialRequestInput {
   approvedById: String
-  date: DateTime
   from: String
   items: [UpdateMaterialRequestItemInput!]
   requestedById: String
@@ -801,7 +813,6 @@ input UpdateMaterialRequestItemInput {
 }
 
 input UpdateMaterialReturnInput {
-  date: DateTime
   from: String
   items: [UpdateMaterialReturnItemInput!]
   receivedById: String
@@ -849,7 +860,6 @@ input UpdateProjectInput {
 
 input UpdatePurchaseOrderInput {
   approvedById: String
-  date: DateTime
   dateOfReceiving: DateTime
   grandTotal: Float
   items: [UpdatePurchaseOrderItemInput!]!

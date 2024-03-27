@@ -14,7 +14,8 @@ export class MaterialIssueService {
   async createMaterialIssue(
     createMaterialIssueInput: CreateMaterialIssueInput,
   ): Promise<MaterialIssueVoucher> {
-    const currentSerialNumber = await this.prisma.materialIssueVoucher.count() + 1;
+    const currentSerialNumber =
+      (await this.prisma.materialIssueVoucher.count()) + 1;
     const serialNumber =
       'ISS/' + currentSerialNumber.toString().padStart(3, '0');
 
@@ -57,7 +58,12 @@ export class MaterialIssueService {
       take,
       where,
       orderBy,
-      include: { items: true },
+      include: {
+        items: true,
+        approvedBy: true,
+        issuedTo: true,
+        preparedBy: true,
+      },
     });
     return materialIssues;
   }
@@ -75,6 +81,7 @@ export class MaterialIssueService {
       },
     });
 
+    console.log(statusCounts);
     let counts = { approved: 0, declined: 0, pending: 0 };
 
     counts = statusCounts.reduce((acc, { status, _count }) => {
@@ -95,7 +102,12 @@ export class MaterialIssueService {
   ): Promise<MaterialIssueVoucher | null> {
     const materialIssue = await this.prisma.materialIssueVoucher.findUnique({
       where: { id: materialIssueId },
-      include: { items: true },
+      include: {
+        items: true,
+        approvedBy: true,
+        issuedTo: true,
+        preparedBy: true,
+      },
     });
 
     return materialIssue;

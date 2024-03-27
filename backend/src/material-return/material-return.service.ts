@@ -61,6 +61,8 @@ export class MaterialReturnService {
       orderBy,
       include: {
         items: true,
+        receivedBy: true,
+        returnedBy: true,
       },
     });
     return materialReturns;
@@ -100,7 +102,7 @@ export class MaterialReturnService {
   ): Promise<MaterialReturnVoucher | null> {
     const materialReturn = await this.prisma.materialReturnVoucher.findUnique({
       where: { id: materialReturnId },
-      include: { items: true },
+      include: { items: true, receivedBy: true, returnedBy: true },
     });
 
     return materialReturn;

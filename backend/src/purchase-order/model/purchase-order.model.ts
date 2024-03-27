@@ -1,12 +1,9 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class PurchaseOrderVoucher extends BaseModel {
-  @Field(() => Date)
-  date: Date;
-
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
@@ -14,22 +11,22 @@ export class PurchaseOrderVoucher extends BaseModel {
   dateOfReceiving?: Date;
 
   @Field(() => String)
-  purchaseNumber: string;
+  purchaseNumber?: string;
 
   @Field(() => String, { nullable: true })
   projectDetails?: string;
 
   @Field(() => String)
-  supplierName: string;
+  supplierName?: string;
 
   @Field(() => String)
-  materialRequestId: string;
+  materialRequestId?: string;
 
   @Field(() => [PurchaseOrderItem])
-  items: PurchaseOrderItem[];
+  items?: PurchaseOrderItem[];
 
   @Field(() => Number)
-  subTotal: number;
+  subTotal?: number;
 
   @Field(() => Number, { nullable: true })
   vat?: number;
@@ -38,44 +35,41 @@ export class PurchaseOrderVoucher extends BaseModel {
   grandTotal?: number;
 
   @Field(() => String)
-  preparedById: string;
+  preparedById?: string;
 
   @Field(() => String)
-  approvedById: string;
+  approvedById?: string;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,
     nullable: true,
   })
-  approved?: ApprovalStatus;
+  status?: ApprovalStatus;
 }
 
 @ObjectType()
-export class PurchaseOrderItem {
-  @Field(() => ID)
-  id: string;
-
+export class PurchaseOrderItem extends BaseModel {
   @Field(() => Number)
-  listNo: number;
+  listNo?: number;
 
   @Field(() => String, { nullable: true })
   description?: string;
 
   @Field(() => String)
-  unitOfMeasure: string;
+  unitOfMeasure?: string;
 
   @Field(() => Number)
-  quantityRequested: number;
+  quantityRequested?: number;
 
   @Field(() => Number)
-  unitPrice: number;
+  unitPrice?: number;
 
   @Field(() => Number)
-  totalPrice: number;
+  totalPrice?: number;
 
   @Field(() => String, { nullable: true })
   remark?: string;
 
   @Field(() => String)
-  purchaseOrderId: string;
+  purchaseOrderId?: string;
 }

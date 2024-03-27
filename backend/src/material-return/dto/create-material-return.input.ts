@@ -5,10 +5,6 @@ import { CreateMaterialReturnItemInput } from './create-material-return-item.inp
 @InputType()
 export class CreateMaterialReturnInput {
   @IsNotEmpty()
-  @Field(() => Date)
-  date: Date;
-
-  @IsNotEmpty()
   @Field(() => String)
   from: string;
 

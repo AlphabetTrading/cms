@@ -37,9 +37,6 @@ export class MaterialReturnResolver {
         {
           OR: [
             {
-              date: filterMaterialReturnInput?.date,
-            },
-            {
               from: filterMaterialReturnInput?.from,
             },
             {
@@ -53,7 +50,7 @@ export class MaterialReturnResolver {
             },
             {
               status: filterMaterialReturnInput?.status,
-            }
+            },
           ],
         },
         {

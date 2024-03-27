@@ -14,7 +14,7 @@ export class PurchaseOrderService {
   async createPurchaseOrder(
     createPurchaseOrder: CreatePurchaseOrderInput,
   ): Promise<PurchaseOrderVoucher> {
-    const currentSerialNumber = await this.prisma.purchaseOrder.count() + 1;
+    const currentSerialNumber = (await this.prisma.purchaseOrder.count()) + 1;
     const serialNumber =
       'PO/' + currentSerialNumber.toString().padStart(3, '0');
 
@@ -59,6 +59,8 @@ export class PurchaseOrderService {
       orderBy,
       include: {
         items: true,
+        approvedBy: true,
+        preparedBy: true,
       },
     });
     return purchaseOrders;
@@ -98,7 +100,7 @@ export class PurchaseOrderService {
   ): Promise<PurchaseOrderVoucher | null> {
     const purchaseOrder = await this.prisma.purchaseOrder.findUnique({
       where: { id: purchaseOrderId },
-      include: { items: true },
+      include: { items: true, approvedBy: true, preparedBy: true },
     });
 
     return purchaseOrder;

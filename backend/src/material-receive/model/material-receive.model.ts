@@ -1,12 +1,10 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ApprovalStatus, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { User as UserModel } from 'src/user/user.model';
 
 @ObjectType()
 export class MaterialReceiveVoucher extends BaseModel {
-  @Field(() => Date)
-  date: Date;
-
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
@@ -14,53 +12,59 @@ export class MaterialReceiveVoucher extends BaseModel {
   projectDetails?: string;
 
   @Field(() => String)
-  supplierName: string;
+  supplierName?: string;
 
   @Field(() => String)
-  invoiceId: string;
+  invoiceId?: string;
 
   @Field(() => String)
-  materialRequestId: string;
+  materialRequestId?: string;
 
   @Field(() => String)
-  purchaseOrderId: string;
+  purchaseOrderId?: string;
 
   @Field(() => String)
-  purchasedById: string;
+  purchasedById?: string;
+
+  @Field(() => UserModel, { nullable: true })
+  purchasedBy?: User;
 
   @Field(() => String, { nullable: true })
   receivedById?: string;
 
+  @Field(() => UserModel, { nullable: true })
+  receivedBy?: User;
+
   @Field(() => String)
-  approvedById: string;
+  approvedById?: string;
+
+  @Field(() => UserModel, { nullable: true })
+  approvedBy?: User;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,
     nullable: true,
   })
-  approved?: ApprovalStatus;
+  status?: ApprovalStatus;
 }
 
 @ObjectType()
-export class MaterialReceiveItem {
-  @Field(() => ID)
-  id: string;
-
+export class MaterialReceiveItem extends BaseModel {
   @Field(() => String, { nullable: true })
   description?: string;
 
   @Field(() => String)
-  unitOfMeasure: string;
+  unitOfMeasure?: string;
 
   @Field(() => Number)
-  quantity: number;
+  quantity?: number;
 
   @Field(() => Number)
-  unitCost: number;
+  unitCost?: number;
 
   @Field(() => Number)
-  totalCost: number;
+  totalCost?: number;
 
   @Field(() => String)
-  materialReceiveVoucherId: string;
+  materialReceiveVoucherId?: string;
 }

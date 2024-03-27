@@ -7,10 +7,6 @@ import { ApprovalStatus } from '@prisma/client';
 export class UpdatePurchaseOrderInput {
   @IsOptional()
   @Field(() => Date, { nullable: true })
-  date?: Date;
-
-  @IsOptional()
-  @Field(() => Date, { nullable: true })
   dateOfReceiving?: Date;
 
   @IsOptional()

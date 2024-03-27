@@ -1,66 +1,67 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ApprovalStatus, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { User as UserModel } from 'src/user/user.model';
 
 @ObjectType()
 export class MaterialReturnVoucher extends BaseModel {
-  @Field(() => Date)
-  date: Date;
-
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
   @Field(() => String)
-  from: string;
+  from?: string;
 
   @Field(() => String)
-  receivingStore: string;
+  receivingStore?: string;
 
   @Field(() => [MaterialReturnItem])
-  items: MaterialReturnItem[];
+  items?: MaterialReturnItem[];
 
   @Field(() => String)
-  returnedById: string;
+  returnedById?: string;
+
+  @Field(() => UserModel, { nullable: true })
+  returnedBy?: User;
 
   @Field(() => String)
-  receivedById: string;
+  receivedById?: string;
+
+  @Field(() => UserModel, { nullable: true })
+  receivedBy?: User;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,
     nullable: true,
   })
-  approved?: ApprovalStatus;
+  status?: ApprovalStatus;
 }
 
 @ObjectType()
-export class MaterialReturnItem {
-  @Field(() => ID)
-  id: string;
-
+export class MaterialReturnItem extends BaseModel {
   @Field(() => Number)
-  listNo: number;
+  listNo?: number;
 
   @Field(() => String, { nullable: true })
   description?: string;
 
   @Field(() => String)
-  issueVoucherId: string;
+  issueVoucherId?: string;
 
   @Field(() => String)
-  unitOfMeasure: string;
+  unitOfMeasure?: string;
 
   @Field(() => Number)
-  quantityReturned: number;
+  quantityReturned?: number;
 
   @Field(() => Number)
-  unitCost: number;
+  unitCost?: number;
 
   @Field(() => Number)
-  totalCost: number;
+  totalCost?: number;
 
   @Field(() => String, { nullable: true })
   remark?: string;
 
   @Field(() => String)
-  materialReturnVoucherId: string;
+  materialReturnVoucherId?: string;
 }
