@@ -1,9 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { CreateMaterialReceiveItemInput } from './create-material-receive-item.input';
 
 @InputType()

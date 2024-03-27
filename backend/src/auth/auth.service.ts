@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   async validateUser(userId: string): Promise<User> {
-    return this.prismaService.user.findUnique({
+    return await this.prismaService.user.findUnique({
       where: { id: userId },
     });
   }

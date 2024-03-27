@@ -43,8 +43,11 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => String)
   approvedById: string;
 
-  @Field(() => ApprovalStatus, { nullable: true })
-  status?: ApprovalStatus;
+  @Field(() => ApprovalStatus, {
+    defaultValue: ApprovalStatus.PENDING,
+    nullable: true,
+  })
+  approved?: ApprovalStatus;
 }
 
 @ObjectType()

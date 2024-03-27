@@ -12,7 +12,7 @@ export class ProformaService {
   async createProforma(
     createProformaInput: CreateProformaInput,
   ): Promise<Proforma> {
-    const currentSerialNumber = await this.prisma.proforma.count();
+    const currentSerialNumber = await this.prisma.proforma.count() + 1;
     const serialNumber =
       'PRO/' + currentSerialNumber.toString().padStart(3, '0');
 

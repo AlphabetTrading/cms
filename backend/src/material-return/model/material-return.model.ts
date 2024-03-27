@@ -25,7 +25,10 @@ export class MaterialReturnVoucher extends BaseModel {
   @Field(() => String)
   receivedById: string;
 
-  @Field(() => ApprovalStatus, { nullable: true })
+  @Field(() => ApprovalStatus, {
+    defaultValue: ApprovalStatus.PENDING,
+    nullable: true,
+  })
   approved?: ApprovalStatus;
 }
 

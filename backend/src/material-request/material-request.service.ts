@@ -15,7 +15,7 @@ export class MaterialRequestService {
     createMaterialRequest: CreateMaterialRequestInput,
   ): Promise<MaterialRequestVoucher> {
     const currentSerialNumber =
-      await this.prisma.materialRequestVoucher.count();
+      await this.prisma.materialRequestVoucher.count() + 1;
     const serialNumber =
       'MRQ/' + currentSerialNumber.toString().padStart(3, '0');
 

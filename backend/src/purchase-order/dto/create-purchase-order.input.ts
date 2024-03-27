@@ -5,7 +5,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreatePurchaseOrderItemInput } from './create-purchase-order-item.input';
-import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class CreatePurchaseOrderInput {
@@ -56,7 +55,4 @@ export class CreatePurchaseOrderInput {
   @IsNotEmpty()
   @Field(() => String)
   approvedById: string;
-
-  @Field(() => ApprovalStatus, { nullable: true })
-  status?: ApprovalStatus;
 }

@@ -15,7 +15,7 @@ export class ProformaResolver {
   constructor(private readonly proformaService: ProformaService) {}
 
   @Query(() => PaginationProformas)
-  async getMaterialIssues(
+  async getProformas(
     @Args('filterProformaInput', {
       type: () => FilterProformaInput,
       nullable: true,

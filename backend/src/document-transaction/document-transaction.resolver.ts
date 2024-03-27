@@ -17,6 +17,7 @@ export class DocumentTransactionResolver {
   async getAllDocumentsStatus(
     @UserEntity() user: User,
   ): Promise<DocumentTransaction[]> {
+    console.log(user)
     return this.documentTransactionService.getAllDocumentsStatus(user.id);
   }
 }

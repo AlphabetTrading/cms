@@ -62,7 +62,6 @@ input CreateMaterialReceiveItemInput {
 }
 
 input CreateMaterialRequestInput {
-  approved: ApprovalStatus
   approvedById: String!
   date: DateTime!
   from: String!
@@ -83,7 +82,6 @@ input CreateMaterialRequestItemInput {
 }
 
 input CreateMaterialReturnInput {
-  approved: ApprovalStatus
   date: DateTime!
   from: String!
   items: [CreateMaterialReturnItemInput!]!
@@ -113,8 +111,10 @@ input CreateMilestoneInput {
 }
 
 input CreateProformaInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  description: String!
+  materialRequestId: String!
+  photos: [String!]!
+  vendor: String!
 }
 
 input CreateProjectInput {
@@ -137,7 +137,6 @@ input CreatePurchaseOrderInput {
   preparedById: String!
   projectDetails: String
   purchaseNumber: String!
-  status: ApprovalStatus
   subTotal: Float!
   supplierName: String!
   vat: Float
@@ -255,6 +254,15 @@ input FilterMilestoneInput {
   name: StringFilter
   projectId: StringFilter
   status: StringFilter
+}
+
+input FilterProformaInput {
+  createdAt: DateTimeFilter
+  description: StringFilter
+  id: String
+  materialRequestId: String
+  updatedAt: DateTimeFilter
+  vendor: String
 }
 
 input FilterProjectInput {
@@ -449,19 +457,19 @@ type Mutation {
   deleteMaterialRequest(id: String!): MaterialRequestVoucher!
   deleteMaterialReturn(id: String!): MaterialReturnVoucher!
   deleteMilestone(id: String!): Milestone!
+  deleteProforma(id: String!): Proforma!
   deleteProject(id: String!): Project!
   deletePurchaseOrder(id: String!): PurchaseOrderVoucher!
   deleteTask(id: String!): Task!
   deleteUser(email: String!): User!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
-  removeProforma(id: Int!): Proforma!
   updateMaterialIssue(id: String!, updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
   updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
-  updateProforma(updateProformaInput: UpdateProformaInput!): Proforma!
+  updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(id: String!, updateTaskInput: UpdateTaskInput!): Task!
@@ -508,6 +516,12 @@ input OrderByMaterialReturnInput {
 input OrderByMilestoneInput {
   createdAt: OrderDirection
   name: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input OrderByProformaInput {
+  createdAt: OrderDirection
+  serialNumber: OrderDirection
   updatedAt: OrderDirection
 }
 
@@ -574,6 +588,11 @@ type PaginationMilestones {
   meta: PaginationInfo
 }
 
+type PaginationProformas {
+  items: [Proforma!]!
+  meta: PaginationInfo
+}
+
 type PaginationProjects {
   items: [Project!]!
   meta: PaginationInfo
@@ -590,8 +609,16 @@ type PaginationTasks {
 }
 
 type Proforma {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  materialRequestId: String!
+  photos: [String!]!
+  serialNumber: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  vendor: String!
 }
 
 type Project {
@@ -624,6 +651,7 @@ type PurchaseOrderItem {
 }
 
 type PurchaseOrderVoucher {
+  approved: ApprovalStatus
   approvedById: String!
 
   """Identifies the date and time when the object was created."""
@@ -638,7 +666,6 @@ type PurchaseOrderVoucher {
   projectDetails: String
   purchaseNumber: String!
   serialNumber: String
-  status: ApprovalStatus
   subTotal: Float!
   supplierName: String!
 
@@ -659,6 +686,8 @@ type Query {
   getMaterialReturns(filterMaterialReturnInput: FilterMaterialReturnInput, orderBy: OrderByMaterialReturnInput, paginationInput: PaginationInput): PaginationMaterialReturns!
   getMilestone(id: String!): Milestone!
   getMilestones(filterMilestoneInput: FilterMilestoneInput, orderBy: OrderByMilestoneInput, paginationInput: PaginationInput): PaginationMilestones!
+  getProformaById(id: String!): Proforma!
+  getProformas(filterProformaInput: FilterProformaInput, orderBy: OrderByProformaInput, paginationInput: PaginationInput): PaginationProformas!
   getProject(id: String!): Project!
   getProjects(filterProjectInput: FilterProjectInput, orderBy: OrderByProjectInput, paginationInput: PaginationInput): PaginationProjects!
   getPurchaseOrderById(id: String!): PurchaseOrderVoucher!
@@ -668,7 +697,6 @@ type Query {
   getUserByEmail(email: String!): User!
   getUserByPhoneNumber(phone_number: String!): User!
   getUsers: [User!]!
-  proforma(id: Int!): Proforma!
 }
 
 input StringFilter {
@@ -803,9 +831,10 @@ input UpdateMilestoneInput {
 }
 
 input UpdateProformaInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  description: String
+  materialRequestId: String
+  photos: [String!]!
+  vendor: String
 }
 
 input UpdateProjectInput {

@@ -38,6 +38,43 @@ model User {
   Task                             Task[]
 }
 
+model Product {
+  id               String             @id @default(uuid())
+  name             String
+  description      String
+  WarehouseProduct WarehouseProduct[]
+  PriceHistory     PriceHistory[]
+}
+
+model WarehouseStore {
+  id             String             @id @default(uuid())
+  name           String
+  location       String
+  products       WarehouseProduct[]
+  purchaseOrders PurchaseOrder[]
+}
+
+model WarehouseProduct {
+  id           String         @id @default(uuid())
+  productId    String
+  product      Product        @relation(fields: [productId], references: [id])
+  warehouseId  String
+  warehouse    WarehouseStore @relation(fields: [warehouseId], references: [id])
+  quantity     Int
+  currentPrice Float
+  priceHistory PriceHistory[]
+}
+
+model PriceHistory {
+  id                 String            @id @default(uuid())
+  productId          String
+  product            Product           @relation(fields: [productId], references: [id])
+  price              Float
+  date               String
+  WarehouseProduct   WarehouseProduct? @relation(fields: [warehouseProductId], references: [id])
+  warehouseProductId String?
+}
+
 model Proforma {
   id                String                 @id @default(uuid())
   serialNumber      String                 @unique
@@ -67,12 +104,14 @@ model PurchaseOrder {
   preparedBy              User                     @relation(fields: [preparedById], references: [id], name: "PreparedBy")
   approvedById            String
   approvedBy              User                     @relation(fields: [approvedById], references: [id], name: "ApprovedBy")
-  approved                Boolean                  @default(false)
   status                  ApprovalStatus           @default(PENDING)
   dateOfReceiving         DateTime?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
   MaterialReceiveVouchers MaterialReceiveVoucher[]
+  WarehouseStore          WarehouseStore?          @relation(fields: [warehouseStoreId], references: [id])
+  warehouseStoreId        String?
+
 }
 
 model PurchaseOrderItem {

@@ -101,6 +101,7 @@ export class MaterialIssueResolver {
         createMaterialIssue,
       );
     } catch (e) {
+      console.log(e)
       throw new BadRequestException('Error creating material issue!');
     }
   }

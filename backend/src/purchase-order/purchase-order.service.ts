@@ -14,7 +14,7 @@ export class PurchaseOrderService {
   async createPurchaseOrder(
     createPurchaseOrder: CreatePurchaseOrderInput,
   ): Promise<PurchaseOrderVoucher> {
-    const currentSerialNumber = await this.prisma.purchaseOrder.count();
+    const currentSerialNumber = await this.prisma.purchaseOrder.count() + 1;
     const serialNumber =
       'PO/' + currentSerialNumber.toString().padStart(3, '0');
 

@@ -14,7 +14,8 @@ export class MaterialReturnService {
   async createMaterialReturn(
     createMaterialReturn: CreateMaterialReturnInput,
   ): Promise<MaterialReturnVoucher> {
-    const currentSerialNumber = await this.prisma.materialReturnVoucher.count();
+    const currentSerialNumber =
+      (await this.prisma.materialReturnVoucher.count()) + 1;
     const serialNumber =
       'RTN/' + currentSerialNumber.toString().padStart(3, '0');
 

@@ -14,7 +14,7 @@ export class MaterialIssueService {
   async createMaterialIssue(
     createMaterialIssueInput: CreateMaterialIssueInput,
   ): Promise<MaterialIssueVoucher> {
-    const currentSerialNumber = await this.prisma.materialIssueVoucher.count();
+    const currentSerialNumber = await this.prisma.materialIssueVoucher.count() + 1;
     const serialNumber =
       'ISS/' + currentSerialNumber.toString().padStart(3, '0');
 

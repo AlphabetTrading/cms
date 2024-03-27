@@ -15,7 +15,7 @@ export class MaterialReceiveService {
     createMaterialReceive: CreateMaterialReceiveInput,
   ): Promise<MaterialReceiveVoucher> {
     const currentSerialNumber =
-      await this.prisma.materialReceiveVoucher.count();
+      await this.prisma.materialReceiveVoucher.count() + 1;
     const serialNumber =
       'REC/' + currentSerialNumber.toString().padStart(3, '0');
 

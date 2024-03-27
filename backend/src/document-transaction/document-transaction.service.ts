@@ -18,6 +18,7 @@ export class DocumentTransactionService {
     private readonly purchaseOrderService: PurchaseOrderService,
   ) {}
   async getAllDocumentsStatus(userId: string): Promise<DocumentTransaction[]> {
+    console.log(userId, "USERID")
     const materialIssues =
       await this.materialIssueService.getMaterialIssuesCountByStatus({
         where: {

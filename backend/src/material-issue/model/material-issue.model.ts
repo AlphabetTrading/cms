@@ -31,7 +31,10 @@ export class MaterialIssueVoucher extends BaseModel {
   @Field(() => String)
   approvedById: string;
 
-  @Field(() => ApprovalStatus, { nullable: true })
+  @Field(() => ApprovalStatus, {
+    defaultValue: ApprovalStatus.PENDING,
+    nullable: true,
+  })
   approved?: ApprovalStatus;
 }
 
