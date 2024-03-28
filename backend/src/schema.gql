@@ -131,7 +131,6 @@ input CreatePurchaseOrderInput {
   materialRequestId: String!
   preparedById: String!
   projectDetails: String
-  purchaseNumber: String!
   subTotal: Float!
   supplierName: String!
   vat: Float
@@ -197,48 +196,60 @@ enum DocumentType {
 }
 
 input FilterMaterialIssueInput {
-  approvedById: StringFilter
+  approvedBy: FilterUserDocumentsInput
+  approvedById: String
   createdAt: DateTimeFilter
-  date: DateTimeFilter
   id: String
-  issuedToId: StringFilter
-  preparedById: StringFilter
-  receivedById: StringFilter
+  issuedTo: FilterUserDocumentsInput
+  issuedToId: String
+  preparedBy: FilterUserDocumentsInput
+  preparedById: String
+  receivedBy: FilterUserDocumentsInput
+  receivedById: String
+  serialNumber: StringFilter
   status: String
 }
 
 input FilterMaterialReceiveInput {
-  approvedById: StringFilter
+  approvedBy: FilterUserDocumentsInput
+  approvedById: String
   createdAt: DateTimeFilter
-  date: DateTimeFilter
   id: String
   invoiceId: StringFilter
-  materialRequestId: StringFilter
-  purchaseOrderId: StringFilter
-  purchasedById: StringFilter
+  materialRequest: FilterMaterialRequestInput
+  materialRequestId: String
+  purchaseOrder: FilterPurchaseOrderInput
+  purchaseOrderId: String
+  purchasedBy: FilterUserDocumentsInput
+  purchasedById: String
+  serialNumber: StringFilter
   status: String
   supplierName: StringFilter
 }
 
 input FilterMaterialRequestInput {
-  approvedById: StringFilter
+  approvedBy: FilterUserDocumentsInput
+  approvedById: String
   createdAt: DateTimeFilter
-  date: DateTimeFilter
   from: StringFilter
   id: String
-  requestedById: StringFilter
+  requestedBy: FilterUserDocumentsInput
+  requestedById: String
+  serialNumber: StringFilter
   status: String
   to: StringFilter
 }
 
 input FilterMaterialReturnInput {
   createdAt: DateTimeFilter
-  date: DateTimeFilter
   from: StringFilter
   id: String
-  receivedById: StringFilter
+  receivedBy: FilterUserDocumentsInput
+  receivedById: String
   receivingStore: StringFilter
-  returnedById: StringFilter
+  returnedBy: FilterUserDocumentsInput
+  returnedById: String
+  serialNumber: StringFilter
   status: ApprovalStatus
 }
 
@@ -273,13 +284,16 @@ input FilterProjectInput {
 }
 
 input FilterPurchaseOrderInput {
-  approvedById: StringFilter
+  approvedBy: FilterUserDocumentsInput
+  approvedById: String
   createdAt: DateTimeFilter
   dateOfReceiving: DateTimeFilter
   id: String
-  materialRequestId: StringFilter
-  preparedById: StringFilter
-  purchaseNumber: StringFilter
+  materialRequest: FilterMaterialRequestInput
+  materialRequestId: String
+  preparedBy: FilterUserDocumentsInput
+  preparedById: String
+  serialNumber: StringFilter
   status: ApprovalStatus
   subTotal: NumberFilter
   supplierName: StringFilter
@@ -295,6 +309,15 @@ input FilterTaskInput {
   priority: StringFilter
   startDate: DateTimeFilter
   status: StringFilter
+}
+
+input FilterUserDocumentsInput {
+  createdAt: DateTimeFilter
+  email: StringFilter
+  fullName: StringFilter
+  id: String
+  phoneNumber: StringFilter
+  role: StringFilter
 }
 
 """
@@ -678,7 +701,6 @@ type PurchaseOrderVoucher {
   materialRequestId: String!
   preparedById: String!
   projectDetails: String
-  purchaseNumber: String!
   serialNumber: String
   status: ApprovalStatus
   subTotal: Float!
@@ -866,7 +888,6 @@ input UpdatePurchaseOrderInput {
   materialRequestId: String
   preparedById: String
   projectDetails: String
-  purchaseNumber: String
   status: ApprovalStatus
   subTotal: Float
   supplierName: String

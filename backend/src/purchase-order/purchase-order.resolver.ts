@@ -7,15 +7,19 @@ import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { FilterPurchaseOrderInput } from './dto/filter-purchase-order.input';
 import { OrderByPurchaseOrderInput } from './dto/order-by-purchase-order.input';
 import { PaginationPurchaseOrders } from 'src/common/pagination/pagination-info';
-import { Prisma } from '@prisma/client';
-import { BadRequestException } from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
+import { BadRequestException, UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { UserEntity } from 'src/common/decorators';
 
 @Resolver('PurchaseOrder')
 export class PurchaseOrderResolver {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => PaginationPurchaseOrders)
   async getPurchaseOrders(
+    @UserEntity() user: User,
     @Args('filterPurchaseOrderInput', {
       type: () => FilterPurchaseOrderInput,
       nullable: true,
@@ -55,10 +59,10 @@ export class PurchaseOrderResolver {
               subTotal: filterPurchaseOrderInput?.subTotal,
             },
             {
-              preparedById: filterPurchaseOrderInput?.preparedById,
+              preparedById: filterPurchaseOrderInput?.preparedById || user.id,
             },
             {
-              approvedById: filterPurchaseOrderInput?.approvedById,
+              approvedById: filterPurchaseOrderInput?.approvedById || user.id,
             },
             {
               preparedBy: filterPurchaseOrderInput?.preparedBy,

@@ -6,9 +6,11 @@ import { UpdateMaterialRequestInput } from './dto/update-material-request.input'
 import { FilterMaterialRequestInput } from './dto/filter-material-request.input';
 import { OrderByMaterialRequestInput } from './dto/order-by-material-request.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
-import { Prisma } from '@prisma/client';
-import { BadRequestException } from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { PaginationMaterialRequests } from 'src/common/pagination/pagination-info';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { UserEntity } from 'src/common/decorators';
 
 @Resolver('MaterialRequest')
 export class MaterialRequestResolver {
@@ -16,8 +18,10 @@ export class MaterialRequestResolver {
     private readonly materialRequestService: MaterialRequestService,
   ) {}
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => PaginationMaterialRequests)
   async getMaterialRequests(
+    @UserEntity() user: User,
     @Args('filterMaterialRequestInput', {
       type: () => FilterMaterialRequestInput,
       nullable: true,
@@ -48,13 +52,13 @@ export class MaterialRequestResolver {
               to: filterMaterialRequestInput?.to,
             },
             {
-              requestedById: filterMaterialRequestInput?.requestedById,
+              requestedById: filterMaterialRequestInput?.requestedById || user.id,
             },
             {
               requestedBy: filterMaterialRequestInput?.requestedBy,
             },
             {
-              approvedById: filterMaterialRequestInput?.approvedById,
+              approvedById: filterMaterialRequestInput?.approvedById || user.id,
             },
             {
               approvedBy: filterMaterialRequestInput?.approvedBy,

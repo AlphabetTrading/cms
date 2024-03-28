@@ -6,16 +6,20 @@ import { UpdateMaterialReturnInput } from './dto/update-material-return.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { FilterMaterialReturnInput } from './dto/filter-material-return.input';
 import { OrderByMaterialReturnInput } from './dto/order-by-material-return.input';
-import { BadRequestException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { BadRequestException, UseGuards } from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
 import { PaginationMaterialReturns } from 'src/common/pagination/pagination-info';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { UserEntity } from 'src/common/decorators';
 
 @Resolver('MaterialReturn')
 export class MaterialReturnResolver {
   constructor(private readonly materialReturnService: MaterialReturnService) {}
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => PaginationMaterialReturns)
   async getMaterialReturns(
+    @UserEntity() user: User,
     @Args('filterMaterialReturnInput', {
       type: () => FilterMaterialReturnInput,
       nullable: true,
@@ -46,13 +50,13 @@ export class MaterialReturnResolver {
               receivingStore: filterMaterialReturnInput?.receivingStore,
             },
             {
-              receivedById: filterMaterialReturnInput?.receivedById,
+              receivedById: filterMaterialReturnInput?.receivedById || user.id,
             },
             {
               receivedBy: filterMaterialReturnInput?.receivedBy,
             },
             {
-              returnedById: filterMaterialReturnInput?.returnedById,
+              returnedById: filterMaterialReturnInput?.returnedById || user.id,
             },
             {
               returnedBy: filterMaterialReturnInput?.returnedBy,
