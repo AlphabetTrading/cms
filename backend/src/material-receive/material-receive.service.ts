@@ -83,7 +83,7 @@ export class MaterialReceiveService {
       },
     });
 
-    let counts = { approved: 0, declined: 0, pending: 0 };
+    let counts = { COMPLETED: 0, DECLINED: 0, PENDING: 0 };
 
     counts = statusCounts.reduce((acc, { status, _count }) => {
       acc[status] = _count.status;
@@ -91,9 +91,9 @@ export class MaterialReceiveService {
     }, counts);
 
     const documentTransaction = new DocumentTransaction();
-    documentTransaction.approvedCount = counts.approved;
-    documentTransaction.declinedCount = counts.declined;
-    documentTransaction.pendingCount = counts.pending;
+    documentTransaction.approvedCount = counts.COMPLETED;
+    documentTransaction.declinedCount = counts.DECLINED;
+    documentTransaction.pendingCount = counts.PENDING;
     documentTransaction.type = DocumentType.MATERIAL_RECEIVING;
 
     return documentTransaction;
