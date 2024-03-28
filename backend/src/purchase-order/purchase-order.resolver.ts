@@ -43,9 +43,6 @@ export class PurchaseOrderResolver {
               materialRequestId: filterPurchaseOrderInput?.materialRequestId,
             },
             {
-              purchaseNumber: filterPurchaseOrderInput?.purchaseNumber,
-            },
-            {
               supplierName: filterPurchaseOrderInput?.supplierName,
             },
             {

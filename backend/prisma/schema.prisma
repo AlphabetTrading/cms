@@ -55,24 +55,20 @@ model WarehouseStore {
 }
 
 model WarehouseProduct {
-  id           String         @id @default(uuid())
-  productId    String
-  product      Product        @relation(fields: [productId], references: [id])
-  warehouseId  String
-  warehouse    WarehouseStore @relation(fields: [warehouseId], references: [id])
-  quantity     Int
-  currentPrice Float
-  priceHistory PriceHistory[]
+  id          String         @id @default(uuid())
+  productId   String
+  product     Product        @relation(fields: [productId], references: [id])
+  warehouseId String
+  warehouse   WarehouseStore @relation(fields: [warehouseId], references: [id])
+  quantity    Int
 }
 
 model PriceHistory {
-  id                 String            @id @default(uuid())
-  productId          String
-  product            Product           @relation(fields: [productId], references: [id])
-  price              Float
-  date               String
-  WarehouseProduct   WarehouseProduct? @relation(fields: [warehouseProductId], references: [id])
-  warehouseProductId String?
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  price     Float
+  date      String
 }
 
 model Proforma {
@@ -90,7 +86,6 @@ model Proforma {
 model PurchaseOrder {
   id                      String                   @id @default(uuid())
   serialNumber            String                   @unique
-  purchaseNumber          String
   projectDetails          String?
   supplierName            String
   materialRequestId       String
