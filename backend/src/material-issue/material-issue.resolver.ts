@@ -46,6 +46,15 @@ export class MaterialIssueResolver {
               approvedById: filterMaterialIssueInput?.approvedById,
             },
             {
+              issuedTo: filterMaterialIssueInput?.issuedTo,
+            },
+            {
+              preparedBy: filterMaterialIssueInput?.preparedBy,
+            },
+            {
+              approvedBy: filterMaterialIssueInput?.approvedBy,
+            },
+            {
               status: filterMaterialIssueInput?.status,
             },
           ],
@@ -98,7 +107,7 @@ export class MaterialIssueResolver {
         createMaterialIssue,
       );
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new BadRequestException('Error creating material issue!');
     }
   }

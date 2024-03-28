@@ -10,9 +10,6 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => Date, { nullable: true })
   dateOfReceiving?: Date;
 
-  @Field(() => String)
-  purchaseNumber?: string;
-
   @Field(() => String, { nullable: true })
   projectDetails?: string;
 

@@ -1,8 +1,10 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { NumberFilter } from 'src/common/filter/number-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
+import { FilterMaterialRequestInput } from 'src/material-request/dto/filter-material-request.input';
+import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 
 registerEnumType(ApprovalStatus, {
   name: 'ApprovalStatus',
@@ -14,26 +16,35 @@ export class FilterPurchaseOrderInput {
   @Field({ nullable: true })
   id?: string;
 
+  @Field(() => StringFilter, { nullable: true })
+  serialNumber?: StringFilter;
+
   @Field(() => DateTimeFilter, { nullable: true })
   dateOfReceiving?: DateTimeFilter;
 
   @Field(() => StringFilter, { nullable: true })
-  purchaseNumber?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
   supplierName?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  materialRequestId?: StringFilter;
+  @Field(() => String, { nullable: true })
+  materialRequestId?: string;
+
+  @Field(() => FilterMaterialRequestInput, { nullable: true })
+  materialRequest?: Prisma.MaterialRequestVoucherWhereInput;
 
   @Field(() => NumberFilter, { nullable: true })
   subTotal?: NumberFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  preparedById?: StringFilter;
+  @Field(() => String, { nullable: true })
+  preparedById?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  approvedById?: StringFilter;
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  preparedBy?: Prisma.UserWhereInput;
+
+  @Field(() => String, { nullable: true })
+  approvedById?: string;
+
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  approvedBy?: Prisma.UserWhereInput;
 
   @Field(() => ApprovalStatus, { nullable: true })
   status?: ApprovalStatus;

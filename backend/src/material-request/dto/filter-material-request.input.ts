@@ -1,7 +1,8 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
+import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 
 registerEnumType(ApprovalStatus, {
   name: 'ApprovalStatus',
@@ -12,8 +13,8 @@ export class FilterMaterialRequestInput {
   @Field({ nullable: true })
   id?: string;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  date?: DateTimeFilter;
+  @Field(() => StringFilter, { nullable: true })
+  serialNumber?: StringFilter;
 
   @Field(() => StringFilter, { nullable: true })
   from?: StringFilter;
@@ -21,11 +22,17 @@ export class FilterMaterialRequestInput {
   @Field(() => StringFilter, { nullable: true })
   to?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  requestedById?: StringFilter;
+  @Field(() => String, { nullable: true })
+  requestedById?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  approvedById?: StringFilter;
+  @Field(() => String, { nullable: true })
+  approvedById?: string;
+
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  requestedBy?: Prisma.UserWhereInput;
+
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  approvedBy?: Prisma.UserWhereInput;
 
   @Field({ nullable: true })
   status?: ApprovalStatus;

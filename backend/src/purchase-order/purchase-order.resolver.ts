@@ -37,10 +37,16 @@ export class PurchaseOrderResolver {
         {
           OR: [
             {
+              serialNumber: filterPurchaseOrderInput?.serialNumber,
+            },
+            {
               dateOfReceiving: filterPurchaseOrderInput?.dateOfReceiving,
             },
             {
               materialRequestId: filterPurchaseOrderInput?.materialRequestId,
+            },
+            {
+              materialRequest: filterPurchaseOrderInput?.materialRequest,
             },
             {
               supplierName: filterPurchaseOrderInput?.supplierName,
@@ -53,6 +59,12 @@ export class PurchaseOrderResolver {
             },
             {
               approvedById: filterPurchaseOrderInput?.approvedById,
+            },
+            {
+              preparedBy: filterPurchaseOrderInput?.preparedBy,
+            },
+            {
+              approvedBy: filterPurchaseOrderInput?.approvedBy,
             },
             {
               status: filterPurchaseOrderInput?.status,

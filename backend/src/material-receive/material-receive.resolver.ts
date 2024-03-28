@@ -42,19 +42,34 @@ export class MaterialReceiveResolver {
               supplierName: filterMaterialReceiveInput?.supplierName,
             },
             {
+              serialNumber: filterMaterialReceiveInput?.serialNumber,
+            },
+            {
               invoiceId: filterMaterialReceiveInput?.invoiceId,
             },
             {
               materialRequestId: filterMaterialReceiveInput?.materialRequestId,
             },
             {
+              materialRequest: filterMaterialReceiveInput?.materialRequest,
+            },
+            {
               purchasedById: filterMaterialReceiveInput?.purchasedById,
+            },
+            {
+              purchasedBy: filterMaterialReceiveInput?.purchasedBy,
             },
             {
               purchaseOrderId: filterMaterialReceiveInput?.purchaseOrderId,
             },
             {
+              purchaseOrder: filterMaterialReceiveInput?.purchaseOrder,
+            },
+            {
               approvedById: filterMaterialReceiveInput?.approvedById,
+            },
+            {
+              approvedBy: filterMaterialReceiveInput?.approvedBy,
             },
             {
               status: filterMaterialReceiveInput?.status,

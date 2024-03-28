@@ -1,7 +1,10 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
+import { FilterMaterialRequestInput } from 'src/material-request/dto/filter-material-request.input';
+import { FilterPurchaseOrderInput } from 'src/purchase-order/dto/filter-purchase-order.input';
+import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 
 registerEnumType(ApprovalStatus, {
   name: 'ApprovalStatus',
@@ -13,26 +16,38 @@ export class FilterMaterialReceiveInput {
   @Field({ nullable: true })
   id?: string;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  date?: DateTimeFilter;
+  @Field(() => StringFilter, { nullable: true })
+  serialNumber?: StringFilter;
 
   @Field(() => StringFilter, { nullable: true })
   supplierName?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  materialRequestId?: StringFilter;
+  @Field(() => String, { nullable: true })
+  materialRequestId?: string;
+
+  @Field(() => FilterMaterialRequestInput, { nullable: true })
+  materialRequest?: Prisma.MaterialRequestVoucherWhereInput;
 
   @Field(() => StringFilter, { nullable: true })
   invoiceId?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  purchasedById?: StringFilter;
+  @Field(() => String, { nullable: true })
+  purchasedById?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  purchaseOrderId?: StringFilter;
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  purchasedBy?: Prisma.UserWhereInput;
 
-  @Field(() => StringFilter, { nullable: true })
-  approvedById?: StringFilter;
+  @Field(() => String, { nullable: true })
+  purchaseOrderId?: string;
+
+  @Field(() => FilterPurchaseOrderInput, { nullable: true })
+  purchaseOrder?: Prisma.PurchaseOrderWhereInput;
+
+  @Field(() => String, { nullable: true })
+  approvedById?: string;
+
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  approvedBy?: Prisma.UserWhereInput;
 
   @Field({ nullable: true })
   status?: ApprovalStatus;

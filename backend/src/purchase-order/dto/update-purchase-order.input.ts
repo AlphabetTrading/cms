@@ -11,10 +11,6 @@ export class UpdatePurchaseOrderInput {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  purchaseNumber?: string;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
   projectDetails?: string;
 
   @IsOptional()

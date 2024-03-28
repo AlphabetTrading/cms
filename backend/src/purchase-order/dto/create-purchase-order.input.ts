@@ -12,10 +12,6 @@ export class CreatePurchaseOrderInput {
   @Field(() => Date, { nullable: true })
   dateOfReceiving?: Date;
 
-  @IsNotEmpty()
-  @Field(() => String)
-  purchaseNumber: string;
-
   @IsOptional()
   @Field(() => String, { nullable: true })
   projectDetails?: string;
