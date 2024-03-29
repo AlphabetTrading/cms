@@ -40,8 +40,8 @@ model User {
 
 model Product {
   id               String             @id @default(uuid())
-  name             String
-  description      String
+  name             String             @unique
+  description      String?
   WarehouseProduct WarehouseProduct[]
   PriceHistory     PriceHistory[]
 }
@@ -52,6 +52,8 @@ model WarehouseStore {
   location       String
   products       WarehouseProduct[]
   purchaseOrders PurchaseOrder[]
+
+  @@unique([name, location])
 }
 
 model WarehouseProduct {
@@ -60,15 +62,19 @@ model WarehouseProduct {
   product     Product        @relation(fields: [productId], references: [id])
   warehouseId String
   warehouse   WarehouseStore @relation(fields: [warehouseId], references: [id])
-  quantity    Int
+  quantity    Float
+
+  @@unique([productId, warehouseId])
 }
 
 model PriceHistory {
   id        String  @id @default(uuid())
-  productId String
+  productId String  
   product   Product @relation(fields: [productId], references: [id])
   price     Float
-  date      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Proforma {
@@ -112,7 +118,7 @@ model PurchaseOrderItem {
   listNo            Int
   description       String?
   unitOfMeasure     String
-  quantityRequested Int
+  quantityRequested Float
   unitPrice         Float
   totalPrice        Float
   remark            String?
@@ -149,7 +155,7 @@ model ReturnVoucherItem {
   issueVoucherId          String
   issueVoucher            MaterialIssueVoucher  @relation(fields: [issueVoucherId], references: [id], onDelete: Cascade)
   unitOfMeasure           String
-  quantityReturned        Int
+  quantityReturned        Float
   unitCost                Float
   totalCost               Float
   remark                  String?
@@ -186,7 +192,7 @@ model IssueVoucherItem {
   listNo                 Int
   description            String?
   unitOfMeasure          String
-  quantity               Int
+  quantity               Float
   unitCost               Float
   totalCost              Float
   remark                 String?
@@ -223,7 +229,7 @@ model MaterialReceiveItem {
   listNo                   Int
   description              String?
   unitOfMeasure            String
-  quantity                 Int
+  quantity                 Float
   unitCost                 Float
   totalCost                Float
   materialReceiveVoucherId String
@@ -257,9 +263,9 @@ model MaterialRequestItem {
   listNo                   Int
   description              String?
   unitOfMeasure            String
-  quantity                 Int
-  inStockQuantity          Int?
-  toBePurchasedQuantity    Int?
+  quantity                 Float
+  inStockQuantity          Float?
+  toBePurchasedQuantity    Float?
   remark                   String?
   materialRequestVoucherId String
   MaterialRequestVoucher   MaterialRequestVoucher @relation(name: "items", fields: [materialRequestVoucherId], references: [id])

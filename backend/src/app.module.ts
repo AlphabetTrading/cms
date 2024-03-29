@@ -18,6 +18,10 @@ import { TaskModule } from './task/task.module';
 import { DocumentTransactionModule } from './document-transaction/document-transaction.module';
 import { StorageModule } from './storage/storage.module';
 import { ProformaModule } from './proforma/proforma.module';
+import { WarehouseStoreModule } from './warehouse-store/warehouse-store.module';
+import { ProductModule } from './product/product.module';
+import { WarehouseProductModule } from './warehouse-product/warehouse-product.module';
+import { PriceHistoryModule } from './price-history/price-history.module';
 
 @Module({
   imports: [
@@ -47,6 +51,10 @@ import { ProformaModule } from './proforma/proforma.module';
     DocumentTransactionModule,
     ProformaModule,
     StorageModule,
+    WarehouseStoreModule,
+    ProductModule,
+    WarehouseProductModule,
+    PriceHistoryModule,
   ],
 })
 export class AppModule {}

@@ -4,11 +4,15 @@ import { MaterialReceiveVoucher } from 'src/material-receive/model/material-rece
 import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
 import { MaterialReturnVoucher } from 'src/material-return/model/material-return.model';
 import { Milestone } from 'src/milestone/model/milestone.model';
+import { PriceHistory } from 'src/price-history/model/price-history.model';
+import { Product } from 'src/product/model/product.model';
 import { Proforma } from 'src/proforma/model/proforma.model';
 import { Project } from 'src/project/model/project.model';
 import { PurchaseOrderVoucher } from 'src/purchase-order/model/purchase-order.model';
 import { Task } from 'src/task/model/task.model';
 import { User } from 'src/user/user.model';
+import { WarehouseProduct } from 'src/warehouse-product/model/warehouse-product.model';
+import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model';
 
 @ObjectType()
 export class PaginationInfo {
@@ -20,6 +24,42 @@ export class PaginationInfo {
 
   @Field(() => Int, { nullable: true })
   count?: number;
+}
+
+@ObjectType()
+export class PaginationPriceHistories {
+  @Field(() => [PriceHistory])
+  items: PriceHistory[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
+}
+
+@ObjectType()
+export class PaginationProducts {
+  @Field(() => [Product])
+  items: Product[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
+}
+
+@ObjectType()
+export class PaginationWarehouseStores {
+  @Field(() => [WarehouseStore])
+  items: WarehouseStore[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
+}
+
+@ObjectType()
+export class PaginationWarehouseProducts {
+  @Field(() => [WarehouseProduct])
+  items: WarehouseProduct[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
 }
 
 @ObjectType()

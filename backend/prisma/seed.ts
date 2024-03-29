@@ -413,7 +413,6 @@ async function seedPriceHistory() {
           return {
             productId: product.id,
             price: 100,
-            date: new Date().toISOString(), // Use current date-time for simplicity
           };
         })
         .flat(),
