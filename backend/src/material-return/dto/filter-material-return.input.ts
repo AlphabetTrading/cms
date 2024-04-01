@@ -18,9 +18,6 @@ export class FilterMaterialReturnInput {
   serialNumber?: StringFilter;
 
   @Field(() => StringFilter, { nullable: true })
-  from?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
   receivingStore?: StringFilter;
 
   @Field(() => String, { nullable: true })

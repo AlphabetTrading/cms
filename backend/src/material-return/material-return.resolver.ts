@@ -41,10 +41,18 @@ export class MaterialReturnResolver {
         {
           OR: [
             {
-              serialNumber: filterMaterialReturnInput.serialNumber,
+              receivedById: user.id,
             },
             {
-              from: filterMaterialReturnInput?.from,
+              returnedById: user.id,
+            },
+          ],
+        },
+
+        {
+          OR: [
+            {
+              serialNumber: filterMaterialReturnInput.serialNumber,
             },
             {
               receivingStore: filterMaterialReturnInput?.receivingStore,

@@ -16,12 +16,6 @@ export class FilterMaterialRequestInput {
   @Field(() => StringFilter, { nullable: true })
   serialNumber?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  from?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
-  to?: StringFilter;
-
   @Field(() => String, { nullable: true })
   requestedById?: string;
 

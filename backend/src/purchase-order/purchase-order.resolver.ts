@@ -41,6 +41,17 @@ export class PurchaseOrderResolver {
         {
           OR: [
             {
+              preparedById: user.id,
+            },
+            {
+              approvedById: user.id,
+            },
+          ],
+        },
+
+        {
+          OR: [
+            {
               serialNumber: filterPurchaseOrderInput?.serialNumber,
             },
             {

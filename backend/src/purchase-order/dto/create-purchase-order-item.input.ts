@@ -3,13 +3,9 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreatePurchaseOrderItemInput {
-  @IsNotEmpty()
-  @Field(() => Number)
-  listNo: number;
-
   @IsOptional()
-  @Field(() => String, { nullable: true })
-  description?: string;
+  @Field(() => String)
+  description: string;
 
   @IsNotEmpty()
   @Field(() => String)
@@ -17,7 +13,7 @@ export class CreatePurchaseOrderItemInput {
 
   @IsNotEmpty()
   @Field(() => Number)
-  quantityRequested: number;
+  quantity: number;
 
   @IsNotEmpty()
   @Field(() => Number)

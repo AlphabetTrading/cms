@@ -6,9 +6,6 @@ import { CreateMaterialIssueItemInput } from './create-material-issue-item.input
 export class UpdateMaterialIssueItemInput extends PartialType(
   CreateMaterialIssueItemInput,
 ) {
-  @Field(() => Number, { nullable: true })
-  listNo?: number;
-
   @Field(() => String, { nullable: true })
   @IsString()
   description?: string;

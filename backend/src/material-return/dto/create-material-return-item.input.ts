@@ -3,14 +3,9 @@ import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateMaterialReturnItemInput {
-  @Field(() => Number)
-  @IsNotEmpty()
-  listNo: number;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
   @IsString()
-  description?: string;
+  description: string;
 
   @Field(() => String)
   @IsNotEmpty()
@@ -24,7 +19,7 @@ export class CreateMaterialReturnItemInput {
 
   @Field(() => Number)
   @IsNotEmpty()
-  quantityReturned: number;
+  quantity: number;
 
   @Field(() => Number)
   @IsNotEmpty()
@@ -39,6 +34,5 @@ export class CreateMaterialReturnItemInput {
   remark?: string;
 
   @Field(() => String)
-  @IsNotEmpty()
-  materialReturnVoucherId: string;
+  materialReturnVoucherId?: string;
 }

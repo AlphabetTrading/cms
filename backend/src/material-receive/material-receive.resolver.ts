@@ -43,6 +43,16 @@ export class MaterialReceiveResolver {
         {
           OR: [
             {
+              purchasedById: user.id,
+            },
+            {
+              approvedById: user.id,
+            },
+          ],
+        },
+        {
+          OR: [
+            {
               supplierName: filterMaterialReceiveInput?.supplierName,
             },
             {

@@ -494,7 +494,6 @@ async function seedMaterialIssueVouchers() {
           items: {
             create: [
               {
-                listNo: 1,
                 quantity: 2,
                 description: 'Cement',
                 totalCost: 100,
@@ -502,7 +501,6 @@ async function seedMaterialIssueVouchers() {
                 unitOfMeasure: 'quintal',
               },
               {
-                listNo: 2,
                 quantity: 20,
                 description: 'Steel',
                 totalCost: 100,
@@ -543,7 +541,6 @@ async function seedMaterialReturnVouchers() {
     const returnVouchers = [
       {
         serialNumber: generateSerialNumber(),
-        from: site_managers[0].fullName,
         receivingStore: warehouse_stores[0].name,
         receivedById: store_managers[0].id,
         returnedById: site_managers[0].id,
@@ -551,7 +548,6 @@ async function seedMaterialReturnVouchers() {
       },
       {
         serialNumber: generateSerialNumber(),
-        from: site_managers[0].fullName,
         receivingStore: warehouse_stores[0].name,
         receivedById: store_managers[0].id,
         returnedById: site_managers[0].id,
@@ -559,7 +555,6 @@ async function seedMaterialReturnVouchers() {
       },
       {
         serialNumber: generateSerialNumber(),
-        from: site_managers[0].fullName,
         receivingStore: warehouse_stores[0].name,
         receivedById: store_managers[0].id,
         returnedById: site_managers[0].id,
@@ -567,7 +562,6 @@ async function seedMaterialReturnVouchers() {
       },
       {
         serialNumber: generateSerialNumber(),
-        from: site_managers[1].fullName,
         receivingStore: warehouse_stores[0].name,
         receivedById: store_managers[0].id,
         returnedById: site_managers[1].id,
@@ -575,7 +569,6 @@ async function seedMaterialReturnVouchers() {
       },
       {
         serialNumber: generateSerialNumber(),
-        from: site_managers[1].fullName,
         receivingStore: warehouse_stores[0].name,
         receivedById: store_managers[1].id,
         returnedById: site_managers[1].id,
@@ -583,7 +576,6 @@ async function seedMaterialReturnVouchers() {
       },
       {
         serialNumber: generateSerialNumber(),
-        from: site_managers[0].fullName,
         receivingStore: warehouse_stores[0].name,
         receivedById: store_managers[1].id,
         returnedById: site_managers[0].id,
@@ -598,8 +590,7 @@ async function seedMaterialReturnVouchers() {
           items: {
             create: [
               {
-                listNo: 1,
-                quantityReturned: 10,
+                quantity: 10,
                 issueVoucherId: material_issues[0].id,
                 description: 'Cement',
                 totalCost: 100,
@@ -607,8 +598,7 @@ async function seedMaterialReturnVouchers() {
                 unitOfMeasure: 'quintal',
               },
               {
-                listNo: 2,
-                quantityReturned: 10,
+                quantity: 10,
                 issueVoucherId: material_issues[1].id,
                 description: 'Steel',
                 totalCost: 100,
@@ -616,8 +606,7 @@ async function seedMaterialReturnVouchers() {
                 unitOfMeasure: 'kg',
               },
               {
-                listNo: 3,
-                quantityReturned: 100,
+                quantity: 100,
                 issueVoucherId: material_issues[1].id,
                 description: 'Nails',
                 totalCost: 150,
@@ -709,7 +698,6 @@ async function seedMaterialReceiveVouchers() {
           items: {
             create: [
               {
-                listNo: 1,
                 quantity: 10,
                 description: 'Cement',
                 totalCost: 100,
@@ -717,7 +705,6 @@ async function seedMaterialReceiveVouchers() {
                 unitOfMeasure: 'quintal',
               },
               {
-                listNo: 2,
                 quantity: 10,
                 description: 'Steel',
                 totalCost: 100,
@@ -725,7 +712,6 @@ async function seedMaterialReceiveVouchers() {
                 unitOfMeasure: 'kg',
               },
               {
-                listNo: 3,
                 quantity: 100,
                 description: 'Nails',
                 totalCost: 150,
@@ -767,32 +753,24 @@ async function seedMaterialRequestVouchers() {
   try {
     const requestVouchers = [
       {
-        from: site_managers[0].fullName,
-        to: project_managers[0].fullName,
         serialNumber: generateSerialNumber(),
         requestedById: site_managers[0].id,
         approvedById: project_managers[0].id,
         status: ApprovalStatus.COMPLETED,
       },
       {
-        from: site_managers[0].fullName,
-        to: project_managers[1].fullName,
         serialNumber: generateSerialNumber(),
         requestedById: site_managers[0].id,
         approvedById: project_managers[1].id,
         status: ApprovalStatus.DECLINED,
       },
       {
-        from: site_managers[1].fullName,
-        to: project_managers[0].fullName,
         serialNumber: generateSerialNumber(),
         approvedById: project_managers[0].id,
         requestedById: site_managers[1].id,
         status: ApprovalStatus.PENDING,
       },
       {
-        from: site_managers[1].fullName,
-        to: project_managers[1].fullName,
         serialNumber: generateSerialNumber(),
         approvedById: project_managers[1].id,
         requestedById: site_managers[1].id,
@@ -807,30 +785,21 @@ async function seedMaterialRequestVouchers() {
           items: {
             create: [
               {
-                listNo: 1,
                 description: 'Cement',
                 unitOfMeasure: 'quintal',
                 quantity: 100,
-                inStockQuantity: 0,
-                toBePurchasedQuantity: 100,
                 remark: 'Remark 1',
               },
               {
-                listNo: 2,
                 description: 'Steel',
                 unitOfMeasure: 'kg',
                 quantity: 10,
-                inStockQuantity: 3,
-                toBePurchasedQuantity: 7,
                 remark: 'Remark 2',
               },
               {
-                listNo: 3,
                 description: 'Paint',
                 unitOfMeasure: 'kg',
                 quantity: 10,
-                inStockQuantity: 10,
-                toBePurchasedQuantity: 0,
                 remark: 'Remark 3',
               },
             ],
@@ -866,7 +835,7 @@ async function seedPurchaseOrders() {
   });
   const material_requests = await prisma.materialRequestVoucher.findMany();
   const warehouse_stores = await prisma.warehouseStore.findMany();
-  
+
   try {
     const purchaseOrders = [
       {
@@ -926,25 +895,22 @@ async function seedPurchaseOrders() {
           items: {
             create: [
               {
-                listNo: 1,
                 description: 'Cement',
-                quantityRequested: 10,
+                quantity: 10,
                 totalPrice: 1000,
                 unitPrice: 100,
                 unitOfMeasure: 'quintal',
               },
               {
-                listNo: 2,
                 description: 'Steel',
-                quantityRequested: 10,
+                quantity: 10,
                 totalPrice: 1500,
                 unitPrice: 150,
                 unitOfMeasure: 'kg',
               },
               {
-                listNo: 3,
                 description: 'Ceramic',
-                quantityRequested: 1000,
+                quantity: 1000,
                 totalPrice: 50000,
                 unitPrice: 50,
                 unitOfMeasure: 'pcs',

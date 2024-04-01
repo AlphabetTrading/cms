@@ -9,9 +9,6 @@ export class MaterialReturnVoucher extends BaseModel {
   serialNumber?: string;
 
   @Field(() => String)
-  from?: string;
-
-  @Field(() => String)
   receivingStore?: string;
 
   @Field(() => [MaterialReturnItem])
@@ -38,9 +35,6 @@ export class MaterialReturnVoucher extends BaseModel {
 
 @ObjectType()
 export class MaterialReturnItem extends BaseModel {
-  @Field(() => Number)
-  listNo?: number;
-
   @Field(() => String, { nullable: true })
   description?: string;
 

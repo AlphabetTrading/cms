@@ -3,14 +3,10 @@ import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateMaterialRequestItemInput {
-  @Field(() => Number)
+  @Field(() => String)
   @IsNotEmpty()
-  listNo: number;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
   @IsString()
-  description?: string;
+  description: string;
 
   @Field(() => String)
   @IsNotEmpty()

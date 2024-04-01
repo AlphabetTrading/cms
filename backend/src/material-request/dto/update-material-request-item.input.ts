@@ -6,9 +6,6 @@ import { CreateMaterialRequestItemInput } from './create-material-request-item.i
 export class UpdateMaterialRequestItemInput extends PartialType(
   CreateMaterialRequestItemInput,
 ) {
-  @Field(() => Number)
-  listNo?: number;
-
   @Field(() => String, { nullable: true })
   @IsString()
   description?: string;

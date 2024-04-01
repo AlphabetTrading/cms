@@ -6,9 +6,6 @@ import { ApprovalStatus } from '@prisma/client';
 @InputType()
 export class UpdateMaterialReturnInput {
   @Field(() => String, { nullable: true })
-  from?: string;
-
-  @Field(() => String, { nullable: true })
   receivingStore?: string;
 
   @ValidateNested({ each: true })

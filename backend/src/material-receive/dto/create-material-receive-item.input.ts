@@ -1,16 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class CreateMaterialReceiveItemInput {
-  @Field(() => Number)
+  @Field(() => String)
   @IsNotEmpty()
-  listNo: number;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  description?: string;
+  description: string;
 
   @Field(() => String)
   @IsNotEmpty()

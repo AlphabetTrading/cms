@@ -12,11 +12,11 @@ export class UpdateMaterialReceiveInput {
 
   @IsString()
   @Field(() => String, { nullable: true })
-  supplierName: string;
+  supplierName?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })
-  invoiceId: string;
+  invoiceId?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })
@@ -29,11 +29,11 @@ export class UpdateMaterialReceiveInput {
 
   @IsString()
   @Field(() => String, { nullable: true })
-  purchaseOrderId: string;
+  purchaseOrderId?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })
-  purchasedById: string;
+  purchasedById?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })
@@ -41,7 +41,7 @@ export class UpdateMaterialReceiveInput {
 
   @IsString()
   @Field(() => String, { nullable: true })
-  approvedById: string;
+  approvedById?: string;
 
   @Field(() => ApprovalStatus, { nullable: true })
   status?: ApprovalStatus;

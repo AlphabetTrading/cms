@@ -7,10 +7,6 @@ export class UpdatePurchaseOrderItemInput extends PartialType(
   CreatePurchaseOrderItemInput,
 ) {
   @IsOptional()
-  @Field(() => Number, { nullable: true })
-  listNo?: number;
-
-  @IsOptional()
   @Field(() => String, { nullable: true })
   description?: string;
 

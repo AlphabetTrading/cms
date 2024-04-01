@@ -29,8 +29,7 @@ input CreateMaterialIssueInput {
 }
 
 input CreateMaterialIssueItemInput {
-  description: String
-  listNo: Float!
+  description: String!
   quantity: Float!
   remark: String
   totalCost: Float!
@@ -79,7 +78,6 @@ input CreateMaterialRequestItemInput {
 }
 
 input CreateMaterialReturnInput {
-  from: String!
   items: [CreateMaterialReturnItemInput!]!
   receivedById: String!
   receivingStore: String!
@@ -89,9 +87,8 @@ input CreateMaterialReturnInput {
 input CreateMaterialReturnItemInput {
   description: String
   issueVoucherId: String!
-  listNo: Float!
   materialReturnVoucherId: String!
-  quantityReturned: Float!
+  quantity: Float!
   remark: String
   totalCost: Float!
   unitCost: Float!
@@ -104,6 +101,16 @@ input CreateMilestoneInput {
   name: String!
   projectId: String!
   status: String!
+}
+
+input CreatePriceHistoryInput {
+  price: Float!
+  productId: String!
+}
+
+input CreateProductInput {
+  description: String
+  name: String!
 }
 
 input CreateProformaInput {
@@ -165,6 +172,17 @@ input CreateUserInput {
   password: String!
   phoneNumber: String!
   role: UserRole!
+}
+
+input CreateWarehouseProductInput {
+  productId: String!
+  quantity: Float
+  warehouseId: String
+}
+
+input CreateWarehouseStoreInput {
+  location: String!
+  name: String!
 }
 
 """
@@ -242,7 +260,6 @@ input FilterMaterialRequestInput {
 
 input FilterMaterialReturnInput {
   createdAt: DateTimeFilter
-  from: StringFilter
   id: String
   receivedBy: FilterUserDocumentsInput
   receivedById: String
@@ -260,6 +277,19 @@ input FilterMilestoneInput {
   name: StringFilter
   projectId: StringFilter
   status: StringFilter
+}
+
+input FilterPriceHistoryInput {
+  createdAt: DateTimeFilter
+  id: String
+  product: FilterProductInput
+  productId: String
+}
+
+input FilterProductInput {
+  createdAt: DateTimeFilter
+  id: String
+  name: StringFilter
 }
 
 input FilterProformaInput {
@@ -318,6 +348,22 @@ input FilterUserDocumentsInput {
   id: String
   phoneNumber: StringFilter
   role: StringFilter
+}
+
+input FilterWarehouseProductInput {
+  createdAt: DateTimeFilter
+  id: String
+  product: FilterProductInput
+  productId: String
+  warehouse: FilterWarehouseStoreInput
+  warehouseId: String
+}
+
+input FilterWarehouseStoreInput {
+  createdAt: DateTimeFilter
+  id: String
+  location: StringFilter
+  name: StringFilter
 }
 
 """
@@ -445,7 +491,6 @@ type MaterialReturnItem {
 type MaterialReturnVoucher {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  from: String!
   id: ID!
   items: [MaterialReturnItem!]!
   receivedBy: User
@@ -480,22 +525,30 @@ type Mutation {
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
   createMaterialReturn(createMaterialReturnInput: CreateMaterialReturnInput!): MaterialReturnVoucher!
   createMilestone(createMilestoneInput: CreateMilestoneInput!): Milestone!
+  createPriceHistory(createPriceHistoryInput: CreatePriceHistoryInput!): PriceHistory!
+  createProduct(createProductInput: CreateProductInput!): Product!
   createProforma(createProformaInput: CreateProformaInput!): Proforma!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
   createTask(createTaskInput: CreateTaskInput!): Task!
   createUser(createUser: CreateUserInput!): User!
+  createWarehouseProduct(createWarehouseProductInput: CreateWarehouseProductInput!): WarehouseProduct!
+  createWarehouseStore(createWarehouseStoreInput: CreateWarehouseStoreInput!): WarehouseStore!
   deleteFile(url: String!): Boolean!
   deleteMaterialIssue(id: String!): MaterialIssueVoucher!
   deleteMaterialReceive(id: String!): MaterialReceiveVoucher!
   deleteMaterialRequest(id: String!): MaterialRequestVoucher!
   deleteMaterialReturn(id: String!): MaterialReturnVoucher!
   deleteMilestone(id: String!): Milestone!
+  deletePriceHistory(id: String!): PriceHistory!
+  deleteProduct(id: String!): Product!
   deleteProforma(id: String!): Proforma!
   deleteProject(id: String!): Project!
   deletePurchaseOrder(id: String!): PurchaseOrderVoucher!
   deleteTask(id: String!): Task!
   deleteUser(email: String!): User!
+  deleteWarehouseProduct(id: String!): WarehouseProduct!
+  deleteWarehouseStore(id: String!): WarehouseStore!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
   updateMaterialIssue(id: String!, updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
@@ -503,11 +556,15 @@ type Mutation {
   updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
+  updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
+  updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(id: String!, updateTaskInput: UpdateTaskInput!): Task!
   updateUser(email: String!, updateUser: UpdateUserInput!): User!
+  updateWarehouseProduct(id: String!, updateWarehouseProductInput: UpdateWarehouseProductInput!): WarehouseProduct!
+  updateWarehouseStore(id: String!, updateWarehouseStoreInput: UpdateWarehouseStoreInput!): WarehouseStore!
   uploadFile(file: Upload!): String!
 }
 
@@ -521,7 +578,6 @@ input NumberFilter {
 
 input OrderByMaterialIssueInput {
   createdAt: OrderDirection
-  name: OrderDirection
   serialNumber: OrderDirection
   updatedAt: OrderDirection
 }
@@ -553,6 +609,19 @@ input OrderByMilestoneInput {
   updatedAt: OrderDirection
 }
 
+input OrderByPriceHistoryInput {
+  createdAt: OrderDirection
+  price: OrderDirection
+  product: OrderByProductInput
+  updatedAt: OrderDirection
+}
+
+input OrderByProductInput {
+  createdAt: OrderDirection
+  name: OrderDirection
+  updatedAt: OrderDirection
+}
+
 input OrderByProformaInput {
   createdAt: OrderDirection
   serialNumber: OrderDirection
@@ -574,6 +643,21 @@ input OrderByPurchaseOrderInput {
 
 input OrderByTaskInput {
   createdAt: OrderDirection
+  name: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input OrderByWarehouseProductInput {
+  createdAt: OrderDirection
+  product: OrderByProductInput
+  quantity: OrderDirection
+  updatedAt: OrderDirection
+  warehouse: OrderByWarehouseStoreInput
+}
+
+input OrderByWarehouseStoreInput {
+  createdAt: OrderDirection
+  location: OrderDirection
   name: OrderDirection
   updatedAt: OrderDirection
 }
@@ -622,6 +706,16 @@ type PaginationMilestones {
   meta: PaginationInfo
 }
 
+type PaginationPriceHistories {
+  items: [PriceHistory!]!
+  meta: PaginationInfo
+}
+
+type PaginationProducts {
+  items: [Product!]!
+  meta: PaginationInfo
+}
+
 type PaginationProformas {
   items: [Proforma!]!
   meta: PaginationInfo
@@ -640,6 +734,33 @@ type PaginationPurchaseOrders {
 type PaginationTasks {
   items: [Task!]!
   meta: PaginationInfo
+}
+
+type PaginationWarehouseProducts {
+  items: [WarehouseProduct!]!
+  meta: PaginationInfo
+}
+
+type PaginationWarehouseStores {
+  items: [WarehouseStore!]!
+  meta: PaginationInfo
+}
+
+type PriceHistory {
+  price: Float!
+  product: Product!
+  productId: String!
+}
+
+type Product {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type Proforma {
@@ -723,6 +844,10 @@ type Query {
   getMaterialReturns(filterMaterialReturnInput: FilterMaterialReturnInput, orderBy: OrderByMaterialReturnInput, paginationInput: PaginationInput): PaginationMaterialReturns!
   getMilestone(id: String!): Milestone!
   getMilestones(filterMilestoneInput: FilterMilestoneInput, orderBy: OrderByMilestoneInput, paginationInput: PaginationInput): PaginationMilestones!
+  getPriceHistory(id: String!): PriceHistory!
+  getProduct(id: String!): Product!
+  getProductPriceHistories(filterPriceHistoryInput: FilterPriceHistoryInput, orderBy: OrderByPriceHistoryInput, paginationInput: PaginationInput): PaginationPriceHistories!
+  getProducts(filterProductInput: FilterProductInput, orderBy: OrderByProductInput, paginationInput: PaginationInput): PaginationProducts!
   getProformaById(id: String!): Proforma!
   getProformas(filterProformaInput: FilterProformaInput, orderBy: OrderByProformaInput, paginationInput: PaginationInput): PaginationProformas!
   getProject(id: String!): Project!
@@ -734,6 +859,10 @@ type Query {
   getUserByEmail(email: String!): User!
   getUserByPhoneNumber(phone_number: String!): User!
   getUsers: [User!]!
+  getWarehouseProduct(id: String!): WarehouseProduct!
+  getWarehouseProducts(filterWarehouseProductInput: FilterWarehouseProductInput, orderBy: OrderByWarehouseProductInput, paginationInput: PaginationInput): PaginationWarehouseProducts!
+  getWarehouseStore(id: String!): WarehouseStore!
+  getWarehouseStores(filterWarehouseStoreInput: FilterWarehouseStoreInput, orderBy: OrderByWarehouseStoreInput, paginationInput: PaginationInput): PaginationWarehouseStores!
 }
 
 input StringFilter {
@@ -784,7 +913,6 @@ input UpdateMaterialIssueInput {
 
 input UpdateMaterialIssueItemInput {
   description: String
-  listNo: Float
   quantity: Float
   remark: String
   totalCost: Float
@@ -835,7 +963,6 @@ input UpdateMaterialRequestItemInput {
 }
 
 input UpdateMaterialReturnInput {
-  from: String
   items: [UpdateMaterialReturnItemInput!]
   receivedById: String
   receivingStore: String
@@ -846,9 +973,8 @@ input UpdateMaterialReturnInput {
 input UpdateMaterialReturnItemInput {
   description: String
   issueVoucherId: String
-  listNo: Float!
   materialReturnVoucherId: String
-  quantityReturned: Float
+  quantity: Float
   remark: String
   totalCost: Float
   unitCost: Float
@@ -861,6 +987,16 @@ input UpdateMilestoneInput {
   name: String
   projectId: String
   status: String
+}
+
+input UpdatePriceHistoryInput {
+  price: Float
+  productId: String
+}
+
+input UpdateProductInput {
+  description: String
+  name: String
 }
 
 input UpdateProformaInput {
@@ -925,6 +1061,17 @@ input UpdateUserInput {
   role: UserRole
 }
 
+input UpdateWarehouseProductInput {
+  productId: String
+  quantity: Float
+  warehouseId: String
+}
+
+input UpdateWarehouseStoreInput {
+  location: String
+  name: String
+}
+
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
@@ -948,4 +1095,17 @@ enum UserRole {
   PURCHASER
   SITE_MANAGER
   STORE_MANAGER
+}
+
+type WarehouseProduct {
+  product: Product!
+  productId: String!
+  quantity: Float!
+  warehouse: WarehouseStore!
+  warehouseId: String
+}
+
+type WarehouseStore {
+  location: String!
+  name: String!
 }

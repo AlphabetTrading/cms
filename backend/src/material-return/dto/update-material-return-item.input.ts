@@ -6,9 +6,6 @@ import { CreateMaterialReturnItemInput } from './create-material-return-item.inp
 export class UpdateMaterialReturnItemInput extends PartialType(
   CreateMaterialReturnItemInput,
 ) {
-  @Field(() => Number)
-  listNo?: number;
-
   @Field(() => String, { nullable: true })
   @IsString()
   description?: string;
@@ -22,7 +19,7 @@ export class UpdateMaterialReturnItemInput extends PartialType(
   unitOfMeasure?: string;
 
   @Field(() => Number, { nullable: true })
-  quantityReturned?: number;
+  quantity?: number;
 
   @Field(() => Number, { nullable: true })
   unitCost?: number;

@@ -58,12 +58,6 @@ export class DocumentTransactionService {
             {
               requestedById: userId,
             },
-            {
-              from: userId,
-            },
-            {
-              to: userId,
-            },
           ],
         },
       });
@@ -72,9 +66,6 @@ export class DocumentTransactionService {
       await this.materialReturnService.getMaterialReturnCountByStatus({
         where: {
           OR: [
-            {
-              from: userId,
-            },
             {
               receivedById: userId,
             },

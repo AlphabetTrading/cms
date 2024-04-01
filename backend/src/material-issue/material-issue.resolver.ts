@@ -33,43 +33,59 @@ export class MaterialIssueResolver {
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
   ): Promise<PaginationMaterialIssues> {
-    const where: Prisma.MaterialIssueVoucherWhereInput = {
-      AND: [
-        {
-          id: filterMaterialIssueInput?.id,
-        },
-        {
-          OR: [
-            {
-              issuedToId: filterMaterialIssueInput?.issuedToId || user.id,
-            },
-            {
-              preparedById: filterMaterialIssueInput?.preparedById || user.id,
-            },
-            {
-              approvedById: filterMaterialIssueInput?.approvedById || user.id,
-            },
-            {
-              issuedTo: filterMaterialIssueInput?.issuedTo,
-            },
-            {
-              preparedBy: filterMaterialIssueInput?.preparedBy,
-            },
-            {
-              approvedBy: filterMaterialIssueInput?.approvedBy,
-            },
-            {
-              status: filterMaterialIssueInput?.status,
-            },
-          ],
-        },
-        {
-          createdAt: filterMaterialIssueInput?.createdAt,
-        },
-      ],
-    };
-
     try {
+      const where: Prisma.MaterialIssueVoucherWhereInput = {
+        AND: [
+          {
+            id: filterMaterialIssueInput?.id,
+          },
+          {
+            OR: [
+              {
+                issuedToId: user.id,
+              },
+              {
+                preparedById: user.id,
+              },
+              {
+                approvedById: user.id,
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                serialNumber: filterMaterialIssueInput?.serialNumber,
+              },
+              {
+                issuedToId: filterMaterialIssueInput?.issuedToId,
+              },
+              {
+                preparedById: filterMaterialIssueInput?.preparedById,
+              },
+              {
+                approvedById: filterMaterialIssueInput?.approvedById,
+              },
+              {
+                issuedTo: filterMaterialIssueInput?.issuedTo,
+              },
+              {
+                preparedBy: filterMaterialIssueInput?.preparedBy,
+              },
+              {
+                approvedBy: filterMaterialIssueInput?.approvedBy,
+              },
+              {
+                status: filterMaterialIssueInput?.status,
+              },
+            ],
+          },
+          {
+            createdAt: filterMaterialIssueInput?.createdAt,
+          },
+        ],
+      };
+
       const materialIssues = await this.materialIssueService.getMaterialIssues({
         where,
         orderBy,

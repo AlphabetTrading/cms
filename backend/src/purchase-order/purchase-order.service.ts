@@ -24,9 +24,8 @@ export class PurchaseOrderService {
         serialNumber: serialNumber,
         items: {
           create: createPurchaseOrder.items.map((item) => ({
-            listNo: item.listNo,
             description: item.description,
-            quantityRequested: item.quantityRequested,
+            quantity: item.quantity,
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice,
             unitOfMeasure: item.unitOfMeasure,
@@ -119,7 +118,7 @@ export class PurchaseOrderService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      listNo: item.listNo,
+      description: item.description,
     }));
 
     const updatedPurchaseOrder = await this.prisma.purchaseOrder.update({

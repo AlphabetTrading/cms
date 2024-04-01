@@ -6,10 +6,6 @@ import { CreateMaterialReturnItemInput } from './create-material-return-item.inp
 export class CreateMaterialReturnInput {
   @IsNotEmpty()
   @Field(() => String)
-  from: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
   receivingStore: string;
 
   @ValidateNested({ each: true })

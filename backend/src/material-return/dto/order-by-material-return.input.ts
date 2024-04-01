@@ -10,9 +10,6 @@ registerEnumType(OrderDirection, {
 @InputType()
 export class OrderByMaterialReturnInput {
   @Field(() => OrderDirection, { nullable: true })
-  name?: OrderDirection;
-
-  @Field(() => OrderDirection, { nullable: true })
   serialNumber?: OrderDirection;
 
   @Field(() => OrderDirection, { nullable: true })

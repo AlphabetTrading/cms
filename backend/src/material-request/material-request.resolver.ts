@@ -43,13 +43,18 @@ export class MaterialRequestResolver {
         {
           OR: [
             {
+              requestedById: user.id,
+            },
+            {
+              approvedById: user.id,
+            },
+          ],
+        },
+
+        {
+          OR: [
+            {
               serialNumber: filterMaterialRequestInput?.serialNumber,
-            },
-            {
-              from: filterMaterialRequestInput?.from,
-            },
-            {
-              to: filterMaterialRequestInput?.to,
             },
             {
               requestedById: filterMaterialRequestInput?.requestedById || user.id,

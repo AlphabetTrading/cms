@@ -8,12 +8,6 @@ export class MaterialRequestVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
-  @Field(() => String)
-  from?: string;
-
-  @Field(() => String)
-  to?: string;
-
   @Field(() => [MaterialRequestItem])
   items?: MaterialRequestItem[];
 
@@ -38,9 +32,6 @@ export class MaterialRequestVoucher extends BaseModel {
 
 @ObjectType()
 export class MaterialRequestItem extends BaseModel {
-  @Field(() => Number)
-  listNo?: number;
-
   @Field(() => String, { nullable: true })
   description?: string;
 

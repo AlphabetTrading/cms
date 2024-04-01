@@ -6,23 +6,20 @@ import { CreateMaterialReceiveItemInput } from './create-material-receive-item.i
 export class UpdateMaterialReceiveItemInput extends PartialType(
   CreateMaterialReceiveItemInput,
 ) {
-  @Field(() => Number, { nullable: true })
-  listNo?: number;
+  @Field(() => String, { nullable: true })
+  @IsString()
+  description?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
-  description: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  unitOfMeasure: string;
+  unitOfMeasure?: string;
 
   @Field(() => Number, { nullable: true })
-  quantity: number;
+  quantity?: number;
 
   @Field(() => Number, { nullable: true })
-  unitCost: number;
+  unitCost?: number;
 
   @Field(() => Number, { nullable: true })
-  totalCost: number;
+  totalCost?: number;
 }

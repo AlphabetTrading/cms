@@ -4,14 +4,6 @@ import { CreateMaterialRequestItemInput } from './create-material-request-item.i
 
 @InputType()
 export class CreateMaterialRequestInput {
-  @IsNotEmpty()
-  @Field(() => String)
-  from: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  to: string;
-
   @ValidateNested({ each: true })
   @Field(() => [CreateMaterialRequestItemInput])
   items: CreateMaterialRequestItemInput[];
