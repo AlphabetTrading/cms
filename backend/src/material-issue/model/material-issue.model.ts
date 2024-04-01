@@ -53,9 +53,6 @@ export class MaterialIssueItem {
   @Field(() => ID)
   id?: string;
 
-  @Field(() => Number)
-  listNo?: number;
-
   @Field(() => String, { nullable: true })
   description?: string;
 

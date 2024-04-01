@@ -98,7 +98,7 @@ export class AuthService {
 
       return this.generateTokens(userId);
     } catch (e) {
-      console.log(e);
+      console.log(e, "HERE");
       throw new UnauthorizedException();
     }
   }

@@ -15,6 +15,7 @@ type Auth {
 
   """JWT refresh token"""
   refreshToken: JWT!
+  user: User!
   userId: String!
 }
 
@@ -50,8 +51,7 @@ input CreateMaterialReceiveInput {
 }
 
 input CreateMaterialReceiveItemInput {
-  description: String
-  listNo: Float!
+  description: String!
   quantity: Float!
   totalCost: Float!
   unitCost: Float!
@@ -60,16 +60,13 @@ input CreateMaterialReceiveItemInput {
 
 input CreateMaterialRequestInput {
   approvedById: String!
-  from: String!
   items: [CreateMaterialRequestItemInput!]!
   requestedById: String!
-  to: String!
 }
 
 input CreateMaterialRequestItemInput {
-  description: String
+  description: String!
   inStockQuantity: Float
-  listNo: Float!
   materialRequestVoucherId: String!
   quantity: Float!
   remark: String
@@ -85,7 +82,7 @@ input CreateMaterialReturnInput {
 }
 
 input CreateMaterialReturnItemInput {
-  description: String
+  description: String!
   issueVoucherId: String!
   materialReturnVoucherId: String!
   quantity: Float!
@@ -144,10 +141,9 @@ input CreatePurchaseOrderInput {
 }
 
 input CreatePurchaseOrderItemInput {
-  description: String
-  listNo: Float!
+  description: String!
   purchaseOrderId: String!
-  quantityRequested: Float!
+  quantity: Float!
   remark: String
   totalPrice: Float!
   unitOfMeasure: String!
@@ -249,13 +245,11 @@ input FilterMaterialRequestInput {
   approvedBy: FilterUserDocumentsInput
   approvedById: String
   createdAt: DateTimeFilter
-  from: StringFilter
   id: String
   requestedBy: FilterUserDocumentsInput
   requestedById: String
   serialNumber: StringFilter
   status: String
-  to: StringFilter
 }
 
 input FilterMaterialReturnInput {
@@ -379,7 +373,6 @@ input LoginInput {
 type MaterialIssueItem {
   description: String
   id: ID!
-  listNo: Float!
   materialIssueVoucherId: String!
   quantity: Float!
   remark: String
@@ -440,7 +433,6 @@ type MaterialRequestItem {
   description: String
   id: ID!
   inStockQuantity: Float
-  listNo: Float!
   materialRequestVoucherId: String!
   quantity: Float!
   remark: String
@@ -457,14 +449,12 @@ type MaterialRequestVoucher {
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  from: String!
   id: ID!
   items: [MaterialRequestItem!]!
   requestedBy: User
   requestedById: String!
   serialNumber: String
   status: ApprovalStatus
-  to: String!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -476,7 +466,6 @@ type MaterialReturnItem {
   description: String
   id: ID!
   issueVoucherId: String!
-  listNo: Float!
   materialReturnVoucherId: String!
   quantityReturned: Float!
   remark: String
@@ -584,21 +573,18 @@ input OrderByMaterialIssueInput {
 
 input OrderByMaterialReceiveInput {
   createdAt: OrderDirection
-  name: OrderDirection
   serialNumber: OrderDirection
   updatedAt: OrderDirection
 }
 
 input OrderByMaterialRequestInput {
   createdAt: OrderDirection
-  name: OrderDirection
   serialNumber: OrderDirection
   updatedAt: OrderDirection
 }
 
 input OrderByMaterialReturnInput {
   createdAt: OrderDirection
-  name: OrderDirection
   serialNumber: OrderDirection
   updatedAt: OrderDirection
 }
@@ -636,7 +622,6 @@ input OrderByProjectInput {
 
 input OrderByPurchaseOrderInput {
   createdAt: OrderDirection
-  name: OrderDirection
   serialNumber: OrderDirection
   updatedAt: OrderDirection
 }
@@ -935,7 +920,6 @@ input UpdateMaterialReceiveInput {
 
 input UpdateMaterialReceiveItemInput {
   description: String
-  listNo: Float
   quantity: Float
   totalCost: Float
   unitCost: Float
@@ -944,17 +928,14 @@ input UpdateMaterialReceiveItemInput {
 
 input UpdateMaterialRequestInput {
   approvedById: String
-  from: String
   items: [UpdateMaterialRequestItemInput!]
   requestedById: String
   status: ApprovalStatus
-  to: String
 }
 
 input UpdateMaterialRequestItemInput {
   description: String
   inStockQuantity: Float
-  listNo: Float!
   materialRequestVoucherId: String
   quantity: Float
   remark: String
@@ -1032,8 +1013,8 @@ input UpdatePurchaseOrderInput {
 
 input UpdatePurchaseOrderItemInput {
   description: String
-  listNo: Float
   purchaseOrderId: String
+  quantity: Float
   quantityRequested: Float
   remark: String
   totalPrice: Float

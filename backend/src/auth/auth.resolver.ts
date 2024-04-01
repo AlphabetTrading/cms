@@ -1,13 +1,10 @@
-import {
-  Args,
-  Mutation,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Auth } from './models/auth.model';
 import { AuthService } from './auth.service';
 import { LoginInput } from './dto/login.input';
 import { RefreshTokenInput } from './dto/refresh-token.input';
 import { Token } from './models/token.model';
+import { User } from 'src/user/user.model';
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -17,7 +14,7 @@ export class AuthResolver {
   async login(@Args('data') loginInput: LoginInput) {
     try {
       const user = await this.auth.login(loginInput);
-      return user
+      return user;
     } catch (error) {
       return error;
     }
@@ -25,11 +22,24 @@ export class AuthResolver {
 
   @Mutation(() => Token)
   async refreshToken(@Args() data: RefreshTokenInput) {
-    return this.auth.refreshToken(data.refreshToken);
+    const { accessToken, refreshToken } = this.auth.refreshToken(
+      data.refreshToken,
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
-//   @ResolveField('user', () => User)
-//   async user(@Parent() auth: Auth) {
-//     return await this.auth.getUserFromToken(auth.accessToken);
-//   }
+  @ResolveField('user', () => User)
+  async user(@Parent() auth: Auth) {
+    return await this.auth.getUserFromToken(auth.accessToken);
+  }
+
+
+  //   @ResolveField('user', () => User)
+  //   async user(@Parent() auth: Auth) {
+  //     return await this.auth.getUserFromToken(auth.accessToken);
+  //   }
 }
