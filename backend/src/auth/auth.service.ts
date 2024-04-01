@@ -11,6 +11,7 @@ import { PasswordService } from './password.service';
 import { LoginInput } from './dto/login.input';
 import { PrismaService } from 'src/prisma.service';
 import { Auth } from './models/auth.model';
+import { Token } from './models/token.model';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +35,9 @@ export class AuthService {
           user.password,
         ))
       ) {
-        const { accessToken, refreshToken } = this.generateTokens(user.id);
+        const { accessToken, refreshToken } = this.generateTokens({
+          userId: user.id,
+        });
         return {
           userId: user.id,
           accessToken: accessToken,
@@ -48,6 +51,7 @@ export class AuthService {
   }
 
   async validateUser(userId: string): Promise<User> {
+    console.log(userId)
     return await this.prismaService.user.findUnique({
       where: { id: userId },
     });
@@ -60,26 +64,20 @@ export class AuthService {
     });
   }
 
-  generateTokens(userId: string): {
-    accessToken: string;
-    refreshToken: string;
-  } {
-    const accessToken = this.generateAccessToken(userId);
-    const refreshToken = this.generateRefreshToken(userId);
-
-    return { accessToken, refreshToken };
+  generateTokens(payload: { userId: string }): Token {
+    return {
+      accessToken: this.generateAccessToken(payload),
+      refreshToken: this.generateRefreshToken(payload),
+    };
   }
 
-  private generateAccessToken(userId: string): string {
-    const payload = { sub: userId };
+  private generateAccessToken(payload: { userId: string }): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_SECRET'),
       expiresIn: this.configService.get('EXPIRE_IN'),
     });
   }
-
-  private generateRefreshToken(userId: string): string {
-    const payload = { sub: userId };
+  private generateRefreshToken(payload: { userId: string }): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn: this.configService.get('REFRESH_IN'),
@@ -96,9 +94,9 @@ export class AuthService {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
 
-      return this.generateTokens(userId);
+      return this.generateTokens({ userId });
     } catch (e) {
-      console.log(e, "HERE");
+      console.log(e, 'HERE');
       throw new UnauthorizedException();
     }
   }
