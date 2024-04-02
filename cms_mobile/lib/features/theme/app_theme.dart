@@ -9,16 +9,73 @@ ThemeData baseTheme = ThemeData(
     subtitleTextStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
     leadingAndTrailingTextStyle: TextStyle(fontSize: 14),
   ),
-  
   textTheme: const TextTheme(
-      displaySmall: TextStyle(fontSize: 28, fontWeight: FontWeight.bold,),
-      bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-      bodyMedium: TextStyle(fontSize: 14),
-      labelSmall: TextStyle(
-        fontSize: 12,
+    displaySmall: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.bold,
+    ),
+    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    bodyMedium: TextStyle(fontSize: 14),
+    labelSmall: TextStyle(
+      fontSize: 12,
+    ),
+    labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+    labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF1A80E5)),
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
-      labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      foregroundColor: MaterialStateProperty.all(Colors.white),
+      elevation: MaterialStateProperty.all(0),
+    ),
+  ),
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      foregroundColor: MaterialStateProperty.all(Color(0xFF1A80E5)),
+      side: MaterialStateProperty.all(BorderSide(
+        color: Color(0xFF1A80E5),
+      )),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Color(0xFFEAECEF),
+    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: BorderSide.none,
+    ),
+    labelStyle: TextStyle(
+      color: Colors.grey[800],
+    ),
+  ),
+  dropdownMenuTheme: DropdownMenuThemeData(
+    textStyle: TextStyle(
+      color: Colors.grey[800],
+      fontSize: 16,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Color(0xFFEAECEF),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide.none,
+      ),
+    ).copyWith(
+      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+    ),
+  ),
 );
 
 ThemeData DARK_THEME = baseTheme.copyWith(

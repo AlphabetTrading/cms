@@ -3,6 +3,7 @@ import 'package:cms_mobile/features/home/presentation/tabs/material-transactions
 import 'package:cms_mobile/features/home/presentation/tabs/settings.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
 import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/create_material_request.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
@@ -83,7 +84,7 @@ Widget _buildScreen({
     case 2:
       return const MaterialTransactionsTabScreen();
     case 3:
-      return const SettingsTabScreen();
+      return const CreateMaterialRequestPage();
     default:
       return const Text("index default");
   }
