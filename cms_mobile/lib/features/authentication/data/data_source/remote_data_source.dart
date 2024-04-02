@@ -45,8 +45,8 @@ class AuthenticationRemoteDataSourceImpl
       document: gql(loginQuery),
       variables: {
         "data": {
-          "phone_number": "+251912345670",
-          "password": "Password@1"
+          "phone_number": "0912345670",
+          "password": "secret42"
           // "phone_number": loginParams.phoneNumber,
           // "password": loginParams.password,
         }

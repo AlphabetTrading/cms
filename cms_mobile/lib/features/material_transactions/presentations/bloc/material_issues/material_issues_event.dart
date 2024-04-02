@@ -1,27 +1,43 @@
-abstract class MaterialRequestEvent{
-  const MaterialRequestEvent();
+import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
+
+abstract class MaterialIssueEvent {
+  const MaterialIssueEvent();
 }
 
-class GetMaterialRequests extends MaterialRequestEvent{
-  const GetMaterialRequests();
+class GetMaterialIssues extends MaterialIssueEvent {
+  final FilterMaterialIssueInput? filterMaterialIssueInput;
+  final OrderByMaterialIssueInput? orderBy;
+  final PaginationInput? paginationInput;
+  const GetMaterialIssues({
+    this.filterMaterialIssueInput,
+    this.orderBy,
+    this.paginationInput,
+  });
 }
 
-class GetMaterialRequest extends MaterialRequestEvent{
+class GetMaterialIssue extends MaterialIssueEvent {
+  final FilterMaterialIssueInput filterMaterialIssueInput;
+  final OrderByMaterialIssueInput orderBy;
+  final PaginationInput paginationInput;
+  const GetMaterialIssue(
+    this.filterMaterialIssueInput,
+    this.orderBy,
+    this.paginationInput,
+  );
+}
+
+class CreateMaterialIssue extends MaterialIssueEvent {
   final String id;
-  const GetMaterialRequest(this.id);
+  const CreateMaterialIssue(this.id);
 }
 
-class CreateMaterialRequest extends MaterialRequestEvent{
+class UpdateMaterialIssue extends MaterialIssueEvent {
   final String id;
-  const CreateMaterialRequest(this.id);
+  const UpdateMaterialIssue(this.id);
 }
 
-class UpdateMaterialRequest extends MaterialRequestEvent{
+class DeleteMaterialIssue extends MaterialIssueEvent {
   final String id;
-  const UpdateMaterialRequest(this.id);
-}
-
-class DeleteMaterialRequest extends MaterialRequestEvent{
-  final String id;
-  const DeleteMaterialRequest(this.id);
+  const DeleteMaterialIssue(this.id);
 }

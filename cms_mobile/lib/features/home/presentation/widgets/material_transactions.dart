@@ -71,10 +71,9 @@ class MaterialTransactionsList extends StatelessWidget {
         trailing: IconButton(
           icon: const Icon(Icons.arrow_forward_ios),
           onPressed: () {
-            debugPrint('Material Requests');
-
-            context.goNamed(materialTransactionInfo['route']!,
-                pathParameters: {'itemId': "123"});
+            debugPrint(
+                'Material Requests ' + materialTransactionInfo['routeName']);
+            context.goNamed(materialTransactionInfo['routeName']!);
           },
         ),
       ),

@@ -3,8 +3,8 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MaterialReturnsPage extends StatelessWidget {
-  const MaterialReturnsPage({Key? key}) : super(key: key);
+class MaterialReceivingPage extends StatelessWidget {
+  const MaterialReceivingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class MaterialReturnsPage extends StatelessWidget {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: Text('Material Returns'),
+      title: Text('Material Receives'),
     );
   }
 

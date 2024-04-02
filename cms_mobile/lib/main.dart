@@ -1,9 +1,8 @@
 import 'package:cms_mobile/core/routes/go_router.dart';
-import 'package:cms_mobile/core/routes/app_router.dart';
-import 'package:cms_mobile/core/theme/light_theme.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/materials/presentation/bloc/materials_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
@@ -17,7 +16,6 @@ import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   Future.wait([
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),
     initializeDependencies(),
@@ -38,10 +36,9 @@ void main() async {
           BlocProvider<MaterialTransactionBloc>(
             create: (context) => sl<MaterialTransactionBloc>(),
           ),
-          BlocProvider<MaterialBloc>(
-            create: (context) => sl<MaterialBloc>(),
+          BlocProvider<MaterialIssueBloc>(
+            create: (context) => sl<MaterialIssueBloc>(),
           ),
-
         ],
         child: EasyLocalization(
           path: 'assets/translations',
@@ -70,29 +67,18 @@ class MyApp extends StatelessWidget {
             return BlocBuilder<ThemeBloc, ThemeState>(
               builder: (context, state) {
                 return MaterialApp.router(
-                    debugShowCheckedModeBanner: false,
-                    title: 'CMS APP',
-                    routerDelegate: appRouter.routerDelegate,
-                    routeInformationParser: appRouter.routeInformationParser,
-                    routeInformationProvider:
-                        appRouter.routeInformationProvider,
-                    localizationsDelegates: context.localizationDelegates,
-                    supportedLocales: context.supportedLocales,
-                    locale: context.locale,
-                    theme: state.themeData);
+                  debugShowCheckedModeBanner: false,
+                  title: 'CMS APP',
+                  routerDelegate: appRouter.routerDelegate,
+                  routeInformationParser: appRouter.routeInformationParser,
+                  routeInformationProvider: appRouter.routeInformationProvider,
+                  localizationsDelegates: context.localizationDelegates,
+                  supportedLocales: context.supportedLocales,
+                  locale: context.locale,
+                  theme: state.themeData,
+                );
               },
             );
-
-            // return MaterialApp(
-            //     title: 'CMS',
-            //     localizationsDelegates: context.localizationDelegates,
-            //     supportedLocales: context.supportedLocales,
-            //     locale: context.locale,
-            //     debugShowCheckedModeBanner: false,
-            //     home: AppRouter(),
-            //     // theme: lightTheme,
-            //     // themeMode: ThemeMode.light
-            //     );
           },
         );
       },

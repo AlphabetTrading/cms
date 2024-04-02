@@ -1,10 +1,12 @@
-import 'package:cms_mobile/core/routes/error_page.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
-import 'package:cms_mobile/features/materials/presentation/pages/MaterialsPage.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,7 @@ class AppRouter {
   late final GoRouter _router;
 
   AppRouter({Key? key}) {
+    debugPrint('AppRouter');
     _router = GoRouter(
       initialLocation: RoutePaths.home,
       redirect: (context, state) {
@@ -56,21 +59,41 @@ class AppRouter {
                   return const LoginPage();
                 }),
             GoRoute(
-              name: RouteNames.materialRequests,
-              path: RoutePaths.materialRequests,
+              name: RouteNames.materialIssue,
+              path: RoutePaths.materialIssue,
               builder: (BuildContext context, GoRouterState state) {
-                return MaterialRequestsPage(
-                  itemId: state.pathParameters['itemId']!,
-                );
+                return const MaterialIssuesPage();
               },
             ),
             GoRoute(
-              name: RouteNames.materials,
-              path: RoutePaths.materials,
+              name: RouteNames.materialRequest,
+              path: RoutePaths.materialRequest,
               builder: (BuildContext context, GoRouterState state) {
-                return const MaterialsPage();
+                return const MaterialRequestsPage();
               },
             ),
+            GoRoute(
+              name: RouteNames.materialReceiving,
+              path: RoutePaths.materialReceiving,
+              builder: (BuildContext context, GoRouterState state) {
+                return const MaterialReceivingPage();
+              },
+            ),
+            GoRoute(
+              name: RouteNames.materialReturn,
+              path: RoutePaths.materialReturn,
+              builder: (BuildContext context, GoRouterState state) {
+                return const MaterialReturnsPage();
+              },
+            ),
+            GoRoute(
+              name: RouteNames.purchaseOrder,
+              path: RoutePaths.purchaseOrder,
+              builder: (BuildContext context, GoRouterState state) {
+                return const PurchaseOrdersPage();
+              },
+            ),
+           
           ],
         ),
       ],

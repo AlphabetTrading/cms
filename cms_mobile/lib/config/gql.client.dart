@@ -12,7 +12,7 @@ class GQLClient {
   static final AuthLink authLink = AuthLink(
     getToken: () async {
       final token = await getAccessTokenFromStorage();
-
+      debugPrint('token $token');
       return 'Bearer $token';
     },
   );
@@ -20,8 +20,12 @@ class GQLClient {
   // implment refresh token using error link
   static final _errorLink = ErrorLink(
     onGraphQLError: (request, forward, response) {
+      debugPrint('error link ${response.errors}');
+
       if (response.errors != null) {
+        debugPrint('error link ${response.errors}');
         for (var err in response.errors!) {
+          debugPrint('error link ${err.message}');
           if (err.message == "Unauthorized") {
             return forward(request).map((response) {
               if (response.errors != null) {
@@ -40,7 +44,7 @@ class GQLClient {
     },
   );
 
-  static final Link link = authLink.concat(httpLink).concat(_errorLink);
+  static final Link link = _errorLink.concat(authLink.concat(httpLink));
 
   static Future<void> refreshToken() async {
     final refreshToken = await getRefreshTokenFromStorage();
@@ -59,6 +63,7 @@ class GQLClient {
         "refreshToken": refreshToken,
       },
     ));
+    debugPrint('refresh token ${response.data}');
 
     if (response.hasException) {
       throw response.exception as GraphQLError;

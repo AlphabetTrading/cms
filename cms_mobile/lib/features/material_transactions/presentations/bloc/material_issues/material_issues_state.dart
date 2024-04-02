@@ -1,35 +1,35 @@
-
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:equatable/equatable.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
-abstract class MaterialRequestState extends Equatable{
-  final List<MaterialRequestEntity> ? materialRequests;
-  final Failure ? error;
+abstract class MaterialIssueState extends Equatable {
+  final MaterialIssueEntityListWithMeta? materialIssues;
+  final Failure? error;
 
-  const MaterialRequestState({this.materialRequests, this.error});
+  const MaterialIssueState({this.materialIssues, this.error});
 
   @override
-  List<Object?> get props => [materialRequests, error];
+  List<Object?> get props => [materialIssues, error];
 }
 
-class MaterialRequestInitial extends MaterialRequestState {
-  const MaterialRequestInitial();
+class MaterialIssueInitial extends MaterialIssueState {
+  const MaterialIssueInitial();
 }
 
-class MaterialRequestLoading extends MaterialRequestState {
-  const MaterialRequestLoading();
+class MaterialIssueLoading extends MaterialIssueState {
+  const MaterialIssueLoading();
 }
 
-class MaterialRequestSuccess extends MaterialRequestState {
-  const MaterialRequestSuccess({required List<MaterialRequestEntity> materialRequests}) : super(materialRequests: materialRequests);
+class MaterialIssueSuccess extends MaterialIssueState {
+  const MaterialIssueSuccess(
+      {required MaterialIssueEntityListWithMeta materialIssues})
+      : super(materialIssues: materialIssues);
 }
 
-class MaterialRequestFailed extends MaterialRequestState {
-  const MaterialRequestFailed({required Failure error}) : super(error: error);
+class MaterialIssueFailed extends MaterialIssueState {
+  const MaterialIssueFailed({required Failure error}) : super(error: error);
 }
 
-class MaterialRequestEmpty extends MaterialRequestState {
-  const MaterialRequestEmpty();
+class MaterialIssueEmpty extends MaterialIssueState {
+  const MaterialIssueEmpty();
 }

@@ -1,28 +1,38 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MaterialRequestBloc
-    extends Bloc<MaterialRequestEvent, MaterialRequestState> {
-  final GetMaterialRequestUseCase _materialRequestUseCase;
+class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
+  final GetMaterialIssuesUseCase _materialIssueUseCase;
 
-  MaterialRequestBloc(this._materialRequestUseCase)
-      : super(const MaterialRequestInitial()) {
-    on<GetMaterialRequest>(onGetMaterialRequests);
+  MaterialIssueBloc(this._materialIssueUseCase)
+      : super(const MaterialIssueInitial()) {
+    on<GetMaterialIssues>(onGetMaterialIssues);
   }
 
-  void onGetMaterialRequests(
-      GetMaterialRequest event, Emitter<MaterialRequestState> emit) async {
-    final dataState = await _materialRequestUseCase();
+  void onGetMaterialIssues(
+      GetMaterialIssues event, Emitter<MaterialIssueState> emit) async {
+    debugPrint('onGetMaterialIssues');
+    emit(const MaterialIssueLoading());
+    debugPrint('onGetMaterialIssues loading');
 
-    if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
-      emit(MaterialRequestSuccess(materialRequests: dataState.data!));
+    final dataState = await _materialIssueUseCase(
+        params: MaterialIssueParams(
+      filterMaterialIssueInput: event.filterMaterialIssueInput,
+      orderBy: event.orderBy,
+      paginationInput: event.paginationInput,
+    ));
+    debugPrint('onGetMaterialIssues dataState: $dataState');
+    if (dataState is DataSuccess) {
+      emit(MaterialIssueSuccess(materialIssues: dataState.data!));
     }
 
     if (dataState is DataFailed) {
-      emit(MaterialRequestFailed(error: dataState.error!));
+      emit(MaterialIssueFailed(error: dataState.error!));
     }
   }
 }

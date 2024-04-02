@@ -19,37 +19,37 @@ class _MaterialTransactionsTabScreenState
   @override
   void initState() {
     super.initState();
-    // context
-    //     .read<MaterialTransactionBloc>()
-    //     .add(const GetMaterialTransactions());
+    context
+        .read<MaterialTransactionBloc>()
+        .add(const GetMaterialTransactions());
   }
 
-  final List<MaterialTransactionEntity> materialTransactions = [
-    const MaterialTransactionEntity(
-      approvedCount: 10,
-      declinedCount: 30,
-      pendingCount: 39,
-      type: "Material Requests",
-    ),
-    const MaterialTransactionEntity(
-      approvedCount: 10,
-      declinedCount: 30,
-      pendingCount: 39,
-      type: "Material Returns",
-    ),
-    const MaterialTransactionEntity(
-      approvedCount: 10,
-      declinedCount: 30,
-      pendingCount: 39,
-      type: "Material Issues",
-    ),
-    const MaterialTransactionEntity(
-      approvedCount: 10,
-      declinedCount: 30,
-      pendingCount: 39,
-      type: "Material Receives",
-    ),
-  ];
+  // final List<MaterialTransactionEntity> materialTransactions = [
+  //   const MaterialTransactionEntity(
+  //     approvedCount: 10,
+  //     declinedCount: 30,
+  //     pendingCount: 39,
+  //     type: "Material Requests",
+  //   ),
+  //   const MaterialTransactionEntity(
+  //     approvedCount: 10,
+  //     declinedCount: 30,
+  //     pendingCount: 39,
+  //     type: "Material Returns",
+  //   ),
+  //   const MaterialTransactionEntity(
+  //     approvedCount: 10,
+  //     declinedCount: 30,
+  //     pendingCount: 39,
+  //     type: "Material Issues",
+  //   ),
+  //   const MaterialTransactionEntity(
+  //     approvedCount: 10,
+  //     declinedCount: 30,
+  //     pendingCount: 39,
+  //     type: "Material Receives",
+  //   ),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -75,36 +75,36 @@ class _MaterialTransactionsTabScreenState
               child: BlocBuilder<MaterialTransactionBloc,
                   MaterialTransactionState>(
                 builder: (_, state) {
-                  // if (state is MaterialTransactionLoading) {
-                  //   return const Center(
-                  //     child: CircularProgressIndicator(),
-                  //   );
-                  // }
+                  if (state is MaterialTransactionLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
 
-                  // if (state is MaterialTransactionLoading) {
-                  //   return const Center(
-                  //     child: CircularProgressIndicator(),
-                  //   );
-                  // }
+                  if (state is MaterialTransactionLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
 
-                  // if (state is MaterialTransactionsuccess) {
-                  //   return Expanded(
-                  //       child: MaterialTransactionsList(
-                  //           materialRequests: state.materialTransactions!));
-                  // }
+                  if (state is MaterialTransactionsuccess) {
+                    return Expanded(
+                        child: MaterialTransactionsList(
+                            materialRequests: state.materialTransactions!));
+                  }
 
-                  // if (state is MaterialTransactionFailed) {
-                  //   return Center(
-                  //     child: Text(state.error!.errorMessage),
-                  //   );
-                  // }
+                  if (state is MaterialTransactionFailed) {
+                    return Center(
+                      child: Text(state.error!.errorMessage),
+                    );
+                  }
 
-                  // return const SizedBox();
+                  return const SizedBox();
 
-                  return Expanded(
-                    child: MaterialTransactionsList(
-                        materialRequests: materialTransactions),
-                  );
+                  // return Expanded(
+                  //   child: MaterialTransactionsList(
+                  //       materialRequests: state.materialTransactions!),
+                  // );
                 },
               ),
             )

@@ -1,36 +1,43 @@
+import 'package:cms_mobile/core/routes/route_names.dart';
+
 class MaterialTransactionsHelperFunctions {
-  // create an object with pathname, route name, and title
   static Map<String, dynamic> getMaterialInfoByType(
       String materialRequestType) {
     switch (materialRequestType) {
       case 'MATERIAL_REQUEST':
         return {
-          'path': 'material_requests/:type',
-          'routeName': 'material_requests',
+          'path': RoutePaths.materialRequest,
+          'routeName': RouteNames.materialRequest,
           'title': 'Material Requests',
         };
       case 'MATERIAL_ISSUE':
         return {
-          'path': 'material_receivings/',
-          'routeName': 'material_receivings',
+          'path': RoutePaths.materialIssue,
+          'routeName': RouteNames.materialIssue,
           'title': 'Material Issues',
         };
       case 'MATERIAL_RETURN':
         return {
-          'path': 'material_returns',
-          'routeName': 'material_returns',
+          'path': RoutePaths.materialReturn,
+          'routeName': RouteNames.materialReturn,
           'title': 'Material Returns',
         };
-      case 'MATERIAL_ORDER':
+      case 'MATERIAL_RECEIVING':
         return {
-          'path': 'material_returns',
-          'routeName': 'material_returns',
-          'title': 'Material Returns',
+          'path': RoutePaths.materialReceiving,
+          'routeName': RouteNames.materialReceiving,
+          'title': 'Material Receiving',
+        };
+      case 'PURCHASE_ORDER':
+        return {
+          'path': RoutePaths.purchaseOrder,
+          'routeName': RouteNames.purchaseOrder,
+          'title': 'Purchase Orders',
         };
       default:
         return {
-          'path': 'material_requests/:type',
-          'routeName': 'material_requests',
+          'path': RoutePaths.materialRequest,
+          'routeName': RouteNames.materialRequest,
           'title': 'Material Requests',
         };
     }

@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialRequestsPage extends StatelessWidget {
-  final String itemId;
-
-  const MaterialRequestsPage({required this.itemId, Key? key}) : super(key: key);
+  const MaterialRequestsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +16,7 @@ class MaterialRequestsPage extends StatelessWidget {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: Text('Material Requests'),
+      title: const Text('Material Requests'),
     );
   }
 

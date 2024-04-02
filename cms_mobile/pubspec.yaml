@@ -57,6 +57,7 @@ dependencies:
   formz: ^0.7.0
   sizer: ^2.0.15
   persistent_bottom_nav_bar: ^5.0.2
+  rxdart: ^0.27.7
 
   # The following adds the http package to your application.
   # Use with the http package for making HTTP requests

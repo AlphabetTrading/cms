@@ -11,17 +11,14 @@ import 'package:cms_mobile/features/home/data/repository/material_transactions_r
 import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
 import 'package:cms_mobile/features/home/domain/usecases/get_material_transactions.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
-import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_event.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
-import 'package:cms_mobile/features/material_transactions/data/repository/material_receiving_repository_impl.dart';
-import 'package:cms_mobile/features/material_transactions/domain/repository/material_request_repository.dart';
+import 'package:cms_mobile/features/material_transactions/data/repository/vouchers_repository_impl.dart';
+import 'package:cms_mobile/features/material_transactions/domain/repository/vouchers_repository.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
-import 'package:cms_mobile/features/materials/data/data_sources/remote_data_source.dart';
-import 'package:cms_mobile/features/materials/data/repository/material_repository_impl.dart';
-import 'package:cms_mobile/features/materials/domain/repository/material_repository.dart';
-import 'package:cms_mobile/features/materials/domain/usecases/get_materials.dart';
-import 'package:cms_mobile/features/materials/presentation/bloc/materials_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -40,20 +37,14 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-  sl.registerLazySingleton<MaterialReceivingDataSource>(
-    () => MaterialReceivingDataSourceImpl(
-      client: sl<GraphQLClient>(),
-    ),
-  );
-
   sl.registerLazySingleton<MaterialTransactionsDataSource>(
     () => MaterialTransactionsDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),
   );
 
-  sl.registerLazySingleton<MaterialsDataSource>(
-    () => MaterialsDataSourceImpl(
+  sl.registerLazySingleton<VoucherDataSourceImpl>(
+    () => VoucherDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),
   );
@@ -63,22 +54,14 @@ Future<void> initializeDependencies() async {
             dataSource: sl<AuthenticationRemoteDataSource>(),
           ));
 
-  sl.registerLazySingleton<MaterialReceivingRepository>(
-    () => MaterialReceivingRepositoryImpl(
-      dataSource: sl<MaterialReceivingDataSource>(),
-    ),
-  );
-
   sl.registerLazySingleton<MaterialTransactionRepository>(
     () => MaterialTransactionRepositoryImpl(
       dataSource: sl<MaterialTransactionsDataSource>(),
     ),
   );
 
-  sl.registerLazySingleton<MaterialRepository>(
-    () => MaterialRepositoryImpl(
-      dataSource: sl<MaterialsDataSource>(),
-    ),
+  sl.registerLazySingleton<VouchersRepository>(
+    () => VoucherRepositoryImpl(dataSource: sl<VoucherDataSourceImpl>()),
   );
 
   // usecase
@@ -109,7 +92,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<GetMaterialRequestUseCase>(
     () => GetMaterialRequestUseCase(
-      sl<MaterialReceivingRepository>(),
+      sl<MaterialTransactionRepository>(),
     ),
   );
 
@@ -119,9 +102,9 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-  sl.registerLazySingleton<GetMaterialsUseCase>(
-    () => GetMaterialsUseCase(
-      sl<MaterialRepository>(),
+  sl.registerLazySingleton<GetMaterialIssuesUseCase>(
+    () => GetMaterialIssuesUseCase(
+      sl<VouchersRepository>(),
     ),
   );
 
@@ -147,7 +130,7 @@ Future<void> initializeDependencies() async {
     () => MaterialTransactionBloc(sl<GetMaterialTransactionUseCase>()),
   );
 
-  sl.registerFactory<MaterialBloc>(
-    () => MaterialBloc(sl<GetMaterialsUseCase>()),
+  sl.registerFactory<MaterialIssueBloc>(
+    () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>()),
   );
 }

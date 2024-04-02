@@ -98,8 +98,6 @@ class _MyLoginFormState extends State<LoginForm> {
             ),
           ),
         );
-
-    _resetForm();
   }
 
   void _resetForm() {
@@ -131,6 +129,9 @@ class _MyLoginFormState extends State<LoginForm> {
           // update the auth state
           context.read<AuthBloc>().add(AuthIsSignedIn());
           context.go(RouteNames.home);
+
+          // reset the form
+          _resetForm();
         }
       },
       child: Form(

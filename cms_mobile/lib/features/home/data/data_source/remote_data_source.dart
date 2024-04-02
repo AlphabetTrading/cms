@@ -4,6 +4,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialTransactionsDataSource {
   Future<DataState<List<MaterialTransactionModel>>> fetchMaterialTransactions();
+
 }
 
 class MaterialTransactionsDataSourceImpl
@@ -20,11 +21,14 @@ class MaterialTransactionsDataSourceImpl
     String fetchMaterialTransactionsQuery;
 
     fetchMaterialTransactionsQuery = r'''
-     query GetMaterialRequests {
-        materialRequests_materialRequests {
-          id
+      query GetAllDocumentsStatus {
+        getAllDocumentsStatus {
+            approvedCount
+            declinedCount
+            pendingCount
+            type
+          }
         }
-      }
     ''';
 
     final response = await _client.query(QueryOptions(
@@ -39,7 +43,7 @@ class MaterialTransactionsDataSourceImpl
       );
     }
 
-    final requests = response.data!['requests'] as List;
+    final requests = response.data!['getAllDocumentsStatus'] as List;
 
     return DataSuccess(
         requests.map((e) => MaterialTransactionModel.fromJson(e)).toList());
