@@ -19,6 +19,7 @@ async function main() {
   await prisma.warehouseStore.deleteMany();
   await prisma.task.deleteMany();
   await prisma.milestone.deleteMany();
+  await prisma.projectUser.deleteMany();
   await prisma.project.deleteMany();
   await prisma.user.deleteMany();
 
@@ -28,6 +29,7 @@ async function main() {
   await seedProducts();
   await seedPriceHistory();
   await seedProjects();
+  await seedProjectUsers();
   await seedMilestones();
   await seedTasks();
   await seedWarehouseStores();
@@ -198,6 +200,56 @@ async function seedProjects() {
     console.error('Error seeding project models:', error);
   }
 }
+
+async function seedProjectUsers() {
+  try {
+    const projects = await prisma.project.findMany();
+
+    const consultants = await prisma.user.findMany({
+      where: { role: UserRole.CONSULTANT },
+    });
+    const siteManagers = await prisma.user.findMany({
+      where: { role: UserRole.SITE_MANAGER },
+    });
+    const purchasers = await prisma.user.findMany({
+      where: { role: UserRole.PURCHASER },
+    });
+
+    for (let i = 0; i < 2; i++) {
+      if (consultants.length > 0) {
+        await prisma.projectUser.create({
+          data: {
+            projectId: projects[i].id,
+            userId: consultants[i].id,
+          },
+        });
+      }
+
+      if (siteManagers.length > 0) {
+        await prisma.projectUser.create({
+          data: {
+            projectId: projects[i].id,
+            userId: siteManagers[i].id,
+          },
+        });
+      }
+
+      if (purchasers.length > 0) {
+        await prisma.projectUser.create({
+          data: {
+            projectId: projects[i].id,
+            userId: purchasers[i].id,
+          },
+        });
+      }
+    }
+
+    console.log('Project Users seeded successfully');
+  } catch (error) {
+    console.error('Error seeding Project Users:', error);
+  }
+}
+
 async function seedMilestones() {
   try {
     const projects = await prisma.project.findMany();
@@ -432,85 +484,100 @@ async function seedMaterialIssueVouchers() {
 
     return paddedSerialNumber;
   }
+  const projects = await prisma.project.findMany();
+
   const store_managers = await prisma.user.findMany({
     where: { role: 'STORE_MANAGER' },
   });
-  const site_managers = await prisma.user.findMany({
-    where: { role: 'SITE_MANAGER' },
-  });
 
   try {
-    const issueVouchers = [
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: store_managers[0].id,
-        issuedToId: store_managers[0].id,
-        preparedById: site_managers[0].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: store_managers[0].id,
-        issuedToId: store_managers[0].id,
-        preparedById: site_managers[0].id,
-        status: ApprovalStatus.PENDING,
-      },
-
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: store_managers[0].id,
-        issuedToId: store_managers[0].id,
-        preparedById: site_managers[0].id,
-        status: ApprovalStatus.DECLINED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: store_managers[0].id,
-        issuedToId: store_managers[0].id,
-        preparedById: site_managers[1].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: store_managers[1].id,
-        issuedToId: store_managers[1].id,
-        preparedById: site_managers[0].id,
-        status: ApprovalStatus.PENDING,
-      },
-
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: store_managers[1].id,
-        issuedToId: store_managers[1].id,
-        preparedById: site_managers[1].id,
-        status: ApprovalStatus.DECLINED,
-      },
-    ];
-
-    for (const data of issueVouchers) {
-      await prisma.materialIssueVoucher.create({
-        data: {
-          ...data,
-          items: {
-            create: [
-              {
-                quantity: 2,
-                description: 'Cement',
-                totalCost: 100,
-                unitCost: 50,
-                unitOfMeasure: 'quintal',
-              },
-              {
-                quantity: 20,
-                description: 'Steel',
-                totalCost: 100,
-                unitCost: 5,
-                unitOfMeasure: 'kg',
-              },
-            ],
+    for (const project of projects) {
+      const site_managers = await prisma.user.findMany({
+        where: {
+          role: 'SITE_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
           },
         },
       });
+
+      if (site_managers.length > 0 && store_managers.length > 0) {
+        const issueVouchers = [
+          {
+            serialNumber: generateSerialNumber(),
+            approvedById: store_managers[0].id,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            approvedById: store_managers[0].id,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+
+          {
+            serialNumber: generateSerialNumber(),
+            approvedById: store_managers[0].id,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            status: ApprovalStatus.DECLINED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            approvedById: store_managers[0].id,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            approvedById: store_managers[1].id,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            approvedById: store_managers[1].id,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            status: ApprovalStatus.DECLINED,
+          },
+        ];
+
+        const products = await prisma.product.findMany();
+
+        for (const data of issueVouchers) {
+          await prisma.materialIssueVoucher.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    quantity: 2,
+                    productId: products[0].id,
+                    totalCost: 100,
+                    unitCost: 50,
+                    unitOfMeasure: 'quintal',
+                  },
+                  {
+                    quantity: 20,
+                    productId: products[1].id,
+                    totalCost: 100,
+                    unitCost: 5,
+                    unitOfMeasure: 'kg',
+                  },
+                ],
+              },
+            },
+          });
+        }
+      }
     }
     console.log('Material Issue models seeded successfully');
   } catch (error) {
@@ -529,94 +596,116 @@ async function seedMaterialReturnVouchers() {
 
     return paddedSerialNumber;
   }
+  const projects = await prisma.project.findMany();
+
   const store_managers = await prisma.user.findMany({
     where: { role: 'STORE_MANAGER' },
-  });
-  const site_managers = await prisma.user.findMany({
-    where: { role: 'SITE_MANAGER' },
   });
   const warehouse_stores = await prisma.warehouseStore.findMany();
   const material_issues = await prisma.materialIssueVoucher.findMany();
   try {
-    const returnVouchers = [
-      {
-        serialNumber: generateSerialNumber(),
-        receivingStore: warehouse_stores[0].name,
-        receivedById: store_managers[0].id,
-        returnedById: site_managers[0].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        receivingStore: warehouse_stores[0].name,
-        receivedById: store_managers[0].id,
-        returnedById: site_managers[0].id,
-        status: ApprovalStatus.PENDING,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        receivingStore: warehouse_stores[0].name,
-        receivedById: store_managers[0].id,
-        returnedById: site_managers[0].id,
-        status: ApprovalStatus.DECLINED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        receivingStore: warehouse_stores[0].name,
-        receivedById: store_managers[0].id,
-        returnedById: site_managers[1].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        receivingStore: warehouse_stores[0].name,
-        receivedById: store_managers[1].id,
-        returnedById: site_managers[1].id,
-        status: ApprovalStatus.PENDING,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        receivingStore: warehouse_stores[0].name,
-        receivedById: store_managers[1].id,
-        returnedById: site_managers[0].id,
-        status: ApprovalStatus.DECLINED,
-      },
-    ];
-
-    for (const data of returnVouchers) {
-      await prisma.materialReturnVoucher.create({
-        data: {
-          ...data,
-          items: {
-            create: [
-              {
-                quantity: 10,
-                issueVoucherId: material_issues[0].id,
-                description: 'Cement',
-                totalCost: 100,
-                unitCost: 50,
-                unitOfMeasure: 'quintal',
-              },
-              {
-                quantity: 10,
-                issueVoucherId: material_issues[1].id,
-                description: 'Steel',
-                totalCost: 100,
-                unitCost: 5,
-                unitOfMeasure: 'kg',
-              },
-              {
-                quantity: 100,
-                issueVoucherId: material_issues[1].id,
-                description: 'Nails',
-                totalCost: 150,
-                unitCost: 1.5,
-                unitOfMeasure: 'box',
-              },
-            ],
+    for (const project of projects) {
+      const site_managers = await prisma.user.findMany({
+        where: {
+          role: 'SITE_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
           },
         },
       });
+
+      if (site_managers.length > 0 && store_managers.length > 0) {
+        const returnVouchers = [
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            receivedById: store_managers[0].id,
+            returnedById: site_managers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            receivedById: store_managers[0].id,
+            returnedById: site_managers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            receivedById: store_managers[0].id,
+            returnedById: site_managers[0].id,
+            status: ApprovalStatus.DECLINED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            receivedById: store_managers[0].id,
+            returnedById: site_managers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            receivedById: store_managers[1].id,
+            returnedById: site_managers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            receivedById: store_managers[1].id,
+            returnedById: site_managers[0].id,
+            status: ApprovalStatus.DECLINED,
+          },
+        ];
+
+        const products = await prisma.product.findMany();
+
+        for (const data of returnVouchers) {
+          await prisma.materialReturnVoucher.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    quantity: 10,
+                    issueVoucherId: material_issues[0].id,
+                    productId: products[0].id,
+                    totalCost: 100,
+                    unitCost: 50,
+                    unitOfMeasure: 'quintal',
+                  },
+                  {
+                    quantity: 10,
+                    issueVoucherId: material_issues[1].id,
+                    productId: products[1].id,
+                    totalCost: 100,
+                    unitCost: 5,
+                    unitOfMeasure: 'kg',
+                  },
+                  {
+                    quantity: 100,
+                    issueVoucherId: material_issues[1].id,
+                    productId: products[2].id,
+                    totalCost: 150,
+                    unitCost: 1.5,
+                    unitOfMeasure: 'box',
+                  },
+                ],
+              },
+            },
+          });
+        }
+      }
     }
     console.log('Material Return models seeded successfully');
   } catch (error) {
@@ -634,94 +723,106 @@ async function seedMaterialReceiveVouchers() {
 
     return paddedSerialNumber;
   }
-  const purchasers = await prisma.user.findMany({
-    where: {
-      role: UserRole.PURCHASER,
-    },
-  });
-  const project_managers = await prisma.user.findMany({
-    where: {
-      role: UserRole.PROJECT_MANAGER,
-    },
-  });
-
+  const projects = await prisma.project.findMany();
   const material_requests = await prisma.materialRequestVoucher.findMany();
   const purchase_orders = await prisma.purchaseOrder.findMany();
   try {
-    const receiveVouchers = [
-      {
-        serialNumber: generateSerialNumber(),
-        invoiceId: '1',
-        supplierName: purchase_orders[0].supplierName,
-        approvedById: project_managers[0].id,
-        materialRequestId: material_requests[0].id,
-        purchasedById: purchasers[0].id,
-        purchaseOrderId: purchase_orders[0].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        invoiceId: '2',
-        supplierName: purchase_orders[3].supplierName,
-        approvedById: project_managers[0].id,
-        materialRequestId: material_requests[3].id,
-        purchasedById: purchasers[0].id,
-        purchaseOrderId: purchase_orders[3].id,
-        status: ApprovalStatus.PENDING,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        invoiceId: '3',
-        supplierName: purchase_orders[0].supplierName,
-        approvedById: project_managers[1].id,
-        materialRequestId: material_requests[0].id,
-        purchasedById: purchasers[1].id,
-        purchaseOrderId: purchase_orders[0].id,
-        status: ApprovalStatus.DECLINED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        invoiceId: '4',
-        supplierName: purchase_orders[3].supplierName,
-        approvedById: project_managers[1].id,
-        materialRequestId: material_requests[3].id,
-        purchasedById: purchasers[0].id,
-        purchaseOrderId: purchase_orders[3].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-    ];
-
-    for (const data of receiveVouchers) {
-      await prisma.materialReceiveVoucher.create({
-        data: {
-          ...data,
-          items: {
-            create: [
-              {
-                quantity: 10,
-                description: 'Cement',
-                totalCost: 100,
-                unitCost: 50,
-                unitOfMeasure: 'quintal',
-              },
-              {
-                quantity: 10,
-                description: 'Steel',
-                totalCost: 100,
-                unitCost: 5,
-                unitOfMeasure: 'kg',
-              },
-              {
-                quantity: 100,
-                description: 'Nails',
-                totalCost: 150,
-                unitCost: 1.5,
-                unitOfMeasure: 'box',
-              },
-            ],
+    for (const project of projects) {
+      const project_manager = project.projectManagerId;
+      const purchasers = await prisma.user.findMany({
+        where: {
+          role: 'PURCHASER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
           },
         },
       });
+
+      if (purchasers.length > 0) {
+        const receiveVouchers = [
+          {
+            serialNumber: generateSerialNumber(),
+            invoiceId: '1',
+            projectId: project.id,
+            supplierName: purchase_orders[0].supplierName,
+            approvedById: project_manager,
+            materialRequestId: material_requests[0].id,
+            purchasedById: purchasers[0].id,
+            purchaseOrderId: purchase_orders[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            invoiceId: '2',
+            projectId: project.id,
+            supplierName: purchase_orders[3].supplierName,
+            approvedById: project_manager,
+            materialRequestId: material_requests[3].id,
+            purchasedById: purchasers[0].id,
+            purchaseOrderId: purchase_orders[3].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            invoiceId: '3',
+            projectId: project.id,
+            supplierName: purchase_orders[0].supplierName,
+            approvedById: project_manager,
+            materialRequestId: material_requests[0].id,
+            purchasedById: purchasers[0].id,
+            purchaseOrderId: purchase_orders[0].id,
+            status: ApprovalStatus.DECLINED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            invoiceId: '4',
+            projectId: project.id,
+            supplierName: purchase_orders[3].supplierName,
+            approvedById: project_manager,
+            materialRequestId: material_requests[3].id,
+            purchasedById: purchasers[0].id,
+            purchaseOrderId: purchase_orders[3].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+        ];
+
+        const products = await prisma.product.findMany();
+
+        for (const data of receiveVouchers) {
+          await prisma.materialReceiveVoucher.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    quantity: 10,
+                    productId: products[0].id,
+                    totalCost: 100,
+                    unitCost: 50,
+                    unitOfMeasure: 'quintal',
+                  },
+                  {
+                    quantity: 10,
+                    productId: products[1].id,
+                    totalCost: 100,
+                    unitCost: 5,
+                    unitOfMeasure: 'kg',
+                  },
+                  {
+                    quantity: 100,
+                    productId: products[2].id,
+                    totalCost: 150,
+                    unitCost: 1.5,
+                    unitOfMeasure: 'box',
+                  },
+                ],
+              },
+            },
+          });
+        }
+      }
     }
     console.log('Material Receive models seeded successfully');
   } catch (error) {
@@ -739,75 +840,89 @@ async function seedMaterialRequestVouchers() {
 
     return paddedSerialNumber;
   }
-  const site_managers = await prisma.user.findMany({
-    where: {
-      role: UserRole.SITE_MANAGER,
-    },
-  });
-  const project_managers = await prisma.user.findMany({
-    where: {
-      role: UserRole.PROJECT_MANAGER,
-    },
-  });
+  const projects = await prisma.project.findMany();
 
   try {
-    const requestVouchers = [
-      {
-        serialNumber: generateSerialNumber(),
-        requestedById: site_managers[0].id,
-        approvedById: project_managers[0].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        requestedById: site_managers[0].id,
-        approvedById: project_managers[1].id,
-        status: ApprovalStatus.DECLINED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: project_managers[0].id,
-        requestedById: site_managers[1].id,
-        status: ApprovalStatus.PENDING,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: project_managers[1].id,
-        requestedById: site_managers[1].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-    ];
-
-    for (const data of requestVouchers) {
-      await prisma.materialRequestVoucher.create({
-        data: {
-          ...data,
-          items: {
-            create: [
-              {
-                description: 'Cement',
-                unitOfMeasure: 'quintal',
-                quantity: 100,
-                remark: 'Remark 1',
-              },
-              {
-                description: 'Steel',
-                unitOfMeasure: 'kg',
-                quantity: 10,
-                remark: 'Remark 2',
-              },
-              {
-                description: 'Paint',
-                unitOfMeasure: 'kg',
-                quantity: 10,
-                remark: 'Remark 3',
-              },
-            ],
+    for (const project of projects) {
+      const project_manager = project.projectManagerId;
+      const site_managers = await prisma.user.findMany({
+        where: {
+          role: 'SITE_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
           },
         },
       });
+
+      if (site_managers.length > 0) {
+        const requestVouchers = [
+          {
+            serialNumber: generateSerialNumber(),
+            projectId: project.id,
+            requestedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            projectId: project.id,
+            requestedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.DECLINED,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            projectId: project.id,
+            approvedById: project_manager,
+            requestedById: site_managers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            projectId: project.id,
+            approvedById: project_manager,
+            requestedById: site_managers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+        ];
+
+        const products = await prisma.product.findMany();
+
+        for (const data of requestVouchers) {
+          await prisma.materialRequestVoucher.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    productId: products[0].id,
+                    unitOfMeasure: 'quintal',
+                    quantity: 100,
+                    remark: 'Remark 1',
+                  },
+                  {
+                    productId: products[1].id,
+                    unitOfMeasure: 'kg',
+                    quantity: 10,
+                    remark: 'Remark 2',
+                  },
+                  {
+                    productId: products[2].id,
+                    unitOfMeasure: 'kg',
+                    quantity: 10,
+                    remark: 'Remark 3',
+                  },
+                ],
+              },
+            },
+          });
+        }
+      }
+
+      console.log('Material Request models seeded successfully');
     }
-    console.log('Material Request models seeded successfully');
   } catch (error) {
     console.error('Error seeding material Request models:', error);
   } finally {
@@ -823,102 +938,116 @@ async function seedPurchaseOrders() {
 
     return paddedSerialNumber;
   }
-  const purchasers = await prisma.user.findMany({
-    where: {
-      role: UserRole.PURCHASER,
-    },
-  });
-  const project_managers = await prisma.user.findMany({
-    where: {
-      role: UserRole.PROJECT_MANAGER,
-    },
-  });
   const material_requests = await prisma.materialRequestVoucher.findMany();
   const warehouse_stores = await prisma.warehouseStore.findMany();
 
-  try {
-    const purchaseOrders = [
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: project_managers[0].id,
-        vat: 130.43,
-        warehouseStoreId: warehouse_stores[0].id,
-        subTotal: 869.57,
-        supplierName: 'Supplier 1',
-        grandTotal: 1000,
-        materialRequestId: material_requests[0].id,
-        preparedById: purchasers[0].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: project_managers[0].id,
-        vat: 195.65,
-        warehouseStoreId: warehouse_stores[1].id,
-        subTotal: 1304.35,
-        supplierName: 'Supplier 2',
-        grandTotal: 1500,
-        materialRequestId: material_requests[0].id,
-        preparedById: purchasers[0].id,
-        status: ApprovalStatus.PENDING,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: project_managers[0].id,
-        vat: 104.35,
-        warehouseStoreId: warehouse_stores[1].id,
-        subTotal: 695.65,
-        supplierName: 'Supplier 3',
-        grandTotal: 800,
-        materialRequestId: material_requests[0].id,
-        preparedById: purchasers[0].id,
-        status: ApprovalStatus.DECLINED,
-      },
-      {
-        serialNumber: generateSerialNumber(),
-        approvedById: project_managers[1].id,
-        vat: 260.87,
-        warehouseStoreId: warehouse_stores[2].id,
-        subTotal: 1739.13,
-        supplierName: 'Supplier 4',
-        grandTotal: 2000,
-        materialRequestId: material_requests[1].id,
-        preparedById: purchasers[1].id,
-        status: ApprovalStatus.COMPLETED,
-      },
-    ];
+  const projects = await prisma.project.findMany();
 
-    for (const data of purchaseOrders) {
-      await prisma.purchaseOrder.create({
-        data: {
-          ...data,
-          items: {
-            create: [
-              {
-                description: 'Cement',
-                quantity: 10,
-                totalPrice: 1000,
-                unitPrice: 100,
-                unitOfMeasure: 'quintal',
-              },
-              {
-                description: 'Steel',
-                quantity: 10,
-                totalPrice: 1500,
-                unitPrice: 150,
-                unitOfMeasure: 'kg',
-              },
-              {
-                description: 'Ceramic',
-                quantity: 1000,
-                totalPrice: 50000,
-                unitPrice: 50,
-                unitOfMeasure: 'pcs',
-              },
-            ],
+  try {
+    for (const project of projects) {
+      const project_manager = project.projectManagerId;
+      const purchasers = await prisma.user.findMany({
+        where: {
+          role: 'SITE_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
           },
         },
       });
+
+      if (purchasers.length > 0) {
+        const purchaseOrders = [
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            approvedById: project_manager,
+            vat: 130.43,
+            warehouseStoreId: warehouse_stores[0].id,
+            subTotal: 869.57,
+            supplierName: 'Supplier 1',
+            grandTotal: 1000,
+            materialRequestId: material_requests[0].id,
+            preparedById: purchasers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            approvedById: project_manager,
+            vat: 195.65,
+            warehouseStoreId: warehouse_stores[1].id,
+            subTotal: 1304.35,
+            supplierName: 'Supplier 2',
+            grandTotal: 1500,
+            materialRequestId: material_requests[0].id,
+            preparedById: purchasers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            approvedById: project_manager,
+            vat: 104.35,
+            warehouseStoreId: warehouse_stores[1].id,
+            subTotal: 695.65,
+            supplierName: 'Supplier 3',
+            grandTotal: 800,
+            materialRequestId: material_requests[0].id,
+            preparedById: purchasers[0].id,
+            status: ApprovalStatus.DECLINED,
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            approvedById: project_manager,
+            vat: 260.87,
+            warehouseStoreId: warehouse_stores[2].id,
+            subTotal: 1739.13,
+            supplierName: 'Supplier 4',
+            grandTotal: 2000,
+            materialRequestId: material_requests[1].id,
+            preparedById: purchasers[0].id,
+            status: ApprovalStatus.COMPLETED,
+          },
+        ];
+
+        const products = await prisma.product.findMany();
+
+        for (const data of purchaseOrders) {
+          await prisma.purchaseOrder.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    productId: products[0].id,
+                    quantity: 10,
+                    totalPrice: 1000,
+                    unitPrice: 100,
+                    unitOfMeasure: 'quintal',
+                  },
+                  {
+                    productId: products[1].id,
+                    quantity: 10,
+                    totalPrice: 1500,
+                    unitPrice: 150,
+                    unitOfMeasure: 'kg',
+                  },
+                  {
+                    productId: products[2].id,
+                    quantity: 1000,
+                    totalPrice: 50000,
+                    unitPrice: 50,
+                    unitOfMeasure: 'pcs',
+                  },
+                ],
+              },
+            },
+          });
+        }
+      }
     }
     console.log('Purchase Order models seeded successfully');
   } catch (error) {
@@ -937,54 +1066,39 @@ async function seedProformas() {
     return paddedSerialNumber;
   }
   const material_requests = await prisma.materialRequestVoucher.findMany();
+  const projects = await prisma.project.findMany();
 
   try {
-    await prisma.proforma.createMany({
-      data: [
-        {
-          serialNumber: generateSerialNumber(),
-          vendor: 'Vendor 1',
-          description: 'Proforma for Cement 1',
-          materialRequestId: material_requests[0].id,
-          photos: [''],
-        },
-        {
-          serialNumber: generateSerialNumber(),
-          vendor: 'Vendor 2',
-          description: 'Proforma for Cement 2',
-          materialRequestId: material_requests[2].id,
-          photos: [''],
-        },
-        {
-          serialNumber: generateSerialNumber(),
-          vendor: 'Vendor 3',
-          description: 'Proforma for Cement 3',
-          materialRequestId: material_requests[1].id,
-          photos: [''],
-        },
-        {
-          serialNumber: generateSerialNumber(),
-          vendor: 'Vendor 4',
-          description: 'Proforma for Steel 1',
-          materialRequestId: material_requests[0].id,
-          photos: [''],
-        },
-        {
-          serialNumber: generateSerialNumber(),
-          vendor: 'Vendor 5',
-          description: 'Proforma for Steel 2',
-          materialRequestId: material_requests[2].id,
-          photos: [''],
-        },
-        {
-          serialNumber: generateSerialNumber(),
-          vendor: 'Vendor 6',
-          description: 'Proforma for Steel 3',
-          materialRequestId: material_requests[1].id,
-          photos: [''],
-        },
-      ],
-    });
+    for (const project of projects) {
+      await prisma.proforma.createMany({
+        data: [
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            vendor: 'Vendor 1',
+            description: 'Proforma for Cement 1',
+            materialRequestId: material_requests[0].id,
+            photos: [''],
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            vendor: 'Vendor 2',
+            description: 'Proforma for Cement 2',
+            materialRequestId: material_requests[2].id,
+            photos: [''],
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            vendor: 'Vendor 3',
+            description: 'Proforma for Cement 3',
+            materialRequestId: material_requests[1].id,
+            photos: [''],
+          },
+        ],
+      });
+    }
     console.log('Proforma models seeded successfully');
   } catch (error) {
     console.error('Error seeding proforma models:', error);
