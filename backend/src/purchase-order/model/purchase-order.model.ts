@@ -1,17 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { ApprovalStatus, Project } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { Project as ProjectModel } from 'src/project/model/project.model';
 
 @ObjectType()
 export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
-  @Field(() => Date, { nullable: true })
-  dateOfReceiving?: Date;
-
   @Field(() => String, { nullable: true })
-  projectDetails?: string;
+  projectId?: string;
+
+  @Field(() => ProjectModel, { nullable: true })
+  project?: Project;
 
   @Field(() => String)
   supplierName?: string;
@@ -46,11 +47,8 @@ export class PurchaseOrderVoucher extends BaseModel {
 
 @ObjectType()
 export class PurchaseOrderItem extends BaseModel {
-  @Field(() => Number)
-  listNo?: number;
-
-  @Field(() => String, { nullable: true })
-  description?: string;
+  @Field(() => String)
+  productId?: string;
 
   @Field(() => String)
   unitOfMeasure?: string;
@@ -67,6 +65,6 @@ export class PurchaseOrderItem extends BaseModel {
   @Field(() => String, { nullable: true })
   remark?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   purchaseOrderId?: string;
 }

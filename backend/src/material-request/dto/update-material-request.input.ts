@@ -5,6 +5,9 @@ import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class UpdateMaterialRequestInput {
+  @Field(() => String, { nullable: true })
+  projectId?: string;
+
   @ValidateNested({ each: true })
   @Field(() => [UpdateMaterialRequestItemInput], { nullable: true })
   items?: UpdateMaterialRequestItemInput[];

@@ -41,6 +41,9 @@ export class MaterialRequestResolver {
           id: filterMaterialRequestInput?.id,
         },
         {
+          projectId: filterMaterialRequestInput.projectId
+        },
+        {
           OR: [
             {
               requestedById: user.id,

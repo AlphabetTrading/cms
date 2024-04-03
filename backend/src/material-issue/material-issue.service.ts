@@ -25,7 +25,7 @@ export class MaterialIssueService {
         serialNumber: serialNumber,
         items: {
           create: createMaterialIssueInput.items.map((item) => ({
-            description: item.description,
+            productId: item.productId,
             unitOfMeasure: item.unitOfMeasure,
             quantity: item.quantity,
             unitCost: item.unitCost,
@@ -60,7 +60,6 @@ export class MaterialIssueService {
       include: {
         items: true,
         approvedBy: true,
-        issuedTo: true,
         preparedBy: true,
       },
     });
@@ -103,7 +102,6 @@ export class MaterialIssueService {
       include: {
         items: true,
         approvedBy: true,
-        issuedTo: true,
         preparedBy: true,
       },
     });
@@ -125,7 +123,7 @@ export class MaterialIssueService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      description: item.description,
+      productId: item.productId,
     }));
 
     const updatedMaterialIssue = await this.prisma.materialIssueVoucher.update({

@@ -1,14 +1,14 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { CreatePurchaseOrderItemInput } from './create-purchase-order-item.input';
 
 @InputType()
 export class UpdatePurchaseOrderItemInput extends PartialType(
   CreatePurchaseOrderItemInput,
 ) {
-  @IsOptional()
   @Field(() => String, { nullable: true })
-  description?: string;
+  @IsString()
+  productId?: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })
@@ -29,8 +29,4 @@ export class UpdatePurchaseOrderItemInput extends PartialType(
   @IsOptional()
   @Field(() => String, { nullable: true })
   remark?: string;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  purchaseOrderId?: string;
 }

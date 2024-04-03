@@ -6,7 +6,7 @@ export class CreateMaterialIssueItemInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  description: string;
+  productId: string;
 
   @Field(() => String)
   @IsNotEmpty()

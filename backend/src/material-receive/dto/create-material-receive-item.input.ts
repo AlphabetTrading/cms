@@ -5,7 +5,8 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateMaterialReceiveItemInput {
   @Field(() => String)
   @IsNotEmpty()
-  description: string;
+  @IsString()
+  productId: string;
 
   @Field(() => String)
   @IsNotEmpty()

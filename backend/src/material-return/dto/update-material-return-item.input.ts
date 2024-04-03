@@ -1,5 +1,5 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { CreateMaterialReturnItemInput } from './create-material-return-item.input';
 
 @InputType()
@@ -8,7 +8,7 @@ export class UpdateMaterialReturnItemInput extends PartialType(
 ) {
   @Field(() => String, { nullable: true })
   @IsString()
-  description?: string;
+  productId?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -29,8 +29,4 @@ export class UpdateMaterialReturnItemInput extends PartialType(
 
   @Field(() => String, { nullable: true })
   remark?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsNotEmpty()
-  materialReturnVoucherId?: string;
 }

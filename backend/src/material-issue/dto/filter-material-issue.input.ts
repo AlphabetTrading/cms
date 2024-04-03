@@ -4,6 +4,7 @@ import { StringFilter } from 'src/common/filter/string-filter';
 import { registerEnumType } from '@nestjs/graphql';
 import { ApprovalStatus, Prisma } from '@prisma/client';
 import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
+import { FilterProjectInput } from 'src/project/dto/filter-project.input';
 
 registerEnumType(ApprovalStatus, {
   name: 'ApprovalStatus',
@@ -15,14 +16,14 @@ export class FilterMaterialIssueInput {
   @Field({ nullable: true })
   id?: string;
 
+  @Field({ nullable: true })
+  projectId?: string;
+
+  @Field(()=> FilterProjectInput, { nullable: true })
+  project?: Prisma.ProjectWhereInput;
+
   @Field(() => StringFilter, { nullable: true })
   serialNumber?: StringFilter;
-
-  @Field(() => String, { nullable: true })
-  issuedToId?: string;
-
-  @Field(() => FilterUserDocumentsInput, { nullable: true })
-  issuedTo?: Prisma.UserWhereInput;
 
   @Field(() => String, { nullable: true })
   preparedById?: string;
@@ -38,12 +39,6 @@ export class FilterMaterialIssueInput {
 
   @Field({ nullable: true })
   status?: ApprovalStatus;
-
-  @Field(() => String, { nullable: true })
-  receivedById?: string;
-
-  @Field(() => FilterUserDocumentsInput, { nullable: true })
-  receivedBy?: Prisma.UserWhereInput;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

@@ -1,11 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreatePurchaseOrderItemInput {
-  @IsOptional()
   @Field(() => String)
-  description: string;
+  @IsNotEmpty()
+  @IsString()
+  productId: string;
 
   @IsNotEmpty()
   @Field(() => String)
@@ -26,8 +27,4 @@ export class CreatePurchaseOrderItemInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   remark?: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  purchaseOrderId: string;
 }

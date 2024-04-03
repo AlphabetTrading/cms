@@ -1,20 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { CreateMaterialIssueItemInput } from './create-material-issue-item.input';
 
 @InputType()
 export class CreateMaterialIssueInput {
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  projectDetails?: string;
-
   @IsNotEmpty()
   @Field(() => String)
-  issuedToId: string;
+  projectId: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })
@@ -28,11 +20,7 @@ export class CreateMaterialIssueInput {
   @Field(() => String)
   preparedById: string;
 
-  @IsNotEmpty()
-  @Field(() => String)
-  approvedById: string;
-
   @IsOptional()
   @Field(() => String, { nullable: true })
-  receivedById?: string;
+  approvedById?: string;
 }

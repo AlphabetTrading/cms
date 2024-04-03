@@ -1,20 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { CreatePurchaseOrderItemInput } from './create-purchase-order-item.input';
 
 @InputType()
 export class CreatePurchaseOrderInput {
-  @IsOptional()
-  @Field(() => Date, { nullable: true })
-  dateOfReceiving?: Date;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  projectDetails?: string;
+  @IsNotEmpty()
+  @Field(() => String)
+  projectId: string;
 
   @IsNotEmpty()
   @Field(() => String)
@@ -44,7 +36,7 @@ export class CreatePurchaseOrderInput {
   @Field(() => String)
   preparedById: string;
 
-  @IsNotEmpty()
-  @Field(() => String)
-  approvedById: string;
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  approvedById?: string;
 }

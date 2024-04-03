@@ -3,6 +3,10 @@ import { IsArray, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateProformaInput {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  projectId?: string;
+
   @IsString()
   @Field(() => String, { nullable: true })
   materialRequestId?: string;

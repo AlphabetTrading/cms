@@ -1,12 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus, User } from '@prisma/client';
+import { ApprovalStatus, Project, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 import { User as UserModel } from 'src/user/user.model';
+import { Project as ProjectModel } from 'src/project/model/project.model';
 
 @ObjectType()
 export class MaterialRequestVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   serialNumber?: string;
+
+  @Field(() => String, { nullable: true })
+  projectId?: string;
+
+  @Field(() => ProjectModel, { nullable: true })
+  project?: Project;
 
   @Field(() => [MaterialRequestItem])
   items?: MaterialRequestItem[];
@@ -33,7 +40,7 @@ export class MaterialRequestVoucher extends BaseModel {
 @ObjectType()
 export class MaterialRequestItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  description?: string;
+  productId?: string;
 
   @Field(() => String)
   unitOfMeasure?: string;
@@ -49,7 +56,4 @@ export class MaterialRequestItem extends BaseModel {
 
   @Field(() => String, { nullable: true })
   remark?: string;
-
-  @Field(() => String)
-  materialRequestVoucherId?: string;
 }

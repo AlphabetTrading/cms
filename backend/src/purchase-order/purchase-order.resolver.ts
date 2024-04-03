@@ -39,6 +39,9 @@ export class PurchaseOrderResolver {
           id: filterPurchaseOrderInput?.id,
         },
         {
+          projectId: filterPurchaseOrderInput.projectId
+        },
+        {
           OR: [
             {
               preparedById: user.id,
@@ -53,9 +56,6 @@ export class PurchaseOrderResolver {
           OR: [
             {
               serialNumber: filterPurchaseOrderInput?.serialNumber,
-            },
-            {
-              dateOfReceiving: filterPurchaseOrderInput?.dateOfReceiving,
             },
             {
               materialRequestId: filterPurchaseOrderInput?.materialRequestId,

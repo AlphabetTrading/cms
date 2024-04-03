@@ -26,7 +26,7 @@ export class MaterialReceiveService {
           serialNumber: serialNumber,
           items: {
             create: createMaterialReceive.items.map((item) => ({
-              description: item.description,
+              productId: item.productId,
               unitOfMeasure: item.unitOfMeasure,
               quantity: item.quantity,
               unitCost: item.unitCost,
@@ -131,7 +131,7 @@ export class MaterialReceiveService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      description: item.description,
+      productId: item.productId,
     }));
 
     const updatedMaterialReceive =

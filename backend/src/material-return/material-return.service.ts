@@ -26,7 +26,7 @@ export class MaterialReturnService {
           serialNumber: serialNumber,
           items: {
             create: createMaterialReturn.items.map((item) => ({
-              description: item.description,
+              productId: item.productId,
               unitOfMeasure: item.unitOfMeasure,
               issueVoucherId: item.issueVoucherId,
               quantity: item.quantity,
@@ -121,7 +121,7 @@ export class MaterialReturnService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      description: item.description,
+      productId: item.productId,
     }));
 
     const updatedMaterialReturn =

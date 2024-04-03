@@ -40,10 +40,10 @@ export class MaterialIssueResolver {
             id: filterMaterialIssueInput?.id,
           },
           {
+            projectId: filterMaterialIssueInput.projectId
+          },
+          {
             OR: [
-              {
-                issuedToId: user.id,
-              },
               {
                 preparedById: user.id,
               },
@@ -58,16 +58,10 @@ export class MaterialIssueResolver {
                 serialNumber: filterMaterialIssueInput?.serialNumber,
               },
               {
-                issuedToId: filterMaterialIssueInput?.issuedToId,
-              },
-              {
                 preparedById: filterMaterialIssueInput?.preparedById,
               },
               {
                 approvedById: filterMaterialIssueInput?.approvedById,
-              },
-              {
-                issuedTo: filterMaterialIssueInput?.issuedTo,
               },
               {
                 preparedBy: filterMaterialIssueInput?.preparedBy,

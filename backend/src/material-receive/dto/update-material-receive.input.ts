@@ -8,7 +8,7 @@ import { ApprovalStatus } from '@prisma/client';
 export class UpdateMaterialReceiveInput {
   @IsString()
   @Field(() => String, { nullable: true })
-  projectDetails?: string;
+  projectId?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })
@@ -34,10 +34,6 @@ export class UpdateMaterialReceiveInput {
   @IsString()
   @Field(() => String, { nullable: true })
   purchasedById?: string;
-
-  @IsString()
-  @Field(() => String, { nullable: true })
-  receivedById?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })

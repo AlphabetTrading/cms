@@ -5,6 +5,10 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 export class CreateProformaInput {
   @IsNotEmpty()
   @Field(() => String)
+  projectId: string;
+
+  @IsNotEmpty()
+  @Field(() => String)
   materialRequestId: string;
 
   @IsNotEmpty()

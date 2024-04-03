@@ -35,6 +35,9 @@ export class ProformaResolver {
           id: filterProformaInput?.id,
         },
         {
+          projectId: filterProformaInput.projectId,
+        },
+        {
           OR: [
             {
               materialRequestId: filterProformaInput?.materialRequestId,

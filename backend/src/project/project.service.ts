@@ -48,8 +48,8 @@ export class ProjectService {
       where,
       orderBy,
       include: {
-        client: true,
-        projectManager: true,
+        Client: true,
+        ProjectManager: true,
         Milestones: true,
       },
     });
@@ -62,8 +62,8 @@ export class ProjectService {
         id,
       },
       include: {
-        client: true,
-        projectManager: true,
+        Client: true,
+        ProjectManager: true,
         Milestones: true,
       },
     });

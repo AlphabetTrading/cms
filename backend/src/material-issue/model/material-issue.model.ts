@@ -1,7 +1,8 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus, User } from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ApprovalStatus, Project, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 import { User as UserModel } from 'src/user/user.model';
+import { Project as ProjectModel } from 'src/project/model/project.model';
 
 @ObjectType()
 export class MaterialIssueVoucher extends BaseModel {
@@ -9,13 +10,10 @@ export class MaterialIssueVoucher extends BaseModel {
   serialNumber?: string;
 
   @Field(() => String, { nullable: true })
-  projectDetails?: string;
+  projectId?: string;
 
-  @Field(() => String)
-  issuedToId?: string;
-
-  @Field(() => UserModel)
-  issuedTo?: User;
+  @Field(() => ProjectModel, { nullable: true })
+  project?: Project;
 
   @Field(() => [MaterialIssueItem])
   items?: MaterialIssueItem[];
@@ -28,12 +26,6 @@ export class MaterialIssueVoucher extends BaseModel {
 
   @Field(() => UserModel)
   preparedBy?: User;
-
-  @Field(() => String, { nullable: true })
-  receivedById?: string;
-
-  @Field(() => UserModel, { nullable: true })
-  receivedBy?: User;
 
   @Field(() => String)
   approvedById?: string;
@@ -49,12 +41,9 @@ export class MaterialIssueVoucher extends BaseModel {
 }
 
 @ObjectType()
-export class MaterialIssueItem {
-  @Field(() => ID)
-  id?: string;
-
+export class MaterialIssueItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  description?: string;
+  productId?: string;
 
   @Field(() => String)
   unitOfMeasure?: string;
@@ -71,6 +60,6 @@ export class MaterialIssueItem {
   @Field(() => String, { nullable: true })
   remark?: string;
 
-  @Field(() => String)
-  materialIssueVoucherId: string;
+  @Field(() => String, { nullable: true })
+  materialIssueVoucherId?: string;
 }

@@ -21,6 +21,18 @@ export class Project extends BaseModel {
   @Field()
   projectManagerId: string;
 
+  @Field(() => [ProjectUser])
+  projectUsers?: ProjectUser[];
+
   @Field()
   status: string;
+}
+
+@ObjectType()
+export class ProjectUser extends BaseModel {
+  @Field(() => String, { nullable: true })
+  projectId?: string;
+
+  @Field(() => String, { nullable: true })
+  userId?: string;
 }

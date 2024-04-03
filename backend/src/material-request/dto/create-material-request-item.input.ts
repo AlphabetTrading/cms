@@ -6,7 +6,7 @@ export class CreateMaterialRequestItemInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  description: string;
+  productId: string;
 
   @Field(() => String)
   @IsNotEmpty()
@@ -28,8 +28,4 @@ export class CreateMaterialRequestItemInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   remark?: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  materialRequestVoucherId: string;
 }

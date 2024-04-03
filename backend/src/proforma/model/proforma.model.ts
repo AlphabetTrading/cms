@@ -3,6 +3,9 @@ import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class Proforma extends BaseModel {
+  @Field({ nullable: true })
+  projectId?: string;
+
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 

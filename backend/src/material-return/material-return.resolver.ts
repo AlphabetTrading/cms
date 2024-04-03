@@ -39,6 +39,9 @@ export class MaterialReturnResolver {
           id: filterMaterialReturnInput?.id,
         },
         {
+          projectId: filterMaterialReturnInput.projectId
+        },
+        {
           OR: [
             {
               receivedById: user.id,

@@ -4,9 +4,9 @@ import { CreateMaterialReceiveItemInput } from './create-material-receive-item.i
 
 @InputType()
 export class CreateMaterialReceiveInput {
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  projectDetails?: string;
+  @IsNotEmpty()
+  @Field(() => String)
+  projectId: string;
 
   @IsNotEmpty()
   @Field(() => String)
@@ -34,9 +34,5 @@ export class CreateMaterialReceiveInput {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  receivedById?: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  approvedById: string;
+  approvedById?: string;
 }

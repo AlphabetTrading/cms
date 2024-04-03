@@ -1,8 +1,9 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { CreateProjectInput } from './create-project.input';
+import { Field, InputType } from '@nestjs/graphql';
+import { ValidateNested } from 'class-validator';
+import { UpdateProjectUserInput } from './update-project-user.input';
 
 @InputType()
-export class UpdateProjectInput extends PartialType(CreateProjectInput) {
+export class UpdateProjectInput {
   @Field({ nullable: true })
   name?: string;
 
@@ -20,6 +21,10 @@ export class UpdateProjectInput extends PartialType(CreateProjectInput) {
 
   @Field({ nullable: true })
   projectManagerId?: string;
+
+  @ValidateNested({ each: true })
+  @Field(() => [UpdateProjectUserInput], { nullable: true })
+  projectUsers?: UpdateProjectUserInput[];
 
   @Field({ nullable: true })
   status?: string;

@@ -3,6 +3,7 @@ import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
 import { FilterMaterialRequestInput } from 'src/material-request/dto/filter-material-request.input';
+import { FilterProjectInput } from 'src/project/dto/filter-project.input';
 import { FilterPurchaseOrderInput } from 'src/purchase-order/dto/filter-purchase-order.input';
 import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 
@@ -18,6 +19,12 @@ export class FilterMaterialReceiveInput {
 
   @Field(() => StringFilter, { nullable: true })
   serialNumber?: StringFilter;
+
+  @Field({ nullable: true })
+  projectId?: string;
+
+  @Field(()=> FilterProjectInput, { nullable: true })
+  project?: Prisma.ProjectWhereInput;
 
   @Field(() => StringFilter, { nullable: true })
   supplierName?: StringFilter;

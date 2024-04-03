@@ -1,10 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus, User } from '@prisma/client';
+import { ApprovalStatus, Project, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 import { User as UserModel } from 'src/user/user.model';
+import { Project as ProjectModel } from 'src/project/model/project.model';
 
 @ObjectType()
 export class MaterialReturnVoucher extends BaseModel {
+  @Field(() => String, { nullable: true })
+  projectId?: string;
+
+  @Field(() => ProjectModel, { nullable: true })
+  project?: Project;
+
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
@@ -36,7 +43,7 @@ export class MaterialReturnVoucher extends BaseModel {
 @ObjectType()
 export class MaterialReturnItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  description?: string;
+  productId?: string;
 
   @Field(() => String)
   issueVoucherId?: string;

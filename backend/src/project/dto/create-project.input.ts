@@ -1,4 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { CreateProjectUserInput } from './create-project-user.input';
+import { ValidateNested } from 'class-validator';
 
 @InputType()
 export class CreateProjectInput {
@@ -19,6 +21,10 @@ export class CreateProjectInput {
 
   @Field()
   projectManagerId: string;
+
+  @ValidateNested({ each: true })
+  @Field(() => [CreateProjectUserInput])
+  projectUsers: CreateProjectUserInput[];
 
   @Field()
   status: string;
