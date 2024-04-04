@@ -2,8 +2,10 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
@@ -71,6 +73,22 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return const MaterialRequestsPage();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.createMaterialRequest,
+                  path: RoutePaths.createMaterialRequest,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialRequestDetails,
+                  path: RoutePaths.materialRequestDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialRequestDetailsPage();
+                  },
+                )
+              ],
             ),
             GoRoute(
               name: RouteNames.materialReceiving,
@@ -93,7 +111,6 @@ class AppRouter {
                 return const PurchaseOrdersPage();
               },
             ),
-           
           ],
         ),
       ],

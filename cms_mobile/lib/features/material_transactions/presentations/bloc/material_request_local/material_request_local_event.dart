@@ -1,4 +1,4 @@
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request_material.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 
 abstract class MaterialRequestLocalEvent{
   const MaterialRequestLocalEvent();

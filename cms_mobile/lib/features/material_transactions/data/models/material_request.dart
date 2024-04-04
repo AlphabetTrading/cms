@@ -1,4 +1,6 @@
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/materials/data/models/material.dart';
+import 'package:cms_mobile/features/materials/domain/entities/material.dart';
 
 class MaterialRequestModel extends MaterialRequestEntity {
   const MaterialRequestModel({
@@ -103,5 +105,58 @@ class MaterialRequestItemModel extends MaterialRequestItem {
       'materialRequestVoucherId': materialRequestVoucherId,
       'remark': remark,
     };
+  }
+}
+
+class MaterialRequestMaterialModel extends MaterialRequestMaterialEntity {
+  const MaterialRequestMaterialModel(
+      {required double requestedQuantity,
+      required MaterialEntity material,
+      required String? remark,
+      required String unit})
+      : super(
+            requestedQuantity: requestedQuantity,
+            material: material,
+            remark: remark,
+            unit: unit);
+    
+ Map<String, dynamic> toJson() {
+    return {
+      'requestedQuantity': requestedQuantity,
+      'material': material,
+      'remark': remark,
+      'unit': unit,
+    };
+  }
+    
+
+  @override
+  List<Object?> get props => [unit, material, remark, requestedQuantity];
+}
+
+class CreateMaterialRequestParamsModel
+    extends CreateMaterialRequestParamsEntity<MaterialRequestMaterialModel> {
+  const CreateMaterialRequestParamsModel({
+    required String projectId,
+    required List<MaterialRequestMaterialModel> materialRequestMaterials,
+  }) : super(
+            projectId: projectId,
+            materialRequestMaterials: materialRequestMaterials);
+
+              
+  @override
+  List<Object?> get props =>[projectId,materialRequestMaterials];
+
+    factory CreateMaterialRequestParamsModel.fromEntity(CreateMaterialRequestParamsEntity entity) {
+    
+    return CreateMaterialRequestParamsModel(
+      projectId: entity.projectId,
+      materialRequestMaterials: entity.materialRequestMaterials.map((e) => MaterialRequestMaterialModel(
+        requestedQuantity: e.requestedQuantity,
+        material: e.material,
+        remark: e.remark,
+        unit: e.unit
+      )).toList()
+    );
   }
 }

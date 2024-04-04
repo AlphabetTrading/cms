@@ -1,6 +1,6 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request_material.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
@@ -20,9 +20,21 @@ class CreateMaterialRequestForm extends StatelessWidget {
   });
 
   final List<MaterialEntity> materials = [
-    const MaterialEntity(id: "1", name: "Material 1", quantity: 10),
-    const MaterialEntity(id: "2", name: "Material 2", quantity: 510),
-    const MaterialEntity(id: "3", name: "Material 3", quantity: 256),
+    const MaterialEntity(
+        id: "1",
+        name: "Brick",
+        quantity: 10,
+        iconSrc: "assets/icons/material/light/brick.svg"),
+    const MaterialEntity(
+        id: "2",
+        name: "Cement",
+        quantity: 510,
+        iconSrc: "assets/icons/material/light/cement.svg"),
+    const MaterialEntity(
+        id: "3",
+        name: "Sand",
+        quantity: 256,
+        iconSrc: "assets/icons/material/light/sand.svg"),
   ];
 
   @override
@@ -33,9 +45,6 @@ class CreateMaterialRequestForm extends StatelessWidget {
     final materialDropdown = materialRequestFormCubit.state.materialDropdown;
     final unitDropdown = materialRequestFormCubit.state.unitDropdown;
     final remarkField = materialRequestFormCubit.state.remarkField;
-    print("in Stockk");
-
-    print(materialRequestFormCubit.state.inStock);
 
     // Build a Form widget using the _formKey created above.
     return Form(

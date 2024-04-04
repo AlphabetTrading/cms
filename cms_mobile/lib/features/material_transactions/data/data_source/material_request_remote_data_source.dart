@@ -3,41 +3,44 @@ import 'package:cms_mobile/features/material_transactions/data/models/material_r
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialRequestDataSource {
- 
- Future<DataState<MaterialRequestModel>> createMaterialRequest({
-    required String name,
-    required int quantity,
-    required String description,
-  });
+  Future<DataState<MaterialRequestModel>> createMaterialRequest(
+      {required CreateMaterialRequestParamsModel
+          createMaterialRequestParamsModel});
 }
 
 class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
   late final GraphQLClient _client;
+// Define the mutation
 
   static const String _createMaterialRequestMutation = '''
-    mutation CreateMaterialRequest(\$name: String!, \$quantity: Int!, \$description: String!) {
-      createMaterialRequest(input: {name: \$name, quantity: \$quantity, description: \$description}) {
-        id
-        name
-        quantity
-        status
-      }
-    }
+
   ''';
 
   // Override the function in the implementation class
   @override
-  Future<DataState<MaterialRequestModel>> createMaterialRequest({
-    required String name,
-    required int quantity,
-    required String description,
-  }) async {
+  Future<DataState<MaterialRequestModel>> createMaterialRequest(
+      {required CreateMaterialRequestParamsModel
+          createMaterialRequestParamsModel}) async {
+    List<Map<String, dynamic>> materialRequestMaterialsMap =
+        createMaterialRequestParamsModel.materialRequestMaterials
+            .map((materialRequestMaterial) {
+      return {
+        'requestedQuantity': materialRequestMaterial.requestedQuantity,
+        'materialId': materialRequestMaterial.material.id,
+        'remark': materialRequestMaterial.remark,
+        'unitOfMeasure': materialRequestMaterial.unit,
+        'toBePurchasedQuantity': materialRequestMaterial.requestedQuantity -
+            materialRequestMaterial.material.quantity,
+      };
+    }).toList();
+
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialRequestMutation),
       variables: {
-        'name': name,
-        'quantity': quantity,
-        'description': description,
+        "createMaterialRequestInput": {
+          "projectId": createMaterialRequestParamsModel.projectId,
+          "items": materialRequestMaterialsMap
+        }
       },
     );
 
@@ -45,11 +48,13 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
       final QueryResult result = await _client.mutate(options);
 
       if (result.hasException) {
-        return DataFailed(ServerFailure(errorMessage: result.exception.toString()));
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
       }
 
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final MaterialRequestModel materialRequest = MaterialRequestModel.fromJson(result.data!['createMaterialRequest']);
+      final MaterialRequestModel materialRequest =
+          MaterialRequestModel.fromJson(result.data!['createMaterialRequest']);
 
       return DataSuccess(materialRequest);
     } catch (e) {
@@ -58,6 +63,3 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
     }
   }
 }
-
-  
-

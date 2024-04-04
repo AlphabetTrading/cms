@@ -4,8 +4,10 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/create_material_request_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CreateMaterialRequestPage extends StatelessWidget {
   const CreateMaterialRequestPage({super.key});
@@ -32,63 +34,39 @@ class CreateMaterialRequestPage extends StatelessWidget {
                     final materialRequest =
                         state.materialRequestMaterials![index];
                     return Container(
-                      margin: const EdgeInsets.all(6.0),
-                      decoration: ShapeDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6)),
-                      ),
-                      child: ListTile(
-                        title: Text(materialRequest.material.name),
-                        subtitle: Text(
-                            "${materialRequest.requestedQuantity.toString()} ${materialRequest.unit}"),
-                        trailing: PopupMenuButton<String>(
-                          // initialValue: selectedItem,
-                          // onSelected: (SampleItem item) {
-                          //   setState(() {
-                          //     selectedItem = item;
-                          //   });
-                          // },
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<String>>[
-                            PopupMenuItem<String>(
-                              child: const Text('Edit'),
-                              onTap: () => showModalBottomSheet(
+                        margin: const EdgeInsets.all(6.0),
+                        decoration: ShapeDecoration(
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
+                        ),
+                        child: MaterialTransactionMaterialItem(
+                            title: materialRequest.material.name,
+                            subtitle: 'Requested Amount: ${materialRequest.requestedQuantity} ${materialRequest.unit}',
+                            iconSrc: materialRequest.material.iconSrc,
+                            onDelete: () => BlocProvider.of<MaterialRequestLocalBloc>(
+                                    context)
+                                .add(DeleteMaterialRequestMaterialLocal(index)),
+                            onEdit: ()=>showModalBottomSheet(
                                 context: context,
                                 builder: (context) =>
                                     BlocProvider<MaterialRequestFormCubit>(
                                   create: (_) => MaterialRequestFormCubit(
-                                      materialId: materialRequest.material.id,
-                                      requestedQuantity:
-                                          materialRequest.requestedQuantity,
-                                      unit: materialRequest.unit,
-                                      remark: materialRequest.remark,
-                                      ),
+                                    materialId: materialRequest.material.id,
+                                    requestedQuantity:
+                                        materialRequest.requestedQuantity,
+                                    unit: materialRequest.unit,
+                                    remark: materialRequest.remark,
+                                  ),
                                   child: Padding(
                                     padding: EdgeInsets.all(32.0),
                                     child: Wrap(children: [
                                       CreateMaterialRequestForm(
-                                        isEdit: true,
-                                        index :index
-                                      ),
+                                          isEdit: true, index: index),
                                     ]),
                                   ),
                                 ),
-                              ),
-                            ),
-                            PopupMenuItem<String>(
-                              child: const Text('Delete'),
-                              onTap: () {
-                                BlocProvider.of<MaterialRequestLocalBloc>(
-                                        context)
-                                    .add(DeleteMaterialRequestMaterialLocal(
-                                        index));
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                              ),),);
                   },
                 );
               },

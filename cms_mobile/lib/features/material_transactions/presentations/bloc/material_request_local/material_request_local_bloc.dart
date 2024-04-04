@@ -1,4 +1,4 @@
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request_material.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
