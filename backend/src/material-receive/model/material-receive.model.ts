@@ -15,25 +15,25 @@ export class MaterialReceiveVoucher extends BaseModel {
   @Field(() => ProjectModel, { nullable: true })
   project?: Project;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   supplierName?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   invoiceId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   materialRequestId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   purchaseOrderId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   purchasedById?: string;
 
   @Field(() => UserModel, { nullable: true })
   purchasedBy?: User;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   approvedById?: string;
 
   @Field(() => UserModel, { nullable: true })
@@ -51,16 +51,16 @@ export class MaterialReceiveItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   unitOfMeasure?: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   quantity?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   unitCost?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   totalCost?: number;
 
   @Field(() => String, { nullable: true })

@@ -6,6 +6,7 @@ import { MaterialRequestService } from 'src/material-request/material-request.se
 import { MaterialReturnService } from 'src/material-return/material-return.service';
 import { PurchaseOrderService } from 'src/purchase-order/purchase-order.service';
 import { DocumentTransaction } from './model/document-transaction-model';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class DocumentTransactionService {
@@ -21,6 +22,29 @@ export class DocumentTransactionService {
     userId: string,
     projectId: string,
   ): Promise<DocumentTransaction[]> {
+    const materialIssueReturnApprovers = await this.prisma.user.findMany({
+      where: {
+        role: UserRole.STORE_MANAGER,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const materialReceiveRequestPurchaseApprovers =
+      await this.prisma.project.findFirst({
+        where: {
+          id: projectId,
+        },
+        select: {
+          projectManagerId: true,
+        },
+      });
+
+    const materialIssueReturnApproversIds = materialIssueReturnApprovers.map(
+      (approver) => approver.id,
+    );
+
     const materialIssues =
       await this.materialIssueService.getMaterialIssuesCountByStatus({
         where: {
@@ -30,9 +54,7 @@ export class DocumentTransactionService {
             },
             {
               OR: [
-                {
-                  approvedById: userId,
-                },
+                { approvedById: { in: materialIssueReturnApproversIds } },
                 {
                   preparedById: userId,
                 },
@@ -52,7 +74,8 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: userId,
+                  approvedById:
+                    materialReceiveRequestPurchaseApprovers.projectManagerId,
                 },
                 {
                   purchasedById: userId,
@@ -73,7 +96,8 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: userId,
+                  approvedById:
+                    materialReceiveRequestPurchaseApprovers.projectManagerId,
                 },
                 {
                   requestedById: userId,
@@ -94,7 +118,7 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  receivedById: userId,
+                  receivedById: { in: materialIssueReturnApproversIds },
                 },
                 {
                   returnedById: userId,
@@ -115,7 +139,8 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: userId,
+                  approvedById:
+                    materialReceiveRequestPurchaseApprovers.projectManagerId,
                 },
                 {
                   preparedById: userId,

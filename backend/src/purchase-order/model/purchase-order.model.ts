@@ -14,16 +14,16 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => ProjectModel, { nullable: true })
   project?: Project;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   supplierName?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   materialRequestId?: string;
 
-  @Field(() => [PurchaseOrderItem])
+  @Field(() => [PurchaseOrderItem], { nullable: true })
   items?: PurchaseOrderItem[];
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   subTotal?: number;
 
   @Field(() => Number, { nullable: true })
@@ -32,10 +32,10 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => Number, { nullable: true })
   grandTotal?: number;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   preparedById?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   approvedById?: string;
 
   @Field(() => ApprovalStatus, {
@@ -47,19 +47,19 @@ export class PurchaseOrderVoucher extends BaseModel {
 
 @ObjectType()
 export class PurchaseOrderItem extends BaseModel {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   unitOfMeasure?: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   quantityRequested?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   unitPrice?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   totalPrice?: number;
 
   @Field(() => String, { nullable: true })

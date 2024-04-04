@@ -15,19 +15,19 @@ export class MaterialReturnVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   receivingStore?: string;
 
   @Field(() => [MaterialReturnItem])
   items?: MaterialReturnItem[];
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   returnedById?: string;
 
   @Field(() => UserModel, { nullable: true })
   returnedBy?: User;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   receivedById?: string;
 
   @Field(() => UserModel, { nullable: true })
@@ -45,24 +45,24 @@ export class MaterialReturnItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   issueVoucherId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   unitOfMeasure?: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   quantityReturned?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   unitCost?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   totalCost?: number;
 
   @Field(() => String, { nullable: true })
   remark?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   materialReturnVoucherId?: string;
 }

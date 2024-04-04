@@ -15,16 +15,16 @@ export class MaterialRequestVoucher extends BaseModel {
   @Field(() => ProjectModel, { nullable: true })
   project?: Project;
 
-  @Field(() => [MaterialRequestItem])
+  @Field(() => [MaterialRequestItem], { nullable: true })
   items?: MaterialRequestItem[];
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   requestedById?: string;
 
   @Field(() => UserModel, { nullable: true })
   requestedBy?: User;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   approvedById?: string;
 
   @Field(() => UserModel, { nullable: true })
@@ -42,10 +42,10 @@ export class MaterialRequestItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   unitOfMeasure?: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   quantity?: number;
 
   @Field(() => Number, { nullable: true })

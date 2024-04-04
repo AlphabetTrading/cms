@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialIssueInput } from './dto/create-material-issue.input';
 import { UpdateMaterialIssueInput } from './dto/update-material-issue.input';
 import { MaterialIssueVoucher } from './model/material-issue.model';
-import { Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentType } from 'src/common/enums/document-type';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 
@@ -160,6 +160,34 @@ export class MaterialIssueService {
     await this.prisma.materialIssueVoucher.delete({
       where: { id: materialIssueId },
     });
+  }
+
+  async approveMaterialIssue(
+    materialIssueId: string,
+    userId: string,
+    status: ApprovalStatus,
+  ) {
+    const materialIssue = await this.prisma.materialIssueVoucher.findUnique({
+      where: { id: materialIssueId },
+    });
+
+    if (!materialIssue) {
+      throw new NotFoundException('Material Issue not found');
+    }
+
+    if (materialIssue.approvedById) {
+      throw new NotFoundException('Already decided on this material issue!');
+    }
+
+    const updatedMaterialIssue = await this.prisma.materialIssueVoucher.update({
+      where: { id: materialIssueId },
+      data: {
+        approvedById: userId,
+        status: status,
+      },
+    });
+
+    return updatedMaterialIssue;
   }
 
   async count(where?: Prisma.MaterialIssueVoucherWhereInput): Promise<number> {

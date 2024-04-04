@@ -7,7 +7,7 @@ import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { FilterPurchaseOrderInput } from './dto/filter-purchase-order.input';
 import { OrderByPurchaseOrderInput } from './dto/order-by-purchase-order.input';
 import { PaginationPurchaseOrders } from 'src/common/pagination/pagination-info';
-import { Prisma, User } from '@prisma/client';
+import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { UserEntity } from 'src/common/decorators';
@@ -39,7 +39,7 @@ export class PurchaseOrderResolver {
           id: filterPurchaseOrderInput?.id,
         },
         {
-          projectId: filterPurchaseOrderInput.projectId
+          projectId: filterPurchaseOrderInput?.projectId
         },
         {
           OR: [
@@ -162,4 +162,24 @@ export class PurchaseOrderResolver {
       throw new BadRequestException('Error deleting purchase order!');
     }
   }
+
+  
+  @Mutation(() => PurchaseOrderVoucher)
+  async approvePurchaseOrder(
+    @UserEntity() user: User,
+    @Args('purchaseOrderId') purchaseOrderId: string,
+    @Args('decision', { type: () => ApprovalStatus })
+    decision: ApprovalStatus,
+  ) {
+    try {
+      return this.purchaseOrderService.approvePurchaseOrder(
+        purchaseOrderId,
+        user.id,
+        decision,
+      );
+    } catch (e) {
+      throw new BadRequestException('Error approving purchase order!');
+    }
+  }
+
 }

@@ -7,7 +7,7 @@ import { FilterMaterialReceiveInput } from './dto/filter-material-receive.input'
 import { OrderByMaterialReceiveInput } from './dto/order-by-material-receive.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { PaginationMaterialReceives } from 'src/common/pagination/pagination-info';
-import { Prisma, User } from '@prisma/client';
+import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { UserEntity } from 'src/common/decorators';
@@ -41,7 +41,7 @@ export class MaterialReceiveResolver {
           id: filterMaterialReceiveInput?.id,
         },
         {
-          projectId: filterMaterialReceiveInput.projectId
+          projectId: filterMaterialReceiveInput?.projectId
         },
         {
           OR: [
@@ -71,7 +71,7 @@ export class MaterialReceiveResolver {
               materialRequest: filterMaterialReceiveInput?.materialRequest,
             },
             {
-              purchasedById: filterMaterialReceiveInput?.purchasedById || user.id,
+              purchasedById: filterMaterialReceiveInput?.purchasedById,
             },
             {
               purchasedBy: filterMaterialReceiveInput?.purchasedBy,
@@ -83,7 +83,7 @@ export class MaterialReceiveResolver {
               purchaseOrder: filterMaterialReceiveInput?.purchaseOrder,
             },
             {
-              approvedById: filterMaterialReceiveInput?.approvedById || user.id,
+              approvedById: filterMaterialReceiveInput?.approvedById,
             },
             {
               approvedBy: filterMaterialReceiveInput?.approvedBy,
@@ -160,6 +160,25 @@ export class MaterialReceiveResolver {
       );
     } catch (e) {
       throw new BadRequestException('Error updating material receive!');
+    }
+  }
+
+  
+  @Mutation(() => MaterialReceiveVoucher)
+  async approveMaterialReceive(
+    @UserEntity() user: User,
+    @Args('materialReceiveId') materialReceiveId: string,
+    @Args('decision', { type: () => ApprovalStatus })
+    decision: ApprovalStatus,
+  ) {
+    try {
+      return this.materialReceiveService.approveMaterialReceive(
+        materialReceiveId,
+        user.id,
+        decision,
+      );
+    } catch (e) {
+      throw new BadRequestException('Error approving material request!');
     }
   }
 

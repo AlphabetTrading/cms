@@ -7,7 +7,7 @@ import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { FilterMaterialReturnInput } from './dto/filter-material-return.input';
 import { OrderByMaterialReturnInput } from './dto/order-by-material-return.input';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { PaginationMaterialReturns } from 'src/common/pagination/pagination-info';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { UserEntity } from 'src/common/decorators';
@@ -39,7 +39,7 @@ export class MaterialReturnResolver {
           id: filterMaterialReturnInput?.id,
         },
         {
-          projectId: filterMaterialReturnInput.projectId
+          projectId: filterMaterialReturnInput?.projectId
         },
         {
           OR: [
@@ -55,7 +55,7 @@ export class MaterialReturnResolver {
         {
           OR: [
             {
-              serialNumber: filterMaterialReturnInput.serialNumber,
+              serialNumber: filterMaterialReturnInput?.serialNumber,
             },
             {
               receivingStore: filterMaterialReturnInput?.receivingStore,
@@ -152,6 +152,25 @@ export class MaterialReturnResolver {
       return this.materialReturnService.deleteMaterialReturn(materialReturnId);
     } catch (e) {
       throw new BadRequestException('Error deleting material return!');
+    }
+  }
+
+  
+  @Mutation(() => MaterialReturnVoucher)
+  async approveMaterialReturn(
+    @UserEntity() user: User,
+    @Args('materialReturnId') materialReturnId: string,
+    @Args('decision', { type: () => ApprovalStatus })
+    decision: ApprovalStatus,
+  ) {
+    try {
+      return this.materialReturnService.approveMaterialReturn(
+        materialReturnId,
+        user.id,
+        decision,
+      );
+    } catch (e) {
+      throw new BadRequestException('Error approving material return!');
     }
   }
 }

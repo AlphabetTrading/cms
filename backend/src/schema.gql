@@ -385,26 +385,26 @@ type MaterialIssueItem {
   id: ID!
   materialIssueVoucherId: String
   productId: String
-  quantity: Float!
+  quantity: Float
   remark: String
-  totalCost: Float!
-  unitCost: Float!
-  unitOfMeasure: String!
+  totalCost: Float
+  unitCost: Float
+  unitOfMeasure: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }
 
 type MaterialIssueVoucher {
-  approvedBy: User!
-  approvedById: String!
+  approvedBy: User
+  approvedById: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  items: [MaterialIssueItem!]!
-  preparedBy: User!
-  preparedById: String!
+  items: [MaterialIssueItem!]
+  preparedBy: User
+  preparedById: String
   project: Project
   projectId: String
   requisitionNumber: String
@@ -417,21 +417,21 @@ type MaterialIssueVoucher {
 
 type MaterialReceiveVoucher {
   approvedBy: User
-  approvedById: String!
+  approvedById: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  invoiceId: String!
-  materialRequestId: String!
+  invoiceId: String
+  materialRequestId: String
   project: Project
   projectId: String
-  purchaseOrderId: String!
+  purchaseOrderId: String
   purchasedBy: User
-  purchasedById: String!
+  purchasedById: String
   serialNumber: String
   status: ApprovalStatus
-  supplierName: String!
+  supplierName: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -443,10 +443,10 @@ type MaterialRequestItem {
   id: ID!
   inStockQuantity: Float
   productId: String
-  quantity: Float!
+  quantity: Float
   remark: String
   toBePurchasedQuantity: Float
-  unitOfMeasure: String!
+  unitOfMeasure: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -454,16 +454,16 @@ type MaterialRequestItem {
 
 type MaterialRequestVoucher {
   approvedBy: User
-  approvedById: String!
+  approvedById: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  items: [MaterialRequestItem!]!
+  items: [MaterialRequestItem!]
   project: Project
   projectId: String
   requestedBy: User
-  requestedById: String!
+  requestedById: String
   serialNumber: String
   status: ApprovalStatus
 
@@ -475,14 +475,14 @@ type MaterialReturnItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  issueVoucherId: String!
-  materialReturnVoucherId: String!
+  issueVoucherId: String
+  materialReturnVoucherId: String
   productId: String
-  quantityReturned: Float!
+  quantityReturned: Float
   remark: String
-  totalCost: Float!
-  unitCost: Float!
-  unitOfMeasure: String!
+  totalCost: Float
+  unitCost: Float
+  unitOfMeasure: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -496,10 +496,10 @@ type MaterialReturnVoucher {
   project: Project
   projectId: String
   receivedBy: User
-  receivedById: String!
-  receivingStore: String!
+  receivedById: String
+  receivingStore: String
   returnedBy: User
-  returnedById: String!
+  returnedById: String
   serialNumber: String
   status: ApprovalStatus
 
@@ -522,6 +522,11 @@ type Milestone {
 }
 
 type Mutation {
+  approveMaterialIssue(decision: ApprovalStatus!, materialIssueId: String!): MaterialIssueVoucher!
+  approveMaterialReceive(decision: ApprovalStatus!, materialReceiveId: String!): MaterialReceiveVoucher!
+  approveMaterialRequest(decision: ApprovalStatus!, materialRequestId: String!): MaterialRequestVoucher!
+  approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
+  approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
   createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
   createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
@@ -808,34 +813,34 @@ type PurchaseOrderItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  productId: String!
+  productId: String
   purchaseOrderId: String
-  quantityRequested: Float!
+  quantityRequested: Float
   remark: String
-  totalPrice: Float!
-  unitOfMeasure: String!
-  unitPrice: Float!
+  totalPrice: Float
+  unitOfMeasure: String
+  unitPrice: Float
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
 }
 
 type PurchaseOrderVoucher {
-  approvedById: String!
+  approvedById: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   grandTotal: Float
   id: ID!
-  items: [PurchaseOrderItem!]!
-  materialRequestId: String!
-  preparedById: String!
+  items: [PurchaseOrderItem!]
+  materialRequestId: String
+  preparedById: String
   project: Project
   projectId: String
   serialNumber: String
   status: ApprovalStatus
-  subTotal: Float!
-  supplierName: String!
+  subTotal: Float
+  supplierName: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!

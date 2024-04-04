@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialReturnInput } from './dto/create-material-return.input';
 import { MaterialReturnVoucher } from './model/material-return.model';
 import { UpdateMaterialReturnInput } from './dto/update-material-return.input';
-import { Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
 
@@ -159,6 +159,35 @@ export class MaterialReturnService {
     await this.prisma.materialReturnVoucher.delete({
       where: { id: materialReturnId },
     });
+  }
+
+  async approveMaterialReturn(
+    materialReturnId: string,
+    userId: string,
+    status: ApprovalStatus,
+  ) {
+    const materialReturn =
+      await this.prisma.materialReturnVoucher.findUnique({
+        where: { id: materialReturnId },
+      });
+
+    if (!materialReturn) {
+      throw new NotFoundException('Material Return not found');
+    }
+
+    if (materialReturn.receivedById) {
+      throw new NotFoundException('Already decided on this material return!');
+    }
+
+    const updatedMaterialReturn = await this.prisma.materialReturnVoucher.update({
+      where: { id: materialReturnId },
+      data: {
+        receivedById: userId,
+        status: status,
+      },
+    });
+  
+    return updatedMaterialReturn;
   }
 
   async count(where?: Prisma.MaterialReturnVoucherWhereInput): Promise<number> {

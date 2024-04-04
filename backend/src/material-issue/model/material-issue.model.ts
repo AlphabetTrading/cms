@@ -15,22 +15,22 @@ export class MaterialIssueVoucher extends BaseModel {
   @Field(() => ProjectModel, { nullable: true })
   project?: Project;
 
-  @Field(() => [MaterialIssueItem])
+  @Field(() => [MaterialIssueItem], { nullable: true })
   items?: MaterialIssueItem[];
 
   @Field(() => String, { nullable: true })
   requisitionNumber?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   preparedById?: string;
 
-  @Field(() => UserModel)
+  @Field(() => UserModel, { nullable: true })
   preparedBy?: User;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   approvedById?: string;
 
-  @Field(() => UserModel)
+  @Field(() => UserModel, { nullable: true })
   approvedBy?: User;
 
   @Field(() => ApprovalStatus, {
@@ -45,16 +45,16 @@ export class MaterialIssueItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   unitOfMeasure?: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   quantity?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   unitCost?: number;
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   totalCost: number;
 
   @Field(() => String, { nullable: true })

@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialReceiveInput } from './dto/create-material-receive.input';
 import { UpdateMaterialReceiveInput } from './dto/update-material-receive.input';
 import { MaterialReceiveVoucher } from './model/material-receive.model';
-import { Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
 
@@ -169,6 +169,37 @@ export class MaterialReceiveService {
     await this.prisma.materialReceiveVoucher.delete({
       where: { id: materialReceiveId },
     });
+  }
+
+  async approveMaterialReceive(
+    materialReceiveId: string,
+    userId: string,
+    status: ApprovalStatus,
+  ) {
+    const materialReceive = await this.prisma.materialReceiveVoucher.findUnique(
+      {
+        where: { id: materialReceiveId }
+      },
+    );
+
+    if (!materialReceive) {
+      throw new NotFoundException('Material Receive not found');
+    }
+
+    if (materialReceive.approvedById) {
+      throw new NotFoundException('Already decided on this material receive!');
+    }
+
+    const updatedMaterialReceive =
+      await this.prisma.materialReceiveVoucher.update({
+        where: { id: materialReceiveId },
+        data: {
+          approvedById: userId,
+          status: status,
+        },
+      });
+
+    return updatedMaterialReceive;
   }
 
   async count(

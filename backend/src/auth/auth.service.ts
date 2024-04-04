@@ -51,7 +51,6 @@ export class AuthService {
   }
 
   async validateUser(userId: string): Promise<User> {
-    console.log(userId)
     return await this.prismaService.user.findUnique({
       where: { id: userId },
     });
@@ -96,7 +95,6 @@ export class AuthService {
 
       return this.generateTokens({ userId });
     } catch (e) {
-      console.log(e, 'HERE');
       throw new UnauthorizedException();
     }
   }

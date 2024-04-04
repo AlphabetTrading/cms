@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreatePurchaseOrderInput } from './dto/create-purchase-order.input';
 import { PurchaseOrderVoucher } from './model/purchase-order.model';
 import { UpdatePurchaseOrderInput } from './dto/update-purchase-order.input';
-import { Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
 
@@ -114,7 +114,7 @@ export class PurchaseOrderService {
     });
 
     if (!existingPurchaseOrder) {
-      throw new NotFoundException('Material Return not found');
+      throw new NotFoundException('Purchase Order not found');
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
@@ -148,12 +148,41 @@ export class PurchaseOrderService {
     });
 
     if (!existingPurchaseOrder) {
-      throw new NotFoundException('Material Return not found');
+      throw new NotFoundException('Purchase Order not found');
     }
 
     await this.prisma.purchaseOrder.delete({
       where: { id: purchaseOrderId },
     });
+  }
+
+  async approvePurchaseOrder(
+    purchaseOrderId: string,
+    userId: string,
+    status: ApprovalStatus,
+  ) {
+    const purchaseOrder = await this.prisma.purchaseOrder.findUnique({
+      where: { id: purchaseOrderId },
+    });
+
+    if (!purchaseOrder) {
+      throw new NotFoundException('Purchase Order not found');
+    }
+
+    if (purchaseOrder.approvedById) {
+      throw new NotFoundException('Already decided on this purchase order!');
+    }
+
+
+    const updatedPurchaseOrder = await this.prisma.purchaseOrder.update({
+      where: { id: purchaseOrderId },
+      data: {
+        approvedById: userId,
+        status: status,
+      },
+    });
+
+    return updatedPurchaseOrder;
   }
 
   async count(where?: Prisma.PurchaseOrderWhereInput): Promise<number> {

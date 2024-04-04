@@ -514,7 +514,6 @@ async function seedMaterialIssueVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            approvedById: store_managers[0].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
@@ -536,7 +535,6 @@ async function seedMaterialIssueVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            approvedById: store_managers[1].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
@@ -630,7 +628,6 @@ async function seedMaterialReturnVouchers() {
             serialNumber: generateSerialNumber(),
             receivingStore: warehouse_stores[0].name,
             projectId: project.id,
-            receivedById: store_managers[0].id,
             returnedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
@@ -654,7 +651,6 @@ async function seedMaterialReturnVouchers() {
             serialNumber: generateSerialNumber(),
             receivingStore: warehouse_stores[0].name,
             projectId: project.id,
-            receivedById: store_managers[1].id,
             returnedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
@@ -758,7 +754,6 @@ async function seedMaterialReceiveVouchers() {
             invoiceId: '2',
             projectId: project.id,
             supplierName: purchase_orders[3].supplierName,
-            approvedById: project_manager,
             materialRequestId: material_requests[3].id,
             purchasedById: purchasers[0].id,
             purchaseOrderId: purchase_orders[3].id,
@@ -780,11 +775,10 @@ async function seedMaterialReceiveVouchers() {
             invoiceId: '4',
             projectId: project.id,
             supplierName: purchase_orders[3].supplierName,
-            approvedById: project_manager,
             materialRequestId: material_requests[3].id,
             purchasedById: purchasers[0].id,
             purchaseOrderId: purchase_orders[3].id,
-            status: ApprovalStatus.COMPLETED,
+            status: ApprovalStatus.PENDING,
           },
         ];
 
@@ -875,16 +869,14 @@ async function seedMaterialRequestVouchers() {
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
-            approvedById: project_manager,
             requestedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
-            approvedById: project_manager,
             requestedById: site_managers[0].id,
-            status: ApprovalStatus.COMPLETED,
+            status: ApprovalStatus.PENDING,
           },
         ];
 
@@ -975,7 +967,6 @@ async function seedPurchaseOrders() {
           {
             projectId: project.id,
             serialNumber: generateSerialNumber(),
-            approvedById: project_manager,
             vat: 195.65,
             warehouseStoreId: warehouse_stores[1].id,
             subTotal: 1304.35,
@@ -1001,7 +992,6 @@ async function seedPurchaseOrders() {
           {
             projectId: project.id,
             serialNumber: generateSerialNumber(),
-            approvedById: project_manager,
             vat: 260.87,
             warehouseStoreId: warehouse_stores[2].id,
             subTotal: 1739.13,
@@ -1009,7 +999,7 @@ async function seedPurchaseOrders() {
             grandTotal: 2000,
             materialRequestId: material_requests[1].id,
             preparedById: purchasers[0].id,
-            status: ApprovalStatus.COMPLETED,
+            status: ApprovalStatus.PENDING,
           },
         ];
 

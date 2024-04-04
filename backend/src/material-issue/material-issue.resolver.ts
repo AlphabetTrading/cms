@@ -7,16 +7,16 @@ import { FilterMaterialIssueInput } from './dto/filter-material-issue.input';
 import { OrderByMaterialIssueInput } from './dto/order-by-material-issue.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { PaginationMaterialIssues } from 'src/common/pagination/pagination-info';
-import { Prisma, User } from '@prisma/client';
+import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 
+@UseGuards(GqlAuthGuard)
 @Resolver('MaterialIssue')
 export class MaterialIssueResolver {
   constructor(private readonly materialIssueService: MaterialIssueService) {}
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => PaginationMaterialIssues)
   async getMaterialIssues(
     @UserEntity() user: User,
@@ -40,7 +40,7 @@ export class MaterialIssueResolver {
             id: filterMaterialIssueInput?.id,
           },
           {
-            projectId: filterMaterialIssueInput.projectId
+            projectId: filterMaterialIssueInput?.projectId
           },
           {
             OR: [
@@ -121,7 +121,6 @@ export class MaterialIssueResolver {
         createMaterialIssue,
       );
     } catch (e) {
-      console.log(e);
       throw new BadRequestException('Error creating material issue!');
     }
   }
@@ -150,4 +149,24 @@ export class MaterialIssueResolver {
       throw new BadRequestException('Error deleting material issue!');
     }
   }
+
+  
+  @Mutation(() => MaterialIssueVoucher)
+  async approveMaterialIssue(
+    @UserEntity() user: User,
+    @Args('materialIssueId') materialIssueId: string,
+    @Args('decision', { type: () => ApprovalStatus })
+    decision: ApprovalStatus,
+  ) {
+    try {
+      return this.materialIssueService.approveMaterialIssue(
+        materialIssueId,
+        user.id,
+        decision,
+      );
+    } catch (e) {
+      throw new BadRequestException('Error approving material issue!');
+    }
+  }
+
 }

@@ -6,7 +6,7 @@ import { UpdateMaterialRequestInput } from './dto/update-material-request.input'
 import { FilterMaterialRequestInput } from './dto/filter-material-request.input';
 import { OrderByMaterialRequestInput } from './dto/order-by-material-request.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
-import { Prisma, User } from '@prisma/client';
+import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { PaginationMaterialRequests } from 'src/common/pagination/pagination-info';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
@@ -41,7 +41,7 @@ export class MaterialRequestResolver {
           id: filterMaterialRequestInput?.id,
         },
         {
-          projectId: filterMaterialRequestInput.projectId
+          projectId: filterMaterialRequestInput?.projectId,
         },
         {
           OR: [
@@ -60,13 +60,13 @@ export class MaterialRequestResolver {
               serialNumber: filterMaterialRequestInput?.serialNumber,
             },
             {
-              requestedById: filterMaterialRequestInput?.requestedById || user.id,
+              requestedById: filterMaterialRequestInput?.requestedById,
             },
             {
               requestedBy: filterMaterialRequestInput?.requestedBy,
             },
             {
-              approvedById: filterMaterialRequestInput?.approvedById || user.id,
+              approvedById: filterMaterialRequestInput?.approvedById,
             },
             {
               approvedBy: filterMaterialRequestInput?.approvedBy,
@@ -154,6 +154,24 @@ export class MaterialRequestResolver {
       );
     } catch (e) {
       throw new BadRequestException('Error deleting material request!');
+    }
+  }
+
+  @Mutation(() => MaterialRequestVoucher)
+  async approveMaterialRequest(
+    @UserEntity() user: User,
+    @Args('materialRequestId') materialRequestId: string,
+    @Args('decision', { type: () => ApprovalStatus })
+    decision: ApprovalStatus,
+  ) {
+    try {
+      return this.materialRequestService.approveMaterialRequest(
+        materialRequestId,
+        user.id,
+        decision,
+      );
+    } catch (e) {
+      throw new BadRequestException('Error approving material request!');
     }
   }
 }
