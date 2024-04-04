@@ -20,17 +20,15 @@ type Auth {
 }
 
 input CreateMaterialIssueInput {
-  approvedById: String!
-  issuedToId: String!
+  approvedById: String
   items: [CreateMaterialIssueItemInput!]!
   preparedById: String!
-  projectDetails: String
-  receivedById: String
+  projectId: String!
   requisitionNumber: String
 }
 
 input CreateMaterialIssueItemInput {
-  description: String!
+  productId: String!
   quantity: Float!
   remark: String
   totalCost: Float!
@@ -39,19 +37,18 @@ input CreateMaterialIssueItemInput {
 }
 
 input CreateMaterialReceiveInput {
-  approvedById: String!
+  approvedById: String
   invoiceId: String!
   items: [CreateMaterialReceiveItemInput!]!
   materialRequestId: String!
-  projectDetails: String
+  projectId: String!
   purchaseOrderId: String!
   purchasedById: String!
-  receivedById: String
   supplierName: String!
 }
 
 input CreateMaterialReceiveItemInput {
-  description: String!
+  productId: String!
   quantity: Float!
   totalCost: Float!
   unitCost: Float!
@@ -59,15 +56,15 @@ input CreateMaterialReceiveItemInput {
 }
 
 input CreateMaterialRequestInput {
-  approvedById: String!
+  approvedById: String
   items: [CreateMaterialRequestItemInput!]!
+  projectId: String!
   requestedById: String!
 }
 
 input CreateMaterialRequestItemInput {
-  description: String!
   inStockQuantity: Float
-  materialRequestVoucherId: String!
+  productId: String!
   quantity: Float!
   remark: String
   toBePurchasedQuantity: Float
@@ -76,15 +73,15 @@ input CreateMaterialRequestItemInput {
 
 input CreateMaterialReturnInput {
   items: [CreateMaterialReturnItemInput!]!
-  receivedById: String!
+  projectId: String!
+  receivedById: String
   receivingStore: String!
   returnedById: String!
 }
 
 input CreateMaterialReturnItemInput {
-  description: String!
   issueVoucherId: String!
-  materialReturnVoucherId: String!
+  productId: String!
   quantity: Float!
   remark: String
   totalCost: Float!
@@ -114,6 +111,7 @@ input CreateProformaInput {
   description: String!
   materialRequestId: String!
   photos: [String!]!
+  projectId: String!
   vendor: String!
 }
 
@@ -123,26 +121,30 @@ input CreateProjectInput {
   endDate: DateTime
   name: String!
   projectManagerId: String!
+  projectUsers: [CreateProjectUserInput!]!
   startDate: DateTime!
   status: String!
 }
 
+input CreateProjectUserInput {
+  projectId: String!
+  userId: String!
+}
+
 input CreatePurchaseOrderInput {
-  approvedById: String!
-  dateOfReceiving: DateTime
+  approvedById: String
   grandTotal: Float
   items: [CreatePurchaseOrderItemInput!]!
   materialRequestId: String!
   preparedById: String!
-  projectDetails: String
+  projectId: String!
   subTotal: Float!
   supplierName: String!
   vat: Float
 }
 
 input CreatePurchaseOrderItemInput {
-  description: String!
-  purchaseOrderId: String!
+  productId: String!
   quantity: Float!
   remark: String
   totalPrice: Float!
@@ -214,12 +216,10 @@ input FilterMaterialIssueInput {
   approvedById: String
   createdAt: DateTimeFilter
   id: String
-  issuedTo: FilterUserDocumentsInput
-  issuedToId: String
   preparedBy: FilterUserDocumentsInput
   preparedById: String
-  receivedBy: FilterUserDocumentsInput
-  receivedById: String
+  project: FilterProjectInput
+  projectId: String
   serialNumber: StringFilter
   status: String
 }
@@ -232,6 +232,8 @@ input FilterMaterialReceiveInput {
   invoiceId: StringFilter
   materialRequest: FilterMaterialRequestInput
   materialRequestId: String
+  project: FilterProjectInput
+  projectId: String
   purchaseOrder: FilterPurchaseOrderInput
   purchaseOrderId: String
   purchasedBy: FilterUserDocumentsInput
@@ -246,6 +248,8 @@ input FilterMaterialRequestInput {
   approvedById: String
   createdAt: DateTimeFilter
   id: String
+  project: FilterProjectInput
+  projectId: String
   requestedBy: FilterUserDocumentsInput
   requestedById: String
   serialNumber: StringFilter
@@ -255,6 +259,8 @@ input FilterMaterialRequestInput {
 input FilterMaterialReturnInput {
   createdAt: DateTimeFilter
   id: String
+  project: FilterProjectInput
+  projectId: String
   receivedBy: FilterUserDocumentsInput
   receivedById: String
   receivingStore: StringFilter
@@ -291,6 +297,8 @@ input FilterProformaInput {
   description: StringFilter
   id: String
   materialRequestId: String
+  project: FilterProjectInput
+  projectId: String
   updatedAt: DateTimeFilter
   vendor: String
 }
@@ -311,12 +319,13 @@ input FilterPurchaseOrderInput {
   approvedBy: FilterUserDocumentsInput
   approvedById: String
   createdAt: DateTimeFilter
-  dateOfReceiving: DateTimeFilter
   id: String
   materialRequest: FilterMaterialRequestInput
   materialRequestId: String
   preparedBy: FilterUserDocumentsInput
   preparedById: String
+  project: FilterProjectInput
+  projectId: String
   serialNumber: StringFilter
   status: ApprovalStatus
   subTotal: NumberFilter
@@ -371,14 +380,19 @@ input LoginInput {
 }
 
 type MaterialIssueItem {
-  description: String
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
   id: ID!
-  materialIssueVoucherId: String!
+  materialIssueVoucherId: String
+  productId: String
   quantity: Float!
   remark: String
   totalCost: Float!
   unitCost: Float!
   unitOfMeasure: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type MaterialIssueVoucher {
@@ -388,14 +402,11 @@ type MaterialIssueVoucher {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  issuedTo: User!
-  issuedToId: String!
   items: [MaterialIssueItem!]!
   preparedBy: User!
   preparedById: String!
-  projectDetails: String
-  receivedBy: User
-  receivedById: String
+  project: Project
+  projectId: String
   requisitionNumber: String
   serialNumber: String
   status: ApprovalStatus
@@ -413,12 +424,11 @@ type MaterialReceiveVoucher {
   id: ID!
   invoiceId: String!
   materialRequestId: String!
-  projectDetails: String
+  project: Project
+  projectId: String
   purchaseOrderId: String!
   purchasedBy: User
   purchasedById: String!
-  receivedBy: User
-  receivedById: String
   serialNumber: String
   status: ApprovalStatus
   supplierName: String!
@@ -430,10 +440,9 @@ type MaterialReceiveVoucher {
 type MaterialRequestItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  description: String
   id: ID!
   inStockQuantity: Float
-  materialRequestVoucherId: String!
+  productId: String
   quantity: Float!
   remark: String
   toBePurchasedQuantity: Float
@@ -451,6 +460,8 @@ type MaterialRequestVoucher {
   createdAt: DateTime!
   id: ID!
   items: [MaterialRequestItem!]!
+  project: Project
+  projectId: String
   requestedBy: User
   requestedById: String!
   serialNumber: String
@@ -463,10 +474,10 @@ type MaterialRequestVoucher {
 type MaterialReturnItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  description: String
   id: ID!
   issueVoucherId: String!
   materialReturnVoucherId: String!
+  productId: String
   quantityReturned: Float!
   remark: String
   totalCost: Float!
@@ -482,6 +493,8 @@ type MaterialReturnVoucher {
   createdAt: DateTime!
   id: ID!
   items: [MaterialReturnItem!]!
+  project: Project
+  projectId: String
   receivedBy: User
   receivedById: String!
   receivingStore: String!
@@ -754,6 +767,7 @@ type Proforma {
   id: ID!
   materialRequestId: String!
   photos: [String!]!
+  projectId: String
   serialNumber: String
 
   """Identifies the date and time when the object was last updated."""
@@ -771,6 +785,7 @@ type Project {
   id: ID!
   name: String!
   projectManagerId: String!
+  projectUsers: [ProjectUser!]!
   startDate: DateTime!
   status: String!
 
@@ -778,13 +793,23 @@ type Project {
   updatedAt: DateTime!
 }
 
+type ProjectUser {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  projectId: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  userId: String
+}
+
 type PurchaseOrderItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  description: String
   id: ID!
-  listNo: Float!
-  purchaseOrderId: String!
+  productId: String!
+  purchaseOrderId: String
   quantityRequested: Float!
   remark: String
   totalPrice: Float!
@@ -800,13 +825,13 @@ type PurchaseOrderVoucher {
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  dateOfReceiving: DateTime
   grandTotal: Float
   id: ID!
   items: [PurchaseOrderItem!]!
   materialRequestId: String!
   preparedById: String!
-  projectDetails: String
+  project: Project
+  projectId: String
   serialNumber: String
   status: ApprovalStatus
   subTotal: Float!
@@ -818,7 +843,7 @@ type PurchaseOrderVoucher {
 }
 
 type Query {
-  getAllDocumentsStatus: [DocumentTransaction!]!
+  getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -888,16 +913,14 @@ type Token {
 input UpdateMaterialIssueInput {
   approved: ApprovalStatus
   approvedById: String
-  issuedToId: String
   items: [UpdateMaterialIssueItemInput!]
   preparedById: String
-  projectDetails: String
-  receivedById: String
+  projectId: String
   requisitionNumber: String
 }
 
 input UpdateMaterialIssueItemInput {
-  description: String
+  productId: String
   quantity: Float
   remark: String
   totalCost: Float
@@ -910,16 +933,15 @@ input UpdateMaterialReceiveInput {
   invoiceId: String
   items: [UpdateMaterialReceiveItemInput!]
   materialRequestId: String
-  projectDetails: String
+  projectId: String
   purchaseOrderId: String
   purchasedById: String
-  receivedById: String
   status: ApprovalStatus
   supplierName: String
 }
 
 input UpdateMaterialReceiveItemInput {
-  description: String
+  productId: String
   quantity: Float
   totalCost: Float
   unitCost: Float
@@ -929,14 +951,14 @@ input UpdateMaterialReceiveItemInput {
 input UpdateMaterialRequestInput {
   approvedById: String
   items: [UpdateMaterialRequestItemInput!]
+  projectId: String
   requestedById: String
   status: ApprovalStatus
 }
 
 input UpdateMaterialRequestItemInput {
-  description: String
   inStockQuantity: Float
-  materialRequestVoucherId: String
+  productId: String
   quantity: Float
   remark: String
   toBePurchasedQuantity: Float
@@ -945,6 +967,7 @@ input UpdateMaterialRequestItemInput {
 
 input UpdateMaterialReturnInput {
   items: [UpdateMaterialReturnItemInput!]
+  projectId: String
   receivedById: String
   receivingStore: String
   returnedById: String
@@ -952,9 +975,8 @@ input UpdateMaterialReturnInput {
 }
 
 input UpdateMaterialReturnItemInput {
-  description: String
   issueVoucherId: String
-  materialReturnVoucherId: String
+  productId: String
   quantity: Float
   remark: String
   totalCost: Float
@@ -984,6 +1006,7 @@ input UpdateProformaInput {
   description: String
   materialRequestId: String
   photos: [String!]!
+  projectId: String
   vendor: String
 }
 
@@ -993,18 +1016,23 @@ input UpdateProjectInput {
   endDate: DateTime
   name: String
   projectManagerId: String
+  projectUsers: [UpdateProjectUserInput!]
   startDate: DateTime
   status: String
 }
 
+input UpdateProjectUserInput {
+  projectId: String
+  userId: String
+}
+
 input UpdatePurchaseOrderInput {
   approvedById: String
-  dateOfReceiving: DateTime
   grandTotal: Float
   items: [UpdatePurchaseOrderItemInput!]!
   materialRequestId: String
   preparedById: String
-  projectDetails: String
+  projectId: String
   status: ApprovalStatus
   subTotal: Float
   supplierName: String
@@ -1012,8 +1040,7 @@ input UpdatePurchaseOrderInput {
 }
 
 input UpdatePurchaseOrderItemInput {
-  description: String
-  purchaseOrderId: String
+  productId: String
   quantity: Float
   quantityRequested: Float
   remark: String

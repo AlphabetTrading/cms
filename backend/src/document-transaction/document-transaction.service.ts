@@ -17,18 +17,26 @@ export class DocumentTransactionService {
     private readonly materialReturnService: MaterialReturnService,
     private readonly purchaseOrderService: PurchaseOrderService,
   ) {}
-  async getAllDocumentsStatus(userId: string): Promise<DocumentTransaction[]> {
-    const materialIssues = await this.materialIssueService.getMaterialIssuesCountByStatus({
+  async getAllDocumentsStatus(
+    userId: string,
+    projectId: string,
+  ): Promise<DocumentTransaction[]> {
+    const materialIssues =
+      await this.materialIssueService.getMaterialIssuesCountByStatus({
         where: {
-          OR: [
+          AND: [
             {
-              approvedById: userId,
+              projectId: projectId,
             },
             {
-              issuedToId: userId,
-            },
-            {
-              preparedById: userId,
+              OR: [
+                {
+                  approvedById: userId,
+                },
+                {
+                  preparedById: userId,
+                },
+              ],
             },
           ],
         },
@@ -37,12 +45,19 @@ export class DocumentTransactionService {
     const materialReceives =
       await this.materialReceiveService.getMaterialReceiveCountByStatus({
         where: {
-          OR: [
+          AND: [
             {
-              approvedById: userId,
+              projectId: projectId,
             },
             {
-              purchasedById: userId,
+              OR: [
+                {
+                  approvedById: userId,
+                },
+                {
+                  purchasedById: userId,
+                },
+              ],
             },
           ],
         },
@@ -51,12 +66,19 @@ export class DocumentTransactionService {
     const materialRequests =
       await this.materialRequestService.getMaterialRequestCountByStatus({
         where: {
-          OR: [
+          AND: [
             {
-              approvedById: userId,
+              projectId: projectId,
             },
             {
-              requestedById: userId,
+              OR: [
+                {
+                  approvedById: userId,
+                },
+                {
+                  requestedById: userId,
+                },
+              ],
             },
           ],
         },
@@ -65,12 +87,19 @@ export class DocumentTransactionService {
     const materialReturns =
       await this.materialReturnService.getMaterialReturnCountByStatus({
         where: {
-          OR: [
+          AND: [
             {
-              receivedById: userId,
+              projectId: projectId,
             },
             {
-              returnedById: userId,
+              OR: [
+                {
+                  receivedById: userId,
+                },
+                {
+                  returnedById: userId,
+                },
+              ],
             },
           ],
         },
@@ -79,12 +108,19 @@ export class DocumentTransactionService {
     const purchaseOrders =
       await this.purchaseOrderService.getPurchaseOrderCountByStatus({
         where: {
-          OR: [
+          AND: [
             {
-              approvedById: userId,
+              projectId: projectId,
             },
             {
-              preparedById: userId,
+              OR: [
+                {
+                  approvedById: userId,
+                },
+                {
+                  preparedById: userId,
+                },
+              ],
             },
           ],
         },
