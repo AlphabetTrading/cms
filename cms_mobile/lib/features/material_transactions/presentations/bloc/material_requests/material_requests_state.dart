@@ -33,3 +33,17 @@ class MaterialRequestFailed extends MaterialRequestState {
 class MaterialRequestEmpty extends MaterialRequestState {
   const MaterialRequestEmpty();
 }
+
+class CreateMaterialRequest extends MaterialRequestState {
+  const CreateMaterialRequest();
+}
+class CreateMaterialRequestLoading extends MaterialRequestState {
+  const CreateMaterialRequestLoading();
+}     
+
+class CreateMaterialRequestSuccess extends MaterialRequestState {
+  const CreateMaterialRequestSuccess();
+}
+class CreateMaterialRequestFailed extends MaterialRequestState {
+  const CreateMaterialRequestFailed({required Failure error}) : super(error: error);
+}

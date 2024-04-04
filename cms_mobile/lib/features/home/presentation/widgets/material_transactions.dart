@@ -57,7 +57,9 @@ class MaterialTransactionsList extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(3),
           child: SvgPicture.asset(
-            'assets/icons/requests/material_issues.svg',
+            Theme.of(context).brightness == Brightness.light
+                ? 'assets/icons/transactions/light/material_issues.svg'
+                : 'assets/icons/transactions/dark/material_issues.svg',
           ),
         ),
         title: Text(

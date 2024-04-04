@@ -19,6 +19,16 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/get_ma
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_state.dart';
+import 'package:cms_mobile/features/materials/data/data_sources/remote_data_source.dart';
+import 'package:cms_mobile/features/materials/data/repository/material_repository_impl.dart';
+import 'package:cms_mobile/features/materials/domain/repository/material_repository.dart';
+import 'package:cms_mobile/features/materials/domain/usecases/get_materials.dart';
+import 'package:cms_mobile/features/materials/presentation/bloc/materials_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -132,5 +142,13 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<MaterialIssueBloc>(
     () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>()),
+  );
+
+  sl.registerFactory<MaterialRequestLocalBloc>(
+    () => MaterialRequestLocalBloc(),
+  );
+
+    sl.registerFactory<MaterialRequestFormCubit>(
+    () => MaterialRequestFormCubit(),
   );
 }

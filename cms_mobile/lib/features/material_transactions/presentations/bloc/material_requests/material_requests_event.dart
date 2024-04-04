@@ -7,8 +7,8 @@ class GetMaterialRequests extends MaterialRequestEvent{
 }
 
 class GetMaterialRequest extends MaterialRequestEvent{
-  final String id;
-  const GetMaterialRequest(this.id);
+
+  const GetMaterialRequest();
 }
 
 class CreateMaterialRequest extends MaterialRequestEvent{
