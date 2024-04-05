@@ -511,11 +511,11 @@ type Milestone {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   description: String
-  dueDate: DateTime!
+  dueDate: DateTime
   id: ID!
-  name: String!
-  projectId: String!
-  status: String!
+  name: String
+  projectId: String
+  status: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -750,9 +750,15 @@ type PaginationWarehouseStores {
 }
 
 type PriceHistory {
-  price: Float!
-  product: Product!
-  productId: String!
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  price: Float
+  product: Product
+  productId: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type Product {
@@ -760,7 +766,7 @@ type Product {
   createdAt: DateTime!
   description: String
   id: ID!
-  name: String!
+  name: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -770,29 +776,29 @@ type Proforma {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  materialRequestId: String!
-  photos: [String!]!
+  materialRequestId: String
+  photos: [String!]
   projectId: String
   serialNumber: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-  vendor: String!
+  vendor: String
 }
 
 type Project {
-  budget: Float!
-  clientId: String!
+  budget: Float
+  clientId: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   endDate: DateTime
   id: ID!
-  name: String!
-  projectManagerId: String!
-  projectUsers: [ProjectUser!]!
-  startDate: DateTime!
-  status: String!
+  name: String
+  projectManagerId: String
+  projectUsers: [ProjectUser!]
+  startDate: DateTime
+  status: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -890,18 +896,18 @@ input StringFilter {
 }
 
 type Task {
-  assignedToId: String!
+  assignedToId: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   description: String
-  dueDate: DateTime!
+  dueDate: DateTime
   id: ID!
-  milestoneId: String!
-  name: String!
-  priority: String!
-  startDate: DateTime!
-  status: String!
+  milestoneId: String
+  name: String
+  priority: String
+  startDate: DateTime
+  status: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -1111,14 +1117,26 @@ enum UserRole {
 }
 
 type WarehouseProduct {
-  product: Product!
-  productId: String!
-  quantity: Float!
-  warehouse: WarehouseStore!
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  product: Product
+  productId: String
+  quantity: Float
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  warehouse: WarehouseStore
   warehouseId: String
 }
 
 type WarehouseStore {
-  location: String!
-  name: String!
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  location: String
+  name: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }

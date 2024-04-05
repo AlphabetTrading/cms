@@ -45,13 +45,13 @@ export class WarehouseProductResolver {
           OR: [
             {
               product: {
-                name: filterWarehouseProductInput?.product.name,
+                name: filterWarehouseProductInput?.product?.name,
               },
             },
             {
               warehouse: {
-                name: filterWarehouseProductInput?.warehouse.name,
-                location: filterWarehouseProductInput?.warehouse.location,
+                name: filterWarehouseProductInput?.warehouse?.name,
+                location: filterWarehouseProductInput?.warehouse?.location,
               },
             },
           ],
