@@ -3,29 +3,29 @@ import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class Project extends BaseModel {
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string;
 
-  @Field()
-  startDate: Date;
+  @Field({ nullable: true })
+  startDate?: Date;
 
   @Field({ nullable: true })
   endDate?: Date;
 
-  @Field(() => Float)
-  budget: number;
+  @Field(() => Float, { nullable: true })
+  budget?: number;
 
-  @Field()
-  clientId: string;
+  @Field({ nullable: true })
+  clientId?: string;
 
-  @Field()
-  projectManagerId: string;
+  @Field({ nullable: true })
+  projectManagerId?: string;
 
-  @Field(() => [ProjectUser])
+  @Field(() => [ProjectUser], { nullable: true })
   projectUsers?: ProjectUser[];
 
-  @Field()
-  status: string;
+  @Field({ nullable: true })
+  status?: string;
 }
 
 @ObjectType()

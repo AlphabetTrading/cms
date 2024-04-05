@@ -3,27 +3,27 @@ import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class Task extends BaseModel {
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string;
 
   @Field({ nullable: true })
   description?: string;
 
-  @Field()
-  startDate: Date;
+  @Field({ nullable: true })
+  startDate?: Date;
 
-  @Field()
-  dueDate: Date;
+  @Field({ nullable: true })
+  dueDate?: Date;
 
-  @Field()
-  status: string;
+  @Field({ nullable: true })
+  status?: string;
 
-  @Field()
-  priority: string;
+  @Field({ nullable: true })
+  priority?: string;
 
-  @Field()
-  assignedToId: string;
+  @Field({ nullable: true })
+  assignedToId?: string;
 
-  @Field()
-  milestoneId: string;
+  @Field({ nullable: true })
+  milestoneId?: string;
 }

@@ -9,12 +9,12 @@ export class Proforma extends BaseModel {
   @Field(() => String, { nullable: true })
   serialNumber?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   materialRequestId?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   vendor?: string;
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   photos?: string[];
 }

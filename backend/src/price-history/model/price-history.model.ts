@@ -5,12 +5,12 @@ import { Product as ProductModel } from 'src/product/model/product.model';
 
 @ObjectType()
 export class PriceHistory extends BaseModel {
-  @Field()
+  @Field({ nullable: true })
   productId?: string;
 
-  @Field(() => ProductModel)
+  @Field(() => ProductModel, { nullable: true })
   product?: Product;
 
-  @Field()
+  @Field({ nullable: true })
   price?: number;
 }

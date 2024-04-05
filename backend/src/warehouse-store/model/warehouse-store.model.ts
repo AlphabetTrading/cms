@@ -3,9 +3,9 @@ import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class WarehouseStore extends BaseModel {
-  @Field()
+  @Field({ nullable: true })
   name?: string;
 
-  @Field()
+  @Field({ nullable: true })
   location?: string;
 }

@@ -3,18 +3,18 @@ import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
 export class Milestone extends BaseModel {
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string;
 
   @Field({ nullable: true })
   description?: string;
 
-  @Field()
-  dueDate: Date;
+  @Field({ nullable: true })
+  dueDate?: Date;
 
-  @Field()
-  status: string;
+  @Field({ nullable: true })
+  status?: string;
 
-  @Field()
-  projectId: string;
+  @Field({ nullable: true })
+  projectId?: string;
 }
