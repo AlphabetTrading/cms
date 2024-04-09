@@ -1,16 +1,16 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Product, WarehouseStore } from '@prisma/client';
+import { ProductVariant, WarehouseStore } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { Product as ProductModel } from 'src/product/model/product.model';
+import { ProductVariant as ProductVariantModel } from 'src/product-variant/model/product-variant.model';
 import { WarehouseStore as WarehouseStoreModel } from 'src/warehouse-store/model/warehouse-store.model';
 
 @ObjectType()
-export class WarehouseProduct extends BaseModel{
+export class WarehouseProduct extends BaseModel {
   @Field({ nullable: true })
   productId?: string;
 
-  @Field(() => ProductModel, { nullable: true })
-  product?: Product;
+  @Field(() => ProductVariantModel, { nullable: true })
+  product?: ProductVariant;
 
   @Field({ nullable: true })
   warehouseId?: string;

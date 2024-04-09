@@ -22,6 +22,8 @@ import { WarehouseStoreModule } from './warehouse-store/warehouse-store.module';
 import { ProductModule } from './product/product.module';
 import { WarehouseProductModule } from './warehouse-product/warehouse-product.module';
 import { PriceHistoryModule } from './price-history/price-history.module';
+import { ProductVariantModule } from './product-variant/product-variant.module';
+import { ProductUseModule } from './product-use/product-use.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { PriceHistoryModule } from './price-history/price-history.module';
     ProductModule,
     WarehouseProductModule,
     PriceHistoryModule,
+    ProductVariantModule,
+    ProductUseModule,
   ],
 })
 export class AppModule {}

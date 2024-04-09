@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { ProductType } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 
 @ObjectType()
@@ -7,5 +8,5 @@ export class Product extends BaseModel {
   name?: string;
 
   @Field({ nullable: true })
-  description?: string;
+  productType?: ProductType;
 }

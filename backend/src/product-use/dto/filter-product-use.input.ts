@@ -1,25 +1,27 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Prisma } from '@prisma/client';
+import { Prisma, SubStructureUseDescription, SuperStructureUseDescription, UseType } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { FilterProductVariantInput } from 'src/product-variant/dto/filter-product-variant.input';
-import { FilterWarehouseStoreInput } from 'src/warehouse-store/dto/filter-warehouse-store.input';
 
 @InputType()
-export class FilterWarehouseProductInput {
+export class FilterProductUseInput {
   @Field({ nullable: true })
   id?: string;
 
   @Field({ nullable: true })
-  productId?: string;
+  productVariantId?: string;
 
   @Field(() => FilterProductVariantInput, { nullable: true })
-  product?: Prisma.ProductVariantWhereInput;
+  productVariant?: Prisma.ProductVariantWhereInput;
 
   @Field({ nullable: true })
-  warehouseId?: string
-  
-  @Field(() => FilterWarehouseStoreInput, { nullable: true })
-  warehouse?: Prisma.WarehouseStoreWhereInput;
+  useType?: UseType;
+
+  @Field({ nullable: true })
+  subStructureDescription?: SubStructureUseDescription;
+
+  @Field({ nullable: true })
+  superStructureDescription?: SuperStructureUseDescription;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

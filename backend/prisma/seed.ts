@@ -15,6 +15,8 @@ async function main() {
   await prisma.materialRequestVoucher.deleteMany();
   await prisma.priceHistory.deleteMany();
   await prisma.warehouseProduct.deleteMany();
+  await prisma.productUse.deleteMany();
+  await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
   await prisma.warehouseStore.deleteMany();
   await prisma.task.deleteMany();
@@ -27,6 +29,8 @@ async function main() {
 
   await seedUsers();
   await seedProducts();
+  await seedProductVariants();
+  await seedProductUses();
   await seedPriceHistory();
   await seedProjects();
   await seedProjectUsers();
@@ -375,30 +379,78 @@ async function seedProducts() {
     await prisma.product.createMany({
       data: [
         {
-          name: 'Product 1',
-          description: 'This is product 1',
+          name: 'Steel Bar',
+          productType: 'CONSTRUCTION',
         },
         {
-          name: 'Product 2',
-          description: 'This is product 2',
+          name: 'Socket Outlets',
+          productType: 'ELECTRICAL',
         },
         {
-          name: 'Product 3',
-          description: 'This is product 3',
+          name: 'Hand Wash Basin',
+          productType: 'SANITARY',
         },
         {
-          name: 'Product 4',
-          description: 'This is product 4',
+          name: 'Soap Dispencer',
+          productType: 'SANITARY',
         },
         {
-          name: 'Product 5',
-          description: 'This is product 5',
+          name: 'Reinforcement Steel Bar',
+          productType: 'CONSTRUCTION',
         },
       ],
     });
     console.log('Product models seeded successfully');
   } catch (error) {
     console.error('Error seeding product models:', error);
+  }
+}
+
+async function seedProductVariants() {
+  try {
+    const products = await prisma.product.findMany();
+    for (const product of products) {
+      await prisma.productVariant.createMany({
+        data: [
+          {
+            productId: product.id,
+            variant: 'Variant 1',
+          },
+          {
+            productId: product.id,
+            variant: 'Variant 2',
+          },
+        ],
+      });
+    }
+    console.log('Product Variant models seeded successfully');
+  } catch (error) {
+    console.error('Error seeding product models:', error);
+  }
+}
+
+async function seedProductUses() {
+  try {
+    const productVariants = await prisma.productVariant.findMany();
+    for (const variant of productVariants) {
+      await prisma.productUse.createMany({
+        data: [
+          {
+            productVariantId: variant.id,
+            useType: 'SUB_STRUCTURE',
+            subStructureDescription: 'CONCRETE_WORK',
+          },
+          {
+            productVariantId: variant.id,
+            useType: 'SUPER_STRUCTURE',
+            superStructureDescription: 'SANITARY_INSTALLATION',
+          },
+        ],
+      });
+    }
+    console.log('Product Use models seeded successfully');
+  } catch (error) {
+    console.error('Error seeding product use models:', error);
   }
 }
 
@@ -436,14 +488,14 @@ async function seedWarehouseStores() {
 
 async function seedWarehouseProducts() {
   try {
-    const products = await prisma.product.findMany();
+    const productVariants = await prisma.productVariant.findMany();
     const warehouseStores = await prisma.warehouseStore.findMany();
     await prisma.warehouseProduct.createMany({
-      data: products
-        .map((product) => {
+      data: productVariants
+        .map((variant) => {
           return warehouseStores.map((warehouseStore) => {
             return {
-              productId: product.id,
+              productId: variant.id,
               warehouseId: warehouseStore.id,
               quantity: Math.floor(Math.random() * 100),
             };
@@ -458,13 +510,13 @@ async function seedWarehouseProducts() {
 }
 async function seedPriceHistory() {
   try {
-    const products = await prisma.product.findMany();
+    const productVariants = await prisma.productVariant.findMany();
     await prisma.priceHistory.createMany({
-      data: products
-        .map((product) => {
+      data: productVariants
+        .map((variant) => {
           return {
-            productId: product.id,
-            price: 100,
+            productId: variant.id,
+            price: Math.floor(Math.random() * 100),
           };
         })
         .flat(),
@@ -548,7 +600,7 @@ async function seedMaterialIssueVouchers() {
           },
         ];
 
-        const products = await prisma.product.findMany();
+        const productUses = await prisma.productUse.findMany();
 
         for (const data of issueVouchers) {
           await prisma.materialIssueVoucher.create({
@@ -558,14 +610,14 @@ async function seedMaterialIssueVouchers() {
                 create: [
                   {
                     quantity: 2,
-                    productId: products[0].id,
+                    productId: productUses[0].id,
                     totalCost: 100,
                     unitCost: 50,
                     unitOfMeasure: 'quintal',
                   },
                   {
                     quantity: 20,
-                    productId: products[1].id,
+                    productId: productUses[1].id,
                     totalCost: 100,
                     unitCost: 5,
                     unitOfMeasure: 'kg',
@@ -664,7 +716,7 @@ async function seedMaterialReturnVouchers() {
           },
         ];
 
-        const products = await prisma.product.findMany();
+        const productVariants = await prisma.productVariant.findMany();
 
         for (const data of returnVouchers) {
           await prisma.materialReturnVoucher.create({
@@ -675,7 +727,7 @@ async function seedMaterialReturnVouchers() {
                   {
                     quantity: 10,
                     issueVoucherId: material_issues[0].id,
-                    productId: products[0].id,
+                    productId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 50,
                     unitOfMeasure: 'quintal',
@@ -683,7 +735,7 @@ async function seedMaterialReturnVouchers() {
                   {
                     quantity: 10,
                     issueVoucherId: material_issues[1].id,
-                    productId: products[1].id,
+                    productId: productVariants[1].id,
                     totalCost: 100,
                     unitCost: 5,
                     unitOfMeasure: 'kg',
@@ -691,7 +743,7 @@ async function seedMaterialReturnVouchers() {
                   {
                     quantity: 100,
                     issueVoucherId: material_issues[1].id,
-                    productId: products[2].id,
+                    productId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
                     unitOfMeasure: 'box',
@@ -782,7 +834,7 @@ async function seedMaterialReceiveVouchers() {
           },
         ];
 
-        const products = await prisma.product.findMany();
+        const productVariants = await prisma.productVariant.findMany();
 
         for (const data of receiveVouchers) {
           await prisma.materialReceiveVoucher.create({
@@ -792,21 +844,21 @@ async function seedMaterialReceiveVouchers() {
                 create: [
                   {
                     quantity: 10,
-                    productId: products[0].id,
+                    productId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 50,
                     unitOfMeasure: 'quintal',
                   },
                   {
                     quantity: 10,
-                    productId: products[1].id,
+                    productId: productVariants[1].id,
                     totalCost: 100,
                     unitCost: 5,
                     unitOfMeasure: 'kg',
                   },
                   {
                     quantity: 100,
-                    productId: products[2].id,
+                    productId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
                     unitOfMeasure: 'box',
@@ -880,7 +932,7 @@ async function seedMaterialRequestVouchers() {
           },
         ];
 
-        const products = await prisma.product.findMany();
+        const productVariants = await prisma.productVariant.findMany();
 
         for (const data of requestVouchers) {
           await prisma.materialRequestVoucher.create({
@@ -889,19 +941,19 @@ async function seedMaterialRequestVouchers() {
               items: {
                 create: [
                   {
-                    productId: products[0].id,
+                    productId: productVariants[0].id,
                     unitOfMeasure: 'quintal',
                     quantity: 100,
                     remark: 'Remark 1',
                   },
                   {
-                    productId: products[1].id,
+                    productId: productVariants[1].id,
                     unitOfMeasure: 'kg',
                     quantity: 10,
                     remark: 'Remark 2',
                   },
                   {
-                    productId: products[2].id,
+                    productId: productVariants[2].id,
                     unitOfMeasure: 'kg',
                     quantity: 10,
                     remark: 'Remark 3',
@@ -1003,7 +1055,7 @@ async function seedPurchaseOrders() {
           },
         ];
 
-        const products = await prisma.product.findMany();
+        const productVariants = await prisma.productVariant.findMany();
 
         for (const data of purchaseOrders) {
           await prisma.purchaseOrder.create({
@@ -1012,21 +1064,21 @@ async function seedPurchaseOrders() {
               items: {
                 create: [
                   {
-                    productId: products[0].id,
+                    productId: productVariants[0].id,
                     quantity: 10,
                     totalPrice: 1000,
                     unitPrice: 100,
                     unitOfMeasure: 'quintal',
                   },
                   {
-                    productId: products[1].id,
+                    productId: productVariants[1].id,
                     quantity: 10,
                     totalPrice: 1500,
                     unitPrice: 150,
                     unitOfMeasure: 'kg',
                   },
                   {
-                    productId: products[2].id,
+                    productId: productVariants[2].id,
                     quantity: 1000,
                     totalPrice: 50000,
                     unitPrice: 50,

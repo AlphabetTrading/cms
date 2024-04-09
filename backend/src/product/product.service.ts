@@ -21,11 +21,8 @@ export class ProductService {
 
     const createdProduct = await this.prisma.product.create({
       data: {
-        ...createProduct,
-      },
-      include: {
-        PriceHistory: true,
-      },
+        ...createProduct
+      }
     });
 
     return createdProduct;
@@ -47,9 +44,6 @@ export class ProductService {
       take,
       where,
       orderBy,
-      include: {
-        PriceHistory: true,
-      },
     });
     return products;
   }
@@ -57,9 +51,6 @@ export class ProductService {
   async getProductById(productId: string): Promise<Product | null> {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
-      include: {
-        PriceHistory: true,
-      },
     });
 
     return product;
@@ -81,9 +72,6 @@ export class ProductService {
       where: { id: productId },
       data: {
         ...updateData,
-      },
-      include: {
-        PriceHistory: true,
       },
     });
 

@@ -45,7 +45,8 @@ export class WarehouseProductResolver {
           OR: [
             {
               product: {
-                name: filterWarehouseProductInput?.product?.name,
+                variant: filterWarehouseProductInput?.product?.variant,
+                productId: filterWarehouseProductInput.product.productId,
               },
             },
             {

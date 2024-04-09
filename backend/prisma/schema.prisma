@@ -51,16 +51,43 @@ model ProjectUser {
 }
 
 model Product {
+  id             String           @id @default(uuid())
+  name           String           @unique
+  productType    ProductType
+  ProductVariant ProductVariant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductVariant {
   id                  String                @id @default(uuid())
-  name                String                @unique
+  productId           String
+  product             Product               @relation(fields: [productId], references: [id])
+  variant             String
   description         String?
-  WarehouseProduct    WarehouseProduct[]
   PriceHistory        PriceHistory[]
+  ProductUse          ProductUse[]
+  WarehouseProduct    WarehouseProduct[]
   MaterialRequestItem MaterialRequestItem[]
   MaterialReceiveItem MaterialReceiveItem[]
-  IssueVoucherItem    IssueVoucherItem[]
   ReturnVoucherItem   ReturnVoucherItem[]
   PurchaseOrderItem   PurchaseOrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, variant])
+}
+
+model ProductUse {
+  id                        String                        @id @default(uuid())
+  productVariantId          String
+  productVariant            ProductVariant                @relation(fields: [productVariantId], references: [id])
+  useType                   UseType
+  subStructureDescription   SubStructureUseDescription?
+  superStructureDescription SuperStructureUseDescription?
+  IssueVoucherItem          IssueVoucherItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -72,9 +99,10 @@ model WarehouseStore {
   location              String
   products              WarehouseProduct[]
   purchaseOrders        PurchaseOrder[]
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
   WarehouseStoreManager WarehouseStoreManager[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([name, location])
 }
@@ -91,11 +119,11 @@ model WarehouseStoreManager {
 
 model WarehouseProduct {
   id          String         @id @default(uuid())
+  quantity    Float
   productId   String
-  product     Product        @relation(fields: [productId], references: [id])
+  product     ProductVariant @relation(fields: [productId], references: [id])
   warehouseId String
   warehouse   WarehouseStore @relation(fields: [warehouseId], references: [id])
-  quantity    Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,9 +132,9 @@ model WarehouseProduct {
 }
 
 model PriceHistory {
-  id        String  @id @default(uuid())
+  id        String         @id @default(uuid())
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   ProductVariant @relation(fields: [productId], references: [id])
   price     Float
 
   createdAt DateTime @default(now())
@@ -153,15 +181,15 @@ model PurchaseOrder {
 }
 
 model PurchaseOrderItem {
-  id              String        @id @default(uuid())
+  id              String         @id @default(uuid())
   productId       String
-  product         Product       @relation(fields: [productId], references: [id])
+  product         ProductVariant @relation(fields: [productId], references: [id])
   unitOfMeasure   String
   quantity        Float
   unitPrice       Float
   totalPrice      Float
   remark          String?
-  PurchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], name: "items")
+  PurchaseOrder   PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], name: "items")
   purchaseOrderId String
 
   createdAt DateTime @default(now())
@@ -190,7 +218,7 @@ model MaterialReturnVoucher {
 model ReturnVoucherItem {
   id                      String                @id @default(uuid())
   productId               String
-  product                 Product               @relation(fields: [productId], references: [id])
+  product                 ProductVariant        @relation(fields: [productId], references: [id])
   issueVoucherId          String
   issueVoucher            MaterialIssueVoucher  @relation(fields: [issueVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   unitOfMeasure           String
@@ -228,7 +256,7 @@ model MaterialIssueVoucher {
 model IssueVoucherItem {
   id                     String               @id @default(uuid())
   productId              String
-  product                Product              @relation(fields: [productId], references: [id])
+  product                ProductUse           @relation(fields: [productId], references: [id])
   unitOfMeasure          String
   quantity               Float
   unitCost               Float
@@ -268,7 +296,7 @@ model MaterialReceiveVoucher {
 model MaterialReceiveItem {
   id                       String                 @id @default(uuid())
   productId                String
-  product                  Product                @relation(fields: [productId], references: [id])
+  product                  ProductVariant         @relation(fields: [productId], references: [id])
   unitOfMeasure            String
   quantity                 Float
   unitCost                 Float
@@ -304,7 +332,7 @@ model MaterialRequestVoucher {
 model MaterialRequestItem {
   id                       String                 @id @default(uuid())
   productId                String
-  product                  Product                @relation(fields: [productId], references: [id])
+  product                  ProductVariant         @relation(fields: [productId], references: [id])
   unitOfMeasure            String
   quantity                 Float
   remark                   String?
@@ -389,4 +417,35 @@ enum ApprovalStatus {
   PENDING
   COMPLETED
   DECLINED
+}
+
+enum ProductType {
+  CONSTRUCTION
+  SANITARY
+  ELECTRICAL
+}
+
+enum UseType {
+  SUB_STRUCTURE
+  SUPER_STRUCTURE
+}
+
+enum SubStructureUseDescription {
+  EXCAVATION_AND_EARTH_WORK
+  CONCRETE_WORK
+  MASONRY_WORK
+}
+
+enum SuperStructureUseDescription {
+  CONCRETE_WORK
+  BLOCK_WORK
+  ROOFING
+  CARPENTRY_AND_JOINERY
+  METAL_WORK
+  PLASTERING_WORK
+  FINISHING_WORK
+  PAINTING_WORK
+  SANITARY_INSTALLATION
+  ELECTRICAL_INSTALLATION
+  MECHANICAL_INSTALLATION
 }

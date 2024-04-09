@@ -22,7 +22,7 @@ export class Project extends BaseModel {
   clientId?: string;
 
   @Field(() => UserModel, { nullable: true })
-  Client?: User;
+  client?: User;
 
   @Field({ nullable: true })
   projectManagerId?: string;
