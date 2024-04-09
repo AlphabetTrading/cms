@@ -2,7 +2,7 @@ import { InputType, Field } from '@nestjs/graphql';
 import {
   SubStructureUseDescription,
   SuperStructureUseDescription,
-  UseType,
+  UseType
 } from '@prisma/client';
 
 @InputType()

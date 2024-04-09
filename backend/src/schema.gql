@@ -103,8 +103,21 @@ input CreatePriceHistoryInput {
 }
 
 input CreateProductInput {
-  description: String
   name: String!
+  productType: String!
+}
+
+input CreateProductUseInput {
+  productVariantId: String!
+  subStructureDescription: SubStructureUseDescription
+  superStructureDescription: SuperStructureUseDescription
+  useType: UseType!
+}
+
+input CreateProductVariantInput {
+  description: String
+  productId: String!
+  variant: String!
 }
 
 input CreateProformaInput {
@@ -282,7 +295,7 @@ input FilterMilestoneInput {
 input FilterPriceHistoryInput {
   createdAt: DateTimeFilter
   id: String
-  product: FilterProductInput
+  product: FilterProductVariantInput
   productId: String
 }
 
@@ -290,6 +303,23 @@ input FilterProductInput {
   createdAt: DateTimeFilter
   id: String
   name: StringFilter
+}
+
+input FilterProductUseInput {
+  createdAt: DateTimeFilter
+  id: String
+  productVariant: FilterProductVariantInput
+  productVariantId: String
+  subStructureDescription: String
+  superStructureDescription: String
+  useType: String
+}
+
+input FilterProductVariantInput {
+  createdAt: DateTimeFilter
+  id: String
+  productId: String
+  variant: StringFilter
 }
 
 input FilterProformaInput {
@@ -356,7 +386,7 @@ input FilterUserDocumentsInput {
 input FilterWarehouseProductInput {
   createdAt: DateTimeFilter
   id: String
-  product: FilterProductInput
+  product: FilterProductVariantInput
   productId: String
   warehouse: FilterWarehouseStoreInput
   warehouseId: String
@@ -534,6 +564,8 @@ type Mutation {
   createMilestone(createMilestoneInput: CreateMilestoneInput!): Milestone!
   createPriceHistory(createPriceHistoryInput: CreatePriceHistoryInput!): PriceHistory!
   createProduct(createProductInput: CreateProductInput!): Product!
+  createProductUse(createProductUseInput: CreateProductUseInput!): ProductUse!
+  createProductVariant(createProductVariantInput: CreateProductVariantInput!): ProductVariant!
   createProforma(createProformaInput: CreateProformaInput!): Proforma!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
@@ -549,6 +581,8 @@ type Mutation {
   deleteMilestone(id: String!): Milestone!
   deletePriceHistory(id: String!): PriceHistory!
   deleteProduct(id: String!): Product!
+  deleteProductUse(id: String!): ProductUse!
+  deleteProductVariant(id: String!): ProductVariant!
   deleteProforma(id: String!): Proforma!
   deleteProject(id: String!): Project!
   deletePurchaseOrder(id: String!): PurchaseOrderVoucher!
@@ -565,6 +599,8 @@ type Mutation {
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
   updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
+  updateProductUse(id: String!, updateProductUseInput: UpdateProductUseInput!): ProductUse!
+  updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
   updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
@@ -626,6 +662,18 @@ input OrderByProductInput {
   updatedAt: OrderDirection
 }
 
+input OrderByProductUseInput {
+  createdAt: OrderDirection
+  productVariantId: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input OrderByProductVariantInput {
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
+  variant: OrderDirection
+}
+
 input OrderByProformaInput {
   createdAt: OrderDirection
   serialNumber: OrderDirection
@@ -652,7 +700,7 @@ input OrderByTaskInput {
 
 input OrderByWarehouseProductInput {
   createdAt: OrderDirection
-  product: OrderByProductInput
+  product: OrderByProductVariantInput
   quantity: OrderDirection
   updatedAt: OrderDirection
   warehouse: OrderByWarehouseStoreInput
@@ -714,6 +762,16 @@ type PaginationPriceHistories {
   meta: PaginationInfo
 }
 
+type PaginationProductUses {
+  items: [ProductUse!]!
+  meta: PaginationInfo
+}
+
+type PaginationProductVariants {
+  items: [ProductVariant!]!
+  meta: PaginationInfo
+}
+
 type PaginationProducts {
   items: [Product!]!
   meta: PaginationInfo
@@ -754,7 +812,7 @@ type PriceHistory {
   createdAt: DateTime!
   id: ID!
   price: Float
-  product: Product
+  product: ProductVariant
   productId: String
 
   """Identifies the date and time when the object was last updated."""
@@ -764,12 +822,38 @@ type PriceHistory {
 type Product {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
-  description: String
   id: ID!
   name: String
+  productType: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+}
+
+type ProductUse {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  productVariant: ProductVariant
+  productVariantId: String
+  subStructureDescription: SubStructureUseDescription
+  superStructureDescription: SuperStructureUseDescription
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  useType: UseType
+}
+
+type ProductVariant {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  productId: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  variant: String
 }
 
 type Proforma {
@@ -787,14 +871,15 @@ type Proforma {
 }
 
 type Project {
-  Client: User
   budget: Float
+  client: User
   clientId: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   endDate: DateTime
   id: ID!
+  milestones: [Milestone!]
   name: String
   projectManager: User
   projectManagerId: String
@@ -870,6 +955,10 @@ type Query {
   getPriceHistory(id: String!): PriceHistory!
   getProduct(id: String!): Product!
   getProductPriceHistories(filterPriceHistoryInput: FilterPriceHistoryInput, orderBy: OrderByPriceHistoryInput, paginationInput: PaginationInput): PaginationPriceHistories!
+  getProductUse(id: String!): ProductUse!
+  getProductUses(filterProductUseInput: FilterProductUseInput, orderBy: OrderByProductUseInput, paginationInput: PaginationInput): PaginationProductUses!
+  getProductVariant(id: String!): ProductVariant!
+  getProductVariants(filterProductVariantInput: FilterProductVariantInput, orderBy: OrderByProductVariantInput, paginationInput: PaginationInput): PaginationProductVariants!
   getProducts(filterProductInput: FilterProductInput, orderBy: OrderByProductInput, paginationInput: PaginationInput): PaginationProducts!
   getProformaById(id: String!): Proforma!
   getProformas(filterProformaInput: FilterProformaInput, orderBy: OrderByProformaInput, paginationInput: PaginationInput): PaginationProformas!
@@ -895,6 +984,28 @@ input StringFilter {
   mode: String = "insensitive"
   not: String
   startsWith: String
+}
+
+"""Possible values for sub structure use description"""
+enum SubStructureUseDescription {
+  CONCRETE_WORK
+  EXCAVATION_AND_EARTH_WORK
+  MASONRY_WORK
+}
+
+"""Possible values for super structure use description"""
+enum SuperStructureUseDescription {
+  BLOCK_WORK
+  CARPENTRY_AND_JOINERY
+  CONCRETE_WORK
+  ELECTRICAL_INSTALLATION
+  FINISHING_WORK
+  MECHANICAL_INSTALLATION
+  METAL_WORK
+  PAINTING_WORK
+  PLASTERING_WORK
+  ROOFING
+  SANITARY_INSTALLATION
 }
 
 type Task {
@@ -1011,8 +1122,21 @@ input UpdatePriceHistoryInput {
 }
 
 input UpdateProductInput {
-  description: String
   name: String
+  productType: String
+}
+
+input UpdateProductUseInput {
+  productVariantId: String!
+  subStructureDescription: SubStructureUseDescription
+  superStructureDescription: SuperStructureUseDescription
+  useType: UseType!
+}
+
+input UpdateProductVariantInput {
+  description: String
+  productId: String
+  variant: String
 }
 
 input UpdateProformaInput {
@@ -1096,6 +1220,12 @@ input UpdateWarehouseStoreInput {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
+"""Possible values for use type"""
+enum UseType {
+  SUB_STRUCTURE
+  SUPER_STRUCTURE
+}
+
 type User {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
@@ -1122,7 +1252,7 @@ type WarehouseProduct {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  product: Product
+  product: ProductVariant
   productId: String
   quantity: Float
 
