@@ -2,7 +2,7 @@ import 'package:cms_mobile/features/authentication/domain/entities/user_entity.d
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
-import 'package:cms_mobile/features/materials/domain/entities/material.dart';
+import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:equatable/equatable.dart';
 
 enum MaterialRequestStatus { pending, approved, declined }
@@ -86,7 +86,7 @@ class MaterialRequestItem extends Equatable {
 
 class MaterialRequestMaterialEntity extends Equatable {
   final double requestedQuantity;
-  final MaterialEntity material;
+  final ItemEntity material;
   final String? remark;
   final String unit;
 

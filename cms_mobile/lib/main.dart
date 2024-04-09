@@ -5,8 +5,10 @@ import 'package:cms_mobile/features/home/presentation/bloc/material_transactions
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +44,12 @@ void main() async {
           BlocProvider<MaterialRequestLocalBloc>(
             create: (context) => sl<MaterialRequestLocalBloc>(),
           ),
-         
+          BlocProvider<WarehouseBloc>(
+            create: (context) => sl<WarehouseBloc>(),
+          ),
+          BlocProvider<ItemBloc>(
+            create: (context) => sl<ItemBloc>(),
+          ),
         ],
         child: EasyLocalization(
           path: 'assets/translations',

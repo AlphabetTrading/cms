@@ -7,6 +7,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final bool enableFilter;
   final void Function(dynamic value) onSelected;
   final T? initialSelection;
+  final Widget? trailingIcon;
 
   const CustomDropdown(
       {super.key,
@@ -15,6 +16,7 @@ class CustomDropdown<T> extends StatelessWidget {
       required this.label,
       this.errorMessage,
       required this.onSelected,
+      this.trailingIcon,
       this.initialSelection});
 
   @override
@@ -27,6 +29,9 @@ class CustomDropdown<T> extends StatelessWidget {
           style: Theme.of(context).textTheme.labelSmall,
         ),
         DropdownMenu<T>(
+          trailingIcon: trailingIcon != null
+              ? Icon(Icons.local_airport)
+              : Icon(Icons.arrow_drop_down),
           initialSelection: initialSelection,
           expandedInsets: EdgeInsets.zero,
           enableFilter: true,

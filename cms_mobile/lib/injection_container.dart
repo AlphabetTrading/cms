@@ -24,12 +24,17 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_state.dart';
-import 'package:cms_mobile/features/materials/data/data_sources/remote_data_source.dart';
-import 'package:cms_mobile/features/materials/data/repository/material_repository_impl.dart';
-import 'package:cms_mobile/features/materials/domain/repository/material_repository.dart';
-import 'package:cms_mobile/features/materials/domain/usecases/get_materials.dart';
-import 'package:cms_mobile/features/materials/presentation/bloc/materials_bloc.dart';
+import 'package:cms_mobile/features/items/data/data_sources/remote_data_source.dart';
+import 'package:cms_mobile/features/items/data/repository/item_repository_impl.dart';
+import 'package:cms_mobile/features/items/domain/repository/item_repository.dart';
+import 'package:cms_mobile/features/items/domain/usecases/get_items.dart';
+import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
+import 'package:cms_mobile/features/warehouse/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/warehouse/data/repository/warehouse_repository_impl.dart';
+import 'package:cms_mobile/features/warehouse/domain/repository/warehouse_repository.dart';
+import 'package:cms_mobile/features/warehouse/domain/usecases/get_warehouses.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -58,6 +63,17 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
+
+  sl.registerLazySingleton<WarehouseDataSourceImpl>(
+    () => WarehouseDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
+  sl.registerLazySingleton<ItemDataSourceImpl>(
+    () => ItemDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
   // repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(
@@ -72,6 +88,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<VouchersRepository>(
     () => VoucherRepositoryImpl(dataSource: sl<VoucherDataSourceImpl>()),
+  );
+
+  sl.registerLazySingleton<WarehouseRepository>(
+    () => WarehouseRepositoryImpl(dataSource: sl<WarehouseDataSourceImpl>()),
+  );
+
+  sl.registerLazySingleton<ItemRepository>(
+    () => ItemRepositoryImpl(dataSource: sl<ItemDataSourceImpl>()),
   );
 
   // usecase
@@ -118,6 +142,18 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetWarehousesUseCase>(
+    () => GetWarehousesUseCase(
+      sl<WarehouseRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetItemsUseCase>(
+    () => GetItemsUseCase(
+      sl<ItemRepository>(),
+    ),
+  );
+
   // bloc
 
   // sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
@@ -148,7 +184,14 @@ Future<void> initializeDependencies() async {
     () => MaterialRequestLocalBloc(),
   );
 
-    sl.registerFactory<MaterialRequestFormCubit>(
+  sl.registerFactory<MaterialRequestFormCubit>(
     () => MaterialRequestFormCubit(),
+  );
+
+  sl.registerFactory<WarehouseBloc>(
+    () => WarehouseBloc(sl<GetWarehousesUseCase>()),
+  );
+  sl.registerFactory<ItemBloc>(
+    () => ItemBloc(sl<GetItemsUseCase>()),
   );
 }

@@ -1,6 +1,6 @@
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/materials/data/models/material.dart';
-import 'package:cms_mobile/features/materials/domain/entities/material.dart';
+import 'package:cms_mobile/features/items/data/models/item.dart';
+import 'package:cms_mobile/features/items/domain/entities/item.dart';
 
 class MaterialRequestModel extends MaterialRequestEntity {
   const MaterialRequestModel({
@@ -111,7 +111,7 @@ class MaterialRequestItemModel extends MaterialRequestItem {
 class MaterialRequestMaterialModel extends MaterialRequestMaterialEntity {
   const MaterialRequestMaterialModel(
       {required double requestedQuantity,
-      required MaterialEntity material,
+      required ItemEntity material,
       required String? remark,
       required String unit})
       : super(
