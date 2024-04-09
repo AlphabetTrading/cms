@@ -787,6 +787,7 @@ type Proforma {
 }
 
 type Project {
+  Client: User
   budget: Float
   clientId: String
 
@@ -795,6 +796,7 @@ type Project {
   endDate: DateTime
   id: ID!
   name: String
+  projectManager: User
   projectManagerId: String
   projectUsers: [ProjectUser!]
   startDate: DateTime
