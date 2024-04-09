@@ -42,7 +42,7 @@ class _MyLoginFormState extends State<LoginForm> {
   }
 
   void _forgotPassword() {
-    context.push(RouteNames.forgotPassword);
+    context.push('/${RoutePaths.forgotPassword}');
   }
 
   void _onPhoneChange() {
@@ -128,7 +128,7 @@ class _MyLoginFormState extends State<LoginForm> {
         } else if (state is LoginSuccess) {
           // update the auth state
           context.read<AuthBloc>().add(AuthIsSignedIn());
-          context.go(RouteNames.home);
+          context.goNamed(RouteNames.home);
 
           // reset the form
           _resetForm();

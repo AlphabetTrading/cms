@@ -4,7 +4,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
-import 'package:cms_mobile/features/materials/domain/entities/material.dart';
+import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -19,20 +19,23 @@ class CreateMaterialRequestForm extends StatelessWidget {
     this.index = -1,
   });
 
-  final List<MaterialEntity> materials = [
-    const MaterialEntity(
+  final List<ItemEntity> materials = [
+    const ItemEntity(
         id: "1",
         name: "Brick",
         quantity: 10,
+        unit: "Pcs",
         iconSrc: "assets/icons/material/light/brick.svg"),
-    const MaterialEntity(
+    const ItemEntity(
         id: "2",
         name: "Cement",
+        unit: "Quintal",
         quantity: 510,
         iconSrc: "assets/icons/material/light/cement.svg"),
-    const MaterialEntity(
+    const ItemEntity(
         id: "3",
         name: "Sand",
+        unit: "Quintal",
         quantity: 256,
         iconSrc: "assets/icons/material/light/sand.svg"),
   ];
@@ -61,10 +64,11 @@ class CreateMaterialRequestForm extends StatelessWidget {
                 materialRequestFormCubit.materialChanged(value),
             dropdownMenuEntries: materials
                 .map((e) =>
-                    DropdownMenuEntry<MaterialEntity>(label: e.name, value: e))
+                    DropdownMenuEntry<ItemEntity>(label: e.name, value: e))
                 .toList(),
             enableFilter: false,
             errorMessage: materialDropdown.errorMessage, label: 'Material',
+            // trailingIcon: Text(""),
             // label: "Material"
           ),
           const SizedBox(
