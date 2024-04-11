@@ -51,9 +51,6 @@ export class MaterialReceiveItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String, { nullable: true })
-  unitOfMeasure?: string;
-
   @Field(() => Number, { nullable: true })
   quantity?: number;
 

@@ -27,10 +27,7 @@ export class MaterialRequestService {
           items: {
             create: createMaterialRequest.items.map((item) => ({
               productId: item.productId,
-              unitOfMeasure: item.unitOfMeasure,
               quantity: item.quantity,
-              inStockQuantity: item.inStockQuantity,
-              toBePurchasedQuantity: item.toBePurchasedQuantity,
               remark: item.remark,
             })),
           },

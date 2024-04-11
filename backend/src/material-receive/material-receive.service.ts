@@ -27,7 +27,6 @@ export class MaterialReceiveService {
           items: {
             create: createMaterialReceive.items.map((item) => ({
               productId: item.productId,
-              unitOfMeasure: item.unitOfMeasure,
               quantity: item.quantity,
               unitCost: item.unitCost,
               totalCost: item.totalCost,

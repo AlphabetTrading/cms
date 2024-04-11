@@ -9,10 +9,6 @@ export class CreatePurchaseOrderItemInput {
   productId: string;
 
   @IsNotEmpty()
-  @Field(() => String)
-  unitOfMeasure: string;
-
-  @IsNotEmpty()
   @Field(() => Number)
   quantity: number;
 

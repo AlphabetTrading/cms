@@ -11,10 +11,6 @@ export class UpdatePurchaseOrderItemInput extends PartialType(
   productId?: string;
 
   @IsOptional()
-  @Field(() => String, { nullable: true })
-  unitOfMeasure?: string;
-
-  @IsOptional()
   @Field(() => Number, { nullable: true })
   quantityRequested?: number;
 

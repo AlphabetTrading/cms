@@ -36,24 +36,24 @@ export class ProductUseResolver {
         {
           OR: [
             {
-              productVariantId: filterProductUseInput.productVariantId,
+              productVariantId: filterProductUseInput?.productVariantId,
             },
             {
-              productVariant: filterProductUseInput.productVariant,
+              productVariant: filterProductUseInput?.productVariant,
             },
 
             {
               subStructureDescription:
-                filterProductUseInput.subStructureDescription,
+                filterProductUseInput?.subStructureDescription,
             },
 
             {
               superStructureDescription:
-                filterProductUseInput.superStructureDescription,
+                filterProductUseInput?.superStructureDescription,
             },
 
             {
-              useType: filterProductUseInput.useType,
+              useType: filterProductUseInput?.useType,
             },
           ],
         },

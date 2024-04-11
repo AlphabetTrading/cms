@@ -8,11 +8,6 @@ export class CreateMaterialReceiveItemInput {
   @IsString()
   productId: string;
 
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  unitOfMeasure: string;
-
   @Field(() => Number)
   @IsNotEmpty()
   quantity: number;

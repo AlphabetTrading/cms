@@ -48,9 +48,6 @@ export class MaterialReturnItem extends BaseModel {
   @Field(() => String, { nullable: true })
   issueVoucherId?: string;
 
-  @Field(() => String, { nullable: true })
-  unitOfMeasure?: string;
-
   @Field(() => Number, { nullable: true })
   quantityReturned?: number;
 

@@ -10,18 +10,8 @@ export class UpdateMaterialRequestItemInput extends PartialType(
   @IsString()
   productId?: string;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  unitOfMeasure?: string;
-
   @Field(() => Number, { nullable: true })
   quantity?: number;
-
-  @Field(() => Number, { nullable: true })
-  inStockQuantity?: number;
-
-  @Field(() => Number, { nullable: true })
-  toBePurchasedQuantity?: number;
 
   @Field(() => String, { nullable: true })
   remark?: string;

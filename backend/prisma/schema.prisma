@@ -66,6 +66,7 @@ model ProductVariant {
   product             Product               @relation(fields: [productId], references: [id])
   variant             String
   description         String?
+  unitOfMeasure       UnitOfMeasure
   PriceHistory        PriceHistory[]
   ProductUse          ProductUse[]
   WarehouseProduct    WarehouseProduct[]
@@ -184,7 +185,6 @@ model PurchaseOrderItem {
   id              String         @id @default(uuid())
   productId       String
   product         ProductVariant @relation(fields: [productId], references: [id])
-  unitOfMeasure   String
   quantity        Float
   unitPrice       Float
   totalPrice      Float
@@ -221,7 +221,6 @@ model ReturnVoucherItem {
   product                 ProductVariant        @relation(fields: [productId], references: [id])
   issueVoucherId          String
   issueVoucher            MaterialIssueVoucher  @relation(fields: [issueVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  unitOfMeasure           String
   quantity                Float
   unitCost                Float
   totalCost               Float
@@ -257,7 +256,6 @@ model IssueVoucherItem {
   id                     String               @id @default(uuid())
   productId              String
   product                ProductUse           @relation(fields: [productId], references: [id])
-  unitOfMeasure          String
   quantity               Float
   unitCost               Float
   totalCost              Float
@@ -297,7 +295,6 @@ model MaterialReceiveItem {
   id                       String                 @id @default(uuid())
   productId                String
   product                  ProductVariant         @relation(fields: [productId], references: [id])
-  unitOfMeasure            String
   quantity                 Float
   unitCost                 Float
   totalCost                Float
@@ -333,7 +330,6 @@ model MaterialRequestItem {
   id                       String                 @id @default(uuid())
   productId                String
   product                  ProductVariant         @relation(fields: [productId], references: [id])
-  unitOfMeasure            String
   quantity                 Float
   remark                   String?
   materialRequestVoucherId String
@@ -428,6 +424,17 @@ enum ProductType {
 enum UseType {
   SUB_STRUCTURE
   SUPER_STRUCTURE
+}
+
+enum UnitOfMeasure {
+  KG
+  BERGA
+  QUINTAL
+  M2
+  M3
+  LITER
+  PCS
+  PACKET
 }
 
 enum SubStructureUseDescription {

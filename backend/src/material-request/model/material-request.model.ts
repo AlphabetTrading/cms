@@ -42,17 +42,8 @@ export class MaterialRequestItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String, { nullable: true })
-  unitOfMeasure?: string;
-
   @Field(() => Number, { nullable: true })
   quantity?: number;
-
-  @Field(() => Number, { nullable: true })
-  inStockQuantity?: number;
-
-  @Field(() => Number, { nullable: true })
-  toBePurchasedQuantity?: number;
 
   @Field(() => String, { nullable: true })
   remark?: string;

@@ -14,10 +14,6 @@ export class UpdateMaterialReturnItemInput extends PartialType(
   @IsString()
   issueVoucherId?: string;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  unitOfMeasure?: string;
-
   @Field(() => Number, { nullable: true })
   quantity?: number;
 

@@ -33,7 +33,6 @@ input CreateMaterialIssueItemInput {
   remark: String
   totalCost: Float!
   unitCost: Float!
-  unitOfMeasure: String!
 }
 
 input CreateMaterialReceiveInput {
@@ -52,7 +51,6 @@ input CreateMaterialReceiveItemInput {
   quantity: Float!
   totalCost: Float!
   unitCost: Float!
-  unitOfMeasure: String!
 }
 
 input CreateMaterialRequestInput {
@@ -63,12 +61,9 @@ input CreateMaterialRequestInput {
 }
 
 input CreateMaterialRequestItemInput {
-  inStockQuantity: Float
   productId: String!
   quantity: Float!
   remark: String
-  toBePurchasedQuantity: Float
-  unitOfMeasure: String!
 }
 
 input CreateMaterialReturnInput {
@@ -86,7 +81,6 @@ input CreateMaterialReturnItemInput {
   remark: String
   totalCost: Float!
   unitCost: Float!
-  unitOfMeasure: String!
 }
 
 input CreateMilestoneInput {
@@ -117,6 +111,7 @@ input CreateProductUseInput {
 input CreateProductVariantInput {
   description: String
   productId: String!
+  unitOfMeasure: UnitOfMeasure!
   variant: String!
 }
 
@@ -161,7 +156,6 @@ input CreatePurchaseOrderItemInput {
   quantity: Float!
   remark: String
   totalPrice: Float!
-  unitOfMeasure: String!
   unitPrice: Float!
 }
 
@@ -419,7 +413,6 @@ type MaterialIssueItem {
   remark: String
   totalCost: Float
   unitCost: Float
-  unitOfMeasure: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -471,12 +464,9 @@ type MaterialRequestItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  inStockQuantity: Float
   productId: String
   quantity: Float
   remark: String
-  toBePurchasedQuantity: Float
-  unitOfMeasure: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -512,7 +502,6 @@ type MaterialReturnItem {
   remark: String
   totalCost: Float
   unitCost: Float
-  unitOfMeasure: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -849,6 +838,7 @@ type ProductVariant {
   createdAt: DateTime!
   description: String
   id: ID!
+  product: Product
   productId: String
 
   """Identifies the date and time when the object was last updated."""
@@ -911,7 +901,6 @@ type PurchaseOrderItem {
   quantityRequested: Float
   remark: String
   totalPrice: Float
-  unitOfMeasure: String
   unitPrice: Float
 
   """Identifies the date and time when the object was last updated."""
@@ -1034,6 +1023,18 @@ type Token {
   refreshToken: JWT!
 }
 
+"""Possible variations of unit of measure"""
+enum UnitOfMeasure {
+  BERGA
+  KG
+  LITER
+  M2
+  M3
+  PACKET
+  PCS
+  QUINTAL
+}
+
 input UpdateMaterialIssueInput {
   approved: ApprovalStatus
   approvedById: String
@@ -1049,7 +1050,6 @@ input UpdateMaterialIssueItemInput {
   remark: String
   totalCost: Float
   unitCost: Float
-  unitOfMeasure: String
 }
 
 input UpdateMaterialReceiveInput {
@@ -1069,7 +1069,6 @@ input UpdateMaterialReceiveItemInput {
   quantity: Float
   totalCost: Float
   unitCost: Float
-  unitOfMeasure: String
 }
 
 input UpdateMaterialRequestInput {
@@ -1081,12 +1080,9 @@ input UpdateMaterialRequestInput {
 }
 
 input UpdateMaterialRequestItemInput {
-  inStockQuantity: Float
   productId: String
   quantity: Float
   remark: String
-  toBePurchasedQuantity: Float
-  unitOfMeasure: String
 }
 
 input UpdateMaterialReturnInput {
@@ -1105,7 +1101,6 @@ input UpdateMaterialReturnItemInput {
   remark: String
   totalCost: Float
   unitCost: Float
-  unitOfMeasure: String
 }
 
 input UpdateMilestoneInput {
@@ -1136,6 +1131,7 @@ input UpdateProductUseInput {
 input UpdateProductVariantInput {
   description: String
   productId: String
+  unitOfMeasure: UnitOfMeasure
   variant: String
 }
 
@@ -1182,7 +1178,6 @@ input UpdatePurchaseOrderItemInput {
   quantityRequested: Float
   remark: String
   totalPrice: Float
-  unitOfMeasure: String
   unitPrice: Float
 }
 

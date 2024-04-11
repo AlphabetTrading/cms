@@ -13,11 +13,6 @@ export class CreateMaterialReturnItemInput {
   @IsString()
   issueVoucherId: string;
 
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  unitOfMeasure: string;
-
   @Field(() => Number)
   @IsNotEmpty()
   quantity: number;

@@ -36,7 +36,7 @@ export class ProductVariantResolver {
         {
           OR: [
             {
-              productId: filterProductVariantInput.productId,
+              productId: filterProductVariantInput?.productId,
             },
             {
               variant: filterProductVariantInput?.variant,

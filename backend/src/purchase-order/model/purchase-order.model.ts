@@ -50,9 +50,6 @@ export class PurchaseOrderItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
 
-  @Field(() => String, { nullable: true })
-  unitOfMeasure?: string;
-
   @Field(() => Number, { nullable: true })
   quantityRequested?: number;
 

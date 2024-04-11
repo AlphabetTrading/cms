@@ -8,22 +8,9 @@ export class CreateMaterialRequestItemInput {
   @IsString()
   productId: string;
 
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  unitOfMeasure: string;
-
   @Field(() => Number)
   @IsNotEmpty()
   quantity: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  inStockQuantity?: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  toBePurchasedQuantity?: number;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

@@ -379,23 +379,59 @@ async function seedProducts() {
     await prisma.product.createMany({
       data: [
         {
-          name: 'Steel Bar',
+          name: 'Reinforcement Bar',
           productType: 'CONSTRUCTION',
         },
         {
-          name: 'Socket Outlets',
-          productType: 'ELECTRICAL',
+          name: 'Cement',
+          productType: 'CONSTRUCTION',
         },
         {
-          name: 'Hand Wash Basin',
-          productType: 'SANITARY',
+          name: 'Sand',
+          productType: 'CONSTRUCTION',
         },
         {
-          name: 'Soap Dispencer',
-          productType: 'SANITARY',
+          name: 'Aggregate',
+          productType: 'CONSTRUCTION',
         },
         {
-          name: 'Reinforcement Steel Bar',
+          name: 'Nail',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Black Wire',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Block',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Admixture',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Wood',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Morale',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Bonda',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Roof',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Waterproof',
+          productType: 'CONSTRUCTION',
+        },
+        {
+          name: 'Paint',
           productType: 'CONSTRUCTION',
         },
       ],
@@ -410,18 +446,293 @@ async function seedProductVariants() {
   try {
     const products = await prisma.product.findMany();
     for (const product of products) {
-      await prisma.productVariant.createMany({
-        data: [
-          {
-            productId: product.id,
-            variant: 'Variant 1',
-          },
-          {
-            productId: product.id,
-            variant: 'Variant 2',
-          },
-        ],
-      });
+      const type = product.name;
+      if (type === 'Reinforcement Bar') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '6mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '8mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '10mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '12mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '14mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '16mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '20mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '24mm',
+              unitOfMeasure: 'BERGA',
+            },
+            {
+              productId: product.id,
+              variant: '32mm',
+              unitOfMeasure: 'BERGA',
+            },
+          ],
+        });
+      } else if (type === 'Cement') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'OPC',
+              unitOfMeasure: 'QUINTAL',
+            },
+            {
+              productId: product.id,
+              variant: 'PPC',
+              unitOfMeasure: 'QUINTAL',
+            },
+          ],
+        });
+      } else if (type === 'Sand') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'Sand',
+              unitOfMeasure: 'M3',
+            },
+          ],
+        });
+      } else if (type === 'Aggregate') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '00',
+              unitOfMeasure: 'M3',
+            },
+            {
+              productId: product.id,
+              variant: '02',
+              unitOfMeasure: 'M3',
+            },
+          ],
+        });
+      } else if (type === 'Nail') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '1',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '2',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '4',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '6',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '7',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '8',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '10',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '12',
+              unitOfMeasure: 'PACKET',
+            },
+            {
+              productId: product.id,
+              variant: '15',
+              unitOfMeasure: 'PACKET',
+            },
+          ],
+        });
+      } else if (type === 'Black Wire') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '1.5',
+              unitOfMeasure: 'KG',
+            },
+            {
+              productId: product.id,
+              variant: '2.5',
+              unitOfMeasure: 'KG',
+            },
+          ],
+        });
+      } else if (type === 'Block') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '10',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '15',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '20',
+              unitOfMeasure: 'PCS',
+            },
+          ],
+        });
+      } else if (type === 'Admixture') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'Admixture',
+              unitOfMeasure: 'LITER',
+            },
+          ],
+        });
+      } else if (type === 'Wood') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '6',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '8',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '10',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '12',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '15',
+              unitOfMeasure: 'PCS',
+            },
+          ],
+        });
+      } else if (type === 'Morale') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: '5x7',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: '4x5',
+              unitOfMeasure: 'PCS',
+            },
+          ],
+        });
+      } else if (type === 'Bonda') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'Bonda',
+              unitOfMeasure: 'KG',
+            },
+          ],
+        });
+      } else if (type === 'Roof') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'CIS',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: 'Ega Sheet',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: 'Decra',
+              unitOfMeasure: 'PCS',
+            },
+          ],
+        });
+      } else if (type === 'Waterproof') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'Waterproof',
+              unitOfMeasure: 'LITER',
+            },
+          ],
+        });
+      } else if (type === 'Paint') {
+        await prisma.productVariant.createMany({
+          data: [
+            {
+              productId: product.id,
+              variant: 'Quartz',
+              unitOfMeasure: 'PCS',
+            },
+            {
+              productId: product.id,
+              variant: 'Primer',
+              unitOfMeasure: 'PCS',
+            },
+          ],
+        });
+      }
     }
     console.log('Product Variant models seeded successfully');
   } catch (error) {
@@ -613,14 +924,12 @@ async function seedMaterialIssueVouchers() {
                     productId: productUses[0].id,
                     totalCost: 100,
                     unitCost: 50,
-                    unitOfMeasure: 'quintal',
                   },
                   {
                     quantity: 20,
                     productId: productUses[1].id,
                     totalCost: 100,
                     unitCost: 5,
-                    unitOfMeasure: 'kg',
                   },
                 ],
               },
@@ -730,7 +1039,6 @@ async function seedMaterialReturnVouchers() {
                     productId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 50,
-                    unitOfMeasure: 'quintal',
                   },
                   {
                     quantity: 10,
@@ -738,7 +1046,6 @@ async function seedMaterialReturnVouchers() {
                     productId: productVariants[1].id,
                     totalCost: 100,
                     unitCost: 5,
-                    unitOfMeasure: 'kg',
                   },
                   {
                     quantity: 100,
@@ -746,7 +1053,6 @@ async function seedMaterialReturnVouchers() {
                     productId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
-                    unitOfMeasure: 'box',
                   },
                 ],
               },
@@ -847,21 +1153,18 @@ async function seedMaterialReceiveVouchers() {
                     productId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 50,
-                    unitOfMeasure: 'quintal',
                   },
                   {
                     quantity: 10,
                     productId: productVariants[1].id,
                     totalCost: 100,
                     unitCost: 5,
-                    unitOfMeasure: 'kg',
                   },
                   {
                     quantity: 100,
                     productId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
-                    unitOfMeasure: 'box',
                   },
                 ],
               },
@@ -942,19 +1245,16 @@ async function seedMaterialRequestVouchers() {
                 create: [
                   {
                     productId: productVariants[0].id,
-                    unitOfMeasure: 'quintal',
                     quantity: 100,
                     remark: 'Remark 1',
                   },
                   {
                     productId: productVariants[1].id,
-                    unitOfMeasure: 'kg',
                     quantity: 10,
                     remark: 'Remark 2',
                   },
                   {
                     productId: productVariants[2].id,
-                    unitOfMeasure: 'kg',
                     quantity: 10,
                     remark: 'Remark 3',
                   },
@@ -1068,21 +1368,18 @@ async function seedPurchaseOrders() {
                     quantity: 10,
                     totalPrice: 1000,
                     unitPrice: 100,
-                    unitOfMeasure: 'quintal',
                   },
                   {
                     productId: productVariants[1].id,
                     quantity: 10,
                     totalPrice: 1500,
                     unitPrice: 150,
-                    unitOfMeasure: 'kg',
                   },
                   {
                     productId: productVariants[2].id,
                     quantity: 1000,
                     totalPrice: 50000,
                     unitPrice: 50,
-                    unitOfMeasure: 'pcs',
                   },
                 ],
               },

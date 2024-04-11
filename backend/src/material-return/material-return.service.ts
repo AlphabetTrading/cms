@@ -27,7 +27,6 @@ export class MaterialReturnService {
           items: {
             create: createMaterialReturn.items.map((item) => ({
               productId: item.productId,
-              unitOfMeasure: item.unitOfMeasure,
               issueVoucherId: item.issueVoucherId,
               quantity: item.quantity,
               unitCost: item.unitCost,

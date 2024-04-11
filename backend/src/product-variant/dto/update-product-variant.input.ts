@@ -1,3 +1,4 @@
+import { UnitOfMeasure } from '@prisma/client';
 import { CreateProductVariantInput } from './create-product-variant.input';
 import { InputType, Field, PartialType } from '@nestjs/graphql';
 
@@ -10,6 +11,9 @@ export class UpdateProductVariantInput extends PartialType(
 
   @Field(() => String, { nullable: true })
   variant?: string;
+
+  @Field(() => UnitOfMeasure, { nullable: true })
+  unitOfMeasure?: UnitOfMeasure;
 
   @Field(() => String, { nullable: true })
   description?: string;

@@ -28,7 +28,6 @@ export class PurchaseOrderService {
             quantity: item.quantity,
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice,
-            unitOfMeasure: item.unitOfMeasure,
             remark: item.remark,
           })),
         },
