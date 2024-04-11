@@ -125,4 +125,34 @@ export class WarehouseProductService {
   async count(where?: Prisma.WarehouseProductWhereInput): Promise<number> {
     return this.prisma.warehouseProduct.count({ where });
   }
+
+  async getAllWarehouseProductsStock() {
+    const allProducts = await this.prisma.productVariant.findMany({
+      select: {
+        id: true,
+        variant: true
+      },
+    });
+
+    const warehouseQuantities = await this.prisma.warehouseProduct.groupBy({
+      by: ['productId'],
+      _sum: {
+        quantity: true,
+      },
+    });
+
+    const quantityMap = new Map(
+      warehouseQuantities.map((item) => [item.productId, item._sum.quantity]),
+    );
+
+    const productQuantities = allProducts.map((product) => {
+      return {
+        productId: product.id,
+        product: product,
+        quantity: quantityMap.get(product.id) || 0,
+      };
+    });
+
+    return productQuantities;
+  }
 }

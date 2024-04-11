@@ -527,13 +527,14 @@ type MaterialReturnVoucher {
 }
 
 type Milestone {
+  Project: Project
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   description: String
   dueDate: DateTime
   id: ID!
   name: String
-  project: Project
   projectId: String
   status: String
 
@@ -934,6 +935,7 @@ type PurchaseOrderVoucher {
 
 type Query {
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
+  getAllWarehouseProductsStock: [WarehouseProductStock!]!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -1001,6 +1003,7 @@ enum SuperStructureUseDescription {
 }
 
 type Task {
+  Milestone: Milestone
   assignedTo: User
   assignedToId: String
 
@@ -1009,7 +1012,6 @@ type Task {
   description: String
   dueDate: DateTime
   id: ID!
-  milestone: Milestone
   milestoneId: String
   name: String
   priority: String
@@ -1260,6 +1262,12 @@ type WarehouseProduct {
   updatedAt: DateTime!
   warehouse: WarehouseStore
   warehouseId: String
+}
+
+type WarehouseProductStock {
+  product: ProductVariant
+  productId: String
+  quantity: Float
 }
 
 type WarehouseStore {

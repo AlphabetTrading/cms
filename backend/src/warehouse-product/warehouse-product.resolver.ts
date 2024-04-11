@@ -9,6 +9,7 @@ import { UpdateWarehouseProductInput } from './dto/update-warehouse-product.inpu
 import { WarehouseProduct } from './model/warehouse-product.model';
 import { WarehouseProductService } from './warehouse-product.service';
 import { OrderByWarehouseProductInput } from './dto/order-by-warehouse-product.input';
+import { WarehouseProductStock } from './model/warehouse-product-stock.model';
 
 @Resolver(() => WarehouseProduct)
 export class WarehouseProductResolver {
@@ -129,6 +130,15 @@ export class WarehouseProductResolver {
       return this.warehouseProductService.deleteWarehouseProduct(id);
     } catch (e) {
       throw new BadRequestException('Error deleting warehouse product!');
+    }
+  }
+
+  @Query(() => [WarehouseProductStock])
+  async getAllWarehouseProductsStock() {
+    try {
+      return this.warehouseProductService.getAllWarehouseProductsStock();
+    } catch (e) {
+      throw new BadRequestException('Error loading warehouse product stocks!');
     }
   }
 }
