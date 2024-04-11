@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma, Product } from '@prisma/client';
 import { CreateProductInput } from './dto/create-product.input';
@@ -21,8 +25,8 @@ export class ProductService {
 
     const createdProduct = await this.prisma.product.create({
       data: {
-        ...createProduct
-      }
+        ...createProduct,
+      },
     });
 
     return createdProduct;
@@ -44,6 +48,9 @@ export class ProductService {
       take,
       where,
       orderBy,
+      include: {
+        ProductVariant: true,
+      },
     });
     return products;
   }
@@ -51,6 +58,9 @@ export class ProductService {
   async getProductById(productId: string): Promise<Product | null> {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
+      include: {
+        ProductVariant: true,
+      },
     });
 
     return product;
@@ -72,6 +82,9 @@ export class ProductService {
       where: { id: productId },
       data: {
         ...updateData,
+      },
+      include: {
+        ProductVariant: true,
       },
     });
 

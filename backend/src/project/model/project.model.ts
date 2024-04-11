@@ -22,19 +22,19 @@ export class Project extends BaseModel {
   clientId?: string;
 
   @Field(() => UserModel, { nullable: true })
-  client?: User;
+  Client?: User;
 
   @Field({ nullable: true })
   projectManagerId?: string;
 
   @Field(() => UserModel, { nullable: true })
-  projectManager?: User;
+  ProjectManager?: User;
 
   @Field(() => [MilestoneModel], { nullable: true })
-  milestones?: Milestone[];
+  Milestones?: Milestone[];
 
   @Field(() => [ProjectUser], { nullable: true })
-  projectUsers?: ProjectUser[];
+  ProjectUsers?: ProjectUser[];
 
   @Field({ nullable: true })
   status?: string;

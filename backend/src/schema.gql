@@ -533,6 +533,7 @@ type Milestone {
   dueDate: DateTime
   id: ID!
   name: String
+  project: Project
   projectId: String
   status: String
 
@@ -809,6 +810,8 @@ type PriceHistory {
 }
 
 type Product {
+  ProductVariant: [ProductVariant!]
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
@@ -861,19 +864,19 @@ type Proforma {
 }
 
 type Project {
+  Client: User
+  Milestones: [Milestone!]
+  ProjectManager: User
+  ProjectUsers: [ProjectUser!]
   budget: Float
-  client: User
   clientId: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   endDate: DateTime
   id: ID!
-  milestones: [Milestone!]
   name: String
-  projectManager: User
   projectManagerId: String
-  projectUsers: [ProjectUser!]
   startDate: DateTime
   status: String
 
@@ -998,6 +1001,7 @@ enum SuperStructureUseDescription {
 }
 
 type Task {
+  assignedTo: User
   assignedToId: String
 
   """Identifies the date and time when the object was created."""
@@ -1005,6 +1009,7 @@ type Task {
   description: String
   dueDate: DateTime
   id: ID!
+  milestone: Milestone
   milestoneId: String
   name: String
   priority: String
