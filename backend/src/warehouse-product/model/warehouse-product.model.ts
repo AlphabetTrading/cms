@@ -10,7 +10,7 @@ export class WarehouseProduct extends BaseModel {
   productId?: string;
 
   @Field(() => ProductVariantModel, { nullable: true })
-  product?: ProductVariant;
+  productVariant?: ProductVariant;
 
   @Field({ nullable: true })
   warehouseId?: string;

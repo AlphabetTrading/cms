@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus, Project } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { Product } from 'src/product/model/product.model';
 import { Project as ProjectModel } from 'src/project/model/project.model';
 
 @ObjectType()
@@ -49,6 +50,9 @@ export class PurchaseOrderVoucher extends BaseModel {
 export class PurchaseOrderItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
+
+  @Field(() => Product, { nullable: true })
+  product?: Product;
 
   @Field(() => Number, { nullable: true })
   quantityRequested?: number;

@@ -18,10 +18,10 @@ import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model'
 
 @ObjectType()
 export class PaginationInfo {
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, { nullable: true, defaultValue: 10 })
   limit?: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Int, { nullable: true, defaultValue: 0 })
   page?: number;
 
   @Field(() => Int, { nullable: true })

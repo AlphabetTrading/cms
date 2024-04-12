@@ -36,6 +36,9 @@ export class MaterialReturnService {
         },
         include: {
           items: true,
+          Project: true,
+          receivedBy: true,
+          returnedBy: true,
         },
       });
     return createdMaterialReturn;
@@ -59,6 +62,7 @@ export class MaterialReturnService {
       orderBy,
       include: {
         items: true,
+        Project: true,
         receivedBy: true,
         returnedBy: true,
       },
@@ -100,7 +104,12 @@ export class MaterialReturnService {
   ): Promise<MaterialReturnVoucher | null> {
     const materialReturn = await this.prisma.materialReturnVoucher.findUnique({
       where: { id: materialReturnId },
-      include: { items: true, receivedBy: true, returnedBy: true },
+      include: {
+        items: true,
+        Project: true,
+        receivedBy: true,
+        returnedBy: true,
+      },
     });
 
     return materialReturn;
@@ -139,6 +148,9 @@ export class MaterialReturnService {
         },
         include: {
           items: true,
+          Project: true,
+          receivedBy: true,
+          returnedBy: true,
         },
       });
 
@@ -165,10 +177,9 @@ export class MaterialReturnService {
     userId: string,
     status: ApprovalStatus,
   ) {
-    const materialReturn =
-      await this.prisma.materialReturnVoucher.findUnique({
-        where: { id: materialReturnId },
-      });
+    const materialReturn = await this.prisma.materialReturnVoucher.findUnique({
+      where: { id: materialReturnId },
+    });
 
     if (!materialReturn) {
       throw new NotFoundException('Material Return not found');
@@ -178,14 +189,15 @@ export class MaterialReturnService {
       throw new NotFoundException('Already decided on this material return!');
     }
 
-    const updatedMaterialReturn = await this.prisma.materialReturnVoucher.update({
-      where: { id: materialReturnId },
-      data: {
-        receivedById: userId,
-        status: status,
-      },
-    });
-  
+    const updatedMaterialReturn =
+      await this.prisma.materialReturnVoucher.update({
+        where: { id: materialReturnId },
+        data: {
+          receivedById: userId,
+          status: status,
+        },
+      });
+
     return updatedMaterialReturn;
   }
 

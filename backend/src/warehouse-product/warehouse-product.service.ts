@@ -34,7 +34,7 @@ export class WarehouseProductService {
         ...createWarehouseProduct,
       },
       include: {
-        product: true,
+        productVariant: true,
         warehouse: true,
       },
     });
@@ -59,7 +59,7 @@ export class WarehouseProductService {
       where,
       orderBy,
       include: {
-        product: true,
+        productVariant: true,
         warehouse: true,
       },
     });
@@ -72,7 +72,7 @@ export class WarehouseProductService {
     const warehouseProduct = await this.prisma.warehouseProduct.findUnique({
       where: { id: warehouseProductId },
       include: {
-        product: true,
+        productVariant: true,
         warehouse: true,
       },
     });
@@ -99,7 +99,7 @@ export class WarehouseProductService {
         ...updateData,
       },
       include: {
-        product: true,
+        productVariant: true,
         warehouse: true,
       },
     });
@@ -130,6 +130,7 @@ export class WarehouseProductService {
     const allProducts = await this.prisma.productVariant.findMany({
       select: {
         id: true,
+        product: true,
         variant: true
       },
     });

@@ -39,7 +39,7 @@ export class PriceHistoryResolver {
           createdAt: filterPriceHistoryInput?.createdAt,
         },
         {
-          product: filterPriceHistoryInput?.product,
+          productVariant: filterPriceHistoryInput?.productVariant,
         },
       ],
     };

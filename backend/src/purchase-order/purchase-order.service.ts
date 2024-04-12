@@ -34,6 +34,12 @@ export class PurchaseOrderService {
       },
       include: {
         items: true,
+        approvedBy: true,
+        MaterialReceiveVouchers: true,
+        materialRequest: true,
+        preparedBy: true,
+        Project: true,
+        WarehouseStore: true,
       },
     });
     return createdPurchaseOrder;
@@ -58,7 +64,11 @@ export class PurchaseOrderService {
       include: {
         items: true,
         approvedBy: true,
+        MaterialReceiveVouchers: true,
+        materialRequest: true,
         preparedBy: true,
+        Project: true,
+        WarehouseStore: true,
       },
     });
     return purchaseOrders;
@@ -98,7 +108,15 @@ export class PurchaseOrderService {
   ): Promise<PurchaseOrderVoucher | null> {
     const purchaseOrder = await this.prisma.purchaseOrder.findUnique({
       where: { id: purchaseOrderId },
-      include: { items: true, approvedBy: true, preparedBy: true },
+      include: {
+        items: true,
+        approvedBy: true,
+        MaterialReceiveVouchers: true,
+        materialRequest: true,
+        preparedBy: true,
+        Project: true,
+        WarehouseStore: true,
+      },
     });
 
     return purchaseOrder;
@@ -135,6 +153,12 @@ export class PurchaseOrderService {
       },
       include: {
         items: true,
+        approvedBy: true,
+        MaterialReceiveVouchers: true,
+        materialRequest: true,
+        preparedBy: true,
+        Project: true,
+        WarehouseStore: true,
       },
     });
 
@@ -171,7 +195,6 @@ export class PurchaseOrderService {
     if (purchaseOrder.approvedById) {
       throw new NotFoundException('Already decided on this purchase order!');
     }
-
 
     const updatedPurchaseOrder = await this.prisma.purchaseOrder.update({
       where: { id: purchaseOrderId },

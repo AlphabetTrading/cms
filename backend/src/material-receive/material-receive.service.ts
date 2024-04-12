@@ -35,6 +35,11 @@ export class MaterialReceiveService {
         },
         include: {
           items: true,
+          Project: true,
+          materialRequest: true,
+          approvedBy: true,
+          purchasedBy: true,
+          purchaseOrder: true,
         },
       });
 
@@ -59,9 +64,10 @@ export class MaterialReceiveService {
       orderBy,
       include: {
         items: true,
+        Project: true,
+        materialRequest: true,
         approvedBy: true,
         purchasedBy: true,
-        materialRequest: true,
         purchaseOrder: true,
       },
     });
@@ -105,9 +111,10 @@ export class MaterialReceiveService {
         where: { id: materialReceiveId },
         include: {
           items: true,
+          Project: true,
+          materialRequest: true,
           approvedBy: true,
           purchasedBy: true,
-          materialRequest: true,
           purchaseOrder: true,
         },
       },
@@ -149,6 +156,11 @@ export class MaterialReceiveService {
         },
         include: {
           items: true,
+          Project: true,
+          materialRequest: true,
+          approvedBy: true,
+          purchasedBy: true,
+          purchaseOrder: true,
         },
       });
 
@@ -177,7 +189,7 @@ export class MaterialReceiveService {
   ) {
     const materialReceive = await this.prisma.materialReceiveVoucher.findUnique(
       {
-        where: { id: materialReceiveId }
+        where: { id: materialReceiveId },
       },
     );
 

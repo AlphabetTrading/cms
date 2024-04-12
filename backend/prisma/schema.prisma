@@ -119,12 +119,12 @@ model WarehouseStoreManager {
 }
 
 model WarehouseProduct {
-  id          String         @id @default(uuid())
-  quantity    Float
-  productId   String
-  product     ProductVariant @relation(fields: [productId], references: [id])
-  warehouseId String
-  warehouse   WarehouseStore @relation(fields: [warehouseId], references: [id])
+  id             String         @id @default(uuid())
+  quantity       Float
+  productId      String
+  productVariant ProductVariant @relation(fields: [productId], references: [id])
+  warehouseId    String
+  warehouse      WarehouseStore @relation(fields: [warehouseId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -133,10 +133,10 @@ model WarehouseProduct {
 }
 
 model PriceHistory {
-  id        String         @id @default(uuid())
-  productId String
-  product   ProductVariant @relation(fields: [productId], references: [id])
-  price     Float
+  id             String         @id @default(uuid())
+  productId      String
+  productVariant ProductVariant @relation(fields: [productId], references: [id])
+  price          Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -184,7 +184,7 @@ model PurchaseOrder {
 model PurchaseOrderItem {
   id              String         @id @default(uuid())
   productId       String
-  product         ProductVariant @relation(fields: [productId], references: [id])
+  productVariant  ProductVariant @relation(fields: [productId], references: [id])
   quantity        Float
   unitPrice       Float
   totalPrice      Float
@@ -218,7 +218,7 @@ model MaterialReturnVoucher {
 model ReturnVoucherItem {
   id                      String                @id @default(uuid())
   productId               String
-  product                 ProductVariant        @relation(fields: [productId], references: [id])
+  productVariant          ProductVariant        @relation(fields: [productId], references: [id])
   issueVoucherId          String
   issueVoucher            MaterialIssueVoucher  @relation(fields: [issueVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   quantity                Float
@@ -255,7 +255,7 @@ model MaterialIssueVoucher {
 model IssueVoucherItem {
   id                     String               @id @default(uuid())
   productId              String
-  product                ProductUse           @relation(fields: [productId], references: [id])
+  productUse             ProductUse           @relation(fields: [productId], references: [id])
   quantity               Float
   unitCost               Float
   totalCost              Float
@@ -294,7 +294,7 @@ model MaterialReceiveVoucher {
 model MaterialReceiveItem {
   id                       String                 @id @default(uuid())
   productId                String
-  product                  ProductVariant         @relation(fields: [productId], references: [id])
+  productVariant           ProductVariant         @relation(fields: [productId], references: [id])
   quantity                 Float
   unitCost                 Float
   totalCost                Float
@@ -329,7 +329,7 @@ model MaterialRequestVoucher {
 model MaterialRequestItem {
   id                       String                 @id @default(uuid())
   productId                String
-  product                  ProductVariant         @relation(fields: [productId], references: [id])
+  productVariant           ProductVariant         @relation(fields: [productId], references: [id])
   quantity                 Float
   remark                   String?
   materialRequestVoucherId String
@@ -351,7 +351,7 @@ model Project {
   clientId               String
   ProjectManager         User                     @relation(fields: [projectManagerId], references: [id], name: "ProjectManager")
   projectManagerId       String
-  Users                  ProjectUser[]
+  ProjectUsers           ProjectUser[]
   status                 String
   Milestones             Milestone[]
   PurchaseOrder          PurchaseOrder[]

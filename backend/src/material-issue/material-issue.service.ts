@@ -35,6 +35,9 @@ export class MaterialIssueService {
       },
       include: {
         items: true,
+        Project: true,
+        approvedBy: true,
+        preparedBy: true,
       },
     });
     return createdMaterialIssue;
@@ -58,6 +61,7 @@ export class MaterialIssueService {
       orderBy,
       include: {
         items: true,
+        Project: true,
         approvedBy: true,
         preparedBy: true,
       },
@@ -100,6 +104,7 @@ export class MaterialIssueService {
       where: { id: materialIssueId },
       include: {
         items: true,
+        Project: true,
         approvedBy: true,
         preparedBy: true,
       },
@@ -140,6 +145,9 @@ export class MaterialIssueService {
       },
       include: {
         items: true,
+        Project: true,
+        approvedBy: true,
+        preparedBy: true,
       },
     });
 

@@ -34,6 +34,12 @@ export class MaterialRequestService {
         },
         include: {
           items: true,
+          approvedBy: true,
+          requestedBy: true,
+          MaterialReceiveVouchers: true,
+          Proforma: true,
+          Project: true,
+          PurchaseOrders: true,
         },
       });
     return createdMaterialRequest;
@@ -59,6 +65,10 @@ export class MaterialRequestService {
         items: true,
         approvedBy: true,
         requestedBy: true,
+        MaterialReceiveVouchers: true,
+        Proforma: true,
+        Project: true,
+        PurchaseOrders: true,
       },
     });
     return materialRequests;
@@ -99,7 +109,15 @@ export class MaterialRequestService {
     const materialRequest = await this.prisma.materialRequestVoucher.findUnique(
       {
         where: { id: materialRequestId },
-        include: { items: true, approvedBy: true, requestedBy: true },
+        include: {
+          items: true,
+          approvedBy: true,
+          requestedBy: true,
+          MaterialReceiveVouchers: true,
+          Proforma: true,
+          Project: true,
+          PurchaseOrders: true,
+        },
       },
     );
 
@@ -139,6 +157,12 @@ export class MaterialRequestService {
         },
         include: {
           items: true,
+          approvedBy: true,
+          requestedBy: true,
+          MaterialReceiveVouchers: true,
+          Proforma: true,
+          Project: true,
+          PurchaseOrders: true,
         },
       });
 
@@ -165,10 +189,11 @@ export class MaterialRequestService {
     userId: string,
     status: ApprovalStatus,
   ) {
-    const materialRequest =
-      await this.prisma.materialRequestVoucher.findUnique({
+    const materialRequest = await this.prisma.materialRequestVoucher.findUnique(
+      {
         where: { id: materialRequestId },
-      });
+      },
+    );
 
     if (!materialRequest) {
       throw new NotFoundException('Material Request not found');
@@ -178,15 +203,15 @@ export class MaterialRequestService {
       throw new NotFoundException('Already decided on this material request!');
     }
 
+    const updatedMaterialRequest =
+      await this.prisma.materialRequestVoucher.update({
+        where: { id: materialRequestId },
+        data: {
+          approvedById: userId,
+          status: status,
+        },
+      });
 
-    const updatedMaterialRequest = await this.prisma.materialRequestVoucher.update({
-      where: { id: materialRequestId },
-      data: {
-        approvedById: userId,
-        status: status,
-      },
-    });
-  
     return updatedMaterialRequest;
   }
 

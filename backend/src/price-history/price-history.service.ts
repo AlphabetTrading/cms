@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma, PriceHistory } from '@prisma/client';
 import { CreatePriceHistoryInput } from './dto/create-price-history.input';
@@ -19,7 +16,7 @@ export class PriceHistoryService {
         ...createPriceHistory,
       },
       include: {
-        product: true,
+        productVariant: true,
       },
     });
 
@@ -43,7 +40,7 @@ export class PriceHistoryService {
       where,
       orderBy,
       include: {
-        product: true,
+        productVariant: true,
       },
     });
     return priceHistories;
@@ -55,7 +52,7 @@ export class PriceHistoryService {
     const priceHistory = await this.prisma.priceHistory.findUnique({
       where: { id: priceHistoryId },
       include: {
-        product: true,
+        productVariant: true,
       },
     });
 
@@ -66,10 +63,9 @@ export class PriceHistoryService {
     priceHistoryId: string,
     updateData: UpdatePriceHistoryInput,
   ): Promise<PriceHistory> {
-    const existingPriceHistory =
-      await this.prisma.priceHistory.findUnique({
-        where: { id: priceHistoryId },
-      });
+    const existingPriceHistory = await this.prisma.priceHistory.findUnique({
+      where: { id: priceHistoryId },
+    });
 
     if (!existingPriceHistory) {
       throw new NotFoundException('Product not found in warehouse');
@@ -81,7 +77,7 @@ export class PriceHistoryService {
         ...updateData,
       },
       include: {
-        product: true,
+        productVariant: true,
       },
     });
 
@@ -89,10 +85,9 @@ export class PriceHistoryService {
   }
 
   async deletePriceHistory(priceHistoryId: string): Promise<void> {
-    const existingPriceHistory =
-      await this.prisma.priceHistory.findUnique({
-        where: { id: priceHistoryId },
-      });
+    const existingPriceHistory = await this.prisma.priceHistory.findUnique({
+      where: { id: priceHistoryId },
+    });
 
     if (!existingPriceHistory) {
       throw new NotFoundException('Product not found in warehouse');

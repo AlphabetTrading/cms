@@ -3,6 +3,7 @@ import { ApprovalStatus, Project, User } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 import { User as UserModel } from 'src/user/user.model';
 import { Project as ProjectModel } from 'src/project/model/project.model';
+import { Product } from 'src/product/model/product.model';
 
 @ObjectType()
 export class MaterialIssueVoucher extends BaseModel {
@@ -44,6 +45,9 @@ export class MaterialIssueVoucher extends BaseModel {
 export class MaterialIssueItem extends BaseModel {
   @Field(() => String, { nullable: true })
   productId?: string;
+
+  @Field(() => Product, { nullable: true })
+  product?: Product;
 
   @Field(() => Number, { nullable: true })
   quantity?: number;

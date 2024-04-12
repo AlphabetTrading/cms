@@ -9,7 +9,7 @@ export class PriceHistory extends BaseModel {
   productId?: string;
 
   @Field(() => ProductVariantModel, { nullable: true })
-  product?: ProductVariant;
+  productVariant?: ProductVariant;
 
   @Field({ nullable: true })
   price?: number;

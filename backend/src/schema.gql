@@ -289,8 +289,8 @@ input FilterMilestoneInput {
 input FilterPriceHistoryInput {
   createdAt: DateTimeFilter
   id: String
-  product: FilterProductVariantInput
   productId: String
+  productVariant: FilterProductVariantInput
 }
 
 input FilterProductInput {
@@ -380,8 +380,8 @@ input FilterUserDocumentsInput {
 input FilterWarehouseProductInput {
   createdAt: DateTimeFilter
   id: String
-  product: FilterProductVariantInput
   productId: String
+  productVariant: FilterProductVariantInput
   warehouse: FilterWarehouseStoreInput
   warehouseId: String
 }
@@ -408,6 +408,7 @@ type MaterialIssueItem {
   createdAt: DateTime!
   id: ID!
   materialIssueVoucherId: String
+  product: Product
   productId: String
   quantity: Float
   remark: String
@@ -464,6 +465,7 @@ type MaterialRequestItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
+  product: Product
   productId: String
   quantity: Float
   remark: String
@@ -497,6 +499,7 @@ type MaterialReturnItem {
   id: ID!
   issueVoucherId: String
   materialReturnVoucherId: String
+  product: Product
   productId: String
   quantityReturned: Float
   remark: String
@@ -643,7 +646,7 @@ input OrderByMilestoneInput {
 input OrderByPriceHistoryInput {
   createdAt: OrderDirection
   price: OrderDirection
-  product: OrderByProductInput
+  productVariant: OrderByProductVariantInput
   updatedAt: OrderDirection
 }
 
@@ -691,7 +694,7 @@ input OrderByTaskInput {
 
 input OrderByWarehouseProductInput {
   createdAt: OrderDirection
-  product: OrderByProductVariantInput
+  productVariant: OrderByProductVariantInput
   quantity: OrderDirection
   updatedAt: OrderDirection
   warehouse: OrderByWarehouseStoreInput
@@ -803,8 +806,8 @@ type PriceHistory {
   createdAt: DateTime!
   id: ID!
   price: Float
-  product: ProductVariant
   productId: String
+  productVariant: ProductVariant
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -900,6 +903,7 @@ type PurchaseOrderItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
+  product: Product
   productId: String
   purchaseOrderId: String
   quantityRequested: Float
@@ -1254,8 +1258,8 @@ type WarehouseProduct {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  product: ProductVariant
   productId: String
+  productVariant: ProductVariant
   quantity: Float
 
   """Identifies the date and time when the object was last updated."""
@@ -1265,8 +1269,8 @@ type WarehouseProduct {
 }
 
 type WarehouseProductStock {
-  product: ProductVariant
   productId: String
+  productVariant: ProductVariant
   quantity: Float
 }
 

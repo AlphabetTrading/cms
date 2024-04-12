@@ -26,6 +26,12 @@ export class ProjectService {
       data: {
         ...createProjectInput,
       },
+      include: {
+        Client: true,
+        ProjectManager: true,
+        Milestones: true,
+        ProjectUsers: true,
+      },
     });
 
     return newProject;
@@ -51,6 +57,7 @@ export class ProjectService {
         Client: true,
         ProjectManager: true,
         Milestones: true,
+        ProjectUsers: true,
       },
     });
     return projects;
@@ -65,6 +72,7 @@ export class ProjectService {
         Client: true,
         ProjectManager: true,
         Milestones: true,
+        ProjectUsers: true,
       },
     });
     return project;
@@ -83,6 +91,12 @@ export class ProjectService {
       where: { id },
       data: {
         ...updateData,
+      },
+      include: {
+        Client: true,
+        ProjectManager: true,
+        Milestones: true,
+        ProjectUsers: true,
       },
     });
 

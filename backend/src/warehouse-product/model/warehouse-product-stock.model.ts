@@ -8,7 +8,7 @@ export class WarehouseProductStock {
   productId?: string;
 
   @Field(() => ProductVariantModel, { nullable: true })
-  product?: ProductVariant;
+  productVariant?: ProductVariant;
 
   @Field(() => Number, { nullable: true })
   quantity?: number;

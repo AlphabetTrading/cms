@@ -12,7 +12,7 @@ registerEnumType(OrderDirection, {
 @InputType()
 export class OrderByWarehouseProductInput {
   @Field(() => OrderByProductVariantInput, { nullable: true })
-  product?: OrderByProductVariantInput;
+  productVariant?: OrderByProductVariantInput;
 
   @Field(() => OrderByWarehouseStoreInput, { nullable: true })
   warehouse?: OrderByWarehouseStoreInput;

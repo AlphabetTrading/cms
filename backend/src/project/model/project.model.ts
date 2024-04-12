@@ -1,8 +1,7 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from 'src/common/models/base.model';
-import { Milestone, User } from '@prisma/client';
-import { User as UserModel } from 'src/user/user.model';
-import { Milestone as MilestoneModel } from 'src/milestone/model/milestone.model';
+import { Milestone } from 'src/milestone/model/milestone.model';
+import { User } from 'src/user/user.model';
 
 @ObjectType()
 export class Project extends BaseModel {
@@ -21,16 +20,16 @@ export class Project extends BaseModel {
   @Field({ nullable: true })
   clientId?: string;
 
-  @Field(() => UserModel, { nullable: true })
+  @Field(() => User, { nullable: true })
   Client?: User;
 
   @Field({ nullable: true })
   projectManagerId?: string;
 
-  @Field(() => UserModel, { nullable: true })
+  @Field(() => User, { nullable: true })
   ProjectManager?: User;
 
-  @Field(() => [MilestoneModel], { nullable: true })
+  @Field(() => [Milestone], { nullable: true })
   Milestones?: Milestone[];
 
   @Field(() => [ProjectUser], { nullable: true })

@@ -12,7 +12,7 @@ export class FilterPriceHistoryInput {
   productId?: string;
 
   @Field(() => FilterProductVariantInput, { nullable: true })
-  product?: Prisma.ProductVariantWhereInput;
+  productVariant?: Prisma.ProductVariantWhereInput;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

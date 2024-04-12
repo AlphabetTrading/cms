@@ -1,6 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql';
 import { OrderDirection } from 'src/common/order/order-direction';
-import { OrderByProductInput } from 'src/product/dto/order-by-product.input';
+import { OrderByProductVariantInput } from 'src/product-variant/dto/order-by-product-variant.input';
 
 registerEnumType(OrderDirection, {
   name: 'OrderDirection',
@@ -10,8 +10,8 @@ registerEnumType(OrderDirection, {
 
 @InputType()
 export class OrderByPriceHistoryInput {
-  @Field(() => OrderByProductInput, { nullable: true })
-  product?: OrderByProductInput;
+  @Field(() => OrderByProductVariantInput, { nullable: true })
+  productVariant?: OrderByProductVariantInput;
 
   @Field(() => OrderDirection, { nullable: true })
   price?: OrderDirection;
