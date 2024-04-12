@@ -59,7 +59,11 @@ export class WarehouseProductService {
       where,
       orderBy,
       include: {
-        productVariant: true,
+        productVariant: {
+          include: {
+            product: true,
+          },
+        },
         warehouse: true,
       },
     });
@@ -138,8 +142,6 @@ export class WarehouseProductService {
       },
     });
 
-    console.log(allProducts, "141")
-
     const warehouseQuantities = await this.prisma.warehouseProduct.groupBy({
       by: ['productVariantId'],
       _sum: {
@@ -161,7 +163,6 @@ export class WarehouseProductService {
       };
     });
 
-    console.log(productQuantities, "164")
     return productQuantities;
   }
 }
