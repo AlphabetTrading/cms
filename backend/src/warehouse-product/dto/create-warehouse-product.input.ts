@@ -3,7 +3,7 @@ import { InputType, Field } from '@nestjs/graphql';
 @InputType()
 export class CreateWarehouseProductInput {
   @Field()
-  productId: string
+  productVariantId: string
 
   @Field({ nullable: true })
   warehouseId: string

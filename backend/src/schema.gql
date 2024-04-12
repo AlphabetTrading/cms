@@ -180,7 +180,7 @@ input CreateUserInput {
 }
 
 input CreateWarehouseProductInput {
-  productId: String!
+  productVariantId: String!
   quantity: Float
   warehouseId: String
 }
@@ -380,8 +380,8 @@ input FilterUserDocumentsInput {
 input FilterWarehouseProductInput {
   createdAt: DateTimeFilter
   id: String
-  productId: String
   productVariant: FilterProductVariantInput
+  productVariantId: String
   warehouse: FilterWarehouseStoreInput
   warehouseId: String
 }
@@ -1213,7 +1213,7 @@ input UpdateUserInput {
 }
 
 input UpdateWarehouseProductInput {
-  productId: String
+  productVariantId: String
   quantity: Float
   warehouseId: String
 }
@@ -1258,8 +1258,8 @@ type WarehouseProduct {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  productId: String
   productVariant: ProductVariant
+  productVariantId: String
   quantity: Float
 
   """Identifies the date and time when the object was last updated."""
@@ -1269,7 +1269,6 @@ type WarehouseProduct {
 }
 
 type WarehouseProductStock {
-  productId: String
   productVariant: ProductVariant
   quantity: Float
 }

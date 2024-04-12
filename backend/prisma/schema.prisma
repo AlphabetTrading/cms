@@ -119,17 +119,17 @@ model WarehouseStoreManager {
 }
 
 model WarehouseProduct {
-  id             String         @id @default(uuid())
-  quantity       Float
-  productId      String
-  productVariant ProductVariant @relation(fields: [productId], references: [id])
-  warehouseId    String
-  warehouse      WarehouseStore @relation(fields: [warehouseId], references: [id])
+  id               String         @id @default(uuid())
+  quantity         Float
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  warehouseId      String
+  warehouse        WarehouseStore @relation(fields: [warehouseId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([productId, warehouseId])
+  @@unique([productVariantId, warehouseId])
 }
 
 model PriceHistory {

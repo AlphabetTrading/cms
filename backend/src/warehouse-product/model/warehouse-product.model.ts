@@ -7,7 +7,7 @@ import { WarehouseStore as WarehouseStoreModel } from 'src/warehouse-store/model
 @ObjectType()
 export class WarehouseProduct extends BaseModel {
   @Field({ nullable: true })
-  productId?: string;
+  productVariantId?: string;
 
   @Field(() => ProductVariantModel, { nullable: true })
   productVariant?: ProductVariant;

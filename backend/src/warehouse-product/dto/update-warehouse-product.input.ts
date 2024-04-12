@@ -6,12 +6,11 @@ export class UpdateWarehouseProductInput extends PartialType(
   CreateWarehouseProductInput,
 ) {
   @Field({ nullable: true })
-  productId?: string
+  productVariantId?: string;
 
   @Field({ nullable: true })
-  warehouseId?: string
-  
-  @Field({ nullable: true })
-  quantity?: number
+  warehouseId?: string;
 
+  @Field({ nullable: true })
+  quantity?: number;
 }

@@ -806,7 +806,7 @@ async function seedWarehouseProducts() {
         .map((variant) => {
           return warehouseStores.map((warehouseStore) => {
             return {
-              productId: variant.id,
+              productVariantId: variant.id,
               warehouseId: warehouseStore.id,
               quantity: Math.floor(Math.random() * 100),
             };

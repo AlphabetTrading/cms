@@ -10,7 +10,7 @@ export class FilterWarehouseProductInput {
   id?: string;
 
   @Field({ nullable: true })
-  productId?: string;
+  productVariantId?: string;
 
   @Field(() => FilterProductVariantInput, { nullable: true })
   productVariant?: Prisma.ProductVariantWhereInput;

@@ -37,7 +37,7 @@ export class WarehouseProductResolver {
           id: filterWarehouseProductInput?.id,
         },
         {
-          productId: filterWarehouseProductInput?.productId,
+          productVariantId: filterWarehouseProductInput?.productVariantId,
         },
         {
           warehouseId: filterWarehouseProductInput?.warehouseId,
