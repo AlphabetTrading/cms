@@ -847,6 +847,7 @@ type ProductVariant {
   id: ID!
   product: Product
   productId: String
+  unitOfMeasure: UnitOfMeasure
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!

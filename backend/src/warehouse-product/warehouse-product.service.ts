@@ -133,8 +133,12 @@ export class WarehouseProductService {
         productId: true,
         product: true,
         variant: true,
+        description: true,
+        unitOfMeasure: true,
       },
     });
+
+    console.log(allProducts, "141")
 
     const warehouseQuantities = await this.prisma.warehouseProduct.groupBy({
       by: ['productVariantId'],
@@ -157,6 +161,7 @@ export class WarehouseProductService {
       };
     });
 
+    console.log(productQuantities, "164")
     return productQuantities;
   }
 }
