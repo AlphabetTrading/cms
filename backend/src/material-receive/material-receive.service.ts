@@ -26,7 +26,7 @@ export class MaterialReceiveService {
           serialNumber: serialNumber,
           items: {
             create: createMaterialReceive.items.map((item) => ({
-              productId: item.productId,
+              productVariantId: item.productVariantId,
               quantity: item.quantity,
               unitCost: item.unitCost,
               totalCost: item.totalCost,
@@ -34,7 +34,15 @@ export class MaterialReceiveService {
           },
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           Project: true,
           materialRequest: true,
           approvedBy: true,
@@ -63,7 +71,15 @@ export class MaterialReceiveService {
       where,
       orderBy,
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         Project: true,
         materialRequest: true,
         approvedBy: true,
@@ -110,7 +126,15 @@ export class MaterialReceiveService {
       {
         where: { id: materialReceiveId },
         include: {
-          items: true,
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           Project: true,
           materialRequest: true,
           approvedBy: true,
@@ -137,7 +161,7 @@ export class MaterialReceiveService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      productId: item.productId,
+      productVariantId: item.productVariantId,
     }));
 
     const updatedMaterialReceive =
@@ -155,7 +179,15 @@ export class MaterialReceiveService {
           },
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           Project: true,
           materialRequest: true,
           approvedBy: true,

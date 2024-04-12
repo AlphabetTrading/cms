@@ -6,7 +6,7 @@ export class CreatePurchaseOrderItemInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  productId: string;
+  productVariantId: string;
 
   @IsNotEmpty()
   @Field(() => Number)

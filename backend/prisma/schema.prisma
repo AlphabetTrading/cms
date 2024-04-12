@@ -182,20 +182,20 @@ model PurchaseOrder {
 }
 
 model PurchaseOrderItem {
-  id              String         @id @default(uuid())
-  productId       String
-  productVariant  ProductVariant @relation(fields: [productId], references: [id])
-  quantity        Float
-  unitPrice       Float
-  totalPrice      Float
-  remark          String?
-  PurchaseOrder   PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], name: "items")
-  purchaseOrderId String
+  id               String         @id @default(uuid())
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  quantity         Float
+  unitPrice        Float
+  totalPrice       Float
+  remark           String?
+  PurchaseOrder    PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], name: "items")
+  purchaseOrderId  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, productId])
+  @@unique([id, productVariantId])
 }
 
 model MaterialReturnVoucher {
@@ -217,8 +217,8 @@ model MaterialReturnVoucher {
 
 model ReturnVoucherItem {
   id                      String                @id @default(uuid())
-  productId               String
-  productVariant          ProductVariant        @relation(fields: [productId], references: [id])
+  productVariantId        String
+  productVariant          ProductVariant        @relation(fields: [productVariantId], references: [id])
   issueVoucherId          String
   issueVoucher            MaterialIssueVoucher  @relation(fields: [issueVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   quantity                Float
@@ -231,7 +231,7 @@ model ReturnVoucherItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, productId])
+  @@unique([id, productVariantId])
 }
 
 model MaterialIssueVoucher {
@@ -254,8 +254,8 @@ model MaterialIssueVoucher {
 
 model IssueVoucherItem {
   id                     String               @id @default(uuid())
-  productId              String
-  productUse             ProductUse           @relation(fields: [productId], references: [id])
+  productUseId           String
+  productUse             ProductUse           @relation(fields: [productUseId], references: [id])
   quantity               Float
   unitCost               Float
   totalCost              Float
@@ -266,7 +266,7 @@ model IssueVoucherItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, productId])
+  @@unique([id, productUseId])
 }
 
 model MaterialReceiveVoucher {
@@ -293,8 +293,8 @@ model MaterialReceiveVoucher {
 
 model MaterialReceiveItem {
   id                       String                 @id @default(uuid())
-  productId                String
-  productVariant           ProductVariant         @relation(fields: [productId], references: [id])
+  productVariantId         String
+  productVariant           ProductVariant         @relation(fields: [productVariantId], references: [id])
   quantity                 Float
   unitCost                 Float
   totalCost                Float
@@ -304,7 +304,7 @@ model MaterialReceiveItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, productId])
+  @@unique([id, productVariantId])
 }
 
 model MaterialRequestVoucher {
@@ -328,8 +328,8 @@ model MaterialRequestVoucher {
 
 model MaterialRequestItem {
   id                       String                 @id @default(uuid())
-  productId                String
-  productVariant           ProductVariant         @relation(fields: [productId], references: [id])
+  productVariantId         String
+  productVariant           ProductVariant         @relation(fields: [productVariantId], references: [id])
   quantity                 Float
   remark                   String?
   materialRequestVoucherId String
@@ -338,7 +338,7 @@ model MaterialRequestItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, productId])
+  @@unique([id, productVariantId])
 }
 
 model Project {

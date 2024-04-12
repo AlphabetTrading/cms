@@ -25,7 +25,7 @@ export class MaterialIssueService {
         serialNumber: serialNumber,
         items: {
           create: createMaterialIssueInput.items.map((item) => ({
-            productId: item.productId,
+            productUseId: item.productUseId,
             quantity: item.quantity,
             unitCost: item.unitCost,
             totalCost: item.totalCost,
@@ -34,7 +34,19 @@ export class MaterialIssueService {
         },
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            productUse: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         Project: true,
         approvedBy: true,
         preparedBy: true,
@@ -60,7 +72,19 @@ export class MaterialIssueService {
       where,
       orderBy,
       include: {
-        items: true,
+        items: {
+          include: {
+            productUse: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         Project: true,
         approvedBy: true,
         preparedBy: true,
@@ -103,7 +127,19 @@ export class MaterialIssueService {
     const materialIssue = await this.prisma.materialIssueVoucher.findUnique({
       where: { id: materialIssueId },
       include: {
-        items: true,
+        items: {
+          include: {
+            productUse: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         Project: true,
         approvedBy: true,
         preparedBy: true,
@@ -127,7 +163,7 @@ export class MaterialIssueService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      productId: item.productId,
+      productUseId: item.productUseId,
     }));
 
     const updatedMaterialIssue = await this.prisma.materialIssueVoucher.update({
@@ -144,7 +180,19 @@ export class MaterialIssueService {
         },
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            productUse: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         Project: true,
         approvedBy: true,
         preparedBy: true,

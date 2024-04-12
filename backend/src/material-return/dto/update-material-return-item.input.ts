@@ -8,7 +8,7 @@ export class UpdateMaterialReturnItemInput extends PartialType(
 ) {
   @Field(() => String, { nullable: true })
   @IsString()
-  productId?: string;
+  productVariantId?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()

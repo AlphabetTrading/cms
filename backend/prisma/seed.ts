@@ -921,13 +921,13 @@ async function seedMaterialIssueVouchers() {
                 create: [
                   {
                     quantity: 2,
-                    productId: productUses[0].id,
+                    productUseId: productUses[0].id,
                     totalCost: 100,
                     unitCost: 50,
                   },
                   {
                     quantity: 20,
-                    productId: productUses[1].id,
+                    productUseId: productUses[1].id,
                     totalCost: 100,
                     unitCost: 5,
                   },
@@ -1036,21 +1036,21 @@ async function seedMaterialReturnVouchers() {
                   {
                     quantity: 10,
                     issueVoucherId: material_issues[0].id,
-                    productId: productVariants[0].id,
+                    productVariantId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 50,
                   },
                   {
                     quantity: 10,
                     issueVoucherId: material_issues[1].id,
-                    productId: productVariants[1].id,
+                    productVariantId: productVariants[1].id,
                     totalCost: 100,
                     unitCost: 5,
                   },
                   {
                     quantity: 100,
                     issueVoucherId: material_issues[1].id,
-                    productId: productVariants[2].id,
+                    productVariantId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
                   },
@@ -1150,19 +1150,19 @@ async function seedMaterialReceiveVouchers() {
                 create: [
                   {
                     quantity: 10,
-                    productId: productVariants[0].id,
+                    productVariantId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 50,
                   },
                   {
                     quantity: 10,
-                    productId: productVariants[1].id,
+                    productVariantId: productVariants[1].id,
                     totalCost: 100,
                     unitCost: 5,
                   },
                   {
                     quantity: 100,
-                    productId: productVariants[2].id,
+                    productVariantId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
                   },
@@ -1244,17 +1244,17 @@ async function seedMaterialRequestVouchers() {
               items: {
                 create: [
                   {
-                    productId: productVariants[0].id,
+                    productVariantId: productVariants[0].id,
                     quantity: 100,
                     remark: 'Remark 1',
                   },
                   {
-                    productId: productVariants[1].id,
+                    productVariantId: productVariants[1].id,
                     quantity: 10,
                     remark: 'Remark 2',
                   },
                   {
-                    productId: productVariants[2].id,
+                    productVariantId: productVariants[2].id,
                     quantity: 10,
                     remark: 'Remark 3',
                   },
@@ -1364,19 +1364,19 @@ async function seedPurchaseOrders() {
               items: {
                 create: [
                   {
-                    productId: productVariants[0].id,
+                    productVariantId: productVariants[0].id,
                     quantity: 10,
                     totalPrice: 1000,
                     unitPrice: 100,
                   },
                   {
-                    productId: productVariants[1].id,
+                    productVariantId: productVariants[1].id,
                     quantity: 10,
                     totalPrice: 1500,
                     unitPrice: 150,
                   },
                   {
-                    productId: productVariants[2].id,
+                    productVariantId: productVariants[2].id,
                     quantity: 1000,
                     totalPrice: 50000,
                     unitPrice: 50,

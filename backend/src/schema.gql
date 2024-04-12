@@ -28,7 +28,7 @@ input CreateMaterialIssueInput {
 }
 
 input CreateMaterialIssueItemInput {
-  productId: String!
+  productUseId: String!
   quantity: Float!
   remark: String
   totalCost: Float!
@@ -47,7 +47,7 @@ input CreateMaterialReceiveInput {
 }
 
 input CreateMaterialReceiveItemInput {
-  productId: String!
+  productVariantId: String!
   quantity: Float!
   totalCost: Float!
   unitCost: Float!
@@ -61,7 +61,7 @@ input CreateMaterialRequestInput {
 }
 
 input CreateMaterialRequestItemInput {
-  productId: String!
+  productVariantId: String!
   quantity: Float!
   remark: String
 }
@@ -76,7 +76,7 @@ input CreateMaterialReturnInput {
 
 input CreateMaterialReturnItemInput {
   issueVoucherId: String!
-  productId: String!
+  productVariantId: String!
   quantity: Float!
   remark: String
   totalCost: Float!
@@ -152,7 +152,7 @@ input CreatePurchaseOrderInput {
 }
 
 input CreatePurchaseOrderItemInput {
-  productId: String!
+  productVariantId: String!
   quantity: Float!
   remark: String
   totalPrice: Float!
@@ -408,8 +408,8 @@ type MaterialIssueItem {
   createdAt: DateTime!
   id: ID!
   materialIssueVoucherId: String
-  product: Product
-  productId: String
+  productUse: ProductUse
+  productUseId: String
   quantity: Float
   remark: String
   totalCost: Float
@@ -465,8 +465,8 @@ type MaterialRequestItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  product: Product
-  productId: String
+  productVariant: ProductVariant
+  productVariantId: String
   quantity: Float
   remark: String
 
@@ -499,8 +499,8 @@ type MaterialReturnItem {
   id: ID!
   issueVoucherId: String
   materialReturnVoucherId: String
-  product: Product
-  productId: String
+  productVariant: ProductVariant
+  productVariantId: String
   quantityReturned: Float
   remark: String
   totalCost: Float
@@ -904,8 +904,8 @@ type PurchaseOrderItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  product: Product
-  productId: String
+  productVariant: ProductVariant
+  productVariantId: String
   purchaseOrderId: String
   quantityRequested: Float
   remark: String
@@ -1057,7 +1057,7 @@ input UpdateMaterialIssueInput {
 }
 
 input UpdateMaterialIssueItemInput {
-  productId: String
+  productUseId: String
   quantity: Float
   remark: String
   totalCost: Float
@@ -1077,7 +1077,7 @@ input UpdateMaterialReceiveInput {
 }
 
 input UpdateMaterialReceiveItemInput {
-  productId: String
+  productVariantId: String
   quantity: Float
   totalCost: Float
   unitCost: Float
@@ -1092,7 +1092,7 @@ input UpdateMaterialRequestInput {
 }
 
 input UpdateMaterialRequestItemInput {
-  productId: String
+  productVariantId: String
   quantity: Float
   remark: String
 }
@@ -1108,7 +1108,7 @@ input UpdateMaterialReturnInput {
 
 input UpdateMaterialReturnItemInput {
   issueVoucherId: String
-  productId: String
+  productVariantId: String
   quantity: Float
   remark: String
   totalCost: Float
@@ -1185,7 +1185,7 @@ input UpdatePurchaseOrderInput {
 }
 
 input UpdatePurchaseOrderItemInput {
-  productId: String
+  productVariantId: String
   quantity: Float
   quantityRequested: Float
   remark: String

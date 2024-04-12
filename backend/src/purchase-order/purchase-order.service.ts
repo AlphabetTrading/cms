@@ -24,7 +24,7 @@ export class PurchaseOrderService {
         serialNumber: serialNumber,
         items: {
           create: createPurchaseOrder.items.map((item) => ({
-            productId: item.productId,
+            productVariantId: item.productVariantId,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice,
@@ -33,7 +33,15 @@ export class PurchaseOrderService {
         },
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         approvedBy: true,
         MaterialReceiveVouchers: true,
         materialRequest: true,
@@ -62,7 +70,15 @@ export class PurchaseOrderService {
       where,
       orderBy,
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         approvedBy: true,
         MaterialReceiveVouchers: true,
         materialRequest: true,
@@ -109,7 +125,15 @@ export class PurchaseOrderService {
     const purchaseOrder = await this.prisma.purchaseOrder.findUnique({
       where: { id: purchaseOrderId },
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         approvedBy: true,
         MaterialReceiveVouchers: true,
         materialRequest: true,
@@ -135,7 +159,7 @@ export class PurchaseOrderService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      productId: item.productId,
+      productVariantId: item.productVariantId,
     }));
 
     const updatedPurchaseOrder = await this.prisma.purchaseOrder.update({
@@ -152,7 +176,15 @@ export class PurchaseOrderService {
         },
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         approvedBy: true,
         MaterialReceiveVouchers: true,
         materialRequest: true,

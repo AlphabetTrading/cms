@@ -6,7 +6,7 @@ export class CreateMaterialReceiveItemInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  productId: string;
+  productVariantId: string;
 
   @Field(() => Number)
   @IsNotEmpty()

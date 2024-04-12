@@ -26,7 +26,7 @@ export class MaterialRequestService {
           serialNumber: serialNumber,
           items: {
             create: createMaterialRequest.items.map((item) => ({
-              productId: item.productId,
+              productVariantId: item.productVariantId,
               quantity: item.quantity,
               remark: item.remark,
             })),
@@ -62,7 +62,15 @@ export class MaterialRequestService {
       where,
       orderBy,
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         approvedBy: true,
         requestedBy: true,
         MaterialReceiveVouchers: true,
@@ -110,7 +118,15 @@ export class MaterialRequestService {
       {
         where: { id: materialRequestId },
         include: {
-          items: true,
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           approvedBy: true,
           requestedBy: true,
           MaterialReceiveVouchers: true,
@@ -138,7 +154,7 @@ export class MaterialRequestService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      productId: item.productId,
+      productVariantId: item.productVariantId,
     }));
 
     const updatedMaterialRequest =
@@ -156,7 +172,15 @@ export class MaterialRequestService {
           },
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           approvedBy: true,
           requestedBy: true,
           MaterialReceiveVouchers: true,

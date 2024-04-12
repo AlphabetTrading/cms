@@ -1,19 +1,18 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import {
-  ProductVariant,
   SubStructureUseDescription,
   SuperStructureUseDescription,
   UseType,
 } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { ProductVariant as ProductVariantModel } from 'src/product-variant/model/product-variant.model';
+import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 
 @ObjectType()
 export class ProductUse extends BaseModel {
   @Field(() => String, { nullable: true })
   productVariantId?: string;
 
-  @Field(() => ProductVariantModel, { nullable: true })
+  @Field(() => ProductVariant, { nullable: true })
   productVariant?: ProductVariant;
 
   @Field(() => UseType, { nullable: true })

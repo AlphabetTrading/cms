@@ -8,7 +8,7 @@ export class UpdatePurchaseOrderItemInput extends PartialType(
 ) {
   @Field(() => String, { nullable: true })
   @IsString()
-  productId?: string;
+  productVariantId?: string;
 
   @IsOptional()
   @Field(() => Number, { nullable: true })

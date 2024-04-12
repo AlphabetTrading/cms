@@ -26,7 +26,7 @@ export class MaterialReturnService {
           serialNumber: serialNumber,
           items: {
             create: createMaterialReturn.items.map((item) => ({
-              productId: item.productId,
+              productVariantId: item.productVariantId,
               issueVoucherId: item.issueVoucherId,
               quantity: item.quantity,
               unitCost: item.unitCost,
@@ -35,7 +35,16 @@ export class MaterialReturnService {
           },
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              issueVoucher: true,
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           Project: true,
           receivedBy: true,
           returnedBy: true,
@@ -61,7 +70,16 @@ export class MaterialReturnService {
       where,
       orderBy,
       include: {
-        items: true,
+        items: {
+          include: {
+            issueVoucher: true,
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         Project: true,
         receivedBy: true,
         returnedBy: true,
@@ -105,7 +123,16 @@ export class MaterialReturnService {
     const materialReturn = await this.prisma.materialReturnVoucher.findUnique({
       where: { id: materialReturnId },
       include: {
-        items: true,
+        items: {
+          include: {
+            issueVoucher: true,
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
         Project: true,
         receivedBy: true,
         returnedBy: true,
@@ -129,7 +156,7 @@ export class MaterialReturnService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      productId: item.productId,
+      productVariantId: item.productVariantId,
     }));
 
     const updatedMaterialReturn =
@@ -147,7 +174,16 @@ export class MaterialReturnService {
           },
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              issueVoucher: true,
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
           Project: true,
           receivedBy: true,
           returnedBy: true,

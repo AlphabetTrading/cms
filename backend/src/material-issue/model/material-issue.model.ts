@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus, Project, User } from '@prisma/client';
+import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { User as UserModel } from 'src/user/user.model';
-import { Project as ProjectModel } from 'src/project/model/project.model';
-import { Product } from 'src/product/model/product.model';
+import { ProductUse } from 'src/product-use/model/product-use.model';
+import { Project } from 'src/project/model/project.model';
+import { User } from 'src/user/user.model';
 
 @ObjectType()
 export class MaterialIssueVoucher extends BaseModel {
@@ -13,7 +13,7 @@ export class MaterialIssueVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   projectId?: string;
 
-  @Field(() => ProjectModel, { nullable: true })
+  @Field(() => Project, { nullable: true })
   project?: Project;
 
   @Field(() => [MaterialIssueItem], { nullable: true })
@@ -25,13 +25,13 @@ export class MaterialIssueVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   preparedById?: string;
 
-  @Field(() => UserModel, { nullable: true })
+  @Field(() => User, { nullable: true })
   preparedBy?: User;
 
   @Field(() => String, { nullable: true })
   approvedById?: string;
 
-  @Field(() => UserModel, { nullable: true })
+  @Field(() => User, { nullable: true })
   approvedBy?: User;
 
   @Field(() => ApprovalStatus, {
@@ -44,10 +44,10 @@ export class MaterialIssueVoucher extends BaseModel {
 @ObjectType()
 export class MaterialIssueItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  productId?: string;
+  productUseId?: string;
 
-  @Field(() => Product, { nullable: true })
-  product?: Product;
+  @Field(() => ProductUse, { nullable: true })
+  productUse?: ProductUse;
 
   @Field(() => Number, { nullable: true })
   quantity?: number;
