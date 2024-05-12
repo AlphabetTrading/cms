@@ -38,6 +38,9 @@ export class MaterialTransferVoucher extends BaseModel {
   requisitionNumber?: string;
 
   @Field(() => String, { nullable: true })
+  materialReceiveId?: string;
+
+  @Field(() => String, { nullable: true })
   preparedById?: string;
 
   @Field(() => User, { nullable: true })
