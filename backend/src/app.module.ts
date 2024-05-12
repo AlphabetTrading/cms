@@ -9,6 +9,7 @@ import { MaterialIssueModule } from './material-issue/material-issue.module';
 import { MaterialReturnModule } from './material-return/material-return.module';
 import { MaterialReceiveModule } from './material-receive/material-receive.module';
 import { MaterialRequestModule } from './material-request/material-request.module';
+import { MaterialTransferModule } from './material-transfer/material-transfer.module';
 import { PurchaseOrderModule } from './purchase-order/purchase-order.module';
 import { PrismaModule } from './prisma.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
@@ -46,6 +47,7 @@ import { ProductUseModule } from './product-use/product-use.module';
     MaterialReturnModule,
     MaterialReceiveModule,
     MaterialRequestModule,
+    MaterialTransferModule,
     PurchaseOrderModule,
     MilestoneModule,
     ProjectModule,

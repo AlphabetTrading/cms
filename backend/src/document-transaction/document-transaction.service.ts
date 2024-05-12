@@ -4,6 +4,7 @@ import { MaterialIssueService } from 'src/material-issue/material-issue.service'
 import { MaterialReceiveService } from 'src/material-receive/material-receive.service';
 import { MaterialRequestService } from 'src/material-request/material-request.service';
 import { MaterialReturnService } from 'src/material-return/material-return.service';
+import { MaterialTransferService } from 'src/material-transfer/material-transfer.service';
 import { PurchaseOrderService } from 'src/purchase-order/purchase-order.service';
 import { DocumentTransaction } from './model/document-transaction-model';
 import { UserRole } from '@prisma/client';
@@ -16,6 +17,7 @@ export class DocumentTransactionService {
     private readonly materialReceiveService: MaterialReceiveService,
     private readonly materialRequestService: MaterialRequestService,
     private readonly materialReturnService: MaterialReturnService,
+    private readonly materialTransferService: MaterialTransferService,
     private readonly purchaseOrderService: PurchaseOrderService,
   ) {}
   async getAllDocumentsStatus(
@@ -31,7 +33,7 @@ export class DocumentTransactionService {
       },
     });
 
-    const materialReceiveRequestPurchaseApprovers =
+    const materialReceiveRequestTransferPurchaseApprovers =
       await this.prisma.project.findFirst({
         where: {
           id: projectId,
@@ -75,7 +77,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
                 },
                 {
                   purchasedById: userId,
@@ -97,7 +99,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
                 },
                 {
                   requestedById: userId,
@@ -129,6 +131,28 @@ export class DocumentTransactionService {
         },
       });
 
+    const materialTransfers =
+      await this.materialTransferService.getMaterialTransfersCountByStatus({
+        where: {
+          AND: [
+            {
+              projectId: projectId,
+            },
+            {
+              OR: [
+                {
+                  approvedById:
+                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
+                },
+                {
+                  preparedById: userId,
+                },
+              ],
+            },
+          ],
+        },
+      });
+
     const purchaseOrders =
       await this.purchaseOrderService.getPurchaseOrderCountByStatus({
         where: {
@@ -140,7 +164,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
                 },
                 {
                   preparedById: userId,
@@ -156,6 +180,7 @@ export class DocumentTransactionService {
       materialReceives,
       materialRequests,
       materialReturns,
+      materialTransfers,
       purchaseOrders,
     ];
   }

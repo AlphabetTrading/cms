@@ -3,6 +3,7 @@ import { MaterialIssueVoucher } from 'src/material-issue/model/material-issue.mo
 import { MaterialReceiveVoucher } from 'src/material-receive/model/material-receive.model';
 import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
 import { MaterialReturnVoucher } from 'src/material-return/model/material-return.model';
+import { MaterialTransferVoucher } from 'src/material-transfer/model/material-transfer.model';
 import { Milestone } from 'src/milestone/model/milestone.model';
 import { PriceHistory } from 'src/price-history/model/price-history.model';
 import { ProductUse } from 'src/product-use/model/product-use.model';
@@ -122,6 +123,15 @@ export class PaginationMaterialReceives {
 export class PaginationPurchaseOrders {
   @Field(() => [PurchaseOrderVoucher])
   items: PurchaseOrderVoucher[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
+}
+
+@ObjectType()
+export class PaginationMaterialTransfers {
+  @Field(() => [MaterialTransferVoucher])
+  items: MaterialTransferVoucher[];
 
   @Field(() => PaginationInfo, { nullable: true })
   meta?: PaginationInfo;

@@ -1,5 +1,5 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { CreateMaterialIssueItemInput } from './create-material-issue-item.input';
 
 @InputType()
@@ -17,7 +17,6 @@ export class UpdateMaterialIssueItemInput extends PartialType(
   unitCost?: number;
 
   @Field(() => Number, { nullable: true })
-  @IsNotEmpty()
   totalCost?: number;
 
   @Field(() => String, { nullable: true })

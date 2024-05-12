@@ -44,6 +44,7 @@ async function main() {
   await seedPurchaseOrders();
   await seedMaterialReceiveVouchers();
   await seedProformas();
+  await seedMaterialTransferVouchers();
 }
 
 async function seedUsers() {
@@ -1441,6 +1442,143 @@ async function seedProformas() {
     console.log('Proforma models seeded successfully');
   } catch (error) {
     console.error('Error seeding proforma models:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+async function seedMaterialTransferVouchers() {
+  let currentSerialNumber = 1;
+  function generateSerialNumber(): string {
+    const paddedSerialNumber =
+      'TN/' + currentSerialNumber.toString().padStart(3, '0');
+    currentSerialNumber++;
+
+    return paddedSerialNumber;
+  }
+  const projects = await prisma.project.findMany();
+
+  const warehouse_stores = await prisma.warehouseStore.findMany();
+  const material_receives = await prisma.materialReceiveVoucher.findMany();
+  try {
+    for (const project of projects) {
+      const project_manager = project.projectManagerId;
+      const site_managers = await prisma.user.findMany({
+        where: {
+          role: 'SITE_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
+          },
+        },
+      });
+
+      if (site_managers.length > 0) {
+        const transferVouchers = [
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            sendingStore: warehouse_stores[1].name,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.COMPLETED,
+            materialReceiveId: material_receives[0].id,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            sendingStore: warehouse_stores[3].name,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.PENDING,
+            materialReceiveId: material_receives[2].id,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[0].name,
+            sendingStore: warehouse_stores[4].name,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.COMPLETED,
+            materialReceiveId: material_receives[1].id,
+          },
+
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[1].name,
+            sendingStore: warehouse_stores[0].name,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.DECLINED,
+            materialReceiveId: material_receives[1].id,
+          },
+
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[1].name,
+            sendingStore: warehouse_stores[2].name,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.PENDING,
+            materialReceiveId: material_receives[0].id,
+          },
+
+          {
+            serialNumber: generateSerialNumber(),
+            receivingStore: warehouse_stores[2].name,
+            sendingStore: warehouse_stores[4].name,
+            projectId: project.id,
+            preparedById: site_managers[0].id,
+            approvedById: project_manager,
+            status: ApprovalStatus.COMPLETED,
+            materialReceiveId: material_receives[0].id,
+          },
+        ];
+
+        const productVariants = await prisma.productVariant.findMany();
+
+        for (const data of transferVouchers) {
+          await prisma.materialTransferVoucher.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    productVariantId: productVariants[0].id,
+                    quantityTransferred: 8,
+                    quantityRequested: 10,
+                    totalCost: 400,
+                    unitCost: 50, 
+                  },
+                  {
+                    productVariantId: productVariants[1].id,
+                    quantityTransferred: 5,
+                    quantityRequested: 5,
+                    totalCost: 100,
+                    unitCost: 20, 
+                  },
+                  {
+                    productVariantId: productVariants[2].id,
+                    quantityTransferred: 2,
+                    quantityRequested: 12,
+                    totalCost: 250,
+                    unitCost: 125, 
+                  },
+                ],
+              },
+            },
+          });
+        }
+      }
+    }
+    console.log('Material Transfer models seeded successfully');
+  } catch (error) {
+    console.error('Error seeding material transfer models:', error);
   } finally {
     await prisma.$disconnect();
   }
