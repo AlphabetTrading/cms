@@ -38,6 +38,10 @@ export class CreateMaterialTransferInput {
 
   @IsNotEmpty()
   @Field(() => String)
+  materialReceiveId: string;
+
+  @IsNotEmpty()
+  @Field(() => String)
   preparedById: string;
 
   @IsOptional()

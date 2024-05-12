@@ -36,11 +36,15 @@ export class UpdateMaterialTransferInput {
   @ValidateNested({ each: true })
   @Type(() => UpdateMaterialTransferItemInput)
   @Field(() => [UpdateMaterialTransferItemInput], { nullable: true })
-  items: UpdateMaterialTransferItemInput[];
+  items?: UpdateMaterialTransferItemInput[];
 
   @IsString()
   @Field(() => String, { nullable: true })
-  preparedById: string;
+  materialReceiveId?: string;
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  preparedById?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })

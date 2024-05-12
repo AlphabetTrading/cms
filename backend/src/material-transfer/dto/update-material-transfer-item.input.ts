@@ -8,7 +8,7 @@ export class UpdateMaterialTransferItemInput extends PartialType(
 ) {
   @Field(() => String, { nullable: true })
   @IsString()
-  productVariantId: string;
+  productVariantId?: string;
 
   @Field(() => Number, { nullable: true })
   quantityRequested?: number;
@@ -17,10 +17,10 @@ export class UpdateMaterialTransferItemInput extends PartialType(
   quantityTransferred?: number;
 
   @Field(() => Number, { nullable: true })
-  unitCost: number;
+  unitCost?: number;
 
   @Field(() => Number, { nullable: true })
-  totalCost: number;
+  totalCost?: number;
 
   @Field(() => String, { nullable: true })
   @IsString()
