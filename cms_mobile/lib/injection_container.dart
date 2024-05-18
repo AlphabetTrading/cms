@@ -17,8 +17,12 @@ import 'package:cms_mobile/features/material_transactions/domain/repository/vouc
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
+import 'package:cms_mobile/features/projects/domain/repository/project_repository.dart';
+import 'package:cms_mobile/features/projects/domain/usecases/get_project_issue.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -43,11 +47,18 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-  sl.registerLazySingleton<VoucherDataSourceImpl>(
+  sl.registerLazySingleton<VoucherDataSource>(
     () => VoucherDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),
   );
+
+  sl.registerLazySingleton<ProjectDataSource>(
+    () => ProjectDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
+
   // repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(
@@ -62,6 +73,12 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<VouchersRepository>(
     () => VoucherRepositoryImpl(dataSource: sl<VoucherDataSourceImpl>()),
+  );
+
+  sl.registerLazySingleton<ProjectRepository>(
+    () => ProjectRepositoryImpl(
+      dataSource: sl<ProjectDataSource>(),
+    ),
   );
 
   // usecase
@@ -108,6 +125,24 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetProjectsUseCase>(
+    () => GetProjectsUseCase(
+      sl<ProjectRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetSelectedProjectUseCase>(
+    () => GetSelectedProjectUseCase(
+      sl<ProjectRepository>(),
+    ),
+  );
+
+  sl.registerSingleton<SelectProjectUseCase>(
+    SelectProjectUseCase(
+      sl<ProjectRepository>(),
+    ),
+  );
+
   // bloc
 
   // sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
@@ -132,5 +167,11 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<MaterialIssueBloc>(
     () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>()),
+  );
+
+  sl.registerFactory<ProjectBloc>(
+    () => ProjectBloc(sl<GetProjectsUseCase>(),
+       sl<GetSelectedProjectUseCase>(),
+        sl<SelectProjectUseCase>()),
   );
 }

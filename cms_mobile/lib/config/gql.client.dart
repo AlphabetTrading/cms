@@ -116,4 +116,9 @@ class GQLClient {
     FlutterSecureStorage storage = LocalStorage().storage;
     await storage.write(key: key, value: value);
   }
+
+  static Future<dynamic> getFromLocalStorage(String key) async {
+    FlutterSecureStorage storage = LocalStorage().storage;
+    return await storage.read(key: key);
+  }
 }
