@@ -25,4 +25,5 @@ class MaterialRequestBloc
       emit(MaterialRequestFailed(error: dataState.error!));
     }
   }
+
 }

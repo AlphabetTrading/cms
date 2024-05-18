@@ -1,5 +1,4 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -49,7 +48,9 @@ class MaterialRequestsList extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(3),
           child: SvgPicture.asset(
-            'assets/icons/requests/material_issues.svg',
+            Theme.of(context).brightness == Brightness.light
+                ? 'assets/icons/transactions/light/material_issues.svg'
+                : 'assets/icons/transactions/dark/material_issues.svg',
           ),
         ),
         title: Text(

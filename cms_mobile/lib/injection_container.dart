@@ -18,12 +18,24 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/get_ma
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
+import 'package:cms_mobile/features/items/data/data_sources/remote_data_source.dart';
+import 'package:cms_mobile/features/items/data/repository/item_repository_impl.dart';
+import 'package:cms_mobile/features/items/domain/repository/item_repository.dart';
+import 'package:cms_mobile/features/items/domain/usecases/get_items.dart';
+import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
 import 'package:cms_mobile/features/projects/domain/repository/project_repository.dart';
 import 'package:cms_mobile/features/projects/domain/usecases/get_project_issue.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
+import 'package:cms_mobile/features/warehouse/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/warehouse/data/repository/warehouse_repository_impl.dart';
+import 'package:cms_mobile/features/warehouse/domain/repository/warehouse_repository.dart';
+import 'package:cms_mobile/features/warehouse/domain/usecases/get_warehouses.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -53,6 +65,17 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<WarehouseDataSourceImpl>(
+    () => WarehouseDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
+  sl.registerLazySingleton<ItemDataSourceImpl>(
+    () => ItemDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
+
   sl.registerLazySingleton<ProjectDataSource>(
     () => ProjectDataSourceImpl(
       client: sl<GraphQLClient>(),
@@ -73,6 +96,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<VouchersRepository>(
     () => VoucherRepositoryImpl(dataSource: sl<VoucherDataSourceImpl>()),
+  );
+
+  sl.registerLazySingleton<WarehouseRepository>(
+    () => WarehouseRepositoryImpl(dataSource: sl<WarehouseDataSourceImpl>()),
+  );
+
+  sl.registerLazySingleton<ItemRepository>(
+    () => ItemRepositoryImpl(dataSource: sl<ItemDataSourceImpl>()),
   );
 
   sl.registerLazySingleton<ProjectRepository>(
@@ -125,6 +156,18 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetWarehousesUseCase>(
+    () => GetWarehousesUseCase(
+      sl<WarehouseRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetItemsUseCase>(
+    () => GetItemsUseCase(
+      sl<ItemRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<GetProjectsUseCase>(
     () => GetProjectsUseCase(
       sl<ProjectRepository>(),
@@ -169,9 +212,23 @@ Future<void> initializeDependencies() async {
     () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>()),
   );
 
+  sl.registerFactory<MaterialRequestLocalBloc>(
+    () => MaterialRequestLocalBloc(),
+  );
+
+  sl.registerFactory<MaterialRequestFormCubit>(
+    () => MaterialRequestFormCubit(),
+  );
+
+  sl.registerFactory<WarehouseBloc>(
+    () => WarehouseBloc(sl<GetWarehousesUseCase>()),
+  );
+  sl.registerFactory<ItemBloc>(
+    () => ItemBloc(sl<GetItemsUseCase>()),
+  );
+
   sl.registerFactory<ProjectBloc>(
-    () => ProjectBloc(sl<GetProjectsUseCase>(),
-       sl<GetSelectedProjectUseCase>(),
+    () => ProjectBloc(sl<GetProjectsUseCase>(), sl<GetSelectedProjectUseCase>(),
         sl<SelectProjectUseCase>()),
   );
 }

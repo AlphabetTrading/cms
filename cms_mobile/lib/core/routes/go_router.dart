@@ -2,11 +2,14 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
+import 'package:cms_mobile/features/items/presentation/pages/ItemsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,27 +25,27 @@ class AppRouter {
         final authState = context.read<AuthBloc>().state.status;
         final isAuthenticated = authState == AuthStatus.signedIn;
         if (isAuthenticated &&
-            (state.matchedLocation == RouteNames.login ||
-                state.matchedLocation == RouteNames.forgotPassword ||
-                state.matchedLocation == RouteNames.resetPassword ||
-                state.matchedLocation == RouteNames.signup)) {
-          return RouteNames.home;
+            (state.matchedLocation == '/${RoutePaths.login}' ||
+                state.matchedLocation == '/${RoutePaths.forgotPassword}' ||
+                state.matchedLocation ==  '/${RoutePaths.resetPassword}' ||
+                state.matchedLocation ==  '/${RoutePaths.signup}')) {
+          return RoutePaths.home;
         }
-        if (!isAuthenticated && state.path == RouteNames.login ||
-            state.matchedLocation == RouteNames.forgotPassword ||
-            state.matchedLocation == RouteNames.resetPassword ||
-            state.matchedLocation == RouteNames.signup) {
+        if (!isAuthenticated && state.path == '/${RoutePaths.login}'||
+            state.matchedLocation == '/${RoutePaths.forgotPassword}' ||
+            state.matchedLocation =='/${RoutePaths.resetPassword}'||
+            state.matchedLocation == '/${RoutePaths.signup}') {
           return state.matchedLocation;
         }
 
         if (!isAuthenticated) {
-          return RouteNames.login;
+          return '/${RoutePaths.login}';
         }
 
         if (isAuthenticated) {
           return state.matchedLocation;
         }
-        return RouteNames.home;
+        return RoutePaths.home;
       },
       routes: <RouteBase>[
         GoRoute(
@@ -52,6 +55,15 @@ class AppRouter {
             return const HomePage();
           },
           routes: <RouteBase>[
+            GoRoute(
+              name: RouteNames.items,
+              path: RoutePaths.items,
+              builder: (BuildContext context, GoRouterState state) {
+                return ItemsPage(
+                  warehouseId: state.pathParameters['warehouseId']!,
+                );
+              },
+            ),
             GoRoute(
                 name: RouteNames.login,
                 path: RoutePaths.login,
@@ -71,6 +83,22 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return const MaterialRequestsPage();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.createMaterialRequest,
+                  path: RoutePaths.createMaterialRequest,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialRequestDetails,
+                  path: RoutePaths.materialRequestDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialRequestDetailsPage();
+                  },
+                ),
+              ],
             ),
             GoRoute(
               name: RouteNames.materialReceiving,
@@ -93,7 +121,6 @@ class AppRouter {
                 return const PurchaseOrdersPage();
               },
             ),
-           
           ],
         ),
       ],

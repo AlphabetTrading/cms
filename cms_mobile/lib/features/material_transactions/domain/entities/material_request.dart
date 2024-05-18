@@ -2,6 +2,7 @@ import 'package:cms_mobile/features/authentication/domain/entities/user_entity.d
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
+import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:equatable/equatable.dart';
 
 enum MaterialRequestStatus { pending, approved, declined }
@@ -81,3 +82,35 @@ class MaterialRequestItem extends Equatable {
     ];
   }
 }
+
+
+class MaterialRequestMaterialEntity extends Equatable {
+  final double requestedQuantity;
+  final ItemEntity material;
+  final String? remark;
+  final String unit;
+
+  const MaterialRequestMaterialEntity(
+      {required this.material,
+      this.remark,
+      required this.unit,
+      required this.requestedQuantity});
+
+  @override
+  List<Object?> get props => [unit, material, remark, requestedQuantity];
+}
+
+class CreateMaterialRequestParamsEntity<T extends MaterialRequestMaterialEntity> extends Equatable {
+  final String projectId;
+  final List<T> materialRequestMaterials;
+
+  const CreateMaterialRequestParamsEntity({
+    required this.projectId,
+    required this.materialRequestMaterials,
+  });
+  
+  @override
+  List<Object?> get props =>[projectId,materialRequestMaterials];
+}
+
+
