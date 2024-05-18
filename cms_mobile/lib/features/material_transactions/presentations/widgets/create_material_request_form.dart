@@ -1,5 +1,8 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
+import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
+import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
+import 'package:cms_mobile/features/items/presentation/bloc/item_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
@@ -9,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
-class CreateMaterialRequestForm extends StatelessWidget {
+class CreateMaterialRequestForm extends StatefulWidget {
   final bool isEdit;
   final int index;
 
@@ -19,26 +22,17 @@ class CreateMaterialRequestForm extends StatelessWidget {
     this.index = -1,
   });
 
-  final List<ItemEntity> materials = [
-    const ItemEntity(
-        id: "1",
-        name: "Brick",
-        quantity: 10,
-        unit: "Pcs",
-        iconSrc: "assets/icons/material/light/brick.svg"),
-    const ItemEntity(
-        id: "2",
-        name: "Cement",
-        unit: "Quintal",
-        quantity: 510,
-        iconSrc: "assets/icons/material/light/cement.svg"),
-    const ItemEntity(
-        id: "3",
-        name: "Sand",
-        unit: "Quintal",
-        quantity: 256,
-        iconSrc: "assets/icons/material/light/sand.svg"),
-  ];
+  @override
+  State<CreateMaterialRequestForm> createState() =>
+      _CreateMaterialRequestFormState();
+}
+
+class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ItemBloc>(context).add(const GetAllWarehouseItems());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,164 +40,230 @@ class CreateMaterialRequestForm extends StatelessWidget {
 
     final quantityField = materialRequestFormCubit.state.quantityField;
     final materialDropdown = materialRequestFormCubit.state.materialDropdown;
-    final unitDropdown = materialRequestFormCubit.state.unitDropdown;
+    // final unitDropdown = materialRequestFormCubit.state.unitDropdown;
     final remarkField = materialRequestFormCubit.state.remarkField;
 
     // Build a Form widget using the _formKey created above.
     return Form(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomDropdown(
-            initialSelection: materialDropdown.value != ""
-                ? materials.firstWhere(
-                    (element) => element.id == materialDropdown.value)
-                : null,
-            onSelected: (dynamic value) =>
-                materialRequestFormCubit.materialChanged(value),
-            dropdownMenuEntries: materials
-                .map((e) =>
-                    DropdownMenuEntry<ItemEntity>(label: e.name, value: e))
-                .toList(),
-            enableFilter: false,
-            errorMessage: materialDropdown.errorMessage, label: 'Material',
-            // trailingIcon: Text(""),
-            // label: "Material"
-          ),
-          const SizedBox(
-            height: 10,
-          ), // SizedBox(height: 10,
-          Row(
+      child: BlocBuilder<ItemBloc, ItemState>(
+        builder: (context, state) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Flexible(
-                child: CustomDropdown(
-                    initialSelection: unitDropdown.value,
-                    onSelected: (dynamic value) =>
-                        materialRequestFormCubit.unitChanged(value),
-                    errorMessage: unitDropdown.errorMessage,
-                    dropdownMenuEntries: [
-                      "m2",
-                      "Quintal",
-                      "Kg",
-                    ]
-                        .map((e) =>
-                            DropdownMenuEntry<String>(label: e, value: e))
-                        .toList(),
-                    enableFilter: false,
-                    label: "Unit"),
+              CustomDropdown(
+                initialSelection: materialDropdown.value != ""
+                    ? state.allWarehouseItems?.firstWhere((element) =>
+                        element.itemVariant.id == materialDropdown.value)
+                    : null,
+                onSelected: (dynamic value) =>
+                    materialRequestFormCubit.materialChanged(value),
+                dropdownMenuEntries: state.allWarehouseItems
+                        ?.map((e) => DropdownMenuEntry<WarehouseItemEntity>(
+                            label:
+                                '${e.itemVariant.item!.name} - ${e.itemVariant.variant}',
+                            value: e))
+                        .toList() ??
+                    [],
+                enableFilter: false,
+                errorMessage: materialDropdown.errorMessage, label: 'Material',
+                trailingIcon: state is AllWarehouseItemsLoading
+                    ? const CircularProgressIndicator()
+                    : null,
+                // label: "Material"
               ),
               const SizedBox(
-                width: 10,
+                height: 10,
+              ), // SizedBox(height: 10,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    child: Column(
+                      children: [
+                        Text("Unit",
+                            style: Theme.of(context).textTheme.labelMedium),
+                        materialDropdown.value != ""
+                            ? Text(state.allWarehouseItems
+                                    ?.firstWhere((element) =>
+                                        element.itemVariant.id ==
+                                        materialDropdown.value)
+                                    .itemVariant
+                                    .unit ??
+                                "N/A")
+                            : Text("N/A")
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: Column(
+                      children: [
+                        Text("In Stock",
+                            style: Theme.of(context).textTheme.labelMedium),
+                        materialDropdown.value != ""
+                            ? Text(state.allWarehouseItems
+                                    ?.firstWhere((element) =>
+                                        element.itemVariant.id ==
+                                        materialDropdown.value)
+                                    .quantity
+                                    .toString() ??
+                                "N/A")
+                            : Text("N/A")
+                      ],
+                    ),
+                  ),
+                  // Flexible(
+                  //   child: CustomDropdown(
+                  //       initialSelection: unitDropdown.value,
+                  //       onSelected: (dynamic value) =>
+                  //           materialRequestFormCubit.unitChanged(value),
+                  //       errorMessage: unitDropdown.errorMessage,
+                  //       dropdownMenuEntries: [
+                  //         "m2",
+                  //         "Quintal",
+                  //         "Kg",
+                  //       ]
+                  //           .map((e) =>
+                  //               DropdownMenuEntry<String>(label: e, value: e))
+                  //           .toList(),
+                  //       enableFilter: false,
+                  //       label: "Unit"),
+                  // ),
+                ],
               ),
-              Flexible(
-                child: CustomTextFormField(
-                  initialValue: double.tryParse(quantityField.value) != null
-                      ? quantityField.value
-                      : "",
-                  keyboardType: TextInputType.number,
-                  label: "Requested Quantity",
-                  onChanged: materialRequestFormCubit.quantityChanged,
-                  errorMessage: quantityField.errorMessage,
-                ),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-
-          Row(
-            children: [
-              Flexible(
-                  child: CustomTextFormField(
-                controller: TextEditingController(
-                    text: materialDropdown.value != ""
-                        ? materials
-                            .firstWhere((element) =>
-                                element.id == materialDropdown.value)
-                            .quantity
-                            .toString()
-                        : ""),
-                label: "In Stock",
-                readOnly: true,
-              )),
               const SizedBox(
-                width: 10,
+                height: 10,
               ),
-              Flexible(
-                  child: CustomTextFormField(
-                controller: materialDropdown.value != "" &&
-                        double.tryParse(quantityField.value) != null
-                    ? TextEditingController(
-                        text: (double.parse(quantityField.value) -
-                                materials
-                                    .firstWhere((element) =>
-                                        element.id == materialDropdown.value)
-                                    .quantity)
-                            .toString())
-                    : TextEditingController(text: ""),
-                label: "To be Purchased",
-                readOnly: true,
-              ))
-            ],
-          ),
 
-          const SizedBox(
-            height: 10,
-          ),
+              Row(
+                children: [
+                  Flexible(
+                    child: CustomTextFormField(
+                      initialValue: double.tryParse(quantityField.value) != null
+                          ? quantityField.value
+                          : "",
+                      keyboardType: TextInputType.number,
+                      label: "Requested Quantity (in unit)" ,
+                      onChanged: materialRequestFormCubit.quantityChanged,
+                      errorMessage: quantityField.errorMessage,
+                    ),
+                  ),
+                  // Flexible(
+                  //   child: CustomTextFormField(
+                  //     controller: TextEditingController(
+                  //         text: materialDropdown.value != ""
+                  //             ? state.allWarehouseItems
+                  //                 ?.firstWhere((element) =>
+                  //                     element.itemVariant.id ==
+                  //                     materialDropdown.value)
+                  //                 .quantity
+                  //                 .toString()
+                  //             : ""),
+                  //     label: "In Stock",
+                  //     readOnly: true,
+                  //   ),
+                  // ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    children: [
+                      Text("To be purchased",
+                          style: Theme.of(context).textTheme.labelMedium),
+                      materialDropdown.value != "" && double.tryParse(quantityField.value) != null
+                          ? Text((double.parse(quantityField.value) -
+                                  (state.allWarehouseItems!
+                                      .firstWhere((element) =>
+                                          element.itemVariant.id ==
+                                          materialDropdown.value)
+                                      .quantity))
+                              .toString())
+                          : Text("N/A"),
+                    ],
+                  )
 
-          //
-          CustomTextFormField(
-            initialValue: remarkField.value,
-            label: "Remark",
-            keyboardType: TextInputType.multiline,
-            maxLines: 3,
-            onChanged: materialRequestFormCubit.remarkChanged,
-            errorMessage: remarkField.errorMessage,
-          ),
-          const SizedBox(
-            height: 10,
-          ), //
-          ElevatedButton(
-            onPressed: () {
-              materialRequestFormCubit.onSubmit();
-              if (materialRequestFormCubit.state.isValid) {
-                if (isEdit) {
-                  final updated = MaterialRequestMaterialEntity(
-                    material: materials.firstWhere(
-                        (element) => element.id == materialDropdown.value),
-                    unit: unitDropdown.value,
-                    requestedQuantity: double.parse(quantityField.value),
-                    remark: remarkField.value,
-                  );
+                  // Flexible(
+                  //   child: CustomTextFormField(
+                  //     controller: materialDropdown.value != "" &&
+                  //             double.tryParse(quantityField.value) != null
+                  //         ? TextEditingController(
+                  //             text: (double.parse(quantityField.value) -
+                  //                     (state.allWarehouseItems!
+                  //                         .firstWhere((element) =>
+                  //                             element.itemVariant.id ==
+                  //                             materialDropdown.value)
+                  //                         .quantity))
+                  //                 .toString())
+                  //         : TextEditingController(text: ""),
+                  //     label: "To be Purchased",
+                  //     readOnly: true,
+                  //   ),
+                  // )
+                ],
+              ),
 
-                  BlocProvider.of<MaterialRequestLocalBloc>(context)
-                      .add(EditMaterialRequestMaterialLocal(updated, index));
-                } else {
-                  BlocProvider.of<MaterialRequestLocalBloc>(context).add(
-                    AddMaterialRequestMaterialLocal(
-                      MaterialRequestMaterialEntity(
-                        material: materials.firstWhere(
-                            (element) => element.id == materialDropdown.value),
-                        unit: unitDropdown.value,
+              const SizedBox(
+                height: 10,
+              ),
+
+              CustomTextFormField(
+                initialValue: remarkField.value,
+                label: "Remark",
+                keyboardType: TextInputType.multiline,
+                maxLines: 3,
+                onChanged: materialRequestFormCubit.remarkChanged,
+                errorMessage: remarkField.errorMessage,
+              ),
+              const SizedBox(
+                height: 10,
+              ), //
+              ElevatedButton(
+                onPressed: () {
+                  materialRequestFormCubit.onSubmit();
+                  if (materialRequestFormCubit.state.isValid) {
+                    if (widget.isEdit) {
+                      final updated = MaterialRequestMaterialEntity(
+                        material: state.allWarehouseItems!.firstWhere(
+                            (element) =>
+                                element.itemVariant.id ==
+                                materialDropdown.value),
+                        // unit: unitDropdown.value,
                         requestedQuantity: double.parse(quantityField.value),
                         remark: remarkField.value,
-                      ),
-                    ),
-                  );
-                }
-                Navigator.pop(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-            ),
-            child: isEdit
-                ? const Text('Save Changes')
-                : const Text('Add Material'),
-          ),
-        ],
+                      );
+
+                      BlocProvider.of<MaterialRequestLocalBloc>(context).add(
+                          EditMaterialRequestMaterialLocal(
+                              updated, widget.index));
+                    } else {
+                      BlocProvider.of<MaterialRequestLocalBloc>(context).add(
+                        AddMaterialRequestMaterialLocal(
+                          MaterialRequestMaterialEntity(
+                            material: state.allWarehouseItems?.firstWhere(
+                                (element) =>
+                                    element.itemVariant.id ==
+                                    materialDropdown.value),
+                            // unit: unitDropdown.value,
+                            requestedQuantity:
+                                double.parse(quantityField.value),
+                            remark: remarkField.value,
+                          ),
+                        ),
+                      );
+                    }
+                    Navigator.pop(context);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                ),
+                child: widget.isEdit
+                    ? const Text('Save Changes')
+                    : const Text('Add Material'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

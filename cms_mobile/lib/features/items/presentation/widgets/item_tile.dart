@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ItemTile extends StatelessWidget {
-  final ItemEntity itemEntity;
-  const ItemTile({super.key, required this.itemEntity});
+  final WarehouseItemEntity warehouseItemEntity;
+  const ItemTile({super.key, required this.warehouseItemEntity});
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +29,14 @@ class ItemTile extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6)),
             ),
-            child: itemEntity.iconSrc != null
+            child: warehouseItemEntity.itemVariant.item?.iconSrc != null
                 ? SvgPicture.asset(
-                    itemEntity.iconSrc!,
+                   warehouseItemEntity.itemVariant.item!.iconSrc!,
                   )
                 : const SizedBox(),
           ),
-          title: Text(itemEntity.name),
-          subtitle: Text(itemEntity.quantity.toString()),
+          title: Text('${warehouseItemEntity.itemVariant.item!.name} ${warehouseItemEntity.itemVariant.variant}'),
+          subtitle: Text(warehouseItemEntity.quantity.toString()),
           trailing: TextButton(
             onPressed: () => showModalBottomSheet(
               context: context,
@@ -46,13 +46,13 @@ class ItemTile extends StatelessWidget {
                   Column(
                     children: [
                       ItemDetail(
-                          title: "Name", value: itemEntity.name),
+                          title: "Name", value:'${warehouseItemEntity.itemVariant.item!.name} ${warehouseItemEntity.itemVariant.variant}'),
                       const SizedBox(
                         height: 10,
                       ),
                       ItemDetail(
                           title: "Quantity",
-                          value: itemEntity.quantity.toString()),
+                          value: warehouseItemEntity.quantity.toString()),
                       const SizedBox(
                         height: 10,
                       ),

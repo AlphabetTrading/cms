@@ -109,29 +109,28 @@ class MaterialRequestItemModel extends MaterialRequestItem {
 }
 
 class MaterialRequestMaterialModel extends MaterialRequestMaterialEntity {
-  const MaterialRequestMaterialModel(
-      {required double requestedQuantity,
-      required ItemEntity material,
-      required String? remark,
-      required String unit})
-      : super(
-            requestedQuantity: requestedQuantity,
-            material: material,
-            remark: remark,
-            unit: unit);
-    
- Map<String, dynamic> toJson() {
+  const MaterialRequestMaterialModel({
+    required double requestedQuantity,
+    WarehouseItemModel? material,
+    required String? remark,
+    // required String unit
+  }) : super(
+          requestedQuantity: requestedQuantity,
+          material: material,
+          remark: remark,
+          // unit: unit
+        );
+
+  Map<String, dynamic> toJson() {
     return {
       'requestedQuantity': requestedQuantity,
-      'material': material,
+      'product': material,
       'remark': remark,
-      'unit': unit,
     };
   }
-    
 
   @override
-  List<Object?> get props => [unit, material, remark, requestedQuantity];
+  List<Object?> get props => [material, remark, requestedQuantity];
 }
 
 class CreateMaterialRequestParamsModel
@@ -139,24 +138,26 @@ class CreateMaterialRequestParamsModel
   const CreateMaterialRequestParamsModel({
     required String projectId,
     required List<MaterialRequestMaterialModel> materialRequestMaterials,
+    required String requestedById,
   }) : super(
+            requestedById: requestedById,
             projectId: projectId,
             materialRequestMaterials: materialRequestMaterials);
 
-              
   @override
-  List<Object?> get props =>[projectId,materialRequestMaterials];
+  List<Object?> get props => [projectId, materialRequestMaterials];
 
-    factory CreateMaterialRequestParamsModel.fromEntity(CreateMaterialRequestParamsEntity entity) {
-    
+  factory CreateMaterialRequestParamsModel.fromEntity(
+      CreateMaterialRequestParamsEntity entity) {
     return CreateMaterialRequestParamsModel(
-      projectId: entity.projectId,
-      materialRequestMaterials: entity.materialRequestMaterials.map((e) => MaterialRequestMaterialModel(
-        requestedQuantity: e.requestedQuantity,
-        material: e.material,
-        remark: e.remark,
-        unit: e.unit
-      )).toList()
-    );
+        projectId: entity.projectId,
+        requestedById: entity.requestedById,
+        materialRequestMaterials: entity.materialRequestMaterials
+            .map((e) => MaterialRequestMaterialModel(
+                  requestedQuantity: e.requestedQuantity,
+                  material: e.material as WarehouseItemModel,
+                  remark: e.remark,
+                ))
+            .toList());
   }
 }

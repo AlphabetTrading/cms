@@ -35,7 +35,16 @@ ThemeData baseTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF1A80E5)),
+      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.disabled)) {
+            return Colors.grey; // Specify the color for the disabled state
+          }
+          return Color(0xFF1A80E5); // Use the default value for other states
+        },
+      ),
+
+      // MaterialStateProperty.all<Color>(Color(0xFF1A80E5)),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

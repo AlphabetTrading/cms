@@ -11,9 +11,14 @@ import 'package:cms_mobile/features/home/data/repository/material_transactions_r
 import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
 import 'package:cms_mobile/features/home/domain/usecases/get_material_transactions.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
+import 'package:cms_mobile/features/items/domain/usecases/get_all_warehouse_items.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_request_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/repository/material_request_repository_impl.dart';
 import 'package:cms_mobile/features/material_transactions/data/repository/vouchers_repository_impl.dart';
+import 'package:cms_mobile/features/material_transactions/domain/repository/material_request_repository.dart';
 import 'package:cms_mobile/features/material_transactions/domain/repository/vouchers_repository.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
@@ -70,6 +75,11 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
+    sl.registerLazySingleton<MaterialRequestDataSourceImpl>(
+    () => MaterialRequestDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
   sl.registerLazySingleton<ItemDataSourceImpl>(
     () => ItemDataSourceImpl(
       client: sl<GraphQLClient>(),
@@ -100,6 +110,11 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<WarehouseRepository>(
     () => WarehouseRepositoryImpl(dataSource: sl<WarehouseDataSourceImpl>()),
+  );
+
+  sl.registerLazySingleton<MaterialRequestRepository>(
+    () => MaterialRequestRepositoryImpl(
+        dataSource: sl<MaterialRequestDataSourceImpl>()),
   );
 
   sl.registerLazySingleton<ItemRepository>(
@@ -167,6 +182,16 @@ Future<void> initializeDependencies() async {
       sl<ItemRepository>(),
     ),
   );
+    sl.registerLazySingleton<GetAllWarehouseItemsUseCase>(
+    () => GetAllWarehouseItemsUseCase(
+      sl<ItemRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<CreateMaterialRequestUseCase>(
+    () => CreateMaterialRequestUseCase(
+      sl<MaterialRequestRepository>(),
+    ),
+  );
 
   sl.registerLazySingleton<GetProjectsUseCase>(
     () => GetProjectsUseCase(
@@ -197,8 +222,8 @@ Future<void> initializeDependencies() async {
         getUserUseCase: sl<GetUserUseCase>(),
       ));
 
-  sl.registerFactory<MaterialRequestBloc>(
-      () => MaterialRequestBloc(sl<GetMaterialRequestUseCase>()));
+  sl.registerFactory<MaterialRequestBloc>(() => MaterialRequestBloc(
+      sl<GetMaterialRequestUseCase>(), sl<CreateMaterialRequestUseCase>()));
 
   sl.registerFactory<LoginBloc>(
     () => LoginBloc(sl<LoginUseCase>()),
@@ -224,7 +249,7 @@ Future<void> initializeDependencies() async {
     () => WarehouseBloc(sl<GetWarehousesUseCase>()),
   );
   sl.registerFactory<ItemBloc>(
-    () => ItemBloc(sl<GetItemsUseCase>()),
+    () => ItemBloc(sl<GetItemsUseCase>(),sl<GetAllWarehouseItemsUseCase>()),
   );
 
   sl.registerFactory<ProjectBloc>(

@@ -24,5 +24,9 @@ class EditMaterialRequestMaterialLocal extends MaterialRequestLocalEvent{
   const EditMaterialRequestMaterialLocal(this.materialRequestMaterial,this.index);
 }
 
+class ClearMaterialRequestMaterialsLocal extends MaterialRequestLocalEvent{
+  const ClearMaterialRequestMaterialsLocal();
+}
+
 
 

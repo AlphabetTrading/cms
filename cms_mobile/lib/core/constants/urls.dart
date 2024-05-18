@@ -1,3 +1,3 @@
 class URLs {
-  static const String graphqlEndpoint = 'https://cms-xuux.onrender.com/graphql';
+  static const String graphqlEndpoint = 'https://cms-0wx3.onrender.com/graphql';
 }

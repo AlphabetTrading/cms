@@ -3,10 +3,10 @@ import 'package:cms_mobile/features/home/presentation/tabs/material-transactions
 import 'package:cms_mobile/features/home/presentation/tabs/settings.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
 import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/create_material_request.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request_details.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/create_material_request.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/material_request_details.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';

@@ -10,11 +10,11 @@ class MaterialRequestBloc
 
   MaterialRequestBloc(this._materialRequestUseCase)
       : super(const MaterialRequestInitial()) {
-    on<GetMaterialRequest>(onGetMaterialRequests);
+    on<GetMaterialRequestEvent>(onGetMaterialRequests);
   }
 
   void onGetMaterialRequests(
-      GetMaterialRequest event, Emitter<MaterialRequestState> emit) async {
+      GetMaterialRequestEvent event, Emitter<MaterialRequestState> emit) async {
     final dataState = await _materialRequestUseCase();
 
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {

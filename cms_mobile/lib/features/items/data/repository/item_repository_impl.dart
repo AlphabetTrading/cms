@@ -9,8 +9,13 @@ class ItemRepositoryImpl extends ItemRepository{
   ItemRepositoryImpl({required this.dataSource});
 
   @override
-  Future<DataState<List<ItemModel>>> getItems(GetItemsInputEntity getItemsInput) {
+  Future<DataState<List<WarehouseItemModel>>> getItems(GetItemsInputEntity? getItemsInput) {
     return dataSource.fetchItems(getItemsInput);
+  }
+  
+  @override
+  Future<DataState<List<WarehouseItemModel>>> getAllWarehouseItems() {
+    return dataSource.fetchAllStockItems();
   }
 
 }
