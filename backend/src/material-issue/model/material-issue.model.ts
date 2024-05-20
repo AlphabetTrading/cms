@@ -1,9 +1,26 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { ApprovalStatus } from '@prisma/client';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  ApprovalStatus,
+  SubStructureUseDescription,
+  SuperStructureUseDescription,
+  UseType,
+} from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { ProductUse } from 'src/product-use/model/product-use.model';
+import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
+
+registerEnumType(UseType, {
+  name: 'UseType',
+});
+
+registerEnumType(SuperStructureUseDescription, {
+  name: 'SuperStructureUseDescription',
+});
+
+registerEnumType(SubStructureUseDescription, {
+  name: 'SubStructureUseDescription',
+});
 
 @ObjectType()
 export class MaterialIssueVoucher extends BaseModel {
@@ -44,10 +61,19 @@ export class MaterialIssueVoucher extends BaseModel {
 @ObjectType()
 export class MaterialIssueItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  productUseId?: string;
+  productVariantId?: string;
 
-  @Field(() => ProductUse, { nullable: true })
-  productUse?: ProductUse;
+  @Field(() => ProductVariant, { nullable: true })
+  productVariant?: ProductVariant;
+
+  @Field(() => UseType, { nullable: true })
+  useType?: UseType;
+
+  @Field(() => SubStructureUseDescription, { nullable: true })
+  subStructureDescription?: SubStructureUseDescription;
+
+  @Field(() => SuperStructureUseDescription, { nullable: true })
+  superStructureDescription?: SuperStructureUseDescription;
 
   @Field(() => Number, { nullable: true })
   quantity?: number;

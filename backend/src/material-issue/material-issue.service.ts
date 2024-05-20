@@ -25,7 +25,10 @@ export class MaterialIssueService {
         serialNumber: serialNumber,
         items: {
           create: createMaterialIssueInput.items.map((item) => ({
-            productUseId: item.productUseId,
+            productVariantId: item.productVariantId,
+            useType: item.useType,
+            subStructureDescription: item.subStructureDescription,
+            superStructureDescription: item.superStructureDescription,
             quantity: item.quantity,
             unitCost: item.unitCost,
             totalCost: item.totalCost,
@@ -36,13 +39,9 @@ export class MaterialIssueService {
       include: {
         items: {
           include: {
-            productUse: {
+            productVariant: {
               include: {
-                productVariant: {
-                  include: {
-                    product: true,
-                  },
-                },
+                product: true,
               },
             },
           },
@@ -74,13 +73,9 @@ export class MaterialIssueService {
       include: {
         items: {
           include: {
-            productUse: {
+            productVariant: {
               include: {
-                productVariant: {
-                  include: {
-                    product: true,
-                  },
-                },
+                product: true,
               },
             },
           },
@@ -129,13 +124,9 @@ export class MaterialIssueService {
       include: {
         items: {
           include: {
-            productUse: {
+            productVariant: {
               include: {
-                productVariant: {
-                  include: {
-                    product: true,
-                  },
-                },
+                product: true,
               },
             },
           },
@@ -163,7 +154,7 @@ export class MaterialIssueService {
     }
 
     const itemUpdateConditions = updateData.items.map((item) => ({
-      productUseId: item.productUseId,
+      productVariantId: item.productVariantId,
     }));
 
     const updatedMaterialIssue = await this.prisma.materialIssueVoucher.update({
@@ -182,13 +173,9 @@ export class MaterialIssueService {
       include: {
         items: {
           include: {
-            productUse: {
+            productVariant: {
               include: {
-                productVariant: {
-                  include: {
-                    product: true,
-                  },
-                },
+                product: true,
               },
             },
           },

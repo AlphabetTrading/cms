@@ -15,7 +15,6 @@ async function main() {
   await prisma.materialRequestVoucher.deleteMany();
   await prisma.priceHistory.deleteMany();
   await prisma.warehouseProduct.deleteMany();
-  await prisma.productUse.deleteMany();
   await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
   await prisma.warehouseStore.deleteMany();
@@ -30,7 +29,6 @@ async function main() {
   await seedUsers();
   await seedProducts();
   await seedProductVariants();
-  await seedProductUses();
   await seedPriceHistory();
   await seedProjects();
   await seedProjectUsers();
@@ -741,31 +739,6 @@ async function seedProductVariants() {
   }
 }
 
-async function seedProductUses() {
-  try {
-    const productVariants = await prisma.productVariant.findMany();
-    for (const variant of productVariants) {
-      await prisma.productUse.createMany({
-        data: [
-          {
-            productVariantId: variant.id,
-            useType: 'SUB_STRUCTURE',
-            subStructureDescription: 'CONCRETE_WORK',
-          },
-          {
-            productVariantId: variant.id,
-            useType: 'SUPER_STRUCTURE',
-            superStructureDescription: 'SANITARY_INSTALLATION',
-          },
-        ],
-      });
-    }
-    console.log('Product Use models seeded successfully');
-  } catch (error) {
-    console.error('Error seeding product use models:', error);
-  }
-}
-
 async function seedWarehouseStores() {
   try {
     await prisma.warehouseStore.createMany({
@@ -912,7 +885,7 @@ async function seedMaterialIssueVouchers() {
           },
         ];
 
-        const productUses = await prisma.productUse.findMany();
+        const productVariants = await prisma.productVariant.findMany();
 
         for (const data of issueVouchers) {
           await prisma.materialIssueVoucher.create({
@@ -922,13 +895,17 @@ async function seedMaterialIssueVouchers() {
                 create: [
                   {
                     quantity: 2,
-                    productUseId: productUses[0].id,
+                    productVariantId: productVariants[0].id,
+                    useType: 'SUPER_STRUCTURE',
+                    superStructureDescription: 'SANITARY_INSTALLATION',
                     totalCost: 100,
                     unitCost: 50,
                   },
                   {
                     quantity: 20,
-                    productUseId: productUses[1].id,
+                    productVariantId: productVariants[1].id,
+                    useType: 'SUB_STRUCTURE',
+                    subStructureDescription: 'CONCRETE_WORK',
                     totalCost: 100,
                     unitCost: 5,
                   },
@@ -1553,21 +1530,21 @@ async function seedMaterialTransferVouchers() {
                     quantityTransferred: 8,
                     quantityRequested: 10,
                     totalCost: 400,
-                    unitCost: 50, 
+                    unitCost: 50,
                   },
                   {
                     productVariantId: productVariants[1].id,
                     quantityTransferred: 5,
                     quantityRequested: 5,
                     totalCost: 100,
-                    unitCost: 20, 
+                    unitCost: 20,
                   },
                   {
                     productVariantId: productVariants[2].id,
                     quantityTransferred: 2,
                     quantityRequested: 12,
                     totalCost: 250,
-                    unitCost: 125, 
+                    unitCost: 125,
                   },
                 ],
               },

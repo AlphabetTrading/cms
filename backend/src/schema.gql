@@ -28,11 +28,14 @@ input CreateMaterialIssueInput {
 }
 
 input CreateMaterialIssueItemInput {
-  productUseId: String!
+  productVariantId: String!
   quantity: Float!
   remark: String
+  subStructureDescription: SubStructureUseDescription
+  superStructureDescription: SuperStructureUseDescription
   totalCost: Float!
   unitCost: Float!
+  useType: UseType!
 }
 
 input CreateMaterialReceiveInput {
@@ -83,6 +86,29 @@ input CreateMaterialReturnItemInput {
   unitCost: Float!
 }
 
+input CreateMaterialTransferInput {
+  approvedById: String
+  items: [CreateMaterialTransferItemInput!]!
+  materialGroup: String
+  materialReceiveId: String!
+  preparedById: String!
+  projectId: String!
+  receivingStore: String
+  requisitionNumber: String
+  sendingStore: String
+  sentThroughName: String
+  vehiclePlateNo: String
+}
+
+input CreateMaterialTransferItemInput {
+  productVariantId: String!
+  quantityRequested: Float
+  quantityTransferred: Float!
+  remark: String
+  totalCost: Float!
+  unitCost: Float!
+}
+
 input CreateMilestoneInput {
   description: String
   dueDate: DateTime!
@@ -99,13 +125,6 @@ input CreatePriceHistoryInput {
 input CreateProductInput {
   name: String!
   productType: String!
-}
-
-input CreateProductUseInput {
-  productVariantId: String!
-  subStructureDescription: SubStructureUseDescription
-  superStructureDescription: SuperStructureUseDescription
-  useType: UseType!
 }
 
 input CreateProductVariantInput {
@@ -277,6 +296,21 @@ input FilterMaterialReturnInput {
   status: ApprovalStatus
 }
 
+input FilterMaterialTransferInput {
+  approvedBy: FilterUserDocumentsInput
+  approvedById: String
+  createdAt: DateTimeFilter
+  id: String
+  preparedBy: FilterUserDocumentsInput
+  preparedById: String
+  project: FilterProjectInput
+  projectId: String
+  receivingStore: StringFilter
+  sendingStore: StringFilter
+  serialNumber: StringFilter
+  status: String
+}
+
 input FilterMilestoneInput {
   createdAt: DateTimeFilter
   dueDate: DateTimeFilter
@@ -297,16 +331,6 @@ input FilterProductInput {
   createdAt: DateTimeFilter
   id: String
   name: StringFilter
-}
-
-input FilterProductUseInput {
-  createdAt: DateTimeFilter
-  id: String
-  productVariant: FilterProductVariantInput
-  productVariantId: String
-  subStructureDescription: String
-  superStructureDescription: String
-  useType: String
 }
 
 input FilterProductVariantInput {
@@ -408,15 +432,18 @@ type MaterialIssueItem {
   createdAt: DateTime!
   id: ID!
   materialIssueVoucherId: String
-  productUse: ProductUse
-  productUseId: String
+  productVariant: ProductVariant
+  productVariantId: String
   quantity: Float
   remark: String
+  subStructureDescription: SubStructureUseDescription
+  superStructureDescription: SuperStructureUseDescription
   totalCost: Float
   unitCost: Float
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+  useType: UseType
 }
 
 type MaterialIssueVoucher {
@@ -529,6 +556,49 @@ type MaterialReturnVoucher {
   updatedAt: DateTime!
 }
 
+type MaterialTransferItem {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  materialTransferVoucherId: String
+  productVariant: ProductVariant
+  productVariantId: String
+  quantityRequested: Float
+  quantityTransferred: Float
+  remark: String
+  totalCost: Float
+  unitCost: Float
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type MaterialTransferVoucher {
+  approvedBy: User
+  approvedById: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  items: [MaterialTransferItem!]
+  materialGroup: String
+  materialReceiveId: String
+  preparedBy: User
+  preparedById: String
+  project: Project
+  projectId: String
+  receivingStore: String
+  requisitionNumber: String
+  sendingStore: String
+  sentThroughName: String
+  serialNumber: String
+  status: ApprovalStatus
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  vehiclePlateNo: String
+}
+
 type Milestone {
   Project: Project
 
@@ -550,15 +620,16 @@ type Mutation {
   approveMaterialReceive(decision: ApprovalStatus!, materialReceiveId: String!): MaterialReceiveVoucher!
   approveMaterialRequest(decision: ApprovalStatus!, materialRequestId: String!): MaterialRequestVoucher!
   approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
+  approveMaterialTransfer(decision: ApprovalStatus!, materialTransferId: String!): MaterialTransferVoucher!
   approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
   createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
   createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
   createMaterialReturn(createMaterialReturnInput: CreateMaterialReturnInput!): MaterialReturnVoucher!
+  createMaterialTransfer(createMaterialTransferInput: CreateMaterialTransferInput!): MaterialTransferVoucher!
   createMilestone(createMilestoneInput: CreateMilestoneInput!): Milestone!
   createPriceHistory(createPriceHistoryInput: CreatePriceHistoryInput!): PriceHistory!
   createProduct(createProductInput: CreateProductInput!): Product!
-  createProductUse(createProductUseInput: CreateProductUseInput!): ProductUse!
   createProductVariant(createProductVariantInput: CreateProductVariantInput!): ProductVariant!
   createProforma(createProformaInput: CreateProformaInput!): Proforma!
   createProject(createProjectInput: CreateProjectInput!): Project!
@@ -572,10 +643,10 @@ type Mutation {
   deleteMaterialReceive(id: String!): MaterialReceiveVoucher!
   deleteMaterialRequest(id: String!): MaterialRequestVoucher!
   deleteMaterialReturn(id: String!): MaterialReturnVoucher!
+  deleteMaterialTransfer(id: String!): MaterialTransferVoucher!
   deleteMilestone(id: String!): Milestone!
   deletePriceHistory(id: String!): PriceHistory!
   deleteProduct(id: String!): Product!
-  deleteProductUse(id: String!): ProductUse!
   deleteProductVariant(id: String!): ProductVariant!
   deleteProforma(id: String!): Proforma!
   deleteProject(id: String!): Project!
@@ -590,10 +661,10 @@ type Mutation {
   updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
+  updateMaterialTransfer(id: String!, updateMaterialTransferInput: UpdateMaterialTransferInput!): MaterialTransferVoucher!
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
   updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
-  updateProductUse(id: String!, updateProductUseInput: UpdateProductUseInput!): ProductUse!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
   updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
@@ -637,6 +708,12 @@ input OrderByMaterialReturnInput {
   updatedAt: OrderDirection
 }
 
+input OrderByMaterialTransferInput {
+  createdAt: OrderDirection
+  serialNumber: OrderDirection
+  updatedAt: OrderDirection
+}
+
 input OrderByMilestoneInput {
   createdAt: OrderDirection
   name: OrderDirection
@@ -653,12 +730,6 @@ input OrderByPriceHistoryInput {
 input OrderByProductInput {
   createdAt: OrderDirection
   name: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input OrderByProductUseInput {
-  createdAt: OrderDirection
-  productVariantId: OrderDirection
   updatedAt: OrderDirection
 }
 
@@ -746,6 +817,11 @@ type PaginationMaterialReturns {
   meta: PaginationInfo
 }
 
+type PaginationMaterialTransfers {
+  items: [MaterialTransferVoucher!]!
+  meta: PaginationInfo
+}
+
 type PaginationMilestones {
   items: [Milestone!]!
   meta: PaginationInfo
@@ -753,11 +829,6 @@ type PaginationMilestones {
 
 type PaginationPriceHistories {
   items: [PriceHistory!]!
-  meta: PaginationInfo
-}
-
-type PaginationProductUses {
-  items: [ProductUse!]!
   meta: PaginationInfo
 }
 
@@ -824,20 +895,6 @@ type Product {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-}
-
-type ProductUse {
-  """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
-  id: ID!
-  productVariant: ProductVariant
-  productVariantId: String
-  subStructureDescription: SubStructureUseDescription
-  superStructureDescription: SuperStructureUseDescription
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
-  useType: UseType
 }
 
 type ProductVariant {
@@ -949,13 +1006,13 @@ type Query {
   getMaterialRequests(filterMaterialRequestInput: FilterMaterialRequestInput, orderBy: OrderByMaterialRequestInput, paginationInput: PaginationInput): PaginationMaterialRequests!
   getMaterialReturnById(id: String!): MaterialReturnVoucher!
   getMaterialReturns(filterMaterialReturnInput: FilterMaterialReturnInput, orderBy: OrderByMaterialReturnInput, paginationInput: PaginationInput): PaginationMaterialReturns!
+  getMaterialTransferById(id: String!): MaterialTransferVoucher!
+  getMaterialTransfers(filterMaterialTransferInput: FilterMaterialTransferInput, orderBy: OrderByMaterialTransferInput, paginationInput: PaginationInput): PaginationMaterialTransfers!
   getMilestone(id: String!): Milestone!
   getMilestones(filterMilestoneInput: FilterMilestoneInput, orderBy: OrderByMilestoneInput, paginationInput: PaginationInput): PaginationMilestones!
   getPriceHistory(id: String!): PriceHistory!
   getProduct(id: String!): Product!
   getProductPriceHistories(filterPriceHistoryInput: FilterPriceHistoryInput, orderBy: OrderByPriceHistoryInput, paginationInput: PaginationInput): PaginationPriceHistories!
-  getProductUse(id: String!): ProductUse!
-  getProductUses(filterProductUseInput: FilterProductUseInput, orderBy: OrderByProductUseInput, paginationInput: PaginationInput): PaginationProductUses!
   getProductVariant(id: String!): ProductVariant!
   getProductVariants(filterProductVariantInput: FilterProductVariantInput, orderBy: OrderByProductVariantInput, paginationInput: PaginationInput): PaginationProductVariants!
   getProducts(filterProductInput: FilterProductInput, orderBy: OrderByProductInput, paginationInput: PaginationInput): PaginationProducts!
@@ -985,14 +1042,12 @@ input StringFilter {
   startsWith: String
 }
 
-"""Possible values for sub structure use description"""
 enum SubStructureUseDescription {
   CONCRETE_WORK
   EXCAVATION_AND_EARTH_WORK
   MASONRY_WORK
 }
 
-"""Possible values for super structure use description"""
 enum SuperStructureUseDescription {
   BLOCK_WORK
   CARPENTRY_AND_JOINERY
@@ -1057,11 +1112,14 @@ input UpdateMaterialIssueInput {
 }
 
 input UpdateMaterialIssueItemInput {
-  productUseId: String
+  productVariantId: String
   quantity: Float
   remark: String
+  subStructureDescription: SubStructureUseDescription
+  superStructureDescription: SuperStructureUseDescription
   totalCost: Float
   unitCost: Float
+  useType: UseType
 }
 
 input UpdateMaterialReceiveInput {
@@ -1115,6 +1173,29 @@ input UpdateMaterialReturnItemInput {
   unitCost: Float
 }
 
+input UpdateMaterialTransferInput {
+  approvedById: String
+  items: [UpdateMaterialTransferItemInput!]
+  materialGroup: String
+  materialReceiveId: String
+  preparedById: String
+  projectId: String
+  receivingStore: String
+  requisitionNumber: String
+  sendingStore: String
+  sentThroughName: String
+  vehiclePlateNo: String
+}
+
+input UpdateMaterialTransferItemInput {
+  productVariantId: String
+  quantityRequested: Float
+  quantityTransferred: Float
+  remark: String
+  totalCost: Float
+  unitCost: Float
+}
+
 input UpdateMilestoneInput {
   description: String
   dueDate: DateTime
@@ -1131,13 +1212,6 @@ input UpdatePriceHistoryInput {
 input UpdateProductInput {
   name: String
   productType: String
-}
-
-input UpdateProductUseInput {
-  productVariantId: String!
-  subStructureDescription: SubStructureUseDescription
-  superStructureDescription: SuperStructureUseDescription
-  useType: UseType!
 }
 
 input UpdateProductVariantInput {
@@ -1227,7 +1301,6 @@ input UpdateWarehouseStoreInput {
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
-"""Possible values for use type"""
 enum UseType {
   SUB_STRUCTURE
   SUPER_STRUCTURE

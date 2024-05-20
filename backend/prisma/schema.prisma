@@ -70,10 +70,10 @@ model ProductVariant {
   description         String?
   unitOfMeasure       UnitOfMeasure
   PriceHistory        PriceHistory[]
-  ProductUse          ProductUse[]
   WarehouseProduct    WarehouseProduct[]
   MaterialRequestItem MaterialRequestItem[]
   MaterialReceiveItem MaterialReceiveItem[]
+  IssueVoucherItem    IssueVoucherItem[]
   ReturnVoucherItem   ReturnVoucherItem[]
   PurchaseOrderItem   PurchaseOrderItem[]
 
@@ -82,19 +82,6 @@ model ProductVariant {
   MaterialTransferItem MaterialTransferItem[]
 
   @@unique([productId, variant])
-}
-
-model ProductUse {
-  id                        String                        @id @default(uuid())
-  productVariantId          String
-  productVariant            ProductVariant                @relation(fields: [productVariantId], references: [id])
-  useType                   UseType
-  subStructureDescription   SubStructureUseDescription?
-  superStructureDescription SuperStructureUseDescription?
-  IssueVoucherItem          IssueVoucherItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model WarehouseStore {
@@ -256,20 +243,23 @@ model MaterialIssueVoucher {
 }
 
 model IssueVoucherItem {
-  id                     String               @id @default(uuid())
-  productUseId           String
-  productUse             ProductUse           @relation(fields: [productUseId], references: [id])
-  quantity               Float
-  unitCost               Float
-  totalCost              Float
-  remark                 String?
-  materialIssueVoucherId String
-  MaterialIssueVoucher   MaterialIssueVoucher @relation(name: "items", fields: [materialIssueVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  id                        String                        @id @default(uuid())
+  productVariantId          String
+  productVariant            ProductVariant                @relation(fields: [productVariantId], references: [id])
+  useType                   UseType
+  subStructureDescription   SubStructureUseDescription?
+  superStructureDescription SuperStructureUseDescription?
+  quantity                  Float
+  unitCost                  Float
+  totalCost                 Float
+  remark                    String?
+  materialIssueVoucherId    String
+  MaterialIssueVoucher      MaterialIssueVoucher          @relation(name: "items", fields: [materialIssueVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([id, productUseId])
+  @@unique([id, productVariantId])
 }
 
 model MaterialReceiveVoucher {

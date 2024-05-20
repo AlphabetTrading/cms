@@ -1,6 +1,7 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { CreateMaterialIssueItemInput } from './create-material-issue-item.input';
+import { SubStructureUseDescription, SuperStructureUseDescription, UseType } from '@prisma/client';
 
 @InputType()
 export class UpdateMaterialIssueItemInput extends PartialType(
@@ -8,7 +9,16 @@ export class UpdateMaterialIssueItemInput extends PartialType(
 ) {
   @Field(() => String, { nullable: true })
   @IsString()
-  productUseId?: string;
+  productVariantId?: string;
+
+  @Field(() => UseType, { nullable: true })
+  useType?: UseType;
+
+  @Field(() => SubStructureUseDescription, { nullable: true })
+  subStructureDescription?: SubStructureUseDescription;
+
+  @Field(() => SuperStructureUseDescription, { nullable: true })
+  superStructureDescription?: SuperStructureUseDescription;
 
   @Field(() => Number, { nullable: true })
   quantity?: number;

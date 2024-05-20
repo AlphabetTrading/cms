@@ -35,7 +35,6 @@ export class ProductVariantService {
       include: {
         product: true,
         WarehouseProduct: true,
-        ProductUse: true,
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
@@ -66,7 +65,6 @@ export class ProductVariantService {
       include: {
         product: true,
         WarehouseProduct: true,
-        ProductUse: true,
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
@@ -85,7 +83,6 @@ export class ProductVariantService {
       include: {
         product: true,
         WarehouseProduct: true,
-        ProductUse: true,
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
@@ -117,7 +114,6 @@ export class ProductVariantService {
       include: {
         product: true,
         WarehouseProduct: true,
-        ProductUse: true,
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,

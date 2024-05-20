@@ -6,7 +6,6 @@ import { MaterialReturnVoucher } from 'src/material-return/model/material-return
 import { MaterialTransferVoucher } from 'src/material-transfer/model/material-transfer.model';
 import { Milestone } from 'src/milestone/model/milestone.model';
 import { PriceHistory } from 'src/price-history/model/price-history.model';
-import { ProductUse } from 'src/product-use/model/product-use.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Product } from 'src/product/model/product.model';
 import { Proforma } from 'src/proforma/model/proforma.model';
@@ -27,15 +26,6 @@ export class PaginationInfo {
 
   @Field(() => Int, { nullable: true })
   count?: number;
-}
-
-@ObjectType()
-export class PaginationProductUses {
-  @Field(() => [ProductUse])
-  items: ProductUse[];
-
-  @Field(() => PaginationInfo, { nullable: true })
-  meta?: PaginationInfo;
 }
 
 @ObjectType()

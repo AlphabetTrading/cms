@@ -1,4 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
+import {
+  SubStructureUseDescription,
+  SuperStructureUseDescription,
+  UseType,
+} from '@prisma/client';
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 @InputType()
@@ -6,7 +11,16 @@ export class CreateMaterialIssueItemInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  productUseId: string;
+  productVariantId: string;
+
+  @Field(() => UseType)
+  useType: UseType;
+
+  @Field(() => SubStructureUseDescription, { nullable: true })
+  subStructureDescription?: SubStructureUseDescription;
+
+  @Field(() => SuperStructureUseDescription, { nullable: true })
+  superStructureDescription?: SuperStructureUseDescription;
 
   @Field(() => Number)
   @IsNotEmpty()
