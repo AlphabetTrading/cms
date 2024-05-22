@@ -48,6 +48,7 @@ export class MaterialReceiveService {
           approvedBy: true,
           purchasedBy: true,
           purchaseOrder: true,
+          WarehouseStore: true,
         },
       });
 
@@ -85,6 +86,7 @@ export class MaterialReceiveService {
         approvedBy: true,
         purchasedBy: true,
         purchaseOrder: true,
+        WarehouseStore: true,
       },
     });
     return materialReceives;
@@ -140,6 +142,7 @@ export class MaterialReceiveService {
           approvedBy: true,
           purchasedBy: true,
           purchaseOrder: true,
+          WarehouseStore: true,
         },
       },
     );
@@ -193,6 +196,7 @@ export class MaterialReceiveService {
           approvedBy: true,
           purchasedBy: true,
           purchaseOrder: true,
+          WarehouseStore: true,
         },
       });
 

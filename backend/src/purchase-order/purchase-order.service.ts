@@ -47,7 +47,6 @@ export class PurchaseOrderService {
         materialRequest: true,
         preparedBy: true,
         Project: true,
-        WarehouseStore: true,
       },
     });
     return createdPurchaseOrder;
@@ -84,7 +83,6 @@ export class PurchaseOrderService {
         materialRequest: true,
         preparedBy: true,
         Project: true,
-        WarehouseStore: true,
       },
     });
     return purchaseOrders;
@@ -139,7 +137,6 @@ export class PurchaseOrderService {
         materialRequest: true,
         preparedBy: true,
         Project: true,
-        WarehouseStore: true,
       },
     });
 
@@ -190,7 +187,6 @@ export class PurchaseOrderService {
         materialRequest: true,
         preparedBy: true,
         Project: true,
-        WarehouseStore: true,
       },
     });
 

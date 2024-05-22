@@ -12,9 +12,7 @@ import { UpdatePriceHistoryInput } from './dto/update-price-history.input';
 
 @Resolver(() => PriceHistory)
 export class PriceHistoryResolver {
-  constructor(
-    private readonly priceHistoryService: PriceHistoryService,
-  ) {}
+  constructor(private readonly priceHistoryService: PriceHistoryService) {}
   @Query(() => PaginationPriceHistories)
   async getProductPriceHistories(
     @Args('filterPriceHistoryInput', {
@@ -37,6 +35,9 @@ export class PriceHistoryResolver {
         },
         {
           createdAt: filterPriceHistoryInput?.createdAt,
+        },
+        {
+          projectId: filterPriceHistoryInput?.projectId,
         },
         {
           productVariant: filterPriceHistoryInput?.productVariant,

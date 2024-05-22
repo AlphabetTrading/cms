@@ -3,7 +3,10 @@ import { InputType, Field } from '@nestjs/graphql';
 @InputType()
 export class CreatePriceHistoryInput {
   @Field()
-  productId: string;
+  productVariantId: string;
+
+  @Field()
+  projectId: string;
 
   @Field()
   price: number;

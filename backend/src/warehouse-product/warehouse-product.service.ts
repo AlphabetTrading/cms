@@ -18,7 +18,8 @@ export class WarehouseProductService {
     const existingWarehouseProduct =
       await this.prisma.warehouseProduct.findUnique({
         where: {
-          productVariantId_warehouseId: {
+          productVariantId_warehouseId_projectId: {
+            projectId: createWarehouseProduct.projectId,
             productVariantId: createWarehouseProduct.productVariantId,
             warehouseId: createWarehouseProduct.warehouseId,
           },
@@ -26,7 +27,9 @@ export class WarehouseProductService {
       });
 
     if (existingWarehouseProduct) {
-      throw new BadRequestException('Product already exists in the warehouse!');
+      throw new BadRequestException(
+        'Product already exists in the warehouse/project!',
+      );
     }
 
     const createdWarehouseProduct = await this.prisma.warehouseProduct.create({
@@ -36,6 +39,7 @@ export class WarehouseProductService {
       include: {
         productVariant: true,
         warehouse: true,
+        project: true,
       },
     });
 
@@ -65,6 +69,7 @@ export class WarehouseProductService {
           },
         },
         warehouse: true,
+        project: true,
       },
     });
     return warehouseProducts;
@@ -78,6 +83,7 @@ export class WarehouseProductService {
       include: {
         productVariant: true,
         warehouse: true,
+        project: true,
       },
     });
 
@@ -105,6 +111,7 @@ export class WarehouseProductService {
       include: {
         productVariant: true,
         warehouse: true,
+        project: true
       },
     });
 
@@ -130,7 +137,7 @@ export class WarehouseProductService {
     return this.prisma.warehouseProduct.count({ where });
   }
 
-  async getAllWarehouseProductsStock() {
+  async getAllWarehouseProductsStock(projectId: string) {
     const allProducts = await this.prisma.productVariant.findMany({
       select: {
         id: true,
@@ -142,24 +149,46 @@ export class WarehouseProductService {
       },
     });
 
-    const warehouseQuantities = await this.prisma.warehouseProduct.groupBy({
-      by: ['productVariantId'],
-      _sum: {
+    const warehouseProducts = await this.prisma.warehouseProduct.findMany({
+      where: {
+        projectId: projectId,
+      },
+      select: {
+        productVariantId: true,
         quantity: true,
+        currentPrice: true,
       },
     });
 
-    const quantityMap = new Map(
-      warehouseQuantities.map((item) => [
-        item.productVariantId,
-        item._sum.quantity,
-      ]),
-    );
+    const productMap = new Map();
+
+    warehouseProducts.forEach((item) => {
+      if (!productMap.has(item.productVariantId)) {
+        productMap.set(item.productVariantId, {
+          quantity: 0,
+          totalValue: 0,
+        });
+      }
+      const productData = productMap.get(item.productVariantId);
+      productData.quantity += item.quantity;
+      productData.totalValue += item.quantity * item.currentPrice;
+    });
 
     const productQuantities = allProducts.map((product) => {
+      const productData = productMap.get(product.id);
+      if (productData) {
+        return {
+          productVariant: product,
+          quantity: productData.quantity,
+          currentPrice: productData.quantity
+            ? productData.totalValue / productData.quantity
+            : 0,
+        };
+      }
       return {
         productVariant: product,
-        quantity: quantityMap.get(product.id) || 0,
+        quantity: 0,
+        currentPrice: 0,
       };
     });
 

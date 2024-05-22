@@ -1,13 +1,22 @@
 import { InputType, Field } from '@nestjs/graphql';
+import { IsPositive } from 'class-validator';
 
 @InputType()
 export class CreateWarehouseProductInput {
   @Field()
-  productVariantId: string
+  projectId: string;
 
-  @Field({ nullable: true })
-  warehouseId: string
-  
-  @Field({ nullable: true })
-  quantity: number
+  @Field()
+  warehouseId: string;
+
+  @Field()
+  productVariantId: string;
+
+  @Field()
+  @IsPositive()
+  quantity: number;
+
+  @Field()
+  @IsPositive()
+  currentPrice: number;
 }

@@ -119,7 +119,8 @@ input CreateMilestoneInput {
 
 input CreatePriceHistoryInput {
   price: Float!
-  productId: String!
+  productVariantId: String!
+  projectId: String!
 }
 
 input CreateProductInput {
@@ -199,9 +200,11 @@ input CreateUserInput {
 }
 
 input CreateWarehouseProductInput {
+  currentPrice: Float!
   productVariantId: String!
-  quantity: Float
-  warehouseId: String
+  projectId: String!
+  quantity: Float!
+  warehouseId: String!
 }
 
 input CreateWarehouseStoreInput {
@@ -323,8 +326,10 @@ input FilterMilestoneInput {
 input FilterPriceHistoryInput {
   createdAt: DateTimeFilter
   id: String
-  productId: String
   productVariant: FilterProductVariantInput
+  productVariantId: String
+  project: FilterProjectInput
+  projectId: String
 }
 
 input FilterProductInput {
@@ -406,6 +411,8 @@ input FilterWarehouseProductInput {
   id: String
   productVariant: FilterProductVariantInput
   productVariantId: String
+  project: FilterProjectInput
+  projectId: String
   warehouse: FilterWarehouseStoreInput
   warehouseId: String
 }
@@ -724,6 +731,7 @@ input OrderByPriceHistoryInput {
   createdAt: OrderDirection
   price: OrderDirection
   productVariant: OrderByProductVariantInput
+  project: OrderByProjectInput
   updatedAt: OrderDirection
 }
 
@@ -765,7 +773,9 @@ input OrderByTaskInput {
 
 input OrderByWarehouseProductInput {
   createdAt: OrderDirection
+  currentPrice: OrderDirection
   productVariant: OrderByProductVariantInput
+  project: OrderByProjectInput
   quantity: OrderDirection
   updatedAt: OrderDirection
   warehouse: OrderByWarehouseStoreInput
@@ -877,8 +887,10 @@ type PriceHistory {
   createdAt: DateTime!
   id: ID!
   price: Float
-  productId: String
   productVariant: ProductVariant
+  productVariantId: String
+  project: Project
+  projectId: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -997,7 +1009,7 @@ type PurchaseOrderVoucher {
 
 type Query {
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
-  getAllWarehouseProductsStock: [WarehouseProductStock!]!
+  getAllWarehouseProductsStock(projectId: String!): [WarehouseProductStock!]!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -1206,7 +1218,8 @@ input UpdateMilestoneInput {
 
 input UpdatePriceHistoryInput {
   price: Float
-  productId: String
+  productVariantId: String
+  projectId: String
 }
 
 input UpdateProductInput {
@@ -1288,7 +1301,9 @@ input UpdateUserInput {
 }
 
 input UpdateWarehouseProductInput {
+  currentPrice: Float
   productVariantId: String
+  projectId: String
   quantity: Float
   warehouseId: String
 }
@@ -1331,9 +1346,12 @@ enum UserRole {
 type WarehouseProduct {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
+  currentPrice: Float
   id: ID!
   productVariant: ProductVariant
   productVariantId: String
+  project: Project
+  projectId: String
   quantity: Float
 
   """Identifies the date and time when the object was last updated."""
@@ -1343,6 +1361,7 @@ type WarehouseProduct {
 }
 
 type WarehouseProductStock {
+  currentPrice: Float
   productVariant: ProductVariant
   quantity: Float
 }

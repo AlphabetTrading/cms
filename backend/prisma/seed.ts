@@ -13,6 +13,8 @@ async function main() {
   await prisma.purchaseOrder.deleteMany();
   await prisma.materialRequestItem.deleteMany();
   await prisma.materialRequestVoucher.deleteMany();
+  await prisma.materialTransferItem.deleteMany();
+  await prisma.materialTransferVoucher.deleteMany();
   await prisma.priceHistory.deleteMany();
   await prisma.warehouseProduct.deleteMany();
   await prisma.productVariant.deleteMany();
@@ -775,14 +777,17 @@ async function seedWarehouseProducts() {
   try {
     const productVariants = await prisma.productVariant.findMany();
     const warehouseStores = await prisma.warehouseStore.findMany();
+    const projects = await prisma.project.findMany();
     await prisma.warehouseProduct.createMany({
       data: productVariants
         .map((variant) => {
           return warehouseStores.map((warehouseStore) => {
             return {
+              projectId: projects[Math.floor(Math.random() * 3)].id,
               productVariantId: variant.id,
               warehouseId: warehouseStore.id,
               quantity: Math.floor(Math.random() * 100),
+              currentPrice: Math.floor(Math.random() * 100),
             };
           });
         })
@@ -795,14 +800,18 @@ async function seedWarehouseProducts() {
 }
 async function seedPriceHistory() {
   try {
+    const projects = await prisma.project.findMany();
     const productVariants = await prisma.productVariant.findMany();
     await prisma.priceHistory.createMany({
       data: productVariants
         .map((variant) => {
-          return {
-            productId: variant.id,
-            price: Math.floor(Math.random() * 100),
-          };
+          return projects.map((project) => {
+            return {
+              projectId: project.id,
+              productVariantId: variant.id,
+              price: Math.floor(Math.random() * 100),
+            };
+          });
         })
         .flat(),
     });
@@ -1058,6 +1067,8 @@ async function seedMaterialReceiveVouchers() {
   const projects = await prisma.project.findMany();
   const material_requests = await prisma.materialRequestVoucher.findMany();
   const purchase_orders = await prisma.purchaseOrder.findMany();
+  const warehouse_stores = await prisma.warehouseStore.findMany();
+
   try {
     for (const project of projects) {
       const project_manager = project.projectManagerId;
@@ -1082,6 +1093,7 @@ async function seedMaterialReceiveVouchers() {
             approvedById: project_manager,
             materialRequestId: material_requests[0].id,
             purchasedById: purchasers[0].id,
+            warehouseStoreId: warehouse_stores[0].id,
             purchaseOrderId: purchase_orders[0].id,
             status: ApprovalStatus.COMPLETED,
           },
@@ -1091,6 +1103,7 @@ async function seedMaterialReceiveVouchers() {
             projectId: project.id,
             supplierName: purchase_orders[3].supplierName,
             materialRequestId: material_requests[3].id,
+            warehouseStoreId: warehouse_stores[1].id,
             purchasedById: purchasers[0].id,
             purchaseOrderId: purchase_orders[3].id,
             status: ApprovalStatus.PENDING,
@@ -1102,6 +1115,7 @@ async function seedMaterialReceiveVouchers() {
             supplierName: purchase_orders[0].supplierName,
             approvedById: project_manager,
             materialRequestId: material_requests[0].id,
+            warehouseStoreId: warehouse_stores[1].id,
             purchasedById: purchasers[0].id,
             purchaseOrderId: purchase_orders[0].id,
             status: ApprovalStatus.DECLINED,
@@ -1112,6 +1126,7 @@ async function seedMaterialReceiveVouchers() {
             projectId: project.id,
             supplierName: purchase_orders[3].supplierName,
             materialRequestId: material_requests[3].id,
+            warehouseStoreId: warehouse_stores[2].id,
             purchasedById: purchasers[0].id,
             purchaseOrderId: purchase_orders[3].id,
             status: ApprovalStatus.PENDING,
@@ -1261,7 +1276,6 @@ async function seedPurchaseOrders() {
     return paddedSerialNumber;
   }
   const material_requests = await prisma.materialRequestVoucher.findMany();
-  const warehouse_stores = await prisma.warehouseStore.findMany();
 
   const projects = await prisma.project.findMany();
 
@@ -1286,7 +1300,6 @@ async function seedPurchaseOrders() {
             serialNumber: generateSerialNumber(),
             approvedById: project_manager,
             vat: 130.43,
-            warehouseStoreId: warehouse_stores[0].id,
             subTotal: 869.57,
             supplierName: 'Supplier 1',
             grandTotal: 1000,
@@ -1298,7 +1311,6 @@ async function seedPurchaseOrders() {
             projectId: project.id,
             serialNumber: generateSerialNumber(),
             vat: 195.65,
-            warehouseStoreId: warehouse_stores[1].id,
             subTotal: 1304.35,
             supplierName: 'Supplier 2',
             grandTotal: 1500,
@@ -1311,7 +1323,6 @@ async function seedPurchaseOrders() {
             serialNumber: generateSerialNumber(),
             approvedById: project_manager,
             vat: 104.35,
-            warehouseStoreId: warehouse_stores[1].id,
             subTotal: 695.65,
             supplierName: 'Supplier 3',
             grandTotal: 800,
@@ -1323,7 +1334,6 @@ async function seedPurchaseOrders() {
             projectId: project.id,
             serialNumber: generateSerialNumber(),
             vat: 260.87,
-            warehouseStoreId: warehouse_stores[2].id,
             subTotal: 1739.13,
             supplierName: 'Supplier 4',
             grandTotal: 2000,

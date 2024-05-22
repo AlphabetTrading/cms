@@ -1,15 +1,21 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { ProductVariant } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { ProductVariant as ProductVariantModel } from 'src/product-variant/model/product-variant.model';
+import { ProductVariant } from 'src/product-variant/model/product-variant.model';
+import { Project } from 'src/project/model/project.model';
 
 @ObjectType()
 export class PriceHistory extends BaseModel {
   @Field({ nullable: true })
-  productId?: string;
+  productVariantId?: string;
 
-  @Field(() => ProductVariantModel, { nullable: true })
+  @Field(() => ProductVariant, { nullable: true })
   productVariant?: ProductVariant;
+
+  @Field({ nullable: true })
+  projectId?: string;
+
+  @Field(() => Project, { nullable: true })
+  project?: Project;
 
   @Field({ nullable: true })
   price?: number;

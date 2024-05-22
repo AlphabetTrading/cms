@@ -37,6 +37,9 @@ export class WarehouseProductResolver {
           id: filterWarehouseProductInput?.id,
         },
         {
+          projectId: filterWarehouseProductInput?.projectId,
+        },
+        {
           productVariantId: filterWarehouseProductInput?.productVariantId,
         },
         {
@@ -135,9 +138,13 @@ export class WarehouseProductResolver {
   }
 
   @Query(() => [WarehouseProductStock])
-  async getAllWarehouseProductsStock() {
+  async getAllWarehouseProductsStock(
+    @Args('projectId', { type: () => String }) projectId: string,
+  ) {
     try {
-      return this.warehouseProductService.getAllWarehouseProductsStock();
+      return this.warehouseProductService.getAllWarehouseProductsStock(
+        projectId,
+      );
     } catch (e) {
       throw new BadRequestException('Error loading warehouse product stocks!');
     }

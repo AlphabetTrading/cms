@@ -16,7 +16,12 @@ export class PriceHistoryService {
         ...createPriceHistory,
       },
       include: {
-        productVariant: true,
+        productVariant: {
+          include: {
+            product: true,
+          },
+        },
+        project: true,
       },
     });
 
@@ -40,7 +45,12 @@ export class PriceHistoryService {
       where,
       orderBy,
       include: {
-        productVariant: true,
+        productVariant: {
+          include: {
+            product: true,
+          },
+        },
+        project: true,
       },
     });
     return priceHistories;
@@ -52,7 +62,12 @@ export class PriceHistoryService {
     const priceHistory = await this.prisma.priceHistory.findUnique({
       where: { id: priceHistoryId },
       include: {
-        productVariant: true,
+        productVariant: {
+          include: {
+            product: true,
+          },
+        },
+        project: true,
       },
     });
 
@@ -77,7 +92,12 @@ export class PriceHistoryService {
         ...updateData,
       },
       include: {
-        productVariant: true,
+        productVariant: {
+          include: {
+            product: true
+          }
+        },
+        project: true
       },
     });
 

@@ -63,34 +63,34 @@ model Product {
 }
 
 model ProductVariant {
-  id                  String                @id @default(uuid())
-  productId           String
-  product             Product               @relation(fields: [productId], references: [id])
-  variant             String
-  description         String?
-  unitOfMeasure       UnitOfMeasure
-  PriceHistory        PriceHistory[]
-  WarehouseProduct    WarehouseProduct[]
-  MaterialRequestItem MaterialRequestItem[]
-  MaterialReceiveItem MaterialReceiveItem[]
-  IssueVoucherItem    IssueVoucherItem[]
-  ReturnVoucherItem   ReturnVoucherItem[]
-  PurchaseOrderItem   PurchaseOrderItem[]
-
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
+  id                   String                 @id @default(uuid())
+  productId            String
+  product              Product                @relation(fields: [productId], references: [id])
+  variant              String
+  description          String?
+  unitOfMeasure        UnitOfMeasure
+  PriceHistory         PriceHistory[]
+  WarehouseProduct     WarehouseProduct[]
+  MaterialRequestItem  MaterialRequestItem[]
+  MaterialReceiveItem  MaterialReceiveItem[]
+  IssueVoucherItem     IssueVoucherItem[]
+  ReturnVoucherItem    ReturnVoucherItem[]
+  PurchaseOrderItem    PurchaseOrderItem[]
   MaterialTransferItem MaterialTransferItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([productId, variant])
 }
 
 model WarehouseStore {
-  id                    String                  @id @default(uuid())
-  name                  String
-  location              String
-  products              WarehouseProduct[]
-  purchaseOrders        PurchaseOrder[]
-  WarehouseStoreManager WarehouseStoreManager[]
+  id                     String                   @id @default(uuid())
+  name                   String
+  location               String
+  products               WarehouseProduct[]
+  MaterialReceiveVoucher MaterialReceiveVoucher[]
+  WarehouseStoreManager  WarehouseStoreManager[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -111,25 +111,32 @@ model WarehouseStoreManager {
 model WarehouseProduct {
   id               String         @id @default(uuid())
   quantity         Float
+  currentPrice     Float
   productVariantId String
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
   warehouseId      String
   warehouse        WarehouseStore @relation(fields: [warehouseId], references: [id])
+  projectId        String
+  project          Project        @relation(fields: [projectId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([productVariantId, warehouseId])
+  @@unique([productVariantId, warehouseId, projectId])
 }
 
 model PriceHistory {
-  id             String         @id @default(uuid())
-  productId      String
-  productVariant ProductVariant @relation(fields: [productId], references: [id])
-  price          Float
+  id               String         @id @default(uuid())
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  projectId        String
+  project          Project        @relation(fields: [projectId], references: [id])
+  price            Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([productVariantId, projectId])
 }
 
 model Proforma {
@@ -164,8 +171,6 @@ model PurchaseOrder {
   approvedById            String?
   approvedBy              User?                    @relation(fields: [approvedById], references: [id], name: "ApprovedBy")
   MaterialReceiveVouchers MaterialReceiveVoucher[]
-  WarehouseStore          WarehouseStore?          @relation(fields: [warehouseStoreId], references: [id])
-  warehouseStoreId        String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -279,6 +284,8 @@ model MaterialReceiveVoucher {
   purchasedBy       User                   @relation(fields: [purchasedById], references: [id], name: "PurchasedBy")
   approvedById      String?
   approvedBy        User?                  @relation(fields: [approvedById], references: [id], name: "ApprovedByReceive")
+  WarehouseStore    WarehouseStore?        @relation(fields: [warehouseStoreId], references: [id])
+  warehouseStoreId  String?
 
   createdAt               DateTime                  @default(now())
   updatedAt               DateTime                  @updatedAt
@@ -378,28 +385,30 @@ model MaterialRequestItem {
 }
 
 model Project {
-  id                     String                   @id @default(uuid())
-  name                   String                   @unique
-  startDate              DateTime
-  endDate                DateTime?
-  budget                 Float
-  Client                 User                     @relation(fields: [clientId], references: [id], name: "Client")
-  clientId               String
-  ProjectManager         User                     @relation(fields: [projectManagerId], references: [id], name: "ProjectManager")
-  projectManagerId       String
-  ProjectUsers           ProjectUser[]
-  status                 String
-  Milestones             Milestone[]
-  PurchaseOrder          PurchaseOrder[]
-  MaterialReturnVoucher  MaterialReturnVoucher[]
-  MaterialIssueVoucher   MaterialIssueVoucher[]
-  MaterialReceiveVoucher MaterialReceiveVoucher[]
-  MaterialRequestVoucher MaterialRequestVoucher[]
-  Proforma               Proforma[]
-
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime                  @updatedAt
+  id                      String                    @id @default(uuid())
+  name                    String                    @unique
+  startDate               DateTime
+  endDate                 DateTime?
+  budget                  Float
+  Client                  User                      @relation(fields: [clientId], references: [id], name: "Client")
+  clientId                String
+  ProjectManager          User                      @relation(fields: [projectManagerId], references: [id], name: "ProjectManager")
+  projectManagerId        String
+  ProjectUsers            ProjectUser[]
+  status                  String
+  Milestones              Milestone[]
+  PurchaseOrder           PurchaseOrder[]
+  MaterialReturnVoucher   MaterialReturnVoucher[]
+  MaterialIssueVoucher    MaterialIssueVoucher[]
+  MaterialReceiveVoucher  MaterialReceiveVoucher[]
+  MaterialRequestVoucher  MaterialRequestVoucher[]
   MaterialTransferVoucher MaterialTransferVoucher[]
+  Proforma                Proforma[]
+  PriceHistory            PriceHistory[]
+  WarehouseProduct        WarehouseProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Milestone {

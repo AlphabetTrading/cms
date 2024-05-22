@@ -8,4 +8,7 @@ export class WarehouseProductStock {
 
   @Field(() => Number, { nullable: true })
   quantity?: number;
+
+  @Field(() => Number, { nullable: true })
+  currentPrice?: number;
 }
