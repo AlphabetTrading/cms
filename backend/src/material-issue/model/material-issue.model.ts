@@ -9,6 +9,7 @@ import { BaseModel } from 'src/common/models/base.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
+import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model';
 
 registerEnumType(UseType, {
   name: 'UseType',
@@ -32,6 +33,12 @@ export class MaterialIssueVoucher extends BaseModel {
 
   @Field(() => Project, { nullable: true })
   project?: Project;
+
+  @Field(() => String, { nullable: true })
+  warehouseStoreId?: string;
+
+  @Field(() => WarehouseStore, { nullable: true })
+  warehouseStore?: WarehouseStore;
 
   @Field(() => [MaterialIssueItem], { nullable: true })
   items?: MaterialIssueItem[];

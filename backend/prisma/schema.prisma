@@ -90,6 +90,7 @@ model WarehouseStore {
   location               String
   products               WarehouseProduct[]
   MaterialReceiveVoucher MaterialReceiveVoucher[]
+  MaterialIssueVoucher   MaterialIssueVoucher[]
   WarehouseStoreManager  WarehouseStoreManager[]
 
   createdAt DateTime @default(now())
@@ -234,6 +235,8 @@ model MaterialIssueVoucher {
   serialNumber      String              @unique
   projectId         String
   Project           Project             @relation(fields: [projectId], references: [id])
+  warehouseStoreId  String
+  warehouseStore    WarehouseStore      @relation(fields: [warehouseStoreId], references: [id])
   requisitionNumber String?
   items             IssueVoucherItem[]  @relation(name: "items")
   status            ApprovalStatus      @default(PENDING)

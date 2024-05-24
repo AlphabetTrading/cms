@@ -12,6 +12,10 @@ export class CreateMaterialIssueInput {
   @Field(() => String, { nullable: true })
   requisitionNumber?: string;
 
+  @IsNotEmpty()
+  @Field(() => String)
+  warehouseStoreId: string;
+
   @ValidateNested({ each: true })
   @Field(() => [CreateMaterialIssueItemInput])
   items: CreateMaterialIssueItemInput[];

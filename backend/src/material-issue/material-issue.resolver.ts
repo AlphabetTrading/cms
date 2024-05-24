@@ -40,7 +40,7 @@ export class MaterialIssueResolver {
             id: filterMaterialIssueInput?.id,
           },
           {
-            projectId: filterMaterialIssueInput?.projectId
+            projectId: filterMaterialIssueInput?.projectId,
           },
           {
             OR: [
@@ -56,6 +56,12 @@ export class MaterialIssueResolver {
             OR: [
               {
                 serialNumber: filterMaterialIssueInput?.serialNumber,
+              },
+              {
+                warehouseStoreId: filterMaterialIssueInput?.warehouseStoreId,
+              },
+              {
+                warehouseStore: filterMaterialIssueInput?.warehouseStore,
               },
               {
                 preparedById: filterMaterialIssueInput?.preparedById,
@@ -150,7 +156,6 @@ export class MaterialIssueResolver {
     }
   }
 
-  
   @Mutation(() => MaterialIssueVoucher)
   async approveMaterialIssue(
     @UserEntity() user: User,
@@ -168,5 +173,4 @@ export class MaterialIssueResolver {
       throw new BadRequestException('Error approving material issue!');
     }
   }
-
 }

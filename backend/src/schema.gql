@@ -25,6 +25,7 @@ input CreateMaterialIssueInput {
   preparedById: String!
   projectId: String!
   requisitionNumber: String
+  warehouseStoreId: String!
 }
 
 input CreateMaterialIssueItemInput {
@@ -251,6 +252,8 @@ input FilterMaterialIssueInput {
   projectId: String
   serialNumber: StringFilter
   status: String
+  warehouseStore: FilterWarehouseStoreInput
+  warehouseStoreId: String
 }
 
 input FilterMaterialReceiveInput {
@@ -471,6 +474,8 @@ type MaterialIssueVoucher {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+  warehouseStore: WarehouseStore
+  warehouseStoreId: String
 }
 
 type MaterialReceiveVoucher {
@@ -1121,6 +1126,7 @@ input UpdateMaterialIssueInput {
   preparedById: String
   projectId: String
   requisitionNumber: String
+  warehouseStoreId: String
 }
 
 input UpdateMaterialIssueItemInput {

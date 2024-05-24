@@ -14,6 +14,10 @@ export class UpdateMaterialIssueInput {
   @Field(() => String, { nullable: true })
   requisitionNumber?: string;
 
+  @IsString()
+  @Field(() => String, { nullable: true })
+  warehouseStoreId?: string;
+
   @ValidateNested({ each: true })
   @Type(() => UpdateMaterialIssueItemInput)
   @Field(() => [UpdateMaterialIssueItemInput], { nullable: true })

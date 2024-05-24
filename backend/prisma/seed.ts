@@ -831,7 +831,7 @@ async function seedMaterialIssueVouchers() {
     return paddedSerialNumber;
   }
   const projects = await prisma.project.findMany();
-
+  const warehouseStores = await prisma.warehouseStore.findMany();
   const store_managers = await prisma.user.findMany({
     where: { role: 'STORE_MANAGER' },
   });
@@ -855,12 +855,14 @@ async function seedMaterialIssueVouchers() {
             serialNumber: generateSerialNumber(),
             approvedById: store_managers[0].id,
             projectId: project.id,
+            warehouseStoreId: warehouseStores[0].id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.COMPLETED,
           },
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
+            warehouseStoreId: warehouseStores[1].id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
@@ -869,6 +871,7 @@ async function seedMaterialIssueVouchers() {
             serialNumber: generateSerialNumber(),
             approvedById: store_managers[0].id,
             projectId: project.id,
+            warehouseStoreId: warehouseStores[1].id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.DECLINED,
           },
@@ -876,12 +879,14 @@ async function seedMaterialIssueVouchers() {
             serialNumber: generateSerialNumber(),
             approvedById: store_managers[0].id,
             projectId: project.id,
+            warehouseStoreId: warehouseStores[2].id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.COMPLETED,
           },
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
+            warehouseStoreId: warehouseStores[0].id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
@@ -889,6 +894,7 @@ async function seedMaterialIssueVouchers() {
             serialNumber: generateSerialNumber(),
             approvedById: store_managers[1].id,
             projectId: project.id,
+            warehouseStoreId: warehouseStores[2].id,
             preparedById: site_managers[0].id,
             status: ApprovalStatus.DECLINED,
           },
