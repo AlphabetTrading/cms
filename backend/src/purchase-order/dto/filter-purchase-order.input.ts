@@ -20,7 +20,7 @@ export class FilterPurchaseOrderInput {
   @Field({ nullable: true })
   projectId?: string;
 
-  @Field(()=> FilterProjectInput, { nullable: true })
+  @Field(() => FilterProjectInput, { nullable: true })
   project?: Prisma.ProjectWhereInput;
 
   @Field(() => StringFilter, { nullable: true })
@@ -50,8 +50,8 @@ export class FilterPurchaseOrderInput {
   @Field(() => FilterUserDocumentsInput, { nullable: true })
   approvedBy?: Prisma.UserWhereInput;
 
-  @Field(() => ApprovalStatus, { nullable: true })
-  status?: ApprovalStatus;
+  @Field(() => [ApprovalStatus], { nullable: true })
+  status?: ApprovalStatus[];
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

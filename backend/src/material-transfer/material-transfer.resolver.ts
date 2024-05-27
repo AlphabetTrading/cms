@@ -78,7 +78,9 @@ export class MaterialTransferResolver {
                 approvedBy: filterMaterialTransferInput?.approvedBy,
               },
               {
-                status: filterMaterialTransferInput?.status,
+                status: {
+                  in: filterMaterialTransferInput?.status,
+                },
               },
             ],
           },

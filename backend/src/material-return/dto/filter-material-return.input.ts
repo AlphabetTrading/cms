@@ -40,7 +40,7 @@ export class FilterMaterialReturnInput {
   receivedBy?: Prisma.UserWhereInput;
 
   @Field(() => ApprovalStatus, { nullable: true })
-  status?: ApprovalStatus;
+  status?: ApprovalStatus[];
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

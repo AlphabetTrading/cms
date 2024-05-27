@@ -89,9 +89,11 @@ export class MaterialReceiveResolver {
               approvedBy: filterMaterialReceiveInput?.approvedBy,
             },
             {
-              status: filterMaterialReceiveInput?.status,
+              status: {
+                in: filterMaterialReceiveInput?.status,
+              },
             },
-          ],
+        ],
         },
         {
           createdAt: filterMaterialReceiveInput?.createdAt,

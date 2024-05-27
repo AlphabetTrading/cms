@@ -39,7 +39,7 @@ export class PurchaseOrderResolver {
           id: filterPurchaseOrderInput?.id,
         },
         {
-          projectId: filterPurchaseOrderInput?.projectId
+          projectId: filterPurchaseOrderInput?.projectId,
         },
         {
           OR: [
@@ -82,7 +82,9 @@ export class PurchaseOrderResolver {
               approvedBy: filterPurchaseOrderInput?.approvedBy,
             },
             {
-              status: filterPurchaseOrderInput?.status,
+              status: {
+                in: filterPurchaseOrderInput?.status,
+              },
             },
           ],
         },
@@ -163,7 +165,6 @@ export class PurchaseOrderResolver {
     }
   }
 
-  
   @Mutation(() => PurchaseOrderVoucher)
   async approvePurchaseOrder(
     @UserEntity() user: User,
@@ -181,5 +182,4 @@ export class PurchaseOrderResolver {
       throw new BadRequestException('Error approving purchase order!');
     }
   }
-
 }

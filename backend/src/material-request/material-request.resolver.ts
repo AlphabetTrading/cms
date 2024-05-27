@@ -72,7 +72,9 @@ export class MaterialRequestResolver {
               approvedBy: filterMaterialRequestInput?.approvedBy,
             },
             {
-              status: filterMaterialRequestInput?.status,
+              status: {
+                in: filterMaterialRequestInput?.status,
+              },
             },
           ],
         },

@@ -23,7 +23,7 @@ export class FilterMaterialReceiveInput {
   @Field({ nullable: true })
   projectId?: string;
 
-  @Field(()=> FilterProjectInput, { nullable: true })
+  @Field(() => FilterProjectInput, { nullable: true })
   project?: Prisma.ProjectWhereInput;
 
   @Field(() => StringFilter, { nullable: true })
@@ -57,7 +57,7 @@ export class FilterMaterialReceiveInput {
   approvedBy?: Prisma.UserWhereInput;
 
   @Field({ nullable: true })
-  status?: ApprovalStatus;
+  status?: ApprovalStatus[];
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

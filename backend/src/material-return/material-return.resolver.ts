@@ -39,7 +39,7 @@ export class MaterialReturnResolver {
           id: filterMaterialReturnInput?.id,
         },
         {
-          projectId: filterMaterialReturnInput?.projectId
+          projectId: filterMaterialReturnInput?.projectId,
         },
         {
           OR: [
@@ -73,7 +73,9 @@ export class MaterialReturnResolver {
               returnedBy: filterMaterialReturnInput?.returnedBy,
             },
             {
-              status: filterMaterialReturnInput?.status,
+              status: {
+                in: filterMaterialReturnInput?.status,
+              },
             },
           ],
         },
@@ -155,7 +157,6 @@ export class MaterialReturnResolver {
     }
   }
 
-  
   @Mutation(() => MaterialReturnVoucher)
   async approveMaterialReturn(
     @UserEntity() user: User,

@@ -76,7 +76,9 @@ export class MaterialIssueResolver {
                 approvedBy: filterMaterialIssueInput?.approvedBy,
               },
               {
-                status: filterMaterialIssueInput?.status,
+                status: {
+                  in: filterMaterialIssueInput?.status,
+                },
               },
             ],
           },
