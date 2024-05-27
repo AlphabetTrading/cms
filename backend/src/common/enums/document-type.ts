@@ -3,5 +3,6 @@ export enum DocumentType {
   MATERIAL_ISSUE = 'material_issue',
   MATERIAL_RECEIVING = 'material_receiving',
   MATERIAL_RETURN = 'material_return',
+  MATERIAL_TRANSFER = 'material_transfer',
   PURCHASE_ORDER = 'purchase_order',
 }

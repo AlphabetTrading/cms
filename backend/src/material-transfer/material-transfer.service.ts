@@ -112,7 +112,7 @@ export class MaterialTransferService {
     documentTransaction.approvedCount = counts.COMPLETED;
     documentTransaction.declinedCount = counts.DECLINED;
     documentTransaction.pendingCount = counts.PENDING;
-    documentTransaction.type = DocumentType.MATERIAL_ISSUE;
+    documentTransaction.type = DocumentType.MATERIAL_TRANSFER;
 
     return documentTransaction;
   }
