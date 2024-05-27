@@ -35,7 +35,7 @@ export class FilterMaterialRequestInput {
   @Field(() => FilterUserDocumentsInput, { nullable: true })
   approvedBy?: Prisma.UserWhereInput;
 
-  @Field({ nullable: true })
+  @Field(() => [ApprovalStatus], { nullable: true })
   status?: ApprovalStatus[];
 
   @Field(() => DateTimeFilter, { nullable: true })

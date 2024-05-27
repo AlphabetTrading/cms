@@ -238,6 +238,7 @@ enum DocumentType {
   MATERIAL_RECEIVING
   MATERIAL_REQUEST
   MATERIAL_RETURN
+  MATERIAL_TRANSFER
   PURCHASE_ORDER
 }
 
@@ -251,7 +252,7 @@ input FilterMaterialIssueInput {
   project: FilterProjectInput
   projectId: String
   serialNumber: StringFilter
-  status: String
+  status: [ApprovalStatus!]
   warehouseStore: FilterWarehouseStoreInput
   warehouseStoreId: String
 }
@@ -271,7 +272,7 @@ input FilterMaterialReceiveInput {
   purchasedBy: FilterUserDocumentsInput
   purchasedById: String
   serialNumber: StringFilter
-  status: String
+  status: [ApprovalStatus!]
   supplierName: StringFilter
 }
 
@@ -285,7 +286,7 @@ input FilterMaterialRequestInput {
   requestedBy: FilterUserDocumentsInput
   requestedById: String
   serialNumber: StringFilter
-  status: String
+  status: [ApprovalStatus!]
 }
 
 input FilterMaterialReturnInput {
@@ -314,7 +315,7 @@ input FilterMaterialTransferInput {
   receivingStore: StringFilter
   sendingStore: StringFilter
   serialNumber: StringFilter
-  status: String
+  status: [ApprovalStatus!]
 }
 
 input FilterMilestoneInput {
@@ -383,7 +384,7 @@ input FilterPurchaseOrderInput {
   project: FilterProjectInput
   projectId: String
   serialNumber: StringFilter
-  status: ApprovalStatus
+  status: [ApprovalStatus!]
   subTotal: NumberFilter
   supplierName: StringFilter
 }
