@@ -12,7 +12,7 @@ class MaterialRequestFormState extends Equatable {
   final RemarkField remarkField;
   final double inStock;
 
-  MaterialRequestFormState(
+ const MaterialRequestFormState(
       {this.isValid = false,
       this.formStatus = FormStatus.invalid,
       this.quantityField = const QuantityField.pure(),

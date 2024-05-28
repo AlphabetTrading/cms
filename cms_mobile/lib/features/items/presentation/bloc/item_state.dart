@@ -3,31 +3,47 @@ import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class ItemState extends Equatable {
-  final List<ItemEntity>? items;
+  final List<WarehouseItemEntity>? warehouseItems;
+  final List<WarehouseItemEntity>? allWarehouseItems;
+
   final Failure? error;
-  const ItemState({this.items, this.error});
+  const ItemState({this.warehouseItems, this.error, this.allWarehouseItems});
 
   @override
-  List<Object?> get props => [items, error];
+  List<Object?> get props => [warehouseItems, error];
 }
 
 class ItemInitial extends ItemState {
   const ItemInitial();
 }
 
-class ItemsLoading extends ItemState {
-  const ItemsLoading();
+class WarehouseItemsLoading extends ItemState {
+  const WarehouseItemsLoading();
 }
 
-class ItemsSuccess extends ItemState {
-  const ItemsSuccess({required List<ItemEntity> items})
-      : super(items: items);
+class WarehouseItemsSuccess extends ItemState {
+  const WarehouseItemsSuccess({required List<WarehouseItemEntity> warehouseItems})
+      : super(warehouseItems: warehouseItems);
 }
 
-class ItemsFailed extends ItemState {
-  const ItemsFailed({required Failure error})
-      : super(error: error);
+class WarehouseItemsFailed extends ItemState {
+  const WarehouseItemsFailed({required Failure error}) : super(error: error);
 }
-class ItemsEmpty extends ItemState {
-  const ItemsEmpty();
+
+class WarehouseItemsEmpty extends ItemState {
+  const WarehouseItemsEmpty();
+}
+
+class AllWarehouseItemsLoading extends ItemState {
+  const AllWarehouseItemsLoading();
+}
+
+class AllWarehouseItemsSuccess extends ItemState {
+  const AllWarehouseItemsSuccess(
+      {required List<WarehouseItemEntity> allWarehouseItems})
+      : super(allWarehouseItems: allWarehouseItems);
+}
+
+class AllWarehouseItemsFailed extends ItemState {
+  const AllWarehouseItemsFailed({required Failure error}) : super(error: error);
 }

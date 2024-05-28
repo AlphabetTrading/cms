@@ -4,13 +4,13 @@ import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
 import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/items/domain/repository/item_repository.dart';
 
-class GetItemsUseCase implements UseCase<List<ItemEntity>, GetItemsInputEntity?> {
+class GetItemsUseCase implements UseCase<List<WarehouseItemEntity>, GetWarehouseItemsInputEntity?> {
   final ItemRepository repository;
 
   GetItemsUseCase(this.repository);
 
   @override
-  Future<DataState<List<ItemEntity>>> call({GetItemsInputEntity? params}) {
-    return repository.getItems(params!);
+  Future<DataState<List<WarehouseItemEntity>>> call({GetWarehouseItemsInputEntity? params}) {
+    return repository.getWarehouseItems(params);
   }
 }

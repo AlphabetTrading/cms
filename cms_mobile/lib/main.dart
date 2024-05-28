@@ -2,6 +2,7 @@ import 'package:cms_mobile/core/routes/go_router.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
@@ -9,6 +10,8 @@ import 'package:cms_mobile/features/projects/presentations/bloc/projects/project
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
@@ -47,8 +50,17 @@ void main() async {
           BlocProvider<MaterialIssueBloc>(
             create: (context) => sl<MaterialIssueBloc>(),
           ),
+          BlocProvider<MaterialReturnBloc>(
+            create: (context) => sl<MaterialReturnBloc>(),
+          ),
           BlocProvider<MaterialRequestLocalBloc>(
             create: (context) => sl<MaterialRequestLocalBloc>(),
+          ),
+          BlocProvider<MaterialIssueLocalBloc>(
+            create: (context) => sl<MaterialIssueLocalBloc>(),
+          ),
+          BlocProvider<MaterialReturnLocalBloc>(
+            create: (context) => sl<MaterialReturnLocalBloc>(),
           ),
           BlocProvider<WarehouseBloc>(
             create: (context) => sl<WarehouseBloc>(),

@@ -10,7 +10,7 @@ class MaterialRequestRepositoryImpl extends MaterialRequestRepository {
   MaterialRequestRepositoryImpl({required this.dataSource});
 
   @override
-  Future<DataState<MaterialRequestModel>> createMaterialRequest(
+  Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsEntity params}) {
 
     return dataSource.createMaterialRequest(

@@ -34,9 +34,6 @@ class MaterialRequestEmpty extends MaterialRequestState {
   const MaterialRequestEmpty();
 }
 
-class CreateMaterialRequest extends MaterialRequestState {
-  const CreateMaterialRequest();
-}
 class CreateMaterialRequestLoading extends MaterialRequestState {
   const CreateMaterialRequestLoading();
 }     

@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ItemsPage extends StatefulWidget {
   final String warehouseId;
-  const ItemsPage({super.key,  required this.warehouseId});
+  const ItemsPage({super.key, required this.warehouseId});
 
   @override
   State<ItemsPage> createState() => _ItemsPageState();
@@ -18,40 +18,41 @@ class _ItemsPageState extends State<ItemsPage> {
   @override
   void initState() {
     super.initState();
+
     context.read<ItemBloc>().add(
-          GetItems(
-            GetItemsInputEntity(
+          GetWarehouseItems(
+            getItemsInputEntity: GetWarehouseItemsInputEntity(
               filterWarehouseItemInput:
                   FilterWarehouseItemInput(warehouseId: widget.warehouseId),
             ),
           ),
         );
+
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  const Text("Materials List"),
+        title: const Text("Materials List"),
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        child: BlocBuilder<ItemBloc, ItemState>(
-            builder: (_, state) {
-          if (state is ItemInitial ||
-              state is ItemsLoading) {
+        child: BlocBuilder<ItemBloc, ItemState>(builder: (_, state) {
+          if (state is ItemInitial || state is WarehouseItemsLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is ItemsSuccess) {
+          if (state is WarehouseItemsSuccess) {
             return ListView.builder(
-                itemCount: state.items!.length,
+                itemCount: state.warehouseItems!.length,
                 itemBuilder: (context, index) {
                   return ItemTile(
-                    itemEntity: state.items![index],
+                    warehouseItemEntity: state.warehouseItems![index],
                   );
                 });
           }
-          if (state is ItemsFailed) {
+          if (state is WarehouseItemsFailed) {
             return Text(state.error!.errorMessage);
           }
           return const SizedBox();

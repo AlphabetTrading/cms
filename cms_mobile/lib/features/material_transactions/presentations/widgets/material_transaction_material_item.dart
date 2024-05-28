@@ -38,9 +38,11 @@ class MaterialTransactionMaterialItem extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           ),
-          child: SvgPicture.asset(
-            iconSrc ?? "",
-          ),
+          child: iconSrc != null
+              ? SvgPicture.asset(
+                  iconSrc!,
+                )
+              : SizedBox(),
         ),
         title: Text(title),
         subtitle: Text(subtitle),

@@ -1,27 +1,30 @@
-abstract class MaterialRequestEvent{
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+
+abstract class MaterialRequestEvent {
   const MaterialRequestEvent();
 }
 
-class GetMaterialRequests extends MaterialRequestEvent{
-  const GetMaterialRequests();
+class GetMaterialRequestsEvent extends MaterialRequestEvent {
+  const GetMaterialRequestsEvent();
 }
 
-class GetMaterialRequest extends MaterialRequestEvent{
-
-  const GetMaterialRequest();
+class GetMaterialRequestEvent extends MaterialRequestEvent {
+  const GetMaterialRequestEvent();
 }
 
-class CreateMaterialRequest extends MaterialRequestEvent{
+class CreateMaterialRequestEvent extends MaterialRequestEvent {
+  final CreateMaterialRequestParamsEntity createMaterialRequestParamsEntity;
+
+  const CreateMaterialRequestEvent(
+      {required this.createMaterialRequestParamsEntity});
+}
+
+class UpdateMaterialRequestEvent extends MaterialRequestEvent {
   final String id;
-  const CreateMaterialRequest(this.id);
+  const UpdateMaterialRequestEvent(this.id);
 }
 
-class UpdateMaterialRequest extends MaterialRequestEvent{
+class DeleteMaterialRequestEvent extends MaterialRequestEvent {
   final String id;
-  const UpdateMaterialRequest(this.id);
-}
-
-class DeleteMaterialRequest extends MaterialRequestEvent{
-  final String id;
-  const DeleteMaterialRequest(this.id);
+  const DeleteMaterialRequestEvent(this.id);
 }

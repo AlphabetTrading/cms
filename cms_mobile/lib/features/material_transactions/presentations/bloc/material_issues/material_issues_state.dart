@@ -33,3 +33,14 @@ class MaterialIssueFailed extends MaterialIssueState {
 class MaterialIssueEmpty extends MaterialIssueState {
   const MaterialIssueEmpty();
 }
+
+class CreateMaterialIssueLoading extends MaterialIssueState {
+  const CreateMaterialIssueLoading();
+}     
+
+class CreateMaterialIssueSuccess extends MaterialIssueState {
+  const CreateMaterialIssueSuccess();
+}
+class CreateMaterialIssueFailed extends MaterialIssueState {
+  const CreateMaterialIssueFailed({required Failure error}) : super(error: error);
+}

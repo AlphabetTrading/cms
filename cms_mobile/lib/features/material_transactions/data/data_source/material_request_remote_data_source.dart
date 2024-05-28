@@ -3,7 +3,7 @@ import 'package:cms_mobile/features/material_transactions/data/models/material_r
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialRequestDataSource {
-  Future<DataState<MaterialRequestModel>> createMaterialRequest(
+  Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsModel
           createMaterialRequestParamsModel});
 }
@@ -11,26 +11,31 @@ abstract class MaterialRequestDataSource {
 class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
   late final GraphQLClient _client;
 // Define the mutation
+  MaterialRequestDataSourceImpl({required GraphQLClient client}) {
+    _client = client;
+  }
 
-  static const String _createMaterialRequestMutation = '''
+  static const String _createMaterialRequestMutation = r'''
+mutation CreateMaterialRequest($createMaterialRequestInput: CreateMaterialRequestInput!) {
+  createMaterialRequest(createMaterialRequestInput: $createMaterialRequestInput) {
+    id
+  }
+}
 
   ''';
 
   // Override the function in the implementation class
   @override
-  Future<DataState<MaterialRequestModel>> createMaterialRequest(
+  Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsModel
           createMaterialRequestParamsModel}) async {
     List<Map<String, dynamic>> materialRequestMaterialsMap =
         createMaterialRequestParamsModel.materialRequestMaterials
             .map((materialRequestMaterial) {
       return {
-        'requestedQuantity': materialRequestMaterial.requestedQuantity,
-        'materialId': materialRequestMaterial.material.id,
-        'remark': materialRequestMaterial.remark,
-        'unitOfMeasure': materialRequestMaterial.unit,
-        'toBePurchasedQuantity': materialRequestMaterial.requestedQuantity -
-            materialRequestMaterial.material.quantity,
+        "quantity": materialRequestMaterial.requestedQuantity,
+        "productVariantId": materialRequestMaterial.material!.itemVariant.id,
+        "remark": materialRequestMaterial.remark,
       };
     }).toList();
 
@@ -38,6 +43,7 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
       document: gql(_createMaterialRequestMutation),
       variables: {
         "createMaterialRequestInput": {
+          "requestedById": createMaterialRequestParamsModel.requestedById,
           "projectId": createMaterialRequestParamsModel.projectId,
           "items": materialRequestMaterialsMap
         }
@@ -53,10 +59,9 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
       }
 
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final MaterialRequestModel materialRequest =
-          MaterialRequestModel.fromJson(result.data!['createMaterialRequest']);
+      final String id = result.data!['createMaterialRequest']['id'];
 
-      return DataSuccess(materialRequest);
+      return DataSuccess(id);
     } catch (e) {
       // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));

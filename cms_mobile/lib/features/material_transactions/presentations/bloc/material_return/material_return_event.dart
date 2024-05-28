@@ -1,27 +1,47 @@
-abstract class MaterialRequestEvent{
-  const MaterialRequestEvent();
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+
+abstract class MaterialReturnEvent{
+  const MaterialReturnEvent();
 }
 
-class GetMaterialRequests extends MaterialRequestEvent{
-  const GetMaterialRequests();
+class GetMaterialReturns extends MaterialReturnEvent{
+  const GetMaterialReturns();
 }
 
-class GetMaterialRequest extends MaterialRequestEvent{
+class GetMaterialReturn extends MaterialReturnEvent{
   final String id;
-  const GetMaterialRequest(this.id);
+  const GetMaterialReturn(this.id);
 }
 
-class CreateMaterialRequest extends MaterialRequestEvent{
+class CreateMaterialReturn extends MaterialReturnEvent{
   final String id;
-  const CreateMaterialRequest(this.id);
+  const CreateMaterialReturn(this.id);
 }
 
-class UpdateMaterialRequest extends MaterialRequestEvent{
+class UpdateMaterialReturn extends MaterialReturnEvent{
   final String id;
-  const UpdateMaterialRequest(this.id);
+  const UpdateMaterialReturn(this.id);
 }
 
-class DeleteMaterialRequest extends MaterialRequestEvent{
+class DeleteMaterialReturn extends MaterialReturnEvent{
   final String id;
-  const DeleteMaterialRequest(this.id);
+  const DeleteMaterialReturn(this.id);
 }
+
+class CreateMaterialReturnEvent extends MaterialReturnEvent {
+  final CreateMaterialReturnParamsEntity createMaterialReturnParamsEntity;
+
+  const CreateMaterialReturnEvent(
+      {required this.createMaterialReturnParamsEntity});
+}
+
+class UpdateMaterialReturnEvent extends MaterialReturnEvent {
+  final String id;
+  const UpdateMaterialReturnEvent(this.id);
+}
+
+class DeleteMaterialReturnEvent extends MaterialReturnEvent {
+  final String id;
+  const DeleteMaterialReturnEvent(this.id);
+}
+

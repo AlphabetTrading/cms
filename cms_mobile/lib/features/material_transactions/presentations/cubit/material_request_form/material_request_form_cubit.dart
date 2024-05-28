@@ -1,4 +1,4 @@
-import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form/material_request_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/create_material_request_form.dart';
 import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,13 +8,14 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
   MaterialRequestFormCubit(
       {String? materialId,
       double? requestedQuantity,
-      String? unit,
+      double? inStock,
       String? remark,
       })
       : super(MaterialRequestFormState(
             materialDropdown: MaterialDropdown.pure(materialId ?? ""),
             quantityField: QuantityField.pure(value:requestedQuantity.toString()),
-            unitDropdown: UnitDropdown.pure(unit ?? ""),
+            // unitDropdown: UnitDropdown.pure(unit ?? ""),
+            inStock: inStock ?? 0.0,
             remarkField: RemarkField.pure(remark ?? "")));
 
   void quantityChanged(String value) {
@@ -26,15 +27,15 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
         isValid: Formz.validate([
           state.quantityField,
           state.materialDropdown,
-          state.unitDropdown,
+          // state.unitDropdown,
           state.remarkField
         ]),
       ),
     );
   }
 
-  void materialChanged(ItemEntity materialEntity) {
-    final MaterialDropdown materialDropdown = MaterialDropdown.dirty(materialEntity.id);
+  void materialChanged(WarehouseItemEntity materialEntity) {
+    final MaterialDropdown materialDropdown = MaterialDropdown.dirty(materialEntity.itemVariant.id);
 
     emit(
       state.copyWith(
@@ -43,7 +44,7 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
         isValid: Formz.validate([
           state.quantityField,
           state.materialDropdown,
-          state.unitDropdown,
+          // state.unitDropdown,
           state.remarkField
         ]),
       ),
@@ -59,7 +60,7 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
         isValid: Formz.validate([
           state.quantityField,
           state.materialDropdown,
-          state.unitDropdown,
+          // state.unitDropdown,
           state.remarkField
         ]),
       ),
@@ -75,7 +76,7 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
         isValid: Formz.validate([
           state.quantityField,
           state.materialDropdown,
-          state.unitDropdown,
+          // state.unitDropdown,
           state.remarkField
         ]),
       ),
@@ -93,7 +94,7 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
         isValid: Formz.validate([
           state.quantityField,
           state.materialDropdown,
-          state.unitDropdown,
+          // state.unitDropdown,
           state.remarkField
         ]),
       ),

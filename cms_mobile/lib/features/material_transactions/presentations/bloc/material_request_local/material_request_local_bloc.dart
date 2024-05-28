@@ -28,5 +28,9 @@ class MaterialRequestLocalBloc
         ..insert(event.index, event.materialRequestMaterial);
       emit(MaterialRequestLocalState(materialRequestMaterials: updatedList));
     });
+
+    on<ClearMaterialRequestMaterialsLocal>((event, emit) {
+      emit(const MaterialRequestLocalState(materialRequestMaterials:[]));
+    });
   }
 }

@@ -75,6 +75,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final dataState = await getUserUseCase();
 
     if (dataState is DataSuccess) {
+      print("getinggg userrrrr");
+      print(dataState.data);
+
       emit(
         AuthState(
           status: AuthStatus.user,

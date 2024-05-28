@@ -1,4 +1,5 @@
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:equatable/equatable.dart';
 
@@ -74,4 +75,48 @@ class MaterialReturnItem extends Equatable {
       id,
     ];
   }
+}
+
+class MaterialReturnMaterialEntity extends Equatable {
+  final String issueVoucherId;
+  final WarehouseItemEntity? material;
+  final double quantity;
+  final double unitCost;
+  final String? remark;
+
+  const MaterialReturnMaterialEntity({
+    this.remark,
+    required this.material,
+    required this.quantity,
+    required this.issueVoucherId,
+    required this.unitCost,
+  });
+
+  @override
+  List<Object?> get props => [
+        remark,
+        quantity,
+        material,
+        issueVoucherId,
+        unitCost,
+      ];
+}
+
+class CreateMaterialReturnParamsEntity<T extends MaterialReturnMaterialEntity>
+    extends Equatable {
+  final String projectId;
+  final String returnedById;
+  final String receivingStoreId;
+  final List<T> materialReturnMaterials;
+
+  const CreateMaterialReturnParamsEntity({
+    required this.projectId,
+    required this.returnedById,
+    required this.receivingStoreId,
+    required this.materialReturnMaterials,
+  });
+
+  @override
+  List<Object?> get props =>
+      [returnedById, receivingStoreId, projectId, materialReturnMaterials];
 }

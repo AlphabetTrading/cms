@@ -56,6 +56,18 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
 
     return Scaffold(
       appBar: _buildAppbar(context),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton(
+          onPressed: () {
+            context.goNamed(RouteNames.materialIssueCreate);
+          },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+          ),
+          child: const Text('Create Material Issue'),
+        ),
+      ),
       body: Container(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -95,15 +107,6 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             _buildBody(context),
             const SizedBox(
               height: 10,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                context.goNamed(RouteNames.materialIssueCreate);
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-              ),
-              child: const Text('Create Material Issue'),
             ),
           ],
         ),

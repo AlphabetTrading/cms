@@ -29,9 +29,8 @@ class CustomDropdown<T> extends StatelessWidget {
           style: Theme.of(context).textTheme.labelSmall,
         ),
         DropdownMenu<T>(
-          trailingIcon: trailingIcon != null
-              ? Icon(Icons.local_airport)
-              : Icon(Icons.arrow_drop_down),
+
+          trailingIcon: trailingIcon ?? const Icon(Icons.arrow_drop_down),
           initialSelection: initialSelection,
           expandedInsets: EdgeInsets.zero,
           enableFilter: true,

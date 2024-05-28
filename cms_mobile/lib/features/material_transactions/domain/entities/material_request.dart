@@ -83,34 +83,35 @@ class MaterialRequestItem extends Equatable {
   }
 }
 
-
 class MaterialRequestMaterialEntity extends Equatable {
   final double requestedQuantity;
-  final ItemEntity material;
+  final WarehouseItemEntity? material;
   final String? remark;
-  final String unit;
+  // final String unit;
 
   const MaterialRequestMaterialEntity(
-      {required this.material,
+      {this.material,
       this.remark,
-      required this.unit,
+      // required this.unit,
       required this.requestedQuantity});
 
   @override
-  List<Object?> get props => [unit, material, remark, requestedQuantity];
+  List<Object?> get props => [ material, remark, requestedQuantity];
 }
 
-class CreateMaterialRequestParamsEntity<T extends MaterialRequestMaterialEntity> extends Equatable {
+class CreateMaterialRequestParamsEntity<T extends MaterialRequestMaterialEntity>
+    extends Equatable {
   final String projectId;
+  final String requestedById;
   final List<T> materialRequestMaterials;
 
   const CreateMaterialRequestParamsEntity({
     required this.projectId,
+    required this.requestedById,
     required this.materialRequestMaterials,
   });
-  
+
   @override
-  List<Object?> get props =>[projectId,materialRequestMaterials];
+  List<Object?> get props =>
+      [requestedById, projectId, materialRequestMaterials];
 }
-
-
