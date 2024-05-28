@@ -33,7 +33,6 @@ class CreateMaterialIssueForm extends StatefulWidget {
 }
 
 class _CreateMaterialIssueFormState extends State<CreateMaterialIssueForm> {
-
   @override
   Widget build(BuildContext context) {
     final materialIssueFormCubit = context.watch<MaterialIssueFormCubit>();
@@ -59,6 +58,16 @@ class _CreateMaterialIssueFormState extends State<CreateMaterialIssueForm> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  state.warehouseItems == null || state.warehouseItems!.isEmpty
+                      ? Text(
+                          "Please select a warehouse first",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
+                                  color: Theme.of(context).colorScheme.error),
+                        )
+                      : const SizedBox(),
                   CustomDropdown(
                     initialSelection: materialDropdown.value != ""
                         ? state.warehouseItems?.firstWhere((element) =>
@@ -158,7 +167,8 @@ class _CreateMaterialIssueFormState extends State<CreateMaterialIssueForm> {
                     dropdownMenuEntries: UseType.values
                         .map((e) => DropdownMenuEntry<UseType>(
                             label: useTypeDisplay[e] ?? "", value: e))
-                        .toList(),
+                        .toList()
+                        .sublist(0, UseType.values.length - 1),
                     enableFilter: false,
                     errorMessage: useTypeDropdown.errorMessage,
                     label: 'Use Type',
@@ -183,7 +193,9 @@ class _CreateMaterialIssueFormState extends State<CreateMaterialIssueForm> {
                                   label: subStructureUseDescriptionDisplay[e] ??
                                       "",
                                   value: e))
-                              .toList(),
+                              .toList()
+                              .sublist(0,
+                                  SubStructureUseDescription.values.length - 1),
                           enableFilter: false,
                           errorMessage: subStructureUseDropdown.errorMessage,
                           label: 'Use Description',
@@ -206,7 +218,11 @@ class _CreateMaterialIssueFormState extends State<CreateMaterialIssueForm> {
                                       superStructureUseDescriptionDisplay[e] ??
                                           "",
                                   value: e))
-                              .toList(),
+                              .toList()
+                              .sublist(
+                                  0,
+                                  SuperStructureUseDescription.values.length -
+                                      1),
                           enableFilter: false,
                           errorMessage: superStructureUseDropdown.errorMessage,
                           label: 'Use Description',
@@ -328,8 +344,6 @@ class QuantityField extends FormzInput<String, QuanityValidationError> {
     return null;
   }
 }
-
-
 
 enum MaterialDropdownError { invalid }
 

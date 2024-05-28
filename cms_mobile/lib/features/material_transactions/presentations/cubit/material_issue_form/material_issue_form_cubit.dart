@@ -1,7 +1,7 @@
 import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_issue_form/material_issue_form_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_create.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

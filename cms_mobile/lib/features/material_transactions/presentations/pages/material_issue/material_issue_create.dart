@@ -1,6 +1,8 @@
+import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
 import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
 import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
@@ -16,7 +18,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/cubit/ma
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/material_issue_input_list.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
@@ -25,23 +27,26 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateMaterialIssuePage extends StatefulWidget {
-  const CreateMaterialIssuePage({super.key});
+class MaterialIssueCreatePage extends StatefulWidget {
+  const MaterialIssueCreatePage({super.key});
 
   @override
-  State<CreateMaterialIssuePage> createState() =>
-      _CreateMaterialIssuePageState();
+  State<MaterialIssueCreatePage> createState() =>
+      _MaterialIssueCreatePageState();
 }
 
-class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
+class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
   @override
   void initState() {
     super.initState();
     BlocProvider.of<WarehouseBloc>(context).add(const GetWarehousesEvent());
   }
 
+  // final String savedUserId = await GQLClient.getUserIdFromStorage();
+
   _buildOnCreateSuccess(BuildContext context) {
     context.goNamed(RouteNames.materialIssue);
+
     BlocProvider.of<MaterialIssueLocalBloc>(context)
         .add(const ClearMaterialIssueMaterialsLocal());
     Fluttertoast.showToast(
@@ -86,9 +91,9 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
               },
               builder: (issueContext, issueState) {
                 return Scaffold(
-                    appBar: AppBar(),
-                    bottomSheet: _buildButtons(
-                        issueContext, localState, issueState, warehouseFormState,warehouseFormContext),
+                    appBar: AppBar(title: const Text("Create Material Issue")),
+                    bottomSheet: _buildButtons(issueContext, localState,
+                        issueState, warehouseFormState, warehouseFormContext),
                     body: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: BlocBuilder<WarehouseBloc, WarehouseState>(
@@ -97,7 +102,8 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
                                 .watch<MaterialIssueWarehouseFormCubit>();
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
                               child: Column(
                                 children: [
                                   CustomDropdown(
@@ -114,7 +120,8 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
                                             ),
                                           );
                                     },
-                                    dropdownMenuEntries: warehouseState.warehouses
+                                    dropdownMenuEntries: warehouseState
+                                            .warehouses
                                             ?.map((e) => DropdownMenuEntry<
                                                     WarehouseEntity>(
                                                 label: e.name, value: e))
@@ -130,6 +137,15 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
                                             : null,
                                   ),
                                   const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    "Materials to be issued:",
+                                    textAlign: TextAlign.start,
+                                    style:
+                                        Theme.of(context).textTheme.labelMedium,
+                                  ),
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   (localState.materialIssueMaterials == null ||
@@ -137,8 +153,11 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
                                               .materialIssueMaterials!.isEmpty)
                                       ? const EmptyList()
                                       : MaterialIssueInputList(
-                                          materialIssues:
-                                              localState.materialIssueMaterials!),
+                                          materialIssues: localState
+                                              .materialIssueMaterials!,
+                                          warehouseFormContext:
+                                              warehouseFormContext,
+                                        ),
                                 ],
                               ),
                             );
@@ -153,18 +172,15 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
   }
 
   _buildButtons(
-      BuildContext context,
-      MaterialIssueLocalState localState,
-      MaterialIssueState state,
-      MaterialIssueWarehouseFormState warehouseFormState,
-      BuildContext warehouseFormContext,
-      ) {
-
+    BuildContext context,
+    MaterialIssueLocalState localState,
+    MaterialIssueState state,
+    MaterialIssueWarehouseFormState warehouseFormState,
+    BuildContext warehouseFormContext,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
         OutlinedButton(
           // onPressed:(){},
           onPressed: () => showModalBottomSheet(
@@ -173,7 +189,8 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
             builder: (context) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(
-                    value: warehouseFormContext.read<MaterialIssueWarehouseFormCubit>(),
+                    value: warehouseFormContext
+                        .read<MaterialIssueWarehouseFormCubit>(),
                   ),
                   BlocProvider<MaterialIssueFormCubit>(
                     create: (_) => MaterialIssueFormCubit(),
@@ -201,16 +218,20 @@ class _CreateMaterialIssuePageState extends State<CreateMaterialIssuePage> {
                   localState.materialIssueMaterials!.isEmpty)
               ? null
               : () {
-                  context.read<MaterialIssueBloc>().add(CreateMaterialIssueEvent(
-                      createMaterialIssueParamsEntity:
-                          CreateMaterialIssueParamsEntity(
-                              projectId: PROJECT_ID,
-                              preparedById: USER_ID,
-                              // warehouseStoreId: "",
-                              warehouseStoreId:
-                                  warehouseFormState.warehouseDropdown.value,
-                              materialIssueMaterials:
-                                  localState.materialIssueMaterials!
+                  context.read<MaterialIssueBloc>().add(
+                      CreateMaterialIssueEvent(
+                          createMaterialIssueParamsEntity:
+                              CreateMaterialIssueParamsEntity(
+                                  projectId: context
+                                          .read<ProjectBloc>()
+                                          .state
+                                          .selectedProjectId ??
+                                      "",
+                                  preparedById: USER_ID,
+                                  warehouseStoreId: warehouseFormState
+                                      .warehouseDropdown.value,
+                                  materialIssueMaterials: localState
+                                      .materialIssueMaterials!
                                       .map((e) => MaterialIssueMaterialEntity(
                                             quantity: e.quantity,
                                             remark: e.remark,
