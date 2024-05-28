@@ -166,9 +166,10 @@ class FilterMaterialIssueInput {
   final StringFilter? approvedBy;
   final StringFilter? preparedBy;
   final StringFilter? serialNumber;
+  final List<String>? status;
 
   FilterMaterialIssueInput(
-      {this.createdAt, this.approvedBy, this.preparedBy, this.serialNumber});
+      {this.createdAt, this.approvedBy, this.preparedBy, this.serialNumber, this.status});
 
   Map<String, dynamic> toJson() {
     // include the property if it is only not null
@@ -182,6 +183,7 @@ class FilterMaterialIssueInput {
           'fullName': preparedBy!.toJson(),
         },
       if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
+      if (status != null) 'status': status,
     };
   }
 }

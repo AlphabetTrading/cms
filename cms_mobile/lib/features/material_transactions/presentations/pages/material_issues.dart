@@ -368,12 +368,17 @@ class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
     context.read<MaterialIssueBloc>().add(
           GetMaterialIssues(
             filterMaterialIssueInput: FilterMaterialIssueInput(
-                // status: StringFilter(contains: status),
-                ),
+              status: selectedStatuses.contains('All')
+                  ? null
+                  : selectedStatuses
+                      .map((status) => status.toUpperCase())
+                      .toList(),
+            ),
             orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 10),
           ),
         );
+    Navigator.pop(context);
   }
 
   void _onFilterChange(value, index) {
