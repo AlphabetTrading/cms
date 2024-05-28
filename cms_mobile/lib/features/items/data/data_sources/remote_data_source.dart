@@ -5,9 +5,10 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class ItemDataSource {
   Future<DataState<List<WarehouseItemModel>>> fetchItems(
-      GetItemsInputEntity? getItemsInput);
+      GetWarehouseItemsInputEntity? getItemsInput);
 
-  Future<DataState<List<WarehouseItemModel>>> fetchAllStockItems();
+  Future<DataState<List<WarehouseItemModel>>> fetchAllStockItems(
+      String projectId);
 }
 
 class ItemDataSourceImpl extends ItemDataSource {
@@ -18,21 +19,23 @@ class ItemDataSourceImpl extends ItemDataSource {
 
   @override
   Future<DataState<List<WarehouseItemModel>>> fetchItems(
-      GetItemsInputEntity? getItemsInput) async {
+      GetWarehouseItemsInputEntity? getItemsInput) async {
     String fetchItemsQuery =
         r'''query GetWarehouseProducts($filterWarehouseProductInput: FilterWarehouseProductInput, $paginationInput: PaginationInput) {
   getWarehouseProducts(filterWarehouseProductInput: $filterWarehouseProductInput, paginationInput: $paginationInput) {
     items {
+      id
+      quantity
+      currentPrice
       productVariant {
         id
         variant
+        unitOfMeasure
         product {
           id
           name
         }
       }
-      id
-      quantity
     }
   }
 }''';
@@ -53,32 +56,37 @@ class ItemDataSourceImpl extends ItemDataSource {
         );
       }
       final requests = response.data!['getWarehouseProducts']['items'] as List;
-
+      // print(requests.map((e) => WarehouseItemModel.fromJson(e)).toList());
       return DataSuccess(
           requests.map((e) => WarehouseItemModel.fromJson(e)).toList());
     });
   }
 
   @override
-  Future<DataState<List<WarehouseItemModel>>> fetchAllStockItems() async {
-    String fetchAllStockItemsQuery = r'''query GetAllWarehouseProductsStock {
-  getAllWarehouseProductsStock {
+  Future<DataState<List<WarehouseItemModel>>> fetchAllStockItems(
+      String projectId) async {
+    String fetchAllStockItemsQuery =
+        r'''query GetAllWarehouseProductsStock($projectId: String!) {
+  getAllWarehouseProductsStock(projectId: $projectId) {
+    currentPrice
     quantity
     productVariant {
+      id
       unitOfMeasure
       variant
-      id
+      description
       product {
         id
         name
+        productType
       }
     }
   }
 }''';
-
-    final response = await _client.query(QueryOptions(
-      document: gql(fetchAllStockItemsQuery),
-    ));
+    final response = await _client
+        .query(QueryOptions(document: gql(fetchAllStockItemsQuery), variables: {
+      'projectId': '2cf44029-fe54-4e91-a031-f8fd7c65bce5',
+    }));
 
     if (response.hasException) {
       return DataFailed(

@@ -1,35 +1,46 @@
 
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_Return.dart';
 import 'package:equatable/equatable.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-abstract class MaterialRequestState extends Equatable{
-  final List<MaterialRequestEntity> ? materialRequests;
+abstract class MaterialReturnState extends Equatable{
+  final List<MaterialReturnEntity> ? materialReturns;
   final Failure ? error;
 
-  const MaterialRequestState({this.materialRequests, this.error});
+  const MaterialReturnState({this.materialReturns, this.error});
 
   @override
-  List<Object?> get props => [materialRequests, error];
+  List<Object?> get props => [materialReturns, error];
 }
 
-class MaterialRequestInitial extends MaterialRequestState {
-  const MaterialRequestInitial();
+class MaterialReturnInitial extends MaterialReturnState {
+  const MaterialReturnInitial();
 }
 
-class MaterialRequestLoading extends MaterialRequestState {
-  const MaterialRequestLoading();
+class MaterialReturnLoading extends MaterialReturnState {
+  const MaterialReturnLoading();
 }
 
-class MaterialRequestSuccess extends MaterialRequestState {
-  const MaterialRequestSuccess({required List<MaterialRequestEntity> materialRequests}) : super(materialRequests: materialRequests);
+class MaterialReturnSuccess extends MaterialReturnState {
+  const MaterialReturnSuccess({required List<MaterialReturnEntity> materialReturns}) : super(materialReturns: materialReturns);
 }
 
-class MaterialRequestFailed extends MaterialRequestState {
-  const MaterialRequestFailed({required Failure error}) : super(error: error);
+class MaterialReturnFailed extends MaterialReturnState {
+  const MaterialReturnFailed({required Failure error}) : super(error: error);
 }
 
-class MaterialRequestEmpty extends MaterialRequestState {
-  const MaterialRequestEmpty();
+class MaterialReturnEmpty extends MaterialReturnState {
+  const MaterialReturnEmpty();
+}
+
+class CreateMaterialReturnLoading extends MaterialReturnState {
+  const CreateMaterialReturnLoading();
+}     
+
+class CreateMaterialReturnSuccess extends MaterialReturnState {
+  const CreateMaterialReturnSuccess();
+}
+class CreateMaterialReturnFailed extends MaterialReturnState {
+  const CreateMaterialReturnFailed({required Failure error}) : super(error: error);
 }

@@ -17,21 +17,21 @@ class ItemInitial extends ItemState {
   const ItemInitial();
 }
 
-class ItemsLoading extends ItemState {
-  const ItemsLoading();
+class WarehouseItemsLoading extends ItemState {
+  const WarehouseItemsLoading();
 }
 
-class ItemsSuccess extends ItemState {
-  const ItemsSuccess({required List<WarehouseItemEntity> warehouseItems})
+class WarehouseItemsSuccess extends ItemState {
+  const WarehouseItemsSuccess({required List<WarehouseItemEntity> warehouseItems})
       : super(warehouseItems: warehouseItems);
 }
 
-class ItemsFailed extends ItemState {
-  const ItemsFailed({required Failure error}) : super(error: error);
+class WarehouseItemsFailed extends ItemState {
+  const WarehouseItemsFailed({required Failure error}) : super(error: error);
 }
 
-class ItemsEmpty extends ItemState {
-  const ItemsEmpty();
+class WarehouseItemsEmpty extends ItemState {
+  const WarehouseItemsEmpty();
 }
 
 class AllWarehouseItemsLoading extends ItemState {

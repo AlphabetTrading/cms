@@ -4,14 +4,16 @@ abstract class ItemEvent {
   const ItemEvent();
 }
 
-class GetItems extends ItemEvent {
-  final GetItemsInputEntity? getItemsInputEntity;
-  const GetItems({this.getItemsInputEntity});
+class GetWarehouseItems extends ItemEvent {
+  final GetWarehouseItemsInputEntity? getItemsInputEntity;
+  const GetWarehouseItems({this.getItemsInputEntity});
 }
 
 class GetAllWarehouseItems extends ItemEvent {
-  const GetAllWarehouseItems();
+  final String projectId;
+  const GetAllWarehouseItems(this.projectId);
 }
+
 
 class GetItem extends ItemEvent {
   final String id;

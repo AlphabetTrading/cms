@@ -3,7 +3,7 @@ import 'package:cms_mobile/features/items/data/models/item.dart';
 import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
 
 abstract class ItemRepository{
-  Future<DataState<List<WarehouseItemModel>>> getItems(GetItemsInputEntity? getItemsInput);
-  Future<DataState<List<WarehouseItemModel>>> getAllWarehouseItems();
+  Future<DataState<List<WarehouseItemModel>>> getWarehouseItems(GetWarehouseItemsInputEntity? getItemsInput);
+  Future<DataState<List<WarehouseItemModel>>> getAllWarehouseItems(String projectId);
 
 }

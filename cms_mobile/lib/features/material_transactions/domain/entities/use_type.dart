@@ -1,0 +1,30 @@
+enum UseType {
+  SUB_STRUCTURE,
+  SUPER_STRUCTURE,
+  DEFAULT_VALUE
+
+}
+abstract class UseDescription{}
+
+enum SubStructureUseDescription implements UseDescription{
+  EXCAVATION_AND_EARTH_WORK,
+  CONCRETE_WORK,
+  MASONRY_WORK,
+  DEFAULT_VALUE
+}
+
+enum SuperStructureUseDescription implements UseDescription{
+  CONCRETE_WORK,
+  BLOCK_WORK,
+  ROOFING,
+  CARPENTRY_AND_JOINERY,
+  METAL_WORK,
+  PLASTERING_WORK,
+  FINISHING_WORK,
+  PAINTING_WORK,
+  SANITARY_INSTALLATION,
+  ELECTRICAL_INSTALLATION,
+  MECHANICAL_INSTALLATION,
+  DEFAULT_VALUE
+
+}

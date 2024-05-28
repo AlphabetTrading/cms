@@ -31,28 +31,33 @@ class ItemTile extends StatelessWidget {
             ),
             child: warehouseItemEntity.itemVariant.item?.iconSrc != null
                 ? SvgPicture.asset(
-                   warehouseItemEntity.itemVariant.item!.iconSrc!,
+                    warehouseItemEntity.itemVariant.item!.iconSrc!,
                   )
                 : const SizedBox(),
           ),
-          title: Text('${warehouseItemEntity.itemVariant.item!.name} ${warehouseItemEntity.itemVariant.variant}'),
-          subtitle: Text(warehouseItemEntity.quantity.toString()),
+          title: Text(
+              '${warehouseItemEntity.itemVariant.item!.name} ${warehouseItemEntity.itemVariant.variant}'),
+          subtitle: Text(
+              '${warehouseItemEntity.quantity.toString()} ${warehouseItemEntity.itemVariant.unit}'),
           trailing: TextButton(
             onPressed: () => showModalBottomSheet(
               context: context,
               builder: (context) => Padding(
-                padding: EdgeInsets.all(32.0),
+                padding: const EdgeInsets.all(32.0),
                 child: Wrap(children: [
                   Column(
                     children: [
                       ItemDetail(
-                          title: "Name", value:'${warehouseItemEntity.itemVariant.item!.name} ${warehouseItemEntity.itemVariant.variant}'),
+                          title: "Name",
+                          value:
+                              '${warehouseItemEntity.itemVariant.item!.name} - ${warehouseItemEntity.itemVariant.variant}'),
                       const SizedBox(
                         height: 10,
                       ),
                       ItemDetail(
                           title: "Quantity",
-                          value: warehouseItemEntity.quantity.toString()),
+                          value:
+                              '${warehouseItemEntity.quantity.toString()} ${warehouseItemEntity.itemVariant.unit}'),
                       const SizedBox(
                         height: 10,
                       ),
@@ -63,7 +68,7 @@ class ItemTile extends StatelessWidget {
                 ]),
               ),
             ),
-            child: Text(
+            child: const Text(
               "View More",
               style: TextStyle(fontSize: 12),
             ),

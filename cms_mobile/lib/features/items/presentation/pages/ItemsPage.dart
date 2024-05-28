@@ -20,8 +20,8 @@ class _ItemsPageState extends State<ItemsPage> {
     super.initState();
 
     context.read<ItemBloc>().add(
-          GetItems(
-            getItemsInputEntity: GetItemsInputEntity(
+          GetWarehouseItems(
+            getItemsInputEntity: GetWarehouseItemsInputEntity(
               filterWarehouseItemInput:
                   FilterWarehouseItemInput(warehouseId: widget.warehouseId),
             ),
@@ -40,10 +40,10 @@ class _ItemsPageState extends State<ItemsPage> {
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: BlocBuilder<ItemBloc, ItemState>(builder: (_, state) {
-          if (state is ItemInitial || state is ItemsLoading) {
+          if (state is ItemInitial || state is WarehouseItemsLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is ItemsSuccess) {
+          if (state is WarehouseItemsSuccess) {
             return ListView.builder(
                 itemCount: state.warehouseItems!.length,
                 itemBuilder: (context, index) {
@@ -52,7 +52,7 @@ class _ItemsPageState extends State<ItemsPage> {
                   );
                 });
           }
-          if (state is ItemsFailed) {
+          if (state is WarehouseItemsFailed) {
             return Text(state.error!.errorMessage);
           }
           return const SizedBox();

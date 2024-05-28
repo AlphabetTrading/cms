@@ -8,7 +8,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form/material_request_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/create_material_request_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
@@ -30,8 +30,8 @@ class CreateMaterialRequestPage extends StatelessWidget {
           listener: (context, state) {
             if (state is CreateMaterialRequestSuccess) {
               context.goNamed(RouteNames.materialRequest);
-               BlocProvider.of<MaterialRequestLocalBloc>(
-                                            context).add(const ClearMaterialRequestMaterialsLocal());
+              BlocProvider.of<MaterialRequestLocalBloc>(context)
+                  .add(const ClearMaterialRequestMaterialsLocal());
               Fluttertoast.showToast(
                   msg: "Material Request Created",
                   toastLength: Toast.LENGTH_SHORT,
@@ -92,6 +92,8 @@ class CreateMaterialRequestPage extends StatelessWidget {
                                       requestedQuantity:
                                           materialRequest.requestedQuantity,
                                       remark: materialRequest.remark,
+                                      inStock:
+                                          materialRequest.material!.quantity,
                                     ),
                                     child: Padding(
                                       padding: EdgeInsets.all(32.0),

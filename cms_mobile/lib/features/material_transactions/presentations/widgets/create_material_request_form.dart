@@ -6,8 +6,8 @@ import 'package:cms_mobile/features/items/presentation/bloc/item_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form_cubit.dart';
 import 'package:cms_mobile/features/items/domain/entities/item.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form/material_request_form_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -31,7 +31,7 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ItemBloc>(context).add(const GetAllWarehouseItems());
+    BlocProvider.of<ItemBloc>(context).add(const GetAllWarehouseItems(""));
   }
 
   @override
@@ -42,6 +42,9 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
     final materialDropdown = materialRequestFormCubit.state.materialDropdown;
     // final unitDropdown = materialRequestFormCubit.state.unitDropdown;
     final remarkField = materialRequestFormCubit.state.remarkField;
+    print("materialRequestFormCubit.state.inStock");
+
+    print(materialRequestFormCubit.state.inStock);
 
     // Build a Form widget using the _formKey created above.
     return Form(
@@ -112,23 +115,6 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                       ],
                     ),
                   ),
-                  // Flexible(
-                  //   child: CustomDropdown(
-                  //       initialSelection: unitDropdown.value,
-                  //       onSelected: (dynamic value) =>
-                  //           materialRequestFormCubit.unitChanged(value),
-                  //       errorMessage: unitDropdown.errorMessage,
-                  //       dropdownMenuEntries: [
-                  //         "m2",
-                  //         "Quintal",
-                  //         "Kg",
-                  //       ]
-                  //           .map((e) =>
-                  //               DropdownMenuEntry<String>(label: e, value: e))
-                  //           .toList(),
-                  //       enableFilter: false,
-                  //       label: "Unit"),
-                  // ),
                 ],
               ),
               const SizedBox(
@@ -143,26 +129,11 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                           ? quantityField.value
                           : "",
                       keyboardType: TextInputType.number,
-                      label: "Requested Quantity (in unit)" ,
+                      label: "Requested Quantity (in unit)",
                       onChanged: materialRequestFormCubit.quantityChanged,
                       errorMessage: quantityField.errorMessage,
                     ),
                   ),
-                  // Flexible(
-                  //   child: CustomTextFormField(
-                  //     controller: TextEditingController(
-                  //         text: materialDropdown.value != ""
-                  //             ? state.allWarehouseItems
-                  //                 ?.firstWhere((element) =>
-                  //                     element.itemVariant.id ==
-                  //                     materialDropdown.value)
-                  //                 .quantity
-                  //                 .toString()
-                  //             : ""),
-                  //     label: "In Stock",
-                  //     readOnly: true,
-                  //   ),
-                  // ),
                   const SizedBox(
                     width: 10,
                   ),
@@ -170,7 +141,8 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                     children: [
                       Text("To be purchased",
                           style: Theme.of(context).textTheme.labelMedium),
-                      materialDropdown.value != "" && double.tryParse(quantityField.value) != null
+                      materialDropdown.value != "" &&
+                              double.tryParse(quantityField.value) != null
                           ? Text((double.parse(quantityField.value) -
                                   (state.allWarehouseItems!
                                       .firstWhere((element) =>
@@ -181,24 +153,6 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                           : Text("N/A"),
                     ],
                   )
-
-                  // Flexible(
-                  //   child: CustomTextFormField(
-                  //     controller: materialDropdown.value != "" &&
-                  //             double.tryParse(quantityField.value) != null
-                  //         ? TextEditingController(
-                  //             text: (double.parse(quantityField.value) -
-                  //                     (state.allWarehouseItems!
-                  //                         .firstWhere((element) =>
-                  //                             element.itemVariant.id ==
-                  //                             materialDropdown.value)
-                  //                         .quantity))
-                  //                 .toString())
-                  //         : TextEditingController(text: ""),
-                  //     label: "To be Purchased",
-                  //     readOnly: true,
-                  //   ),
-                  // )
                 ],
               ),
 
@@ -301,6 +255,9 @@ class QuantityField extends FormzInput<String, QuanityValidationError> {
 
   @override
   QuanityValidationError? validator(String value) {
+    print("inStock");
+    print(inStock);
+
     if (value.isEmpty) {
       return QuanityValidationError.empty;
     } else if (double.tryParse(value) == null) {

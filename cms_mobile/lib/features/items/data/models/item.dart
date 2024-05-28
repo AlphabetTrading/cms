@@ -50,13 +50,14 @@ class ItemVariantModel extends ItemVariantEntity {
 
 class WarehouseItemModel extends WarehouseItemEntity {
   const WarehouseItemModel(
-      {required ItemVariantModel itemVariant, required double quantity})
-      : super(itemVariant: itemVariant, quantity: quantity);
+      {required ItemVariantModel itemVariant, required double quantity, required double currentPrice})
+      : super(itemVariant: itemVariant, quantity: quantity, currentPrice: currentPrice);
 
   Map<String, dynamic> toJson() {
     return {
       'productVariant': (itemVariant as ItemVariantModel).toJson(),
       'quantity': quantity,
+      'currentPrice':currentPrice
     };
   }
 
@@ -64,6 +65,7 @@ class WarehouseItemModel extends WarehouseItemEntity {
     return WarehouseItemModel(
       itemVariant: ItemVariantModel.fromJson(json['productVariant']),
       quantity: json['quantity'],
+      currentPrice: json['currentPrice'],
     );
   }
 }

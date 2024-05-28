@@ -1,7 +1,7 @@
-class GetItemsInputEntity {
+class GetWarehouseItemsInputEntity {
   PaginationInput? paginationInput;
   FilterWarehouseItemInput? filterWarehouseItemInput;
-  GetItemsInputEntity(
+  GetWarehouseItemsInputEntity(
       {this.filterWarehouseItemInput, this.paginationInput});
   Map<String, dynamic> toJson() {
     return {

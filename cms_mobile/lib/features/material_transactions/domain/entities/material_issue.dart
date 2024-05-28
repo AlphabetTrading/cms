@@ -1,5 +1,8 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/items/domain/entities/item.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialIssueEntity extends Equatable {
@@ -84,4 +87,53 @@ class MaterialIssueEntityListWithMeta {
     required this.meta,
     required this.items,
   });
+}
+
+class MaterialIssueMaterialEntity extends Equatable {
+  final double quantity;
+  final String? remark;
+  final WarehouseItemEntity? material;
+  final UseType useType;
+  final SubStructureUseDescription? subStructureDescription;
+  final SuperStructureUseDescription? superStructureDescription;
+
+
+  const MaterialIssueMaterialEntity({
+    this.remark,
+    this.material,
+    required this.quantity,
+    this.subStructureDescription,
+    this.superStructureDescription,
+
+    required this.useType,
+  });
+
+  @override
+  List<Object?> get props => [
+        remark,
+        quantity,
+        material,
+        useType,
+        subStructureDescription,
+        superStructureDescription,
+   
+      ];
+}
+
+class CreateMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
+    extends Equatable {
+  final String projectId;
+  final String preparedById;
+  final String warehouseStoreId;
+  final List<T> materialIssueMaterials;
+
+  const CreateMaterialIssueParamsEntity({
+    required this.projectId,
+    required this.preparedById,
+    required this.materialIssueMaterials,
+    required this.warehouseStoreId
+  });
+
+  @override
+  List<Object?> get props => [preparedById, projectId, materialIssueMaterials];
 }

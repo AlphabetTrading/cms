@@ -36,14 +36,16 @@ class WarehouseItemEntity extends Equatable {
 
   final ItemVariantEntity itemVariant;
   final double quantity;
+  final double currentPrice;
 
   const WarehouseItemEntity({
     required this.itemVariant,
     required this.quantity,
+    required this.currentPrice,
   });
 
   @override
-  List<Object?> get props => [itemVariant, quantity];
+  List<Object?> get props => [itemVariant, quantity, currentPrice];
 
 
 }

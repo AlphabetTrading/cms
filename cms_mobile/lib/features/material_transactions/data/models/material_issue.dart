@@ -1,6 +1,9 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
+import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/items/data/models/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:flutter/widgets.dart';
 
 class MaterialIssueModel extends MaterialIssueEntity {
@@ -196,6 +199,98 @@ class MaterialIssueListWithMeta extends MaterialIssueEntityListWithMeta {
     );
   }
 }
+
+class MaterialIssueMaterialModel extends MaterialIssueMaterialEntity {
+  const MaterialIssueMaterialModel(
+      {required double quantity,
+      String? remark,
+      WarehouseItemModel? material,
+      required UseType useType,
+      SubStructureUseDescription? subStructureDescription,
+      SuperStructureUseDescription? superStructureDescription})
+      : super(
+            quantity: quantity,
+            material: material,
+            remark: remark,
+            useType: useType,
+            subStructureDescription: subStructureDescription,
+            superStructureDescription: superStructureDescription
+            // unit: unit
+            );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'quantity': quantity,
+      'remark': remark,
+      "productVariantId": material!.itemVariant.id,
+      "useType": useType.name,
+      "unitCost": material!.currentPrice,
+      "totalCost": material!.currentPrice * quantity,
+      "subStructureDescription":
+          subStructureDescription != SubStructureUseDescription.DEFAULT_VALUE
+              ? subStructureDescription!.name
+              : null,
+      "superStructureDescription": superStructureDescription !=
+              SuperStructureUseDescription.DEFAULT_VALUE
+          ? superStructureDescription!.name
+          : null,
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        remark,
+        quantity,
+        material,
+        useType,
+        subStructureDescription,
+        superStructureDescription
+      ];
+}
+
+class CreateMaterialIssueParamsModel
+    extends CreateMaterialIssueParamsEntity<MaterialIssueMaterialModel> {
+  const CreateMaterialIssueParamsModel({
+    required String projectId,
+    required List<MaterialIssueMaterialModel> materialIssueMaterials,
+    required String preparedById,
+    required String warehouseStoreId,
+  }) : super(
+            warehouseStoreId: warehouseStoreId,
+            preparedById: preparedById,
+            projectId: projectId,
+            materialIssueMaterials: materialIssueMaterials);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "preparedById": preparedById,
+      "projectId": projectId,
+      "warehouseStoreId": warehouseStoreId,
+      "items": materialIssueMaterials.map((e) => e.toJson()).toList()
+    };
+  }
+
+  @override
+  List<Object?> get props => [projectId, preparedById, materialIssueMaterials];
+
+  factory CreateMaterialIssueParamsModel.fromEntity(
+      CreateMaterialIssueParamsEntity entity) {
+    return CreateMaterialIssueParamsModel(
+        projectId: entity.projectId,
+        preparedById: entity.preparedById,
+        warehouseStoreId: entity.warehouseStoreId,
+        materialIssueMaterials: entity.materialIssueMaterials
+            .map((e) => MaterialIssueMaterialModel(
+                quantity: e.quantity,
+                material: e.material as WarehouseItemModel,
+                remark: e.remark,
+                useType: e.useType,
+                subStructureDescription: e.subStructureDescription,
+                superStructureDescription: e.superStructureDescription))
+            .toList());
+  }
+}
+
 
 
 

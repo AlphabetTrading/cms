@@ -10,27 +10,28 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
   final GetAllWarehouseItemsUseCase _getAllWarehouseItemsUseCase;
 
   ItemBloc(this._getItemsUseCase,this._getAllWarehouseItemsUseCase) : super(const ItemInitial()) {
-    on<GetItems>(onGetItems);
+    on<GetWarehouseItems>(onGetWarehouseItems);
     on<GetAllWarehouseItems>(onGetAllWarehouseItems);
+
 
   }
 
-  void onGetItems(GetItems event, Emitter<ItemState> emit) async {
-    emit(const ItemsLoading());
+  void onGetWarehouseItems(GetWarehouseItems event, Emitter<ItemState> emit) async {
+    emit(const WarehouseItemsLoading());
     
     final dataState = await _getItemsUseCase(params: event.getItemsInputEntity);
     
     
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
-      emit(ItemsSuccess(warehouseItems: dataState.data!));
+      emit(WarehouseItemsSuccess(warehouseItems: dataState.data!));
     }
     if (dataState is DataFailed) {
-      emit(ItemsFailed(error: dataState.error!));
+      emit(WarehouseItemsFailed(error: dataState.error!));
     }
   }
   void onGetAllWarehouseItems(GetAllWarehouseItems event, Emitter<ItemState> emit) async{
     emit(const AllWarehouseItemsLoading());
-    final dataState = await _getAllWarehouseItemsUseCase();
+    final dataState = await _getAllWarehouseItemsUseCase(params: event.projectId);
 
     if (dataState is DataSuccess && dataState.data!.isNotEmpty){
       emit(AllWarehouseItemsSuccess(allWarehouseItems: dataState.data!));
