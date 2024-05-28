@@ -133,13 +133,19 @@ class ProjectDataSourceImpl extends ProjectDataSource {
       if (projects is DataSuccess) {
         if (projects.data!.items.isNotEmpty) {
           debugPrint('getSelectedProject: ${projects.data!.items.first.id}');
-          await selectProject(projects.data!.items.first.id!);
+          // await selectProject(projects.data!.items.first.id!);
           return DataSuccess(projects.data!.items.first.id);
         }
       }
+      return DataFailed(
+        ServerFailure(
+          errorMessage: 'No projects found',
+        ),
+      );
+    } else {
+      debugPrint('getSelectedProject: $selectedProjectId');
+      return DataSuccess(selectedProjectId);
     }
-    debugPrint('getSelectedProject: $selectedProjectId');
-    return DataSuccess(selectedProjectId);
   }
 }
 
@@ -152,20 +158,7 @@ class FilterProjectInput {
 
   Map<String, dynamic> toJson() {
     return {
-      // 'createdAt': createdAt,
-      // "approvedBy": {
-      //   "fullName": approvedBy,
-      // },
-      // "issuedTo": {
-      //   "fullName": issuedTo,
-      // },
-      // "preparedBy": {
-      //   "fullName": preparedBy,
-      // },
-      // "receivedBy": {
-      //   "fullName": receivedBy,
-      // },
-      // "serialNumber": serialNumber,
+      if (createdAt != null) 'createdAt': createdAt?.toJson(),
     };
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
@@ -57,60 +58,78 @@ class VoucherDataSourceImpl extends VoucherDataSource {
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
     PaginationInput? paginationInput,
-  }) {
+  }) async {
     String fetchMaterialIssuesQuery;
 
     fetchMaterialIssuesQuery = r'''
       query GetMaterialIssues($filterMaterialIssueInput: FilterMaterialIssueInput, $orderBy: OrderByMaterialIssueInput, $paginationInput: PaginationInput) {
         getMaterialIssues(filterMaterialIssueInput: $filterMaterialIssueInput, orderBy: $orderBy, paginationInput: $paginationInput) {
-           meta {
+          meta {
             count
             limit
             page
           }
           items {
+            approvedById
+            createdAt
             id
-            serialNumber 
+            preparedById
+            projectId
+            requisitionNumber
+            serialNumber
             status
-            approvedById 
-            approvedBy {
+            updatedAt
+            warehouseStoreId
+            items {
+              createdAt
               id
+              materialIssueVoucherId
+              productVariant {
+                id
+              }
+              productVariantId
+              quantity
+              remark
+              subStructureDescription
+              superStructureDescription
+              totalCost
+              unitCost
+              updatedAt
+              useType
+            }
+            preparedBy {
+              createdAt
               email
               fullName
+              id
               phoneNumber
-              createdAt
               role
               updatedAt
             }
-            issuedToId
-            items {
-              description
+            warehouseStore {
+              createdAt
               id
-              materialIssueVoucherId
-              quantity
-              remark
-              totalCost
-              unitCost
-              unitOfMeasure
+              location
+              name
+              updatedAt
             }
-            preparedById
-            projectDetails
-            receivedById
-            requisitionNumber
-            createdAt
-            updatedAt
-          
           }
         }
       }
     ''';
 
+    final filterInput = filterMaterialIssueInput?.toJson();
+    final selectedProjectId =
+        await GQLClient.getFromLocalStorage('selected_project_id');
+
+    filterInput!["projectId"] = selectedProjectId;
+    debugPrint('filterInput: $filterInput');
     return _client
         .query(
       QueryOptions(
         document: gql(fetchMaterialIssuesQuery),
         variables: {
-          'filterMaterialIssueInput': filterMaterialIssueInput?.toJson(),
+          'filterMaterialIssueInput': filterInput,
           'orderBy': orderBy ?? {},
           'paginationInput': paginationInput ?? {},
         },
@@ -142,39 +161,27 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   }
 }
 
-
 class FilterMaterialIssueInput {
   final StringFilter? createdAt;
   final StringFilter? approvedBy;
-  final StringFilter? issuedTo;
   final StringFilter? preparedBy;
-  final StringFilter? receivedBy;
   final StringFilter? serialNumber;
 
   FilterMaterialIssueInput(
-      {this.createdAt,
-      this.approvedBy,
-      this.issuedTo,
-      this.preparedBy,
-      this.receivedBy,
-      this.serialNumber});
+      {this.createdAt, this.approvedBy, this.preparedBy, this.serialNumber});
 
   Map<String, dynamic> toJson() {
+    // include the property if it is only not null
     return {
-      // 'createdAt': createdAt,
-      "approvedBy": {
-        "fullName": approvedBy,
-      },
-      "issuedTo": {
-        "fullName": issuedTo,
-      },
-      "preparedBy": {
-        "fullName": preparedBy,
-      },
-      "receivedBy": {
-        "fullName": receivedBy,
-      },
-      "serialNumber": serialNumber,
+      if (approvedBy != null)
+        'approvedBy': {
+          'fullName': approvedBy!.toJson(),
+        },
+      if (preparedBy != null)
+        'preparedBy': {
+          'fullName': preparedBy!.toJson(),
+        },
+      if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
     };
   }
 }
@@ -186,7 +193,7 @@ class OrderByMaterialIssueInput {
 
   Map<String, dynamic> toJson() {
     return {
-      'createdAt': createdAt,
+      if (createdAt != null) "createdAt": createdAt,
     };
   }
 }

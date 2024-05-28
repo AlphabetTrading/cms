@@ -8,6 +8,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_state.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
@@ -32,9 +33,8 @@ void main() async {
           BlocProvider<AuthBloc>(
               create: (context) => sl<AuthBloc>()..add(AuthStarted())),
           BlocProvider<ProjectBloc>(
-            create: (context) =>
-                sl<ProjectBloc>()..add(const GetSelectedProject()),
-          ),
+              create: (context) =>
+                  sl<ProjectBloc>()..add(const LoadProjects())),
           BlocProvider<LoginBloc>(
             create: (context) => sl<LoginBloc>(),
           ),
@@ -69,7 +69,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Sizer(
@@ -80,19 +79,43 @@ class MyApp extends StatelessWidget {
             if (state.status == AuthStatus.loading) {
               return const CircularProgressIndicator();
             }
-            final appRouter = AppRouter().router;
             return BlocBuilder<ThemeBloc, ThemeState>(
               builder: (context, state) {
-                return MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  title: 'CMS APP',
-                  routerDelegate: appRouter.routerDelegate,
-                  routeInformationParser: appRouter.routeInformationParser,
-                  routeInformationProvider: appRouter.routeInformationProvider,
-                  localizationsDelegates: context.localizationDelegates,
-                  supportedLocales: context.supportedLocales,
-                  locale: context.locale,
-                  theme: state.themeData,
+                final themeData = state.themeData;
+                final appRouter = AppRouter().router;
+                return BlocConsumer<ProjectBloc, ProjectState>(
+                  listener: (context, state) {
+                    if (state is ProjectSuccess) {
+                      if (state.projects!.items.isNotEmpty) {
+                        context.read<ProjectBloc>().add(
+                              SelectProject(
+                                state.projects!.items.first.id!,
+                                state.projects!,
+                              ),
+                            );
+                      }
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is ProjectIntialLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    return MaterialApp.router(
+                      debugShowCheckedModeBanner: false,
+                      title: 'CMS APP',
+                      routerDelegate: appRouter.routerDelegate,
+                      routeInformationParser: appRouter.routeInformationParser,
+                      routeInformationProvider:
+                          appRouter.routeInformationProvider,
+                      localizationsDelegates: context.localizationDelegates,
+                      supportedLocales: context.supportedLocales,
+                      locale: context.locale,
+                      theme: themeData,
+                    );
+                  },
                 );
               },
             );

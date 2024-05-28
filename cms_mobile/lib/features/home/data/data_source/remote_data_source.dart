@@ -1,10 +1,11 @@
+import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/home/data/models/material_transactions.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialTransactionsDataSource {
   Future<DataState<List<MaterialTransactionModel>>> fetchMaterialTransactions();
-
 }
 
 class MaterialTransactionsDataSourceImpl
@@ -21,8 +22,8 @@ class MaterialTransactionsDataSourceImpl
     String fetchMaterialTransactionsQuery;
 
     fetchMaterialTransactionsQuery = r'''
-      query GetAllDocumentsStatus {
-        getAllDocumentsStatus {
+      query GetAllDocumentsStatus($projectId: String!) {
+          getAllDocumentsStatus(projectId: $projectId) {
             approvedCount
             declinedCount
             pendingCount
@@ -31,8 +32,14 @@ class MaterialTransactionsDataSourceImpl
         }
     ''';
 
+    final selectedProjectId =
+        await GQLClient.getFromLocalStorage('selected_project_id');
+
+    debugPrint('selectedProjectId $selectedProjectId');
+
     final response = await _client.query(QueryOptions(
       document: gql(fetchMaterialTransactionsQuery),
+      variables: {'projectId': selectedProjectId},
     ));
 
     if (response.hasException) {

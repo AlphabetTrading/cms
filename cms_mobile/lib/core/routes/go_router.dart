@@ -2,6 +2,9 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/MaterialIssues/material_issue_create.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/MaterialIssues/material_issue_detail.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/MaterialIssues/material_issue_edit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receiving.dart';
@@ -76,6 +79,29 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return const MaterialIssuesPage();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.materialIssueCreate,
+                  path: RoutePaths.materialIssueCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialIssueCreatePage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialIssueDetails,
+                  path: RoutePaths.materialIssueDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialIssueDetailsPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialIssueEdit,
+                  path: RoutePaths.materialIssueEdit,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialIssueEditPage();
+                  },
+                ),
+              ],
             ),
             GoRoute(
               name: RouteNames.materialRequest,

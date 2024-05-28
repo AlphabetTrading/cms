@@ -59,7 +59,7 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-  sl.registerLazySingleton<VoucherDataSource>(
+  sl.registerLazySingleton<VoucherDataSourceImpl>(
     () => VoucherDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),

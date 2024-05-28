@@ -25,11 +25,18 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
               paginationInput: PaginationInput(skip: 0, take: 10),
               orderBy: OrderByProjectInput(createdAt: "desc")),
         );
+
+    // context.read<ProjectBloc>().add(SelectProject(
+    //     context.read<ProjectBloc>().state.selectedProjectId!,
+    //     context.read<ProjectBloc>().state.projects!));
   }
 
   void _onProjectSelected(String id) {
     context.read<ProjectBloc>().add(
-          SelectProject(id),
+          SelectProject(
+            id,
+            context.read<ProjectBloc>().state.projects!,
+          ),
         );
   }
 
@@ -64,12 +71,15 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
           );
         }
 
-        if (state is ProjectSelected || state is ProjectSuccess) {
-          ProjectEntityListWithMeta projects;
+        // if (state is ProjectSelected || state is ProjectSuccess) {
+        if (state is ProjectStateWithMeta || state is ProjectSuccess) {
           debugPrint('state: $state');
-          if (state is ProjectSuccess) {
+          ProjectEntityListWithMeta projects;
+          if (state is ProjectStateWithMeta) {
             projects = state.projects!;
-            debugPrint('projectss: $projects');
+
+            debugPrint(
+                'projectss: $projects, selected project ${state.selectedProjectId}');
           } else {
             projects = context.read<ProjectBloc>().state.projects!;
             debugPrint('projects: $projects');
@@ -126,7 +136,7 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                       ListView(
                         shrinkWrap: true,
                         children: projects.items.map((project) {
-                          bool selected = state is ProjectSelected &&
+                          bool selected = state is ProjectStateWithMeta &&
                               state.selectedProjectId == project.id;
                           return Container(
                             decoration: BoxDecoration(

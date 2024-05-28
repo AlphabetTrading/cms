@@ -115,9 +115,11 @@
 //   Size get preferredSize => const Size.fromHeight(64);
 // }
 
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/widgets/project_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomAppBar extends PreferredSize {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -129,8 +131,20 @@ class CustomAppBar extends PreferredSize {
           preferredSize: const Size(100, 80),
         );
 
+  // init state
+
   @override
   Widget build(BuildContext context) {
+    final selectedProjectId =
+        context.read<ProjectBloc>().state.selectedProjectId;
+    final selectedProject = context
+        .read<ProjectBloc>()
+        .state
+        .projects!
+        .items
+        .firstWhere((element) => element.id == selectedProjectId);
+
+    debugPrint('selectedProject: $selectedProject');
     return AppBar(
       systemOverlayStyle: const SystemUiOverlayStyle(
         statusBarColor: Colors.white,
@@ -172,7 +186,7 @@ class CustomAppBar extends PreferredSize {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      'Bulbula'.toUpperCase(),
+                      selectedProject.name!.toUpperCase(),
                       style: Theme.of(context).textTheme.labelMedium,
                     )
                   ],

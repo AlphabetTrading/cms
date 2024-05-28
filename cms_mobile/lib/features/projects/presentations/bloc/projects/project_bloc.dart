@@ -18,32 +18,58 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     on<GetSelectedProject>(onGetSelectedProject);
     on<GetProjects>(onGetProjects);
     on<SelectProject>(onSelectProject);
+    on<LoadProjects>(onLoadProjects);
+  }
+
+  void onLoadProjects(LoadProjects event, Emitter<ProjectState> emit) async {
+    emit(const ProjectIntialLoading());
+    final dataState = await _projectUseCase(params: ProjectParams());
+    if (dataState is DataSuccess) {
+      emit(ProjectSuccess(projects: dataState.data!));
+    }
+    if (dataState is DataFailed) {
+      emit(ProjectFailed(error: dataState.error!));
+    }
   }
 
   void onGetProjects(GetProjects event, Emitter<ProjectState> emit) async {
-    debugPrint('onGetProjects');
+    debugPrint("LoadProjects init");
     emit(const ProjectLoading());
-    debugPrint('onGetProjects loading');
-
     final dataState = await _projectUseCase(
         params: ProjectParams(
       filterProjectInput: event.filterProjectInput,
       orderBy: event.orderBy,
       paginationInput: event.paginationInput,
     ));
-    debugPrint('onGetProjects dataState: $dataState');
+    debugPrint("LoadProjects dataState: $dataState");
     if (dataState is DataSuccess) {
-      // final selectedProjectState = await _getSelectedProjectUseCase();
-      // if (selectedProjectState is DataSuccess) {
-      //   if (selectedProjectState.data == null ||
-      //       dataState.data!.items.isEmpty) {
-      //     emit(ProjectSelected(dataState.data!.items.first.id!));
-      //     // add(SelectProject(dataState.data!.items.first.id!));
-      //   }
-      // }
-      emit(ProjectSuccess(projects: dataState.data!));
-    }
+      final selectedProjectState = await _getSelectedProjectUseCase();
+      if (selectedProjectState is DataSuccess) {
+        if (selectedProjectState.data == null ||
+            dataState.data!.items.isEmpty) {
+          // emit(ProjectSelected(dataState.data!.items.first.id!));
+          final selectedProjectId = dataState.data!.items.first.id!;
 
+          emit(ProjectStateWithMeta(
+              projects: dataState.data!, selectedProjectId: selectedProjectId));
+
+          final selectedDataState =
+              await _selectedProjectUseCase(params: selectedProjectId);
+
+          if (selectedDataState is DataSuccess) {
+            debugPrint("selectedDataState: ${selectedDataState.data}");
+          } else {
+            debugPrint("selectedDataState: ${selectedDataState.error}");
+          }
+        } else {
+          emit(ProjectStateWithMeta(
+              projects: dataState.data!,
+              selectedProjectId: selectedProjectState.data!));
+        }
+      } else {
+        emit(ProjectSuccess(projects: dataState.data!));
+      }
+    }
     if (dataState is DataFailed) {
       emit(ProjectFailed(error: dataState.error!));
     }
@@ -51,6 +77,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
   void onGetSelectedProject(
       GetSelectedProject event, Emitter<ProjectState> emit) async {
+    emit(const ProjectLoading());
     final dataState = await _getSelectedProjectUseCase();
     if (dataState is DataSuccess) {
       emit(ProjectSelected(dataState.data!));
@@ -58,11 +85,12 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   }
 
   void onSelectProject(SelectProject event, Emitter<ProjectState> emit) async {
-    final dataState = await _selectedProjectUseCase(params: event.id);
-    debugPrint('onSelectProject dataState: ${dataState}, id: ${event.id}');
+    emit(const ProjectIntialLoading());
 
+    final dataState = await _selectedProjectUseCase(params: event.id);
     if (dataState is DataSuccess) {
-      emit(ProjectSelected(dataState.data));
+      emit(ProjectStateWithMeta(
+          selectedProjectId: dataState.data, projects: event.projects));
     } else {
       emit(ProjectFailed(error: dataState.error!));
     }

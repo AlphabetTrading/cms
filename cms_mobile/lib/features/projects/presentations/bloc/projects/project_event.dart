@@ -7,6 +7,10 @@ abstract class ProjectEvent {
   const ProjectEvent();
 }
 
+class LoadProjects extends ProjectEvent {
+  const LoadProjects();
+}
+
 class GetProjects extends ProjectEvent {
   final FilterProjectInput? filterProjectInput;
   final OrderByProjectInput? orderBy;
@@ -46,9 +50,8 @@ class DeleteProject extends ProjectEvent {
 
 class SelectProject extends ProjectEvent {
   final String id;
-  const SelectProject(
-    this.id,
-  );
+  final ProjectEntityListWithMeta projects;
+  const SelectProject(this.id, this.projects);
 }
 
 class GetSelectedProject extends ProjectEvent {

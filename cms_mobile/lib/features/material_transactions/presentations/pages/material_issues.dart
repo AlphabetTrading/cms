@@ -1,11 +1,15 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MaterialIssuesPage extends StatefulWidget {
@@ -21,6 +25,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
     super.initState();
     context.read<MaterialIssueBloc>().add(
           GetMaterialIssues(
+            filterMaterialIssueInput: FilterMaterialIssueInput(),
             orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 10),
           ),
@@ -31,8 +36,12 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
   Widget build(BuildContext context) {
     final searchQuery = BehaviorSubject<String>();
     searchQuery.stream
-        .debounceTime(const Duration(milliseconds: 500), )
-        .listen((query, ) {
+        .debounceTime(
+      const Duration(milliseconds: 500),
+    )
+        .listen((
+      query,
+    ) {
       context.read<MaterialIssueBloc>().add(
             GetMaterialIssues(
                 orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
@@ -40,8 +49,6 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 filterMaterialIssueInput: FilterMaterialIssueInput(
                   preparedBy: StringFilter(contains: query),
                   approvedBy: StringFilter(contains: query),
-                  issuedTo: StringFilter(contains: query),
-                  receivedBy: StringFilter(contains: query),
                   serialNumber: StringFilter(contains: query),
                 )),
           );
@@ -74,7 +81,11 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                   onPressed: () {
                     _showCustomPopupMenu(context);
                   },
-                  icon: const Icon(Icons.filter),
+                  icon: SvgPicture.asset(
+                    "../../../../../assets/icons/common/filter.svg",
+                    height: 25,
+                    width: 25,
+                  ),
                 ),
               ],
             ),
@@ -82,6 +93,18 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
               height: 10,
             ),
             _buildBody(context),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.goNamed(RouteNames.materialIssueCreate);
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+              ),
+              child: const Text('Create Material Issue'),
+            ),
           ],
         ),
       ),
@@ -111,7 +134,8 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
         }
 
         if (state is MaterialIssueSuccess) {
-          debugPrint('MaterialRequestSuccess ${state.materialIssues?.items.length} ');
+          debugPrint(
+              'MaterialRequestSuccess ${state.materialIssues?.items.length} ');
 
           return state.materialIssues!.items.isNotEmpty
               ? Expanded(
@@ -175,41 +199,84 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
-                'MRQ-001',
-                style: TextStyle(
+              Text(
+                materialIssue.serialNumber ?? 'N/A',
+                style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 18,
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              IconButton(
-                onPressed: () => {},
-                icon: const Icon(
-                  Icons.more_vert,
-                  color: Color(0xFF111416),
-                ),
+              PopupMenuButton(
+                color: Theme.of(context).colorScheme.surface,
+                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                  PopupMenuItem(
+                      onTap: () {
+                        context.goNamed(RouteNames.materialIssueEdit,
+                            pathParameters: {
+                              'materialIssueId': materialIssue.id.toString()
+                            });
+                      },
+                      child: ListTile(
+                        leading: const Icon(Icons.edit, color: Colors.blue),
+                        title: const Text('Edit',
+                            style: TextStyle(color: Colors.blue)),
+                      )),
+                  PopupMenuItem(
+                    onTap: () {
+                      print('Item 2');
+                    },
+                    child: ListTile(
+                      leading: const Icon(Icons.delete, color: Colors.red),
+                      title: const Text('Delete',
+                          style: TextStyle(color: Colors.red)),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const Text(
-            '10/02/2024',
-            style: TextStyle(
+          Text(
+            DateFormat.yMMMMd().format(materialIssue.createdAt!),
+            style: const TextStyle(
               color: Color(0xFF637587),
               fontSize: 12,
               fontFamily: 'Inter',
               fontWeight: FontWeight.w400,
             ),
           ),
-          const Text(
-            'By Alula Tadesse',
-            style: TextStyle(
-              color: Color(0xFF111416),
-              fontSize: 15,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w600,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'By ${materialIssue.preparedBy?.fullName ?? 'N/A'}',
+                style: const TextStyle(
+                  color: Color(0xFF111416),
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                materialIssue.preparedBy?.email ?? 'N/A',
+                style: const TextStyle(
+                  color: Color(0xFF637587),
+                  fontSize: 12,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              //  Text(
+              //   "From ${materialIssue.?.fullName ?? 'N/A'}",
+              //   style: const TextStyle(
+              //     color: Color(0xFF637587),
+              //     fontSize: 12,
+              //     fontFamily: 'Inter',
+              //     fontWeight: FontWeight.w400,
+              //   ),
+              // ),
+            ],
           ),
           const SizedBox(
             height: 5,
@@ -223,29 +290,49 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: ShapeDecoration(
-                  color: const Color(0x19FFB700),
+                  color: materialIssue.status == 'PENDING'
+                      ? const Color.fromARGB(31, 255, 183, 0)
+                      : materialIssue.status == 'COMPLETED'
+                          ? const Color.fromARGB(30, 0, 179, 66)
+                          : materialIssue.status == 'DECLINED'
+                              ? const Color.fromARGB(30, 208, 2, 26)
+                              : const Color.fromARGB(31, 17, 20, 22),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: const Text(
-                  'Pending',
+                child: Text(
+                  materialIssue.status ?? 'N/A',
                   style: TextStyle(
-                    color: Color(0xFFFFB700),
+                    color: materialIssue.status == 'PENDING'
+                        ? const Color(0xFFFFB700)
+                        : materialIssue.status == 'COMPLETED'
+                            ? const Color(0xFF00B341)
+                            : materialIssue.status == 'DECLINED'
+                                ? const Color(0xFFD0021B)
+                                : const Color(0xFF111416),
                     fontSize: 10,
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              const Text(
-                'View Details',
-                style: TextStyle(
-                  color: Color(0xFF1A80E5),
-                  fontSize: 12,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w500,
-                  height: 0.17,
+              TextButton(
+                onPressed: () {
+                  context.goNamed(RouteNames.materialIssueDetails,
+                      pathParameters: {
+                        'materialIssueId': materialIssue.id.toString()
+                      });
+                },
+                child: const Text(
+                  'View Details',
+                  style: TextStyle(
+                    color: Color(0xFF1A80E5),
+                    fontSize: 12,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                    height: 0.17,
+                  ),
                 ),
               ),
             ],
@@ -260,137 +347,244 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return CustomPopupMenuDialog();
+        return const FilterPopupMenuDialog();
       },
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(64);
 }
 
-class CustomPopupMenuDialog extends StatefulWidget {
+class FilterPopupMenuDialog extends StatefulWidget {
+  const FilterPopupMenuDialog({super.key});
+
   @override
-  State<CustomPopupMenuDialog> createState() => _CustomPopupMenuDialogState();
+  State<FilterPopupMenuDialog> createState() => _CustomPopupMenuDialogState();
 }
 
-class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
-  final List<String> _projects = ['Bulbula', '24', 'Kazanchis'];
+class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
+  final List<String> statuses = ['All', 'Pending', 'Completed', 'Declined'];
+  List<String> selectedStatuses = [];
 
-  // selected project index
-  int _selectedProjectIndex = 0;
+  void _onStatusSelected() {
+    context.read<MaterialIssueBloc>().add(
+          GetMaterialIssues(
+            filterMaterialIssueInput: FilterMaterialIssueInput(
+                // status: StringFilter(contains: status),
+                ),
+            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 10),
+          ),
+        );
+  }
 
-  void _onProjectSelected(int index) {
+  void _onFilterChange(value, index) {
     setState(() {
-      _selectedProjectIndex = index;
+      if (statuses[index] == 'All') {
+        if (value == true) {
+          selectedStatuses = [...statuses];
+        } else {
+          selectedStatuses = [];
+        }
+      } else {
+        if (value == true) {
+          selectedStatuses.add(statuses[index]);
+        } else {
+          if (statuses.contains('All')) {
+            selectedStatuses.remove('All');
+          }
+          selectedStatuses.remove(statuses[index]);
+        }
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return AlertDialog(
       elevation: 0,
-      backgroundColor: Colors.grey[300],
-      insetPadding: EdgeInsets.zero,
+      // backgroundColor: Colors.grey[300],
+      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Container(
-        alignment: Alignment.topCenter,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.close,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Theme.of(context).colorScheme.surfaceVariant,
-              ),
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+      content: Container(
+        width: MediaQuery.of(context).size.width *
+            0.8, // Set width as 80% of screen width
+        padding: const EdgeInsets.all(16.0),
+
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Projects',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                      SvgPicture.asset(
+                        "../../../../../assets/icons/common/filter.svg",
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        'Filter',
+                        style: TextStyle(
+                          color: Color(0xFF637587),
+                          fontSize: 16,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ListView(
-                    shrinkWrap: true,
-                    children: _projects.map((project) {
-                      bool selected =
-                          _projects.indexOf(project) == _selectedProjectIndex;
-                      return Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          // color: selected ? Theme.of(context).colorScheme.surfaceVariant : Theme.of(context).colorScheme.surface,
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            _onProjectSelected(_projects.indexOf(project));
-                          },
-                          selected: selected,
-                          selectedTileColor: Colors.grey[300],
-                          leading: CircleAvatar(
-                              radius: 15,
-                              child:
-                                  Text(project.substring(0, 1).toUpperCase())),
-                          title: Text(
-                            project.toUpperCase(),
-                            // style: const TextStyle(
-                            //     fontSize: 14, fontWeight: FontWeight.w600),
-                          ),
-                          trailing: selected
-                              ? const Icon(Icons.check)
-                              : const SizedBox.shrink(),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  const Divider(),
-                  const ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
-                  ),
-                  const ListTile(
-                    leading: Icon(Icons.logout),
-                    title: Text('Logout'),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Clear All',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const Divider(
+                color: Color(0xFFE5E5E5),
+                thickness: 1,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Status',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF111416),
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              ListView.separated(
+                shrinkWrap: true,
+                itemBuilder: (ctx, index) {
+                  return ListTile(
+                    onTap: () {
+                      _onFilterChange(
+                          !selectedStatuses.contains(statuses[index]), index);
+                    },
+                    title: Text(
+                      statuses[index],
+                      style: const TextStyle(
+                        color: Color(0xFF111416),
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    leading: Checkbox(
+                        value: selectedStatuses.contains(statuses[index]),
+                        onChanged: (value) => _onFilterChange(value, index)),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 1,
+                  );
+                },
+                itemCount: statuses.length,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const Divider(
+                color: Color(0xFFE5E5E5),
+                thickness: 1,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _onStatusSelected();
+                        },
+                        child: const Text(
+                          'Apply',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

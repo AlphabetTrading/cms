@@ -17,14 +17,22 @@ class ProjectInitial extends ProjectState {
   const ProjectInitial();
 }
 
+class ProjectIntialLoading extends ProjectState {
+  const ProjectIntialLoading();
+}
+
 class ProjectLoading extends ProjectState {
   const ProjectLoading();
 }
+
+
 
 class ProjectSuccess extends ProjectState {
   const ProjectSuccess({required ProjectEntityListWithMeta projects})
       : super(projects: projects);
 }
+
+
 
 class ProjectFailed extends ProjectState {
   const ProjectFailed({required Failure error}) : super(error: error);
@@ -38,4 +46,11 @@ class ProjectSelected extends ProjectState {
   const ProjectSelected(
     String? selectedProjectId,
   ) : super(selectedProjectId: selectedProjectId);
+}
+
+class ProjectStateWithMeta extends ProjectState {
+  const ProjectStateWithMeta({
+    ProjectEntityListWithMeta? projects,
+    String? selectedProjectId,
+  }) : super(projects: projects, selectedProjectId: selectedProjectId);
 }

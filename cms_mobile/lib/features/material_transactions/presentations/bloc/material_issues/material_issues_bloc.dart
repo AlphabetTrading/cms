@@ -19,6 +19,7 @@ class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
     debugPrint('onGetMaterialIssues');
     emit(const MaterialIssueLoading());
     debugPrint('onGetMaterialIssues loading');
+    debugPrint('onGetMaterialIssues event: ${event.filterMaterialIssueInput}');
 
     final dataState = await _materialIssueUseCase(
         params: MaterialIssueParams(

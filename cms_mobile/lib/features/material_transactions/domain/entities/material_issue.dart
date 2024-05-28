@@ -1,6 +1,5 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialIssueEntity extends Equatable {
@@ -10,8 +9,6 @@ class MaterialIssueEntity extends Equatable {
   final String? approvedById;
   final UserEntity? approvedBy;
   final String? projectDetails;
-  final String? issuedToId;
-  final UserEntity? issuedTo;
   final String? requisitionNumber;
   final List<IssueVoucherItem>? items;
   final String? preparedById;
@@ -25,8 +22,6 @@ class MaterialIssueEntity extends Equatable {
     this.id,
     this.serialNumber,
     this.projectDetails,
-    this.issuedToId,
-    this.issuedTo,
     this.requisitionNumber,
     this.items,
     this.preparedById,
@@ -77,11 +72,9 @@ class IssueVoucherItem extends Equatable {
   List<Object?> get props {
     return [
       id,
-      
     ];
   }
 }
-
 
 class MaterialIssueEntityListWithMeta {
   final List<MaterialIssueEntity> items;
@@ -91,6 +84,4 @@ class MaterialIssueEntityListWithMeta {
     required this.meta,
     required this.items,
   });
-
- 
 }

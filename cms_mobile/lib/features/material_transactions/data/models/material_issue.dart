@@ -1,6 +1,5 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:flutter/widgets.dart';
 
@@ -12,8 +11,6 @@ class MaterialIssueModel extends MaterialIssueEntity {
     required String? approvedById,
     UserModel? approvedBy,
     required String? projectDetails,
-    required String? issuedToId,
-    UserModel? issuedTo,
     required String? requisitionNumber,
     List<IssueVoucherItemModel>? items,
     required String? preparedById,
@@ -29,8 +26,6 @@ class MaterialIssueModel extends MaterialIssueEntity {
             approvedById: approvedById,
             approvedBy: approvedBy,
             projectDetails: projectDetails,
-            issuedToId: issuedToId,
-            issuedTo: issuedTo,
             requisitionNumber: requisitionNumber,
             items: items,
             preparedById: preparedById,
@@ -53,10 +48,6 @@ class MaterialIssueModel extends MaterialIssueEntity {
         id: json['id'],
         serialNumber: json['serialNumber'],
         projectDetails: json['projectDetails'],
-        issuedToId: json['issuedToId'],
-        issuedTo: json['issuedTo'] != null
-            ? UserModel.fromJson(json['issuedTo'])
-            : null,
         requisitionNumber: json['requisitionNumber'],
         items: json['items'].map<IssueVoucherItemModel>((item) {
           return IssueVoucherItemModel.fromJson(item);
@@ -83,8 +74,6 @@ class MaterialIssueModel extends MaterialIssueEntity {
         id: json['id'],
         serialNumber: json['serialNumber'],
         projectDetails: json['projectDetails'],
-        issuedToId: json['issuedToId'],
-        issuedTo: json['issuedTo'] ?? UserModel.fromJson(json['issuedTo']),
         requisitionNumber: json['requisitionNumber'],
         items: json['items'] ??
             json['items']
@@ -115,8 +104,6 @@ class MaterialIssueModel extends MaterialIssueEntity {
       'approvedById': approvedById,
       'approvedBy': approvedBy,
       'projectDetails': projectDetails,
-      'issuedToId': issuedToId,
-      'issuedTo': issuedTo,
       'requisitionNumber': requisitionNumber,
       'items': items,
       'preparedById': preparedById,

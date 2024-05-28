@@ -25,9 +25,9 @@ class StringFilter {
 
   Map<String, dynamic> toJson() {
     return {
-      'contains': contains ?? '',
-      'startsWith': startsWith ?? '',
-      'endsWith': endsWith ?? '',
+      if (contains != null) 'contains': contains ?? '',
+      if (startsWith != null) 'startsWith': startsWith ?? '',
+      if (endsWith != null) 'endsWith': endsWith ?? '',
     };
   }
 }
