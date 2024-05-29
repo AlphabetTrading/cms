@@ -7,6 +7,10 @@ import { ApprovalStatus } from '@prisma/client';
 @InputType()
 export class UpdateMaterialReceiveInput {
   @IsString()
+  @Field(() => String)
+  id: string;
+
+  @IsString()
   @Field(() => String, { nullable: true })
   projectId?: string;
 

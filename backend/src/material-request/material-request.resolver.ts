@@ -134,13 +134,11 @@ export class MaterialRequestResolver {
 
   @Mutation(() => MaterialRequestVoucher)
   async updateMaterialRequest(
-    @Args('id') materialRequestId: string,
     @Args('updateMaterialRequestInput')
     updateMaterialRequestInput: UpdateMaterialRequestInput,
   ) {
     try {
       return this.materialRequestService.updateMaterialRequest(
-        materialRequestId,
         updateMaterialRequestInput,
       );
     } catch (e) {

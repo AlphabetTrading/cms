@@ -6,6 +6,10 @@ import { UpdateMaterialTransferItemInput } from './update-material-transfer-item
 @InputType()
 export class UpdateMaterialTransferInput {
   @IsString()
+  @Field(() => String)
+  id: string;
+
+  @IsString()
   @Field(() => String, { nullable: true })
   projectId?: string;
 

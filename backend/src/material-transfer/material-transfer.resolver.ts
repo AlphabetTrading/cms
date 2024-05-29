@@ -140,13 +140,11 @@ export class MaterialTransferResolver {
 
   @Mutation(() => MaterialTransferVoucher)
   async updateMaterialTransfer(
-    @Args('id') materialTransferId: string,
     @Args('updateMaterialTransferInput')
     updateMaterialTransferInput: UpdateMaterialTransferInput,
   ) {
     try {
       return this.materialTransferService.updateMaterialTransfer(
-        materialTransferId,
         updateMaterialTransferInput,
       );
     } catch (e) {

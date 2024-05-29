@@ -135,13 +135,11 @@ export class MaterialIssueResolver {
 
   @Mutation(() => MaterialIssueVoucher)
   async updateMaterialIssue(
-    @Args('id') materialIssueId: string,
     @Args('updateMaterialIssueInput')
     updateMaterialIssueInput: UpdateMaterialIssueInput,
   ) {
     try {
       return this.materialIssueService.updateMaterialIssue(
-        materialIssueId,
         updateMaterialIssueInput,
       );
     } catch (e) {

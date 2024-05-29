@@ -1,10 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsOptional, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { UpdatePurchaseOrderItemInput } from './update-purchase-order-item.input';
 import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class UpdatePurchaseOrderInput {
+  @IsString()
+  @Field(() => String)
+  id: string;
+
   @IsOptional()
   @Field(() => String, { nullable: true })
   projectId?: string;

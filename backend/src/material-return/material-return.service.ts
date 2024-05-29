@@ -143,9 +143,10 @@ export class MaterialReturnService {
   }
 
   async updateMaterialReturn(
-    materialReturnId: string,
-    updateData: UpdateMaterialReturnInput,
+    input: UpdateMaterialReturnInput,
   ): Promise<MaterialReturnVoucher> {
+    const { id: materialReturnId, ...updateData } = input;
+
     const existingMaterialReturn =
       await this.prisma.materialReturnVoucher.findUnique({
         where: { id: materialReturnId },

@@ -1,10 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { UpdateMaterialRequestItemInput } from './update-material-request-item.input';
 import { ApprovalStatus } from '@prisma/client';
 
 @InputType()
 export class UpdateMaterialRequestInput {
+  @IsString()
+  @Field(() => String)
+  id: string;
+
   @Field(() => String, { nullable: true })
   projectId?: string;
 

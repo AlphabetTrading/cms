@@ -142,13 +142,11 @@ export class PurchaseOrderResolver {
 
   @Mutation(() => PurchaseOrderVoucher)
   async updatePurchaseOrder(
-    @Args('id') purchaseOrderId: string,
     @Args('updatePurchaseOrderInput')
     updatePurchaseOrderInput: UpdatePurchaseOrderInput,
   ) {
     try {
       return this.purchaseOrderService.updatePurchaseOrder(
-        purchaseOrderId,
         updatePurchaseOrderInput,
       );
     } catch (e) {

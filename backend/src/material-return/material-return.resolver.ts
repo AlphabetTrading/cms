@@ -134,13 +134,11 @@ export class MaterialReturnResolver {
 
   @Mutation(() => MaterialReturnVoucher)
   async updateMaterialReturn(
-    @Args('id') materialReturnId: string,
     @Args('updateMaterialReturnInput')
     updateMaterialReturnInput: UpdateMaterialReturnInput,
   ) {
     try {
       return this.materialReturnService.updateMaterialReturn(
-        materialReturnId,
         updateMaterialReturnInput,
       );
     } catch (e) {

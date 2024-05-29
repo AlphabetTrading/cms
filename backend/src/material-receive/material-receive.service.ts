@@ -151,9 +151,10 @@ export class MaterialReceiveService {
   }
 
   async updateMaterialReceive(
-    materialReceiveId: string,
-    updateData: UpdateMaterialReceiveInput,
+    input: UpdateMaterialReceiveInput,
   ): Promise<MaterialReceiveVoucher> {
+    const { id: materialReceiveId, ...updateData } = input;
+
     const existingMaterialReceive =
       await this.prisma.materialReceiveVoucher.findUnique({
         where: { id: materialReceiveId },

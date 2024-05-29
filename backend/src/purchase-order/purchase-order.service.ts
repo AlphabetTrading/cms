@@ -144,9 +144,10 @@ export class PurchaseOrderService {
   }
 
   async updatePurchaseOrder(
-    purchaseOrderId: string,
-    updateData: UpdatePurchaseOrderInput,
+    input: UpdatePurchaseOrderInput,
   ): Promise<PurchaseOrderVoucher> {
+    const { id: purchaseOrderId, ...updateData } = input;
+
     const existingPurchaseOrder = await this.prisma.purchaseOrder.findUnique({
       where: { id: purchaseOrderId },
     });

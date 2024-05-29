@@ -151,13 +151,11 @@ export class MaterialReceiveResolver {
 
   @Mutation(() => MaterialReceiveVoucher)
   async updateMaterialReceive(
-    @Args('id') materialReceiveId: string,
     @Args('updateMaterialReceiveInput')
     updateMaterialReceiveInput: UpdateMaterialReceiveInput,
   ) {
     try {
       return this.materialReceiveService.updateMaterialReceive(
-        materialReceiveId,
         updateMaterialReceiveInput,
       );
     } catch (e) {

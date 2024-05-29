@@ -142,9 +142,10 @@ export class MaterialTransferService {
   }
 
   async updateMaterialTransfer(
-    materialTransferId: string,
-    updateData: UpdateMaterialTransferInput,
+    input: UpdateMaterialTransferInput,
   ): Promise<MaterialTransferVoucher> {
+    const { id: materialTransferId, ...updateData } = input;
+
     const existingMaterialTransfer =
       await this.prisma.materialTransferVoucher.findUnique({
         where: { id: materialTransferId },
