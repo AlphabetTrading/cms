@@ -146,3 +146,25 @@ class CreateMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
   @override
   List<Object?> get props => [preparedById, projectId, materialIssueMaterials];
 }
+
+class EditMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
+    extends Equatable {
+  final String updateMaterialIssueId;
+  final String warehouseStoreId;
+  final String approved;
+  final String approvedById;
+  final List<T> materialIssueMaterials;
+
+  const EditMaterialIssueParamsEntity(
+      {required this.updateMaterialIssueId,
+      required this.approved,
+      required this.approvedById,
+      required this.materialIssueMaterials,
+      required this.warehouseStoreId});
+
+  @override
+  List<Object?> get props => [updateMaterialIssueId,warehouseStoreId ,approved, approvedById, materialIssueMaterials];
+}
+
+
+

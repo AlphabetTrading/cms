@@ -25,21 +25,21 @@ class MaterialIssueModel extends MaterialIssueEntity {
     required DateTime? createdAt,
     required DateTime? updatedAt,
   }) : super(
-            id: id,
-            serialNumber: serialNumber,
-            status: status,
-            approvedById: approvedById,
-            approvedBy: approvedBy,
-            projectDetails: projectDetails,
-            requisitionNumber: requisitionNumber,
-            items: items,
-            preparedById: preparedById,
-            preparedBy: preparedBy,
-            receivedById: receivedById,
-            receivedBy: receivedBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            );
+          id: id,
+          serialNumber: serialNumber,
+          status: status,
+          approvedById: approvedById,
+          approvedBy: approvedBy,
+          projectDetails: projectDetails,
+          requisitionNumber: requisitionNumber,
+          items: items,
+          preparedById: preparedById,
+          preparedBy: preparedBy,
+          receivedById: receivedById,
+          receivedBy: receivedBy,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        );
 
   @override
   List<Object?> get props {
@@ -71,11 +71,16 @@ class MaterialIssueModel extends MaterialIssueEntity {
         receivedBy: json['receivedBy'] != null
             ? UserModel.fromJson(json['receivedBy'])
             : null,
-        createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
-        updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : null,
       );
     } catch (e) {
-      debugPrint('********** Error: in Material Issue Model $e \n $json[items]');
+      debugPrint(
+          '********** Error: in Material Issue Model $e \n $json[items]');
       return MaterialIssueModel(
         id: json['id'],
         serialNumber: json['serialNumber'],
@@ -96,8 +101,12 @@ class MaterialIssueModel extends MaterialIssueEntity {
         receivedById: json['receivedById'],
         receivedBy:
             json['receivedBy'] ?? UserModel.fromJson(json['receivedBy']),
-         createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
-        updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : null,
       );
     }
   }
@@ -135,52 +144,48 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
     required UseType? useType,
     required String? materialIssueVoucherId,
   }) : super(
-          id: id,
-          productVariant: productVariant,
-          quantity: quantity,
-          remark: remark,
-          totalCost: totalCost,
-          unitCost: unitCost,
-          subStructureDescription: subStructureDescription,
-          superStructureDescription: superStructureDescription,
-          useType: useType,
-          materialIssueVoucherId: materialIssueVoucherId
-        );
+            id: id,
+            productVariant: productVariant,
+            quantity: quantity,
+            remark: remark,
+            totalCost: totalCost,
+            unitCost: unitCost,
+            subStructureDescription: subStructureDescription,
+            superStructureDescription: superStructureDescription,
+            useType: useType,
+            materialIssueVoucherId: materialIssueVoucherId);
 
   factory IssueVoucherMaterialModel.fromJson(Map<String, dynamic> json) {
-    try{
-          return IssueVoucherMaterialModel(
-      id: json['id'],
-      productVariant:  ItemVariantModel.fromJson(json['productVariant']),
-      quantity: json['quantity'],
-      remark: json['remark'],
-      totalCost: json['totalCost'],
-      unitCost: json['unitCost'],
-      subStructureDescription:
-          subStructureUseDescriptionFromString(json['subStructureDescription']),
-      superStructureDescription: superStructureUseDescriptionFromString(
-          json['superStructureDescription']),
-      useType: useTypeFromString(json['useType']),
-      materialIssueVoucherId: json['materialIssueVoucherId']
-    );
-
-    }catch(e){
+    try {
+      return IssueVoucherMaterialModel(
+          id: json['id'],
+          productVariant: ItemVariantModel.fromJson(json['productVariant']),
+          quantity: json['quantity'],
+          remark: json['remark'],
+          totalCost: json['totalCost'],
+          unitCost: json['unitCost'],
+          subStructureDescription: subStructureUseDescriptionFromString(
+              json['subStructureDescription']),
+          superStructureDescription: superStructureUseDescriptionFromString(
+              json['superStructureDescription']),
+          useType: useTypeFromString(json['useType']),
+          materialIssueVoucherId: json['materialIssueVoucherId']);
+    } catch (e) {
       print('Error in Issue Voucer Material Model ${e}');
     }
     return IssueVoucherMaterialModel(
-      id: json['id'],
-      productVariant:  ItemVariantModel.fromJson(json['productVariant']),
-      quantity: json['quantity'],
-      remark: json['remark'],
-      totalCost: json['totalCost'],
-      unitCost: json['unitCost'],
-      subStructureDescription:
-          subStructureUseDescriptionFromString(json['subStructureDescription']),
-      superStructureDescription: superStructureUseDescriptionFromString(
-          json['superStructureDescription']),
-      useType: useTypeFromString(json['useType']),
-      materialIssueVoucherId: json['materialIssueVoucherId']
-    );
+        id: json['id'],
+        productVariant: ItemVariantModel.fromJson(json['productVariant']),
+        quantity: json['quantity'],
+        remark: json['remark'],
+        totalCost: json['totalCost'],
+        unitCost: json['unitCost'],
+        subStructureDescription: subStructureUseDescriptionFromString(
+            json['subStructureDescription']),
+        superStructureDescription: superStructureUseDescriptionFromString(
+            json['superStructureDescription']),
+        useType: useTypeFromString(json['useType']),
+        materialIssueVoucherId: json['materialIssueVoucherId']);
   }
 
   Map<String, dynamic> toJson() {
@@ -294,6 +299,58 @@ class CreateMaterialIssueParamsModel
         projectId: entity.projectId,
         preparedById: entity.preparedById,
         warehouseStoreId: entity.warehouseStoreId,
+        materialIssueMaterials: entity.materialIssueMaterials
+            .map((e) => MaterialIssueMaterialModel(
+                quantity: e.quantity,
+                material: e.material as WarehouseItemModel,
+                remark: e.remark,
+                useType: e.useType,
+                subStructureDescription: e.subStructureDescription,
+                superStructureDescription: e.superStructureDescription))
+            .toList());
+  }
+}
+
+class EditMaterialIssueParamsModel
+    extends EditMaterialIssueParamsEntity<MaterialIssueMaterialModel> {
+  const EditMaterialIssueParamsModel(
+      {required String approved,
+      required List<MaterialIssueMaterialModel> materialIssueMaterials,
+      required String approvedById,
+      required String warehouseStoreId,
+      required String updateMaterialIssueId})
+      : super(
+            approved: approved,
+            warehouseStoreId: warehouseStoreId,
+            approvedById: approvedById,
+            materialIssueMaterials: materialIssueMaterials,
+            updateMaterialIssueId: updateMaterialIssueId);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "warehouseStoreId": warehouseStoreId,
+      "approved": approved,
+      "approvedById": approvedById,
+      "items": materialIssueMaterials.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        updateMaterialIssueId,
+        warehouseStoreId,
+        approved,
+        approvedById,
+        materialIssueMaterials
+      ];
+
+  factory EditMaterialIssueParamsModel.fromEntity(
+      EditMaterialIssueParamsEntity entity) {
+    return EditMaterialIssueParamsModel(
+        updateMaterialIssueId: entity.updateMaterialIssueId,
+        approved: entity.approved,
+        warehouseStoreId: entity.warehouseStoreId,
+        approvedById: entity.approvedById,
         materialIssueMaterials: entity.materialIssueMaterials
             .map((e) => MaterialIssueMaterialModel(
                 quantity: e.quantity,
