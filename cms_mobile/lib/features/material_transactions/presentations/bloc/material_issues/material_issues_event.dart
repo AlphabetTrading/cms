@@ -28,9 +28,9 @@ class GetMaterialIssue extends MaterialIssueEvent {
   );
 }
 
-class CreateMaterialIssue extends MaterialIssueEvent {
-  final String id;
-  const CreateMaterialIssue(this.id);
+class GetMaterialIssueDetailsEvent extends MaterialIssueEvent {
+  final String materialIssueId;
+  const GetMaterialIssueDetailsEvent({required this.materialIssueId});
 }
 
 class UpdateMaterialIssue extends MaterialIssueEvent {

@@ -4,16 +4,16 @@ enum UseType {
   DEFAULT_VALUE
 
 }
-abstract class UseDescription{}
 
-enum SubStructureUseDescription implements UseDescription{
+
+enum SubStructureUseDescription {
   EXCAVATION_AND_EARTH_WORK,
   CONCRETE_WORK,
   MASONRY_WORK,
   DEFAULT_VALUE
 }
 
-enum SuperStructureUseDescription implements UseDescription{
+enum SuperStructureUseDescription {
   CONCRETE_WORK,
   BLOCK_WORK,
   ROOFING,

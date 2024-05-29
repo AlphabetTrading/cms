@@ -3,6 +3,7 @@ import 'package:cms_mobile/features/authentication/domain/entities/user_entity.d
 import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialIssueEntity extends Equatable {
@@ -13,13 +14,14 @@ class MaterialIssueEntity extends Equatable {
   final UserEntity? approvedBy;
   final String? projectDetails;
   final String? requisitionNumber;
-  final List<IssueVoucherItem>? items;
+  final List<IssueVoucherMaterialEntity>? items;
   final String? preparedById;
   final UserEntity? preparedBy;
   final String? receivedById;
   final UserEntity? receivedBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final ProjectEntity? project;
 
   const MaterialIssueEntity({
     this.id,
@@ -36,6 +38,7 @@ class MaterialIssueEntity extends Equatable {
     this.receivedById,
     this.updatedAt,
     this.createdAt,
+    this.project
   });
 
   @override
@@ -46,35 +49,45 @@ class MaterialIssueEntity extends Equatable {
   }
 }
 
-class IssueVoucherItem extends Equatable {
+class IssueVoucherMaterialEntity extends Equatable {
   final String? id;
-  final int? listNo;
-  final String? description;
-  final String? unitOfMeasure;
+  final ItemVariantEntity? productVariant;
   final double? quantity;
-  final double? unitCost;
-  final double? totalCost;
   final String? remark;
+  final double? totalCost;
+  final double? unitCost;
+  final SubStructureUseDescription? subStructureDescription;
+  final SuperStructureUseDescription? superStructureDescription;
+  final UseType? useType;
   final String? materialIssueVoucherId;
-  final MaterialIssueEntity? materialIssueVoucher;
 
-  const IssueVoucherItem({
-    this.id,
-    this.listNo,
-    this.description,
-    this.unitOfMeasure,
-    this.quantity,
-    this.unitCost,
-    this.totalCost,
-    this.remark,
-    this.materialIssueVoucherId,
-    this.materialIssueVoucher,
-  });
+  const IssueVoucherMaterialEntity(
+      {
+      required this.id,
+      required this.productVariant,
+      required this.quantity,
+      this.remark,
+      required this.totalCost,
+      required this.unitCost,
+      this.subStructureDescription,
+      this.superStructureDescription,
+      required this.useType,
+      this.materialIssueVoucherId
+      });
 
   @override
   List<Object?> get props {
     return [
       id,
+      productVariant,
+      quantity,
+      remark,
+      totalCost,
+      unitCost,
+      subStructureDescription,
+      superStructureDescription,
+      useType,
+      materialIssueVoucherId
     ];
   }
 }
@@ -97,14 +110,12 @@ class MaterialIssueMaterialEntity extends Equatable {
   final SubStructureUseDescription? subStructureDescription;
   final SuperStructureUseDescription? superStructureDescription;
 
-
   const MaterialIssueMaterialEntity({
     this.remark,
     this.material,
     required this.quantity,
     this.subStructureDescription,
     this.superStructureDescription,
-
     required this.useType,
   });
 
@@ -116,7 +127,6 @@ class MaterialIssueMaterialEntity extends Equatable {
         useType,
         subStructureDescription,
         superStructureDescription,
-   
       ];
 }
 
@@ -127,12 +137,11 @@ class CreateMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
   final String warehouseStoreId;
   final List<T> materialIssueMaterials;
 
-  const CreateMaterialIssueParamsEntity({
-    required this.projectId,
-    required this.preparedById,
-    required this.materialIssueMaterials,
-    required this.warehouseStoreId
-  });
+  const CreateMaterialIssueParamsEntity(
+      {required this.projectId,
+      required this.preparedById,
+      required this.materialIssueMaterials,
+      required this.warehouseStoreId});
 
   @override
   List<Object?> get props => [preparedById, projectId, materialIssueMaterials];

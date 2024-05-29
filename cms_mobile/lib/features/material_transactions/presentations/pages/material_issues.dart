@@ -130,13 +130,13 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
           );
         }
 
-        if (state is MaterialIssueLoading) {
+        if (state is MaterialIssuesLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (state is MaterialIssueSuccess) {
+        if (state is MaterialIssuesSuccess) {
           debugPrint(
               'MaterialRequestSuccess ${state.materialIssues?.items.length} ');
 
@@ -174,7 +174,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 );
         }
 
-        if (state is MaterialIssueFailed) {
+        if (state is MaterialIssuesFailed) {
           return Center(
             child: Text(state.error!.errorMessage),
           );

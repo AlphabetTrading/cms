@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 class ItemEntity extends Equatable {
-  final String id;
-  final String name;
+  final String? id;
+  final String? name;
   final String? iconSrc;
 
   const ItemEntity({
@@ -16,10 +16,10 @@ class ItemEntity extends Equatable {
 }
 
 class ItemVariantEntity extends Equatable {
-  final String id;
-  final String variant;
+  final String? id;
+  final String? variant;
   final ItemEntity? item;
-  final String unit;
+  final String? unit;
 
   const ItemVariantEntity({
     required this.id,

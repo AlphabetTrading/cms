@@ -7,6 +7,8 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 abstract class MaterialIssueDataSource {
   Future<DataState<String>> createMaterialIssue(
       {required CreateMaterialIssueParamsModel createMaterialIssueParamsModel});
+  Future<DataState<MaterialIssueModel>> getMaterialIssueDetails(
+      {required String params});
 }
 
 class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
@@ -30,7 +32,6 @@ mutation CreateMaterialIssue($createMaterialIssueInput: CreateMaterialIssueInput
   Future<DataState<String>> createMaterialIssue(
       {required CreateMaterialIssueParamsModel
           createMaterialIssueParamsModel}) async {
-
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialIssueMutation),
       variables: {
@@ -40,7 +41,6 @@ mutation CreateMaterialIssue($createMaterialIssueInput: CreateMaterialIssueInput
 
     try {
       final QueryResult result = await _client.mutate(options);
-      print(result);
 
       if (result.hasException) {
         return DataFailed(
@@ -55,5 +55,85 @@ mutation CreateMaterialIssue($createMaterialIssueInput: CreateMaterialIssueInput
       // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
+  }
+
+  @override
+  Future<DataState<MaterialIssueModel>> getMaterialIssueDetails(
+      {required String params}) {
+    String fetchMaterialIssueDetailsQuery = r'''
+query GetMaterialIssueById($getMaterialIssueByIdId: String!) {
+  getMaterialIssueById(id: $getMaterialIssueByIdId) {
+    items {
+      createdAt
+      id
+      productVariant {
+        id
+        variant
+        unitOfMeasure
+        product {
+          id
+          name
+        }
+      }
+      quantity
+      remark
+      totalCost
+      unitCost
+      subStructureDescription
+      superStructureDescription
+      updatedAt
+      useType
+      materialIssueVoucherId
+    }
+    requisitionNumber
+    serialNumber
+    status
+    id
+    
+    approvedById
+    createdAt
+    approvedBy {
+
+              createdAt
+              email
+              fullName
+              id
+              phoneNumber
+              role
+              updatedAt
+    }
+    preparedBy {
+                 createdAt
+              email
+              fullName
+              id
+              phoneNumber
+              role
+              updatedAt
+    }
+
+  }
+}
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(fetchMaterialIssueDetailsQuery),
+      variables: {"getMaterialIssueByIdId": params},
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final materialIssue =
+          MaterialIssueModel.fromJson(response.data!['getMaterialIssueById']);
+
+      return DataSuccess(materialIssue);
+    });
   }
 }

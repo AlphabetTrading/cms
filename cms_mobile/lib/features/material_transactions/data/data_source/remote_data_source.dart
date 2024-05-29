@@ -151,6 +151,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
       debugPrint('fetchMaterialIssuesQuery: $issues');
       final meta = response.data!['getMaterialIssues']["meta"];
       final items = issues.map((e) => MaterialIssueModel.fromJson(e)).toList();
+      debugPrint('******************Successfully converted to MaterialIssueModel: $items');
       return DataSuccess(
         MaterialIssueListWithMeta(
           items: items,

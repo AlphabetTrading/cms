@@ -3,6 +3,7 @@ import 'package:cms_mobile/features/home/presentation/tabs/material-transactions
 import 'package:cms_mobile/features/home/presentation/tabs/settings.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
 import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_details.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_event.dart';
@@ -99,7 +100,7 @@ Widget _buildScreen({
     case 2:
       return const MaterialTransactionsTabScreen();
     case 3:
-      return const CreateMaterialReturnPage();
+      return const SettingsTabScreen();
     default:
       return const Text("index default");
   }

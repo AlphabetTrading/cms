@@ -17,4 +17,9 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
       createMaterialIssueParamsModel:CreateMaterialIssueParamsModel.fromEntity(params)
     );
   }
+  
+  @override
+  Future<DataState<MaterialIssueModel>> getMaterialIssueDetails({required String params}) {
+    return dataSource.getMaterialIssueDetails(params:params);
+  }
 }
