@@ -14,7 +14,7 @@ export class MaterialRequestVoucher extends BaseModel {
   projectId?: string;
 
   @Field(() => Project, { nullable: true })
-  project?: Project;
+  Project?: Project;
 
   @Field(() => [MaterialRequestItem], { nullable: true })
   items?: MaterialRequestItem[];

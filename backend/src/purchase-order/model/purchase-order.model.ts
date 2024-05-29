@@ -13,7 +13,7 @@ export class PurchaseOrderVoucher extends BaseModel {
   projectId?: string;
 
   @Field(() => Project, { nullable: true })
-  project?: Project;
+  Project?: Project;
 
   @Field(() => String, { nullable: true })
   supplierName?: string;

@@ -32,7 +32,7 @@ export class MaterialIssueVoucher extends BaseModel {
   projectId?: string;
 
   @Field(() => Project, { nullable: true })
-  project?: Project;
+  Project?: Project;
 
   @Field(() => String, { nullable: true })
   warehouseStoreId?: string;

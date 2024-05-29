@@ -14,7 +14,7 @@ export class MaterialTransferVoucher extends BaseModel {
   projectId?: string;
 
   @Field(() => Project, { nullable: true })
-  project?: Project;
+  Project?: Project;
 
   @Field(() => String, { nullable: true })
   materialGroup?: string;
