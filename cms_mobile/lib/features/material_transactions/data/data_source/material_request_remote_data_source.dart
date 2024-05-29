@@ -6,6 +6,8 @@ abstract class MaterialRequestDataSource {
   Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsModel
           createMaterialRequestParamsModel});
+
+  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests();
 }
 
 class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
@@ -15,20 +17,101 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
     _client = client;
   }
 
-  static const String _createMaterialRequestMutation = r'''
-mutation CreateMaterialRequest($createMaterialRequestInput: CreateMaterialRequestInput!) {
-  createMaterialRequest(createMaterialRequestInput: $createMaterialRequestInput) {
-    id
-  }
-}
-
-  ''';
-
   // Override the function in the implementation class
+
+  @override
+  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests() async {
+    String fetchMaterialRequestsQuery;
+
+
+    fetchMaterialRequestsQuery = r'''
+      query GetMaterialRequests($orderBy: OrderByMaterialRequestInput, $filterMaterialRequestInput: FilterMaterialRequestInput, $paginationInput: PaginationInput) {
+        getMaterialRequests(orderBy: $orderBy, filterMaterialRequestInput: $filterMaterialRequestInput, paginationInput: $paginationInput) {
+          meta {
+            count
+            limit
+            page
+          }
+          items {
+            approvedBy {
+              createdAt
+              email
+              fullName
+              id
+              phoneNumber
+              role
+              updatedAt
+            }
+            approvedById
+            createdAt
+            id
+            items {
+              createdAt
+              id
+              productVariant {
+                createdAt
+                description
+                id
+                productId
+                unitOfMeasure
+                updatedAt
+                variant
+              }
+              productVariantId
+              quantity
+              remark
+              updatedAt
+            }
+            projectId
+            requestedBy {
+              createdAt
+              email
+              fullName
+              id
+              phoneNumber
+              role
+              updatedAt
+            }
+            requestedById
+            serialNumber
+            status
+            updatedAt
+          }
+        }
+      }
+    ''';
+
+    final response = await _client.query(QueryOptions(
+      document: gql(fetchMaterialRequestsQuery),
+    ));
+
+    if (response.hasException) {
+      return DataFailed(
+        ServerFailure(
+          errorMessage: response.exception.toString(),
+        ),
+      );
+    }
+
+    final requests = response.data!['getMaterialRequests'] as List;
+
+    return DataSuccess(
+        requests.map((e) => MaterialRequestModel.fromJson(e)).toList());
+  }
+
   @override
   Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsModel
           createMaterialRequestParamsModel}) async {
+
+    const String _createMaterialRequestMutation = r'''
+      mutation CreateMaterialRequest($createMaterialRequestInput: CreateMaterialRequestInput!) {
+        createMaterialRequest(createMaterialRequestInput: $createMaterialRequestInput) {
+          id
+        }
+      }
+  ''';
+
     List<Map<String, dynamic>> materialRequestMaterialsMap =
         createMaterialRequestParamsModel.materialRequestMaterials
             .map((materialRequestMaterial) {

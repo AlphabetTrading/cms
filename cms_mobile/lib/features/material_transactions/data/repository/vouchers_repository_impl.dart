@@ -3,7 +3,6 @@ import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/home/domain/entities/material_transaction.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
@@ -17,14 +16,7 @@ class VoucherRepositoryImpl extends VouchersRepository {
   VoucherRepositoryImpl({required this.dataSource});
 
   @override
-  Future<DataState<List<MaterialRequestEntity>>> getMaterialRequests() {
-    return dataSource.fetchMaterialRequests();
-  }
-
-  @override
-  Future<DataState<
-  MaterialIssueListWithMeta
-  >> getMaterialIssues(
+  Future<DataState<MaterialIssueListWithMeta>> getMaterialIssues(
       FilterMaterialIssueInput? filterMaterialIssueInput,
       OrderByMaterialIssueInput? orderBy,
       PaginationInput? paginationInput) {
@@ -44,7 +36,10 @@ class VoucherRepositoryImpl extends VouchersRepository {
   }
 
   @override
-  Future<DataState<List<MaterialReturnEntity>>> getMaterialReturns() {
+  Future<DataState<List<MaterialReturnEntity>>> getMaterialReturns(
+      FilterMaterialRequestInput? filterMaterialReturnInput,
+      OrderByMaterialRequestInput? orderBy,
+      PaginationInput? paginationInput) {
     throw UnimplementedError();
   }
 
@@ -56,5 +51,20 @@ class VoucherRepositoryImpl extends VouchersRepository {
   @override
   Future<DataState<List<PurchaseOrderEntity>>> getPurchaseOrders() {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DataState<List<MaterialRequestEntity>>> getMaterialRequests(
+      FilterMaterialRequestInput? filterMaterialRequestInput,
+      OrderByMaterialRequestInput? orderBy,
+      PaginationInput? paginationInput) {
+    debugPrint(
+        'getMaterialRequests, filterMaterialRequestInput: $filterMaterialRequestInput, orderBy: $orderBy, paginationInput: $paginationInput');
+
+    return dataSource.fetchMaterialRequests(
+      filterMaterialRequestInput,
+      orderBy,
+      paginationInput,
+    );
   }
 }

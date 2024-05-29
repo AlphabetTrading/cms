@@ -1,5 +1,6 @@
 import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
@@ -8,7 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class VoucherDataSource {
-  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests();
+  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests(
+    FilterMaterialRequestInput? filterMaterialRequestInput,
+    OrderByMaterialRequestInput? orderBy,
+    PaginationInput? paginationInput,
+  );
   Future<DataState<MaterialIssueListWithMeta>> fetchMaterialIssues({
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
@@ -24,15 +29,68 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   }
 
   @override
-  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests() async {
+  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests(
+    FilterMaterialRequestInput? filterMaterialRequestInput,
+    OrderByMaterialRequestInput? orderBy,
+    PaginationInput? paginationInput,
+  ) async {
     String fetchMaterialRequestsQuery;
 
     fetchMaterialRequestsQuery = r'''
-     query GetMaterialRequests {
-        materialRequests_materialRequests {
-          id
+      query GetMaterialRequests($orderBy: OrderByMaterialRequestInput, $filterMaterialRequestInput: FilterMaterialRequestInput, $paginationInput: PaginationInput) {
+          getMaterialRequests(orderBy: $orderBy, filterMaterialRequestInput: $filterMaterialRequestInput, paginationInput: $paginationInput) {
+            meta {
+              count
+              limit
+              page
+            }
+            items {
+              approvedBy {
+                createdAt
+                email
+                fullName
+                id
+                phoneNumber
+                role
+                updatedAt
+              }
+              approvedById
+              createdAt
+              id
+              items {
+                createdAt
+                id
+                productVariant {
+                  createdAt
+                  description
+                  id
+                  productId
+                  unitOfMeasure
+                  updatedAt
+                  variant
+                }
+                productVariantId
+                quantity
+                remark
+                updatedAt
+              }
+              projectId
+              requestedBy {
+                createdAt
+                email
+                fullName
+                id
+                phoneNumber
+                role
+                updatedAt
+              }
+              requestedById
+              serialNumber
+              status
+              updatedAt
+            }
+          }
         }
-      }
     ''';
 
     final response = await _client.query(QueryOptions(
@@ -47,7 +105,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
       );
     }
 
-    final requests = response.data!['requests'] as List;
+    final requests = response.data!['getMaterialRequests'] as List;
 
     return DataSuccess(
         requests.map((e) => MaterialRequestModel.fromJson(e)).toList());
@@ -152,7 +210,8 @@ class VoucherDataSourceImpl extends VoucherDataSource {
       debugPrint('fetchMaterialIssuesQuery: $issues');
       final meta = response.data!['getMaterialIssues']["meta"];
       final items = issues.map((e) => MaterialIssueModel.fromJson(e)).toList();
-      debugPrint('******************Successfully converted to MaterialIssueModel: $items');
+      debugPrint(
+          '******************Successfully converted to MaterialIssueModel: $items');
       return DataSuccess(
         MaterialIssueListWithMeta(
           items: items,
@@ -198,6 +257,39 @@ class OrderByMaterialIssueInput {
   final String? createdAt;
 
   OrderByMaterialIssueInput({required this.createdAt});
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (createdAt != null) "createdAt": createdAt,
+    };
+  }
+}
+
+class FilterMaterialRequestInput {
+  final StringFilter? createdAt;
+  final StringFilter? requestedBy;
+  final StringFilter? serialNumber;
+  final List<String>? status;
+
+  FilterMaterialRequestInput(
+      {this.createdAt, this.requestedBy, this.serialNumber, this.status});
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (requestedBy != null)
+        'requestedBy': {
+          'fullName': requestedBy!.toJson(),
+        },
+      if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
+      if (status != null) 'status': status,
+    };
+  }
+}
+
+class OrderByMaterialRequestInput {
+  final String? createdAt;
+
+  OrderByMaterialRequestInput({required this.createdAt});
 
   Map<String, dynamic> toJson() {
     return {

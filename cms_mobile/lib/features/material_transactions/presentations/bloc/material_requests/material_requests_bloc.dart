@@ -31,13 +31,13 @@ class MaterialRequestBloc
 
   void onCreateMaterialRequest(CreateMaterialRequestEvent event, Emitter<MaterialRequestState> emit) async {
     
-    emit(CreateMaterialRequestLoading());
+    emit(const CreateMaterialRequestLoading());
     final dataState = await _createMaterialRequestUseCase(
       params: event.createMaterialRequestParamsEntity
     );
 
     if (dataState is DataSuccess) {
-      emit(CreateMaterialRequestSuccess());
+      emit(const CreateMaterialRequestSuccess());
     }
 
     if (dataState is DataFailed) {

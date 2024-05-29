@@ -60,37 +60,37 @@ class MaterialRequestsPage extends StatelessWidget {
   _buildBody(BuildContext context) {
     return BlocBuilder<MaterialRequestBloc, MaterialRequestState>(
       builder: (_, state) {
-        // if (state is MaterialRequestInitial) {
-        //   return const Center(
-        //     child: CircularProgressIndicator(),
-        //   );
-        // }
+        if (state is MaterialRequestInitial) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-        // if (state is MaterialRequestLoading) {
-        //   return const Center(
-        //     child: CircularProgressIndicator(),
-        //   );
-        // }
+        if (state is MaterialRequestLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-        // if (state is MaterialRequestSuccess) {
-        return ListView.builder(
-          itemCount: materialRequests.length,
-          itemBuilder: (_, index) {
-            final materialRequest = materialRequests[index];
-            return ListTile(
-              title: Text(materialRequest.id!),
-            );
-          },
-        );
-        // }
+        if (state is MaterialRequestSuccess) {
+          return ListView.builder(
+            itemCount: materialRequests.length,
+            itemBuilder: (_, index) {
+              final materialRequest = materialRequests[index];
+              return ListTile(
+                title: Text(materialRequest.id!),
+              );
+            },
+          );
+        }
 
-        // if (state is MaterialRequestFailed) {
-        //   return Center(
-        //     child: Text(state.error!.errorMessage),
-        //   );
-        // }
+        if (state is MaterialRequestFailed) {
+          return Center(
+            child: Text(state.error!.errorMessage),
+          );
+        }
 
-        // return const SizedBox();
+        return const SizedBox();
       },
     );
   }

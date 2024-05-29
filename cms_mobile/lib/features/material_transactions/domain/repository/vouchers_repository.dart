@@ -11,12 +11,20 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/purcha
 abstract class VouchersRepository {
   Future<DataState<List<MaterialTransactionEntity>>> getMaterialTransactions();
   Future<DataState<List<PurchaseOrderEntity>>> getPurchaseOrders();
-  Future<DataState<List<MaterialRequestEntity>>> getMaterialRequests();
+  Future<DataState<List<MaterialRequestEntity>>> getMaterialRequests(
+    FilterMaterialRequestInput? filterMaterialReturnInput,
+    OrderByMaterialRequestInput? orderBy,
+    PaginationInput? paginationInput,
+  );
   Future<DataState<List<MaterialReceivingEntity>>> getMaterialReceivings();
   Future<DataState<MaterialIssueListWithMeta>> getMaterialIssues(
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
     PaginationInput? paginationInput,
   );
-  Future<DataState<List<MaterialReturnEntity>>> getMaterialReturns();
+  Future<DataState<List<MaterialReturnEntity>>> getMaterialReturns(
+    FilterMaterialRequestInput? filterMaterialReturnInput,
+    OrderByMaterialRequestInput? orderBy,
+    PaginationInput? paginationInput,
+  );
 }

@@ -1,5 +1,6 @@
 import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/projects/data/models/project.dart';

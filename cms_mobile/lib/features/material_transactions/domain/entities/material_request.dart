@@ -1,4 +1,6 @@
+import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/items/data/models/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
@@ -96,7 +98,7 @@ class MaterialRequestMaterialEntity extends Equatable {
       required this.requestedQuantity});
 
   @override
-  List<Object?> get props => [ material, remark, requestedQuantity];
+  List<Object?> get props => [material, remark, requestedQuantity];
 }
 
 class CreateMaterialRequestParamsEntity<T extends MaterialRequestMaterialEntity>
@@ -114,4 +116,39 @@ class CreateMaterialRequestParamsEntity<T extends MaterialRequestMaterialEntity>
   @override
   List<Object?> get props =>
       [requestedById, projectId, materialRequestMaterials];
+}
+
+class MaterialRequestEntityListWithMeta {
+  final List<MaterialRequestEntity> items;
+  final Meta meta;
+
+  MaterialRequestEntityListWithMeta({
+    required this.meta,
+    required this.items,
+  });
+}
+
+class MaterialRequestMaterialModel extends MaterialRequestMaterialEntity {
+  const MaterialRequestMaterialModel({
+    required double requestedQuantity,
+    WarehouseItemModel? material,
+    required String? remark,
+    // required String unit
+  }) : super(
+          requestedQuantity: requestedQuantity,
+          material: material,
+          remark: remark,
+          // unit: unit
+        );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'requestedQuantity': requestedQuantity,
+      'product': material,
+      'remark': remark,
+    };
+  }
+
+  @override
+  List<Object?> get props => [material, remark, requestedQuantity];
 }

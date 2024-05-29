@@ -1,12 +1,10 @@
-
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:equatable/equatable.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
-abstract class MaterialRequestState extends Equatable{
-  final List<MaterialRequestEntity> ? materialRequests;
-  final Failure ? error;
+abstract class MaterialRequestState extends Equatable {
+  final List<MaterialRequestEntity>? materialRequests;
+  final Failure? error;
 
   const MaterialRequestState({this.materialRequests, this.error});
 
@@ -23,7 +21,9 @@ class MaterialRequestLoading extends MaterialRequestState {
 }
 
 class MaterialRequestSuccess extends MaterialRequestState {
-  const MaterialRequestSuccess({required List<MaterialRequestEntity> materialRequests}) : super(materialRequests: materialRequests);
+  const MaterialRequestSuccess(
+      {required List<MaterialRequestEntity> materialRequests})
+      : super(materialRequests: materialRequests);
 }
 
 class MaterialRequestFailed extends MaterialRequestState {
@@ -36,11 +36,13 @@ class MaterialRequestEmpty extends MaterialRequestState {
 
 class CreateMaterialRequestLoading extends MaterialRequestState {
   const CreateMaterialRequestLoading();
-}     
+}
 
 class CreateMaterialRequestSuccess extends MaterialRequestState {
   const CreateMaterialRequestSuccess();
 }
+
 class CreateMaterialRequestFailed extends MaterialRequestState {
-  const CreateMaterialRequestFailed({required Failure error}) : super(error: error);
+  const CreateMaterialRequestFailed({required Failure error})
+      : super(error: error);
 }
