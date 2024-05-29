@@ -1,3 +1,5 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
+
 class GetWarehouseItemsInputEntity {
   PaginationInput? paginationInput;
   FilterWarehouseItemInput? filterWarehouseItemInput;
@@ -6,18 +8,8 @@ class GetWarehouseItemsInputEntity {
   Map<String, dynamic> toJson() {
     return {
       "paginationInput": paginationInput?.toJson() ?? {},
-      "filterWarehouseProductInput":
-          filterWarehouseItemInput!.toJson() ?? {}
+      "filterWarehouseProductInput": filterWarehouseItemInput!.toJson() ?? {}
     };
-  }
-}
-
-class PaginationInput {
-  int? skip;
-  int? take;
-  PaginationInput({this.skip, this.take});
-  Map<String, dynamic> toJson() {
-    return {"skip": skip, "take": take};
   }
 }
 

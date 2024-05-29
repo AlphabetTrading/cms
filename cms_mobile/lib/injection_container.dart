@@ -31,6 +31,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/get_ma
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
@@ -291,6 +292,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<MaterialRequestLocalBloc>(
     () => MaterialRequestLocalBloc(),
+  );
+
+  sl.registerFactory<MaterialIssueDetailsCubit>(
+    () => MaterialIssueDetailsCubit(sl<GetMaterialIssueDetailsUseCase>()),
   );
 
   sl.registerFactory<MaterialRequestFormCubit>(

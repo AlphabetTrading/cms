@@ -122,6 +122,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
     final selectedProjectId =
         await GQLClient.getFromLocalStorage('selected_project_id');
 
+    debugPrint('selectedProjectId: $selectedProjectId');
     filterInput!["projectId"] = selectedProjectId;
     debugPrint('filterInput: $filterInput');
     return _client
@@ -170,7 +171,11 @@ class FilterMaterialIssueInput {
   final List<String>? status;
 
   FilterMaterialIssueInput(
-      {this.createdAt, this.approvedBy, this.preparedBy, this.serialNumber, this.status});
+      {this.createdAt,
+      this.approvedBy,
+      this.preparedBy,
+      this.serialNumber,
+      this.status});
 
   Map<String, dynamic> toJson() {
     // include the property if it is only not null

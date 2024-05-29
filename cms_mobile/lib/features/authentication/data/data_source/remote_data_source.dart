@@ -11,7 +11,7 @@ abstract class AuthenticationRemoteDataSource {
   Future<DataState<LoginModel>> register(String phone, String password);
   Future<DataState<UserModel>> getUser();
   Future<DataState<LoginModel>> logout();
-  Future<bool> isSignedIn();
+  Future<AuthData> isSignedIn();
 }
 
 class AuthenticationRemoteDataSourceImpl
@@ -191,8 +191,10 @@ class AuthenticationRemoteDataSourceImpl
     ));
   }
 
+  // object bool, and user
+
   @override
-  Future<bool> isSignedIn() async {
+  Future<AuthData> isSignedIn() async {
     debugPrint('Checking if user is signed in');
     final String savedAccessToken = await GQLClient.getAccessTokenFromStorage();
     final String savedRefreshToken =
@@ -208,7 +210,7 @@ class AuthenticationRemoteDataSourceImpl
         savedUserId.isNotEmpty;
 
     debugPrint('IsSignedIn: $isSignIn');
-    return isSignIn;
+    return AuthData(isSignedIn: isSignIn, userId: savedUserId);
   }
 
   // save id, access token, refresh token to local storage
@@ -227,4 +229,15 @@ class AuthenticationRemoteDataSourceImpl
       authData['userId'],
     );
   }
+}
+
+// class auth user, and bool
+class AuthData {
+  final bool isSignedIn;
+  final String userId;
+
+  AuthData({
+    required this.isSignedIn,
+    required this.userId,
+  });
 }

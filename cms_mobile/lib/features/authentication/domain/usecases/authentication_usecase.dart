@@ -1,16 +1,17 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/core/usecase/usecase.dart';
+import 'package:cms_mobile/features/authentication/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/login_entity.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/authentication/domain/repository/authentication_repository.dart';
 
-class IsSignedInUseCase implements UseCaseWithoutState<bool, void> {
+class IsSignedInUseCase implements UseCaseWithoutState<AuthData, void> {
   final AuthenticationRepository _authenticationRepository;
 
   IsSignedInUseCase(this._authenticationRepository);
 
   @override
-  Future<bool> call({void params}) {
+  Future<AuthData> call({void params}) {
     return _authenticationRepository.isSignedIn();
   }
 }

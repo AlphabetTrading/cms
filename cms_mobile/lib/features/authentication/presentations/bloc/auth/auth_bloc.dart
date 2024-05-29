@@ -1,4 +1,5 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/features/authentication/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/authentication/domain/usecases/authentication_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -33,17 +34,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       user: null,
     ));
 
-    final isSignedIn = await isSignedInUseCase();
-    if (isSignedIn) {
-      emit(const AuthState(
+    debugPrint('DataState: started');
+    final AuthData authData = await isSignedInUseCase();
+    if (authData.isSignedIn) {
+      emit(AuthState(
         status: AuthStatus.signedIn,
-        user: null,
+        userId: authData.userId,
       ));
     } else {
       emit(
         const AuthState(
           status: AuthStatus.signedOut,
-          user: null,
+          userId: null,
         ),
       );
     }
@@ -99,11 +101,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthState(
       status: AuthStatus.loading,
     ));
-    final isSignedIn = await isSignedInUseCase();
-    if (isSignedIn) {
+    final authData = await isSignedInUseCase();
+    if (authData.isSignedIn) {
       emit(
-        const AuthState(
+        AuthState(
           status: AuthStatus.signedIn,
+          userId: authData.userId,
         ),
       );
     } else {

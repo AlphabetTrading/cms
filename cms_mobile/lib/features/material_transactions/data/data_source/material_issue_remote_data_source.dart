@@ -1,7 +1,5 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialIssueDataSource {
@@ -19,11 +17,11 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
   }
 
   static const String _createMaterialIssueMutation = r'''
-mutation CreateMaterialIssue($createMaterialIssueInput: CreateMaterialIssueInput!) {
-  createMaterialIssue(createMaterialIssueInput: $createMaterialIssueInput) {
-    id
-  }
-}
+    mutation CreateMaterialIssue($createMaterialIssueInput: CreateMaterialIssueInput!) {
+      createMaterialIssue(createMaterialIssueInput: $createMaterialIssueInput) {
+        id
+      }
+    }
 
   ''';
 

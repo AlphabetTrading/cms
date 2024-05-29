@@ -1,9 +1,6 @@
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialIssueLocalBloc
@@ -33,7 +30,7 @@ class MaterialIssueLocalBloc
     });
 
     on<ClearMaterialIssueMaterialsLocal>((event, emit) {
-      emit(const MaterialIssueLocalState(materialIssueMaterials:[]));
+      emit(const MaterialIssueLocalState(materialIssueMaterials: []));
     });
   }
 }

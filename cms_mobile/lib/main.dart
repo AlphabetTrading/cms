@@ -1,8 +1,10 @@
 import 'package:cms_mobile/core/routes/go_router.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
+import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
@@ -85,49 +87,64 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Sizer(
       builder: (context, orientation, deviceType) {
-        return BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {},
+        return BlocBuilder<ThemeBloc, ThemeState>(
           builder: (context, state) {
-            if (state.status == AuthStatus.loading) {
-              return const CircularProgressIndicator();
-            }
-            return BlocBuilder<ThemeBloc, ThemeState>(
+            final themeData = state.themeData;
+            return BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {},
               builder: (context, state) {
-                final themeData = state.themeData;
-                final appRouter = AppRouter().router;
-                return BlocConsumer<ProjectBloc, ProjectState>(
-                  listener: (context, state) {
-                    if (state is ProjectSuccess) {
-                      if (state.projects!.items.isNotEmpty) {
-                        context.read<ProjectBloc>().add(
-                              SelectProject(
-                                state.projects!.items.first.id!,
-                                state.projects!,
-                              ),
-                            );
-                      }
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is ProjectIntialLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                if (state.status == AuthStatus.loading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state.status == AuthStatus.signedOut) {
+                  return const MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    home: LoginPage(),
+                  );
+                }
 
-                    return MaterialApp.router(
-                      debugShowCheckedModeBanner: false,
-                      title: 'CMS APP',
-                      routerDelegate: appRouter.routerDelegate,
-                      routeInformationParser: appRouter.routeInformationParser,
-                      routeInformationProvider:
-                          appRouter.routeInformationProvider,
-                      localizationsDelegates: context.localizationDelegates,
-                      supportedLocales: context.supportedLocales,
-                      locale: context.locale,
-                      theme: themeData,
-                    );
-                  },
+                if (state.status == AuthStatus.signedIn) {
+                  final appRouter = AppRouter().router;
+                  return BlocConsumer<ProjectBloc, ProjectState>(
+                    listener: (context, state) {
+                      if (state is ProjectSuccess) {
+                        if (state.projects!.items.isNotEmpty) {
+                          context.read<ProjectBloc>().add(
+                                SelectProject(
+                                  state.projects!.items.first.id!,
+                                  state.projects!,
+                                ),
+                              );
+                        }
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is ProjectIntialLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return MaterialApp.router(
+                        debugShowCheckedModeBanner: false,
+                        title: 'CMS APP',
+                        routerDelegate: appRouter.routerDelegate,
+                        routeInformationParser:
+                            appRouter.routeInformationParser,
+                        routeInformationProvider:
+                            appRouter.routeInformationProvider,
+                        localizationsDelegates: context.localizationDelegates,
+                        supportedLocales: context.supportedLocales,
+                        locale: context.locale,
+                        theme: themeData,
+                      );
+                    },
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               },
             );

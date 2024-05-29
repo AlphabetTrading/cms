@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
@@ -27,9 +28,12 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
           GetMaterialIssues(
             filterMaterialIssueInput: FilterMaterialIssueInput(),
             orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
-            paginationInput: PaginationInput(skip: 0, take: 10),
+            paginationInput: PaginationInput(skip: 0, take: 20),
           ),
         );
+
+    // read auth state
+    debugPrint("Auth state: ${context.read<AuthBloc>().state.userId}");
   }
 
   @override
@@ -69,7 +73,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
         child: Column(
           children: [
             Row(
@@ -221,19 +225,19 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                               'materialIssueId': materialIssue.id.toString()
                             });
                       },
-                      child: ListTile(
-                        leading: const Icon(Icons.edit, color: Colors.blue),
-                        title: const Text('Edit',
-                            style: TextStyle(color: Colors.blue)),
+                      child: const ListTile(
+                        leading: Icon(Icons.edit, color: Colors.blue),
+                        title:
+                            Text('Edit', style: TextStyle(color: Colors.blue)),
                       )),
                   PopupMenuItem(
                     onTap: () {
                       print('Item 2');
                     },
-                    child: ListTile(
-                      leading: const Icon(Icons.delete, color: Colors.red),
-                      title: const Text('Delete',
-                          style: TextStyle(color: Colors.red)),
+                    child: const ListTile(
+                      leading: Icon(Icons.delete, color: Colors.red),
+                      title:
+                          Text('Delete', style: TextStyle(color: Colors.red)),
                     ),
                   ),
                 ],

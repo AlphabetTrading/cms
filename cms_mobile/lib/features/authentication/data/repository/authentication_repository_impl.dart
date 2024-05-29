@@ -21,7 +21,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   }
 
   @override
-  Future<bool> isSignedIn() {
+  Future<AuthData> isSignedIn() {
     return dataSource.isSignedIn();
   }
 

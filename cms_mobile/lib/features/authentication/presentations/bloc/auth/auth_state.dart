@@ -12,13 +12,14 @@ enum AuthStatus {
 class AuthState extends Equatable {
   final AuthStatus? status;
   final UserEntity? user;
+  final String? userId;
 
-  const AuthState({this.status, this.user});
+  const AuthState({this.status, this.user, this.userId});
 
   @override
   List<Object?> get props => [
         status,
-        user,
+        userId,
       ];
 }
 
