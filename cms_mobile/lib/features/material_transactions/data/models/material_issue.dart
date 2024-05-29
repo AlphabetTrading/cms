@@ -1,10 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cms_mobile/features/home/domain/entities/project.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
+import 'package:cms_mobile/features/projects/data/models/project.dart';
+import 'package:flutter/widgets.dart';
+
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/items/data/models/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
-import 'package:flutter/widgets.dart';
 
 class MaterialIssueModel extends MaterialIssueEntity {
   const MaterialIssueModel({
@@ -15,7 +20,7 @@ class MaterialIssueModel extends MaterialIssueEntity {
     UserModel? approvedBy,
     required String? projectDetails,
     required String? requisitionNumber,
-    List<IssueVoucherItemModel>? items,
+    List<IssueVoucherMaterialModel>? items,
     required String? preparedById,
     UserModel? preparedBy,
     required String? receivedById,
@@ -36,7 +41,8 @@ class MaterialIssueModel extends MaterialIssueEntity {
             receivedById: receivedById,
             receivedBy: receivedBy,
             createdAt: createdAt,
-            updatedAt: updatedAt);
+            updatedAt: updatedAt,
+            );
 
   @override
   List<Object?> get props {
@@ -52,9 +58,9 @@ class MaterialIssueModel extends MaterialIssueEntity {
         serialNumber: json['serialNumber'],
         projectDetails: json['projectDetails'],
         requisitionNumber: json['requisitionNumber'],
-        items: json['items'].map<IssueVoucherItemModel>((item) {
-          return IssueVoucherItemModel.fromJson(item);
-        }).toList() as List<IssueVoucherItemModel>,
+        items: json['items'].map<IssueVoucherMaterialModel>((item) {
+          return IssueVoucherMaterialModel.fromJson(item);
+        }).toList() as List<IssueVoucherMaterialModel>,
         preparedById: json['preparedById'],
         preparedBy: json['preparedBy'] != null
             ? UserModel.fromJson(json['preparedBy'])
@@ -68,11 +74,11 @@ class MaterialIssueModel extends MaterialIssueEntity {
         receivedBy: json['receivedBy'] != null
             ? UserModel.fromJson(json['receivedBy'])
             : null,
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
+        createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
+        updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
       );
     } catch (e) {
-      debugPrint('Error: $e \n $json[items]');
+      debugPrint('********** Error: in Material Issue Model $e \n $json[items]');
       return MaterialIssueModel(
         id: json['id'],
         serialNumber: json['serialNumber'],
@@ -80,8 +86,8 @@ class MaterialIssueModel extends MaterialIssueEntity {
         requisitionNumber: json['requisitionNumber'],
         items: json['items'] ??
             json['items']
-                .map<IssueVoucherItemModel>(
-                    (item) => IssueVoucherItemModel.fromJson(item))
+                .map<IssueVoucherMaterialModel>(
+                    (item) => IssueVoucherMaterialModel.fromJson(item))
                 .toList(),
         preparedById: json['preparedById'],
         preparedBy:
@@ -93,8 +99,8 @@ class MaterialIssueModel extends MaterialIssueEntity {
         receivedById: json['receivedById'],
         receivedBy:
             json['receivedBy'] ?? UserModel.fromJson(json['receivedBy']),
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
+         createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
+        updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
       );
     }
   }
@@ -119,67 +125,79 @@ class MaterialIssueModel extends MaterialIssueEntity {
   }
 }
 
-class IssueVoucherItemModel extends IssueVoucherItem {
-  const IssueVoucherItemModel({
-    required String id,
-    required String? description,
-    required String? unitOfMeasure,
+class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
+  const IssueVoucherMaterialModel({
+    required String? id,
+    required ItemVariantModel? productVariant,
     required double? quantity,
     required String? remark,
     required double? totalCost,
     required double? unitCost,
+    required SubStructureUseDescription? subStructureDescription,
+    required SuperStructureUseDescription? superStructureDescription,
+    required UseType? useType,
     required String? materialIssueVoucherId,
   }) : super(
           id: id,
-          description: description,
-          unitOfMeasure: unitOfMeasure,
+          productVariant: productVariant,
           quantity: quantity,
-          unitCost: unitCost,
-          totalCost: totalCost,
           remark: remark,
-          materialIssueVoucherId: materialIssueVoucherId,
+          totalCost: totalCost,
+          unitCost: unitCost,
+          subStructureDescription: subStructureDescription,
+          superStructureDescription: superStructureDescription,
+          useType: useType,
+          materialIssueVoucherId: materialIssueVoucherId
         );
 
-  @override
-  List<Object?> get props {
-    return [
-      id,
-      listNo,
-      description,
-      unitOfMeasure,
-      quantity,
-      unitCost,
-      totalCost,
-      remark,
-      materialIssueVoucherId
-    ];
-  }
-
-  factory IssueVoucherItemModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("hello item: $json");
-    return IssueVoucherItemModel(
+  factory IssueVoucherMaterialModel.fromJson(Map<String, dynamic> json) {
+    try{
+          return IssueVoucherMaterialModel(
       id: json['id'],
-      description: json['description'],
-      unitOfMeasure: json['unitOfMeasure'],
+      productVariant:  ItemVariantModel.fromJson(json['productVariant']),
       quantity: json['quantity'],
-      unitCost: json['unitCost'],
-      totalCost: json['totalCost'],
       remark: json['remark'],
-      materialIssueVoucherId: json['materialIssueVoucherId'],
+      totalCost: json['totalCost'],
+      unitCost: json['unitCost'],
+      subStructureDescription:
+          subStructureUseDescriptionFromString(json['subStructureDescription']),
+      superStructureDescription: superStructureUseDescriptionFromString(
+          json['superStructureDescription']),
+      useType: useTypeFromString(json['useType']),
+      materialIssueVoucherId: json['materialIssueVoucherId']
+    );
+
+    }catch(e){
+      print('Error in Issue Voucer Material Model ${e}');
+    }
+    return IssueVoucherMaterialModel(
+      id: json['id'],
+      productVariant:  ItemVariantModel.fromJson(json['productVariant']),
+      quantity: json['quantity'],
+      remark: json['remark'],
+      totalCost: json['totalCost'],
+      unitCost: json['unitCost'],
+      subStructureDescription:
+          subStructureUseDescriptionFromString(json['subStructureDescription']),
+      superStructureDescription: superStructureUseDescriptionFromString(
+          json['superStructureDescription']),
+      useType: useTypeFromString(json['useType']),
+      materialIssueVoucherId: json['materialIssueVoucherId']
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'listNo': listNo,
-      'description': description,
-      'unitOfMeasure': unitOfMeasure,
+      'productVariant': productVariant,
       'quantity': quantity,
-      'unitCost': unitCost,
-      'totalCost': totalCost,
       'remark': remark,
-      'materialIssueVoucherId': materialIssueVoucherId,
+      'totalCost': totalCost,
+      'unitCost': unitCost,
+      'subStructureDescription': subStructureDescription,
+      'superStructureDescription': superStructureDescription,
+      'useType': useType,
+      'materialIssueVoucherId': materialIssueVoucherId
     };
   }
 }

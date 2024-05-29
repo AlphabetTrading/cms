@@ -1,7 +1,7 @@
 import 'package:cms_mobile/features/items/domain/entities/item.dart';
 
 class ItemModel extends ItemEntity {
-  const ItemModel({required String id, required String name, String? iconSrc})
+  const ItemModel({required String? id, required String? name, String? iconSrc})
       : super(id: id, name: name, iconSrc: iconSrc);
 
   @override
@@ -9,10 +9,10 @@ class ItemModel extends ItemEntity {
     return [id, name, iconSrc];
   }
 
-  factory ItemModel.fromJson(Map<String, dynamic> json) {
+  factory ItemModel.fromJson(Map<String, dynamic>? json) {
     return ItemModel(
-      id: json['id'],
-      name: json['name'],
+      id: json?['id'],
+      name: json?['name'],
     );
   }
 
@@ -23,9 +23,9 @@ class ItemModel extends ItemEntity {
 
 class ItemVariantModel extends ItemVariantEntity {
   const ItemVariantModel(
-      {required String id,
-      required String variant,
-      required String unit,
+      {required String? id,
+      required String? variant,
+      required String? unit,
       ItemModel? item})
       : super(id: id, variant: variant, item: item, unit: unit);
 
@@ -50,14 +50,19 @@ class ItemVariantModel extends ItemVariantEntity {
 
 class WarehouseItemModel extends WarehouseItemEntity {
   const WarehouseItemModel(
-      {required ItemVariantModel itemVariant, required double quantity, required double currentPrice})
-      : super(itemVariant: itemVariant, quantity: quantity, currentPrice: currentPrice);
+      {required ItemVariantModel itemVariant,
+      required double quantity,
+      required double currentPrice})
+      : super(
+            itemVariant: itemVariant,
+            quantity: quantity,
+            currentPrice: currentPrice);
 
   Map<String, dynamic> toJson() {
     return {
       'productVariant': (itemVariant as ItemVariantModel).toJson(),
       'quantity': quantity,
-      'currentPrice':currentPrice
+      'currentPrice': currentPrice
     };
   }
 

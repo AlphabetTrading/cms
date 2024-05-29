@@ -54,9 +54,9 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
         builder: (warehouseContext, warehouseState) {
           return BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
             builder: (context, state) {
-              List<IssueVoucherItem> materialIssueMaterials =  state.materialIssues?.items.firstWhere((element) =>
+              List<IssueVoucherMaterialEntity> materialIssueMaterials =  state.materialIssues?.items.firstWhere((element) =>
                             element.id == materialIssueDropdown.value).items ??[];
-              IssueVoucherItem? selectedMaterial = materialIssueMaterials.firstWhere((element) =>
+              IssueVoucherMaterialEntity? selectedMaterial = materialIssueMaterials.firstWhere((element) =>
                             element.id == materialDropdown.value);
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -80,7 +80,7 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                     enableFilter: false,
                     errorMessage: materialIssueDropdown.errorMessage,
                     label: 'Material Issue',
-                    trailingIcon: state is MaterialIssueLoading
+                    trailingIcon: state is MaterialIssuesLoading
                         ? const CircularProgressIndicator()
                         : null,
                   ),
@@ -98,7 +98,7 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                     },
                     dropdownMenuEntries: state.materialIssues?.items.firstWhere((element) =>
                             element.id == materialIssueDropdown.value).items
-                            ?.map((e) => DropdownMenuEntry<IssueVoucherItem>(
+                            ?.map((e) => DropdownMenuEntry<IssueVoucherMaterialEntity>(
                                 label:
                                     e.id ?? "N/A",
                                 value: e))

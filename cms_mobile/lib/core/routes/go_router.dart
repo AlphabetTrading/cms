@@ -3,7 +3,7 @@ import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_create.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_detail.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_edit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
@@ -30,13 +30,13 @@ class AppRouter {
         if (isAuthenticated &&
             (state.matchedLocation == '/${RoutePaths.login}' ||
                 state.matchedLocation == '/${RoutePaths.forgotPassword}' ||
-                state.matchedLocation ==  '/${RoutePaths.resetPassword}' ||
-                state.matchedLocation ==  '/${RoutePaths.signup}')) {
+                state.matchedLocation == '/${RoutePaths.resetPassword}' ||
+                state.matchedLocation == '/${RoutePaths.signup}')) {
           return RoutePaths.home;
         }
-        if (!isAuthenticated && state.path == '/${RoutePaths.login}'||
+        if (!isAuthenticated && state.path == '/${RoutePaths.login}' ||
             state.matchedLocation == '/${RoutePaths.forgotPassword}' ||
-            state.matchedLocation =='/${RoutePaths.resetPassword}'||
+            state.matchedLocation == '/${RoutePaths.resetPassword}' ||
             state.matchedLocation == '/${RoutePaths.signup}') {
           return state.matchedLocation;
         }
@@ -91,7 +91,9 @@ class AppRouter {
                   name: RouteNames.materialIssueDetails,
                   path: RoutePaths.materialIssueDetails,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const MaterialIssueDetailsPage();
+                    return  MaterialIssueDetailsPage(
+                        materialIssueId:
+                            state.pathParameters['materialIssueId']!);
                   },
                 ),
                 GoRoute(

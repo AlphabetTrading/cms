@@ -55,7 +55,9 @@ class UserModel extends UserEntity {
         );
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
+    try{
+
+return UserModel(
       id: json['id'],
       fullName: json['fullName'],
       email: json['email'],
@@ -78,6 +80,34 @@ class UserModel extends UserEntity {
       projects: json['projects'],
       tasks: json['tasks'],
     );
+    }
+    catch(e){
+      print('********** Error in UserModel.fromJson: $e');
+    }
+   return UserModel(
+      id: json['id'],
+      fullName: json['fullName'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+      role: getRole(json['role']),
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      purchaseOrders: json['purchaseOrders'],
+      purchaseOrdersApproved: json['purchaseOrdersApproved'],
+      materialIssueVouchers: json['materialIssueVouchers'],
+      materialIssueVouchersApproved: json['materialIssueVouchersApproved'],
+      materialReceiveVouchers: json['materialReceiveVouchers'],
+      materialReceiveVouchersApproved: json['materialReceiveVouchersApproved'],
+      materialRequestVouchers: json['materialRequestVouchers'],
+      materialRequestVouchersApproved: json['materialRequestVouchersApproved'],
+      materialReturnVouchers: json['materialReturnVouchers'],
+      materialReturnVouchersReceived: json['materialReturnVouchersReceived'],
+      materialReturnVouchersApproved: json['materialReturnVouchersApproved'],
+      materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
+      projects: json['projects'],
+      tasks: json['tasks'],
+    );;
+    
   }
 
   Map<String, dynamic> toJson() {

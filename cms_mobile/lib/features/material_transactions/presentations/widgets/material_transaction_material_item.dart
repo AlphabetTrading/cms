@@ -7,6 +7,8 @@ class MaterialTransactionMaterialItem extends StatelessWidget {
   final String subtitle;
   final onEdit;
   final onDelete;
+  final onOpen;
+
 
   const MaterialTransactionMaterialItem(
       {super.key,
@@ -14,46 +16,50 @@ class MaterialTransactionMaterialItem extends StatelessWidget {
       required this.title,
       required this.subtitle,
       this.onEdit,
-      this.onDelete});
+      this.onDelete,
+      this.onOpen});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      alignment: Alignment.center,
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: ShapeDecoration(
-        color: const Color(0x110F4A84),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      child: ListTile(
-        leading: Container(
-          width: 45,
-          height: 45,
-          padding: const EdgeInsets.all(5),
-          decoration: ShapeDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+    return InkWell(
+      onTap: onOpen,
+      child: Container(
+        height: 80,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: ShapeDecoration(
+          color: const Color(0x110F4A84),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: iconSrc != null
-              ? SvgPicture.asset(
-                  iconSrc!,
-                )
-              : SizedBox(),
         ),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: PopupMenuButton<String>(
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
-              onTap: onEdit,
-              child: const Text('Edit'),
+        child: ListTile(
+          leading: Container(
+            width: 45,
+            height: 45,
+            padding: const EdgeInsets.all(5),
+            decoration: ShapeDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             ),
-            PopupMenuItem<String>(onTap: onDelete, child: const Text('Delete')),
-          ],
+            child: iconSrc != null
+                ? SvgPicture.asset(
+                    iconSrc!,
+                  )
+                : SizedBox(),
+          ),
+          title: Text(title),
+          subtitle: Text(subtitle),
+          trailing: PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                onTap: onEdit,
+                child: const Text('Edit'),
+              ),
+              PopupMenuItem<String>(onTap: onDelete, child: const Text('Delete')),
+            ],
+          ),
         ),
       ),
     );

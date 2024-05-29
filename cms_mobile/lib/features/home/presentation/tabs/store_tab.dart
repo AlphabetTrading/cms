@@ -55,16 +55,12 @@ class _StoreTabScreenState extends State<StoreTabScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return InkWell(
                       onTap: () {
-                        try {
-                          context.goNamed(
-                            RouteNames.items,
-                            pathParameters: {
-                              "warehouseId": state.warehouses![index].id,
-                            },
-                          );
-                        } catch (e) {
-                          print(e);
-                        }
+                        context.goNamed(
+                          RouteNames.items,
+                          pathParameters: {
+                            "warehouseId": state.warehouses![index].id,
+                          },
+                        );
                       },
                       child: Container(
                         height: 80,

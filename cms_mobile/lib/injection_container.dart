@@ -27,7 +27,8 @@ import 'package:cms_mobile/features/material_transactions/domain/repository/vouc
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_return.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue_details.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
@@ -202,6 +203,11 @@ Future<void> initializeDependencies() async {
       sl<VouchersRepository>(),
     ),
   );
+  sl.registerLazySingleton<GetMaterialIssueDetailsUseCase>(
+    () => GetMaterialIssueDetailsUseCase(
+      sl<MaterialIssueRepository>(),
+    ),
+  );
 
   sl.registerLazySingleton<GetWarehousesUseCase>(
     () => GetWarehousesUseCase(
@@ -239,7 +245,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<SelectProjectUseCase>(
       SelectProjectUseCase(sl<ProjectRepository>()));
-  
+
   sl.registerLazySingleton<CreateMaterialIssueUseCase>(
     () => CreateMaterialIssueUseCase(
       sl<MaterialIssueRepository>(),
@@ -275,8 +281,8 @@ Future<void> initializeDependencies() async {
   );
 
   sl.registerFactory<MaterialIssueBloc>(
-    () => MaterialIssueBloc(
-        sl<GetMaterialIssuesUseCase>(), sl<CreateMaterialIssueUseCase>()),
+    () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>(),
+        sl<CreateMaterialIssueUseCase>(), sl<GetMaterialIssueDetailsUseCase>()),
   );
 
   sl.registerFactory<MaterialReturnBloc>(
