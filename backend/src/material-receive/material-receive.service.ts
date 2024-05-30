@@ -260,6 +260,7 @@ export class MaterialReceiveService {
     const materialReceive = await this.prisma.materialReceiveVoucher.findUnique(
       {
         where: { id: materialReceiveId },
+        include: { items: true },
       },
     );
 
@@ -271,16 +272,66 @@ export class MaterialReceiveService {
       throw new NotFoundException('Already decided on this material receive!');
     }
 
-    const updatedMaterialReceive =
-      await this.prisma.materialReceiveVoucher.update({
-        where: { id: materialReceiveId },
-        data: {
-          approvedById: userId,
-          status: status,
-        },
-      });
+    if (status === ApprovalStatus.COMPLETED) {
+      await this.prisma.$transaction(async (prisma) => {
+        for (const item of materialReceive.items) {
+          const stock = await prisma.warehouseProduct.findUnique({
+            where: {
+              productVariantId_warehouseId_projectId: {
+                productVariantId: item.productVariantId,
+                warehouseId: materialReceive.warehouseStoreId,
+                projectId: materialReceive.projectId,
+              },
+            },
+          });
 
-    return updatedMaterialReceive;
+          if (!stock) {
+            await prisma.warehouseProduct.create({
+              data: {
+                projectId: materialReceive.projectId,
+                warehouseId: materialReceive.warehouseStoreId,
+                productVariantId: item.productVariantId,
+                quantity: item.quantity,
+                currentPrice: item.unitCost,
+              },
+            });
+          } else {
+            const totalValueOfExistingStock =
+              stock.currentPrice * stock.quantity;
+            const totalValueOfNewStock = item.unitCost * item.quantity;
+            const totalQuantityOfStock = stock.quantity + item.quantity;
+            const newAveragePrice =
+              (totalValueOfExistingStock + totalValueOfNewStock) /
+              totalQuantityOfStock;
+
+            await prisma.warehouseProduct.update({
+              where: { id: stock.id },
+              data: {
+                quantity: totalQuantityOfStock,
+                currentPrice: newAveragePrice,
+              },
+            });
+          }
+        }
+        const updatedMaterialReceive =
+          await prisma.materialReceiveVoucher.update({
+            where: { id: materialReceiveId },
+            data: { status: status, approvedById: userId },
+          });
+
+        return updatedMaterialReceive;
+      });
+    } else {
+      const updatedMaterialReceive =
+        await this.prisma.materialReceiveVoucher.update({
+          where: { id: materialReceiveId },
+          data: {
+            approvedById: userId,
+            status: status,
+          },
+        });
+      return updatedMaterialReceive;
+    }
   }
 
   async count(

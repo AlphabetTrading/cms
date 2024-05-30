@@ -4,6 +4,7 @@ import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
 import { FilterProjectInput } from 'src/project/dto/filter-project.input';
 import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
+import { FilterWarehouseProductInput } from 'src/warehouse-product/dto/filter-warehouse-product.input';
 
 registerEnumType(ApprovalStatus, {
   name: 'ApprovalStatus',
@@ -18,14 +19,17 @@ export class FilterMaterialReturnInput {
   @Field({ nullable: true })
   projectId?: string;
 
-  @Field(()=> FilterProjectInput, { nullable: true })
+  @Field(() => FilterProjectInput, { nullable: true })
   project?: Prisma.ProjectWhereInput;
 
   @Field(() => StringFilter, { nullable: true })
   serialNumber?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  receivingStore?: StringFilter;
+  @Field({ nullable: true })
+  receivingWarehouseStoreId?: string;
+
+  @Field(() => FilterWarehouseProductInput, { nullable: true })
+  receivingWarehouseStore?: Prisma.WarehouseStoreWhereInput;
 
   @Field(() => String, { nullable: true })
   returnedById?: string;

@@ -23,11 +23,11 @@ export class UpdateMaterialTransferInput {
 
   @IsString()
   @Field(() => String, { nullable: true })
-  sendingStore?: string;
+  sendingWarehouseStoreId?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })
-  receivingStore?: string;
+  receivingWarehouseStoreId?: string;
 
   @IsString()
   @Field(() => String, { nullable: true })

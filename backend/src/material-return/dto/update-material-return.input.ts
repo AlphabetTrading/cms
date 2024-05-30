@@ -13,7 +13,7 @@ export class UpdateMaterialReturnInput {
   projectId?: string;
 
   @Field(() => String, { nullable: true })
-  receivingStore?: string;
+  receivingWarehouseStoreId?: string;
 
   @ValidateNested({ each: true })
   @Field(() => [UpdateMaterialReturnItemInput], { nullable: true })

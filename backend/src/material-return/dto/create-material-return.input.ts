@@ -10,7 +10,7 @@ export class CreateMaterialReturnInput {
 
   @IsNotEmpty()
   @Field(() => String)
-  receivingStore: string;
+  receivingWarehouseStoreId: string;
 
   @ValidateNested({ each: true })
   @Field(() => [CreateMaterialReturnItemInput])

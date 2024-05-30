@@ -4,6 +4,7 @@ import { BaseModel } from 'src/common/models/base.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
+import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model';
 
 @ObjectType()
 export class MaterialTransferVoucher extends BaseModel {
@@ -18,6 +19,18 @@ export class MaterialTransferVoucher extends BaseModel {
 
   @Field(() => String, { nullable: true })
   materialGroup?: string;
+
+  @Field(() => String, { nullable: true })
+  receivingWarehouseStoreId?: string;
+
+  @Field(() => WarehouseStore, { nullable: true })
+  receivingWarehouseStore?: WarehouseStore;
+
+  @Field(() => String, { nullable: true })
+  sendingWarehouseStoreId?: string;
+
+  @Field(() => WarehouseStore, { nullable: true })
+  sendingWarehouseStore?: WarehouseStore;
 
   @Field(() => String, { nullable: true })
   sendingStore?: string;

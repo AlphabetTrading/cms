@@ -55,7 +55,12 @@ export class MaterialReturnResolver {
               serialNumber: filterMaterialReturnInput?.serialNumber,
             },
             {
-              receivingStore: filterMaterialReturnInput?.receivingStore,
+              receivingWarehouseStoreId:
+                filterMaterialReturnInput?.receivingWarehouseStoreId,
+            },
+            {
+              receivingWarehouseStore:
+                filterMaterialReturnInput?.receivingWarehouseStore,
             },
             {
               receivedById: filterMaterialReturnInput?.receivedById || user.id,

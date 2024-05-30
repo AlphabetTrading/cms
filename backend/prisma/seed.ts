@@ -1021,7 +1021,7 @@ async function seedMaterialReturnVouchers() {
         const returnVouchers = [
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             receivedById: store_managers[0].id,
             returnedById: site_managers[0].id,
@@ -1029,14 +1029,14 @@ async function seedMaterialReturnVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             returnedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             receivedById: store_managers[0].id,
             returnedById: site_managers[0].id,
@@ -1044,7 +1044,7 @@ async function seedMaterialReturnVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             receivedById: store_managers[0].id,
             returnedById: site_managers[0].id,
@@ -1052,14 +1052,14 @@ async function seedMaterialReturnVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             returnedById: site_managers[0].id,
             status: ApprovalStatus.PENDING,
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             receivedById: store_managers[1].id,
             returnedById: site_managers[0].id,
@@ -1519,8 +1519,8 @@ async function seedMaterialTransferVouchers() {
         const transferVouchers = [
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
-            sendingStore: warehouse_stores[1].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
+            sendingWarehouseStoreId: warehouse_stores[1].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             approvedById: project_manager,
@@ -1529,8 +1529,8 @@ async function seedMaterialTransferVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
-            sendingStore: warehouse_stores[3].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
+            sendingWarehouseStoreId: warehouse_stores[3].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             approvedById: project_manager,
@@ -1539,8 +1539,8 @@ async function seedMaterialTransferVouchers() {
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[0].name,
-            sendingStore: warehouse_stores[4].name,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
+            sendingWarehouseStoreId: warehouse_stores[4].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             approvedById: project_manager,
@@ -1550,8 +1550,8 @@ async function seedMaterialTransferVouchers() {
 
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[1].name,
-            sendingStore: warehouse_stores[0].name,
+            receivingWarehouseStoreId: warehouse_stores[1].id,
+            sendingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             approvedById: project_manager,
@@ -1561,8 +1561,8 @@ async function seedMaterialTransferVouchers() {
 
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[1].name,
-            sendingStore: warehouse_stores[2].name,
+            receivingWarehouseStoreId: warehouse_stores[1].id,
+            sendingWarehouseStoreId: warehouse_stores[2].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             approvedById: project_manager,
@@ -1572,8 +1572,8 @@ async function seedMaterialTransferVouchers() {
 
           {
             serialNumber: generateSerialNumber(),
-            receivingStore: warehouse_stores[2].name,
-            sendingStore: warehouse_stores[4].name,
+            receivingWarehouseStoreId: warehouse_stores[2].id,
+            sendingWarehouseStoreId: warehouse_stores[3].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
             approvedById: project_manager,
