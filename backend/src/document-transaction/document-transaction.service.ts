@@ -77,7 +77,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
                 },
                 {
                   purchasedById: userId,
@@ -99,7 +99,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
                 },
                 {
                   requestedById: userId,
@@ -142,7 +142,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
                 },
                 {
                   preparedById: userId,
@@ -164,7 +164,7 @@ export class DocumentTransactionService {
               OR: [
                 {
                   approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers.projectManagerId,
+                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
                 },
                 {
                   preparedById: userId,

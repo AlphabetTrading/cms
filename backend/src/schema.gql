@@ -458,6 +458,7 @@ type MaterialIssueItem {
 }
 
 type MaterialIssueVoucher {
+  Project: Project
   approvedBy: User
   approvedById: String
 
@@ -467,7 +468,6 @@ type MaterialIssueVoucher {
   items: [MaterialIssueItem!]
   preparedBy: User
   preparedById: String
-  project: Project
   projectId: String
   requisitionNumber: String
   serialNumber: String
@@ -480,6 +480,7 @@ type MaterialIssueVoucher {
 }
 
 type MaterialReceiveVoucher {
+  Project: Project
   approvedBy: User
   approvedById: String
 
@@ -488,7 +489,6 @@ type MaterialReceiveVoucher {
   id: ID!
   invoiceId: String
   materialRequestId: String
-  project: Project
   projectId: String
   purchaseOrderId: String
   purchasedBy: User
@@ -515,6 +515,7 @@ type MaterialRequestItem {
 }
 
 type MaterialRequestVoucher {
+  Project: Project
   approvedBy: User
   approvedById: String
 
@@ -522,7 +523,6 @@ type MaterialRequestVoucher {
   createdAt: DateTime!
   id: ID!
   items: [MaterialRequestItem!]
-  project: Project
   projectId: String
   requestedBy: User
   requestedById: String
@@ -551,11 +551,12 @@ type MaterialReturnItem {
 }
 
 type MaterialReturnVoucher {
+  Project: Project
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
   items: [MaterialReturnItem!]!
-  project: Project
   projectId: String
   receivedBy: User
   receivedById: String
@@ -587,6 +588,7 @@ type MaterialTransferItem {
 }
 
 type MaterialTransferVoucher {
+  Project: Project
   approvedBy: User
   approvedById: String
 
@@ -598,7 +600,6 @@ type MaterialTransferVoucher {
   materialReceiveId: String
   preparedBy: User
   preparedById: String
-  project: Project
   projectId: String
   receivingStore: String
   requisitionNumber: String
@@ -670,18 +671,18 @@ type Mutation {
   deleteWarehouseStore(id: String!): WarehouseStore!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
-  updateMaterialIssue(id: String!, updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
-  updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
-  updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
-  updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
-  updateMaterialTransfer(id: String!, updateMaterialTransferInput: UpdateMaterialTransferInput!): MaterialTransferVoucher!
+  updateMaterialIssue(updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
+  updateMaterialReceive(updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
+  updateMaterialRequest(updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
+  updateMaterialReturn(updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
+  updateMaterialTransfer(updateMaterialTransferInput: UpdateMaterialTransferInput!): MaterialTransferVoucher!
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
   updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
   updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
-  updatePurchaseOrder(id: String!, updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
+  updatePurchaseOrder(updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(id: String!, updateTaskInput: UpdateTaskInput!): Task!
   updateUser(email: String!, updateUser: UpdateUserInput!): User!
   updateWarehouseProduct(id: String!, updateWarehouseProductInput: UpdateWarehouseProductInput!): WarehouseProduct!
@@ -992,6 +993,7 @@ type PurchaseOrderItem {
 }
 
 type PurchaseOrderVoucher {
+  Project: Project
   approvedById: String
 
   """Identifies the date and time when the object was created."""
@@ -1001,7 +1003,6 @@ type PurchaseOrderVoucher {
   items: [PurchaseOrderItem!]
   materialRequestId: String
   preparedById: String
-  project: Project
   projectId: String
   serialNumber: String
   status: ApprovalStatus
@@ -1123,6 +1124,7 @@ enum UnitOfMeasure {
 input UpdateMaterialIssueInput {
   approved: ApprovalStatus
   approvedById: String
+  id: String!
   items: [UpdateMaterialIssueItemInput!]
   preparedById: String
   projectId: String
@@ -1143,6 +1145,7 @@ input UpdateMaterialIssueItemInput {
 
 input UpdateMaterialReceiveInput {
   approvedById: String
+  id: String!
   invoiceId: String
   items: [UpdateMaterialReceiveItemInput!]
   materialRequestId: String
@@ -1162,6 +1165,7 @@ input UpdateMaterialReceiveItemInput {
 
 input UpdateMaterialRequestInput {
   approvedById: String
+  id: String!
   items: [UpdateMaterialRequestItemInput!]
   projectId: String
   requestedById: String
@@ -1175,6 +1179,7 @@ input UpdateMaterialRequestItemInput {
 }
 
 input UpdateMaterialReturnInput {
+  id: String!
   items: [UpdateMaterialReturnItemInput!]
   projectId: String
   receivedById: String
@@ -1194,6 +1199,7 @@ input UpdateMaterialReturnItemInput {
 
 input UpdateMaterialTransferInput {
   approvedById: String
+  id: String!
   items: [UpdateMaterialTransferItemInput!]
   materialGroup: String
   materialReceiveId: String
@@ -1268,6 +1274,7 @@ input UpdateProjectUserInput {
 input UpdatePurchaseOrderInput {
   approvedById: String
   grandTotal: Float
+  id: String!
   items: [UpdatePurchaseOrderItemInput!]!
   materialRequestId: String
   preparedById: String
