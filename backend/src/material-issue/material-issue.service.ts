@@ -147,53 +147,58 @@ export class MaterialIssueService {
     input: UpdateMaterialIssueInput,
   ): Promise<MaterialIssueVoucher> {
     const { id: materialIssueId, ...updateData } = input;
-    const existingMaterialIssue =
-      await this.prisma.materialIssueVoucher.findUnique({
+    
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingMaterialIssue =
+        await prisma.materialIssueVoucher.findUnique({
+          where: { id: materialIssueId },
+        });
+
+      if (!existingMaterialIssue) {
+        throw new NotFoundException('Material Issue not found');
+      }
+
+      const itemUpdateConditions = updateData.items.map((item) => ({
+        productVariantId: item.productVariantId,
+      }));
+
+      const updatedMaterialIssue = await prisma.materialIssueVoucher.update({
         where: { id: materialIssueId },
-      });
-
-    if (!existingMaterialIssue) {
-      throw new NotFoundException('Material Issue not found');
-    }
-
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      productVariantId: item.productVariantId,
-    }));
-
-    const updatedMaterialIssue = await this.prisma.materialIssueVoucher.update({
-      where: { id: materialIssueId },
-      data: {
-        ...updateData,
-        items: {
-          updateMany: {
-            data: updateData.items,
-            where: {
-              OR: itemUpdateConditions,
-            },
-          },
-        },
-      },
-      include: {
-        items: {
-          include: {
-            productVariant: {
-              include: {
-                product: true,
+        data: {
+          ...updateData,
+          items: {
+            updateMany: {
+              data: updateData.items,
+              where: {
+                OR: itemUpdateConditions,
               },
             },
           },
         },
-        Project: true,
-        warehouseStore: true,
-        approvedBy: true,
-        preparedBy: true,
-      },
-    });
+        include: {
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
+          Project: true,
+          warehouseStore: true,
+          approvedBy: true,
+          preparedBy: true,
+        },
+      });
 
-    return updatedMaterialIssue;
+      return updatedMaterialIssue;
+    });
   }
 
-  async deleteMaterialIssue(materialIssueId: string): Promise<void> {
+  async deleteMaterialIssue(
+    materialIssueId: string,
+  ): Promise<MaterialIssueVoucher> {
     const existingMaterialIssue =
       await this.prisma.materialIssueVoucher.findUnique({
         where: { id: materialIssueId },
@@ -206,6 +211,8 @@ export class MaterialIssueService {
     await this.prisma.materialIssueVoucher.delete({
       where: { id: materialIssueId },
     });
+
+    return existingMaterialIssue;
   }
 
   async approveMaterialIssue(

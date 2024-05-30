@@ -147,21 +147,21 @@ export class MaterialReturnService {
   ): Promise<MaterialReturnVoucher> {
     const { id: materialReturnId, ...updateData } = input;
 
-    const existingMaterialReturn =
-      await this.prisma.materialReturnVoucher.findUnique({
-        where: { id: materialReturnId },
-      });
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingMaterialReturn =
+        await prisma.materialReturnVoucher.findUnique({
+          where: { id: materialReturnId },
+        });
 
-    if (!existingMaterialReturn) {
-      throw new NotFoundException('Material Return not found');
-    }
+      if (!existingMaterialReturn) {
+        throw new NotFoundException('Material Return not found');
+      }
 
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      productVariantId: item.productVariantId,
-    }));
+      const itemUpdateConditions = updateData.items.map((item) => ({
+        productVariantId: item.productVariantId,
+      }));
 
-    const updatedMaterialReturn =
-      await this.prisma.materialReturnVoucher.update({
+      const updatedMaterialReturn = await prisma.materialReturnVoucher.update({
         where: { id: materialReturnId },
         data: {
           ...updateData,
@@ -191,10 +191,13 @@ export class MaterialReturnService {
         },
       });
 
-    return updatedMaterialReturn;
+      return updatedMaterialReturn;
+    });
   }
 
-  async deleteMaterialReturn(materialReturnId: string): Promise<void> {
+  async deleteMaterialReturn(
+    materialReturnId: string,
+  ): Promise<MaterialReturnVoucher> {
     const existingMaterialReturn =
       await this.prisma.materialReturnVoucher.findUnique({
         where: { id: materialReturnId },
@@ -207,6 +210,8 @@ export class MaterialReturnService {
     await this.prisma.materialReturnVoucher.delete({
       where: { id: materialReturnId },
     });
+
+    return existingMaterialReturn;
   }
 
   async approveMaterialReturn(

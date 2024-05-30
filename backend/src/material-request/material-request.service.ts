@@ -145,56 +145,61 @@ export class MaterialRequestService {
   ): Promise<MaterialRequestVoucher> {
     const { id: materialRequestId, ...updateData } = input;
 
-    const existingMaterialRequest =
-      await this.prisma.materialRequestVoucher.findUnique({
-        where: { id: materialRequestId },
-      });
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingMaterialRequest =
+        await prisma.materialRequestVoucher.findUnique({
+          where: { id: materialRequestId },
+        });
 
-    if (!existingMaterialRequest) {
-      throw new NotFoundException('Material Request not found');
-    }
+      if (!existingMaterialRequest) {
+        throw new NotFoundException('Material Request not found');
+      }
 
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      productVariantId: item.productVariantId,
-    }));
+      const itemUpdateConditions = updateData.items.map((item) => ({
+        productVariantId: item.productVariantId,
+      }));
 
-    const updatedMaterialRequest =
-      await this.prisma.materialRequestVoucher.update({
-        where: { id: materialRequestId },
-        data: {
-          ...updateData,
-          items: {
-            updateMany: {
-              data: updateData.items,
-              where: {
-                OR: itemUpdateConditions,
-              },
-            },
-          },
-        },
-        include: {
-          items: {
-            include: {
-              productVariant: {
-                include: {
-                  product: true,
+      const updatedMaterialRequest = await prisma.materialRequestVoucher.update(
+        {
+          where: { id: materialRequestId },
+          data: {
+            ...updateData,
+            items: {
+              updateMany: {
+                data: updateData.items,
+                where: {
+                  OR: itemUpdateConditions,
                 },
               },
             },
           },
-          approvedBy: true,
-          requestedBy: true,
-          MaterialReceiveVouchers: true,
-          Proforma: true,
-          Project: true,
-          PurchaseOrders: true,
+          include: {
+            items: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            approvedBy: true,
+            requestedBy: true,
+            MaterialReceiveVouchers: true,
+            Proforma: true,
+            Project: true,
+            PurchaseOrders: true,
+          },
         },
-      });
+      );
 
-    return updatedMaterialRequest;
+      return updatedMaterialRequest;
+    });
   }
 
-  async deleteMaterialRequest(materialRequestId: string): Promise<void> {
+  async deleteMaterialRequest(
+    materialRequestId: string,
+  ): Promise<MaterialRequestVoucher> {
     const existingMaterialRequest =
       await this.prisma.materialRequestVoucher.findUnique({
         where: { id: materialRequestId },
@@ -207,6 +212,8 @@ export class MaterialRequestService {
     await this.prisma.materialRequestVoucher.delete({
       where: { id: materialRequestId },
     });
+
+    return existingMaterialRequest;
   }
 
   async approveMaterialRequest(

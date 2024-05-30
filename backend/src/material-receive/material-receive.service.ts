@@ -155,56 +155,60 @@ export class MaterialReceiveService {
   ): Promise<MaterialReceiveVoucher> {
     const { id: materialReceiveId, ...updateData } = input;
 
-    const existingMaterialReceive =
-      await this.prisma.materialReceiveVoucher.findUnique({
-        where: { id: materialReceiveId },
-      });
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingMaterialReceive =
+        await prisma.materialReceiveVoucher.findUnique({
+          where: { id: materialReceiveId },
+        });
 
-    if (!existingMaterialReceive) {
-      throw new NotFoundException('Material Receive not found');
-    }
+      if (!existingMaterialReceive) {
+        throw new NotFoundException('Material Receive not found');
+      }
 
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      productVariantId: item.productVariantId,
-    }));
+      const itemUpdateConditions = updateData.items.map((item) => ({
+        productVariantId: item.productVariantId,
+      }));
 
-    const updatedMaterialReceive =
-      await this.prisma.materialReceiveVoucher.update({
-        where: { id: materialReceiveId },
-        data: {
-          ...updateData,
-          items: {
-            updateMany: {
-              data: updateData.items,
-              where: {
-                OR: itemUpdateConditions,
-              },
-            },
-          },
-        },
-        include: {
-          items: {
-            include: {
-              productVariant: {
-                include: {
-                  product: true,
+      const updatedMaterialReceive =
+        await prisma.materialReceiveVoucher.update({
+          where: { id: materialReceiveId },
+          data: {
+            ...updateData,
+            items: {
+              updateMany: {
+                data: updateData.items,
+                where: {
+                  OR: itemUpdateConditions,
                 },
               },
             },
           },
-          Project: true,
-          materialRequest: true,
-          approvedBy: true,
-          purchasedBy: true,
-          purchaseOrder: true,
-          WarehouseStore: true,
-        },
-      });
+          include: {
+            items: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            Project: true,
+            materialRequest: true,
+            approvedBy: true,
+            purchasedBy: true,
+            purchaseOrder: true,
+            WarehouseStore: true,
+          },
+        });
 
-    return updatedMaterialReceive;
+      return updatedMaterialReceive;
+    });
   }
 
-  async deleteMaterialReceive(materialReceiveId: string): Promise<void> {
+  async deleteMaterialReceive(
+    materialReceiveId: string,
+  ): Promise<MaterialReceiveVoucher> {
     const existingMaterialReceive =
       await this.prisma.materialReceiveVoucher.findUnique({
         where: { id: materialReceiveId },
@@ -217,6 +221,8 @@ export class MaterialReceiveService {
     await this.prisma.materialReceiveVoucher.delete({
       where: { id: materialReceiveId },
     });
+
+    return existingMaterialReceive;
   }
 
   async approveMaterialReceive(

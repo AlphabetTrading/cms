@@ -148,53 +148,57 @@ export class PurchaseOrderService {
   ): Promise<PurchaseOrderVoucher> {
     const { id: purchaseOrderId, ...updateData } = input;
 
-    const existingPurchaseOrder = await this.prisma.purchaseOrder.findUnique({
-      where: { id: purchaseOrderId },
-    });
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingPurchaseOrder = await prisma.purchaseOrder.findUnique({
+        where: { id: purchaseOrderId },
+      });
 
-    if (!existingPurchaseOrder) {
-      throw new NotFoundException('Purchase Order not found');
-    }
+      if (!existingPurchaseOrder) {
+        throw new NotFoundException('Purchase Order not found');
+      }
 
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      productVariantId: item.productVariantId,
-    }));
+      const itemUpdateConditions = updateData.items.map((item) => ({
+        productVariantId: item.productVariantId,
+      }));
 
-    const updatedPurchaseOrder = await this.prisma.purchaseOrder.update({
-      where: { id: purchaseOrderId },
-      data: {
-        ...updateData,
-        items: {
-          updateMany: {
-            data: updateData.items,
-            where: {
-              OR: itemUpdateConditions,
-            },
-          },
-        },
-      },
-      include: {
-        items: {
-          include: {
-            productVariant: {
-              include: {
-                product: true,
+      const updatedPurchaseOrder = await prisma.purchaseOrder.update({
+        where: { id: purchaseOrderId },
+        data: {
+          ...updateData,
+          items: {
+            updateMany: {
+              data: updateData.items,
+              where: {
+                OR: itemUpdateConditions,
               },
             },
           },
         },
-        approvedBy: true,
-        MaterialReceiveVouchers: true,
-        materialRequest: true,
-        preparedBy: true,
-        Project: true,
-      },
-    });
+        include: {
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+            },
+          },
+          approvedBy: true,
+          MaterialReceiveVouchers: true,
+          materialRequest: true,
+          preparedBy: true,
+          Project: true,
+        },
+      });
 
-    return updatedPurchaseOrder;
+      return updatedPurchaseOrder;
+    });
   }
 
-  async deletePurchaseOrder(purchaseOrderId: string): Promise<void> {
+  async deletePurchaseOrder(
+    purchaseOrderId: string,
+  ): Promise<PurchaseOrderVoucher> {
     const existingPurchaseOrder = await this.prisma.purchaseOrder.findUnique({
       where: { id: purchaseOrderId },
     });
@@ -206,6 +210,8 @@ export class PurchaseOrderService {
     await this.prisma.purchaseOrder.delete({
       where: { id: purchaseOrderId },
     });
+
+    return existingPurchaseOrder;
   }
 
   async approvePurchaseOrder(

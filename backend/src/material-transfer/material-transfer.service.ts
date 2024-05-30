@@ -146,53 +146,57 @@ export class MaterialTransferService {
   ): Promise<MaterialTransferVoucher> {
     const { id: materialTransferId, ...updateData } = input;
 
-    const existingMaterialTransfer =
-      await this.prisma.materialTransferVoucher.findUnique({
-        where: { id: materialTransferId },
-      });
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingMaterialTransfer =
+        await prisma.materialTransferVoucher.findUnique({
+          where: { id: materialTransferId },
+        });
 
-    if (!existingMaterialTransfer) {
-      throw new NotFoundException('Material Transfer not found');
-    }
+      if (!existingMaterialTransfer) {
+        throw new NotFoundException('Material Transfer not found');
+      }
 
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      productVariantId: item.productVariantId,
-    }));
+      const itemUpdateConditions = updateData.items.map((item) => ({
+        productVariantId: item.productVariantId,
+      }));
 
-    const updatedMaterialTransfer =
-      await this.prisma.materialTransferVoucher.update({
-        where: { id: materialTransferId },
-        data: {
-          ...updateData,
-          items: {
-            updateMany: {
-              data: updateData.items,
-              where: {
-                OR: itemUpdateConditions,
-              },
-            },
-          },
-        },
-        include: {
-          items: {
-            include: {
-              productVariant: {
-                include: {
-                  product: true,
+      const updatedMaterialTransfer =
+        await prisma.materialTransferVoucher.update({
+          where: { id: materialTransferId },
+          data: {
+            ...updateData,
+            items: {
+              updateMany: {
+                data: updateData.items,
+                where: {
+                  OR: itemUpdateConditions,
                 },
               },
             },
           },
-          Project: true,
-          approvedBy: true,
-          preparedBy: true,
-        },
-      });
+          include: {
+            items: {
+              include: {
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            Project: true,
+            approvedBy: true,
+            preparedBy: true,
+          },
+        });
 
-    return updatedMaterialTransfer;
+      return updatedMaterialTransfer;
+    });
   }
 
-  async deleteMaterialTransfer(materialTransferId: string): Promise<void> {
+  async deleteMaterialTransfer(
+    materialTransferId: string,
+  ): Promise<MaterialTransferVoucher> {
     const existingMaterialTransfer =
       await this.prisma.materialTransferVoucher.findUnique({
         where: { id: materialTransferId },
@@ -205,6 +209,8 @@ export class MaterialTransferService {
     await this.prisma.materialTransferVoucher.delete({
       where: { id: materialTransferId },
     });
+
+    return existingMaterialTransfer;
   }
 
   async approveMaterialTransfer(
