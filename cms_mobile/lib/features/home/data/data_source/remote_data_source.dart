@@ -52,6 +52,8 @@ class MaterialTransactionsDataSourceImpl
 
     final requests = response.data!['getAllDocumentsStatus'] as List;
 
+    debugPrint('requests ${requests.length}');
+
     return DataSuccess(
         requests.map((e) => MaterialTransactionModel.fromJson(e)).toList());
   }

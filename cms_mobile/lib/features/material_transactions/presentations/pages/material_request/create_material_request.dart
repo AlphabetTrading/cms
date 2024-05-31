@@ -29,7 +29,7 @@ class CreateMaterialRequestPage extends StatelessWidget {
         child: BlocConsumer<MaterialRequestBloc, MaterialRequestState>(
           listener: (context, state) {
             if (state is CreateMaterialRequestSuccess) {
-              context.goNamed(RouteNames.materialRequest);
+              context.goNamed(RouteNames.materialRequests);
               BlocProvider.of<MaterialRequestLocalBloc>(context)
                   .add(const ClearMaterialRequestMaterialsLocal());
               Fluttertoast.showToast(

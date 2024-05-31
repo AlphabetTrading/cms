@@ -29,6 +29,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/create
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issues.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
@@ -204,6 +205,13 @@ Future<void> initializeDependencies() async {
       sl<VouchersRepository>(),
     ),
   );
+
+  sl.registerLazySingleton<GetMaterialRequestsUseCase>(
+    () => GetMaterialRequestsUseCase(
+      sl<VouchersRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<GetMaterialIssueDetailsUseCase>(
     () => GetMaterialIssueDetailsUseCase(
       sl<MaterialIssueRepository>(),
@@ -271,7 +279,7 @@ Future<void> initializeDependencies() async {
       ));
 
   sl.registerFactory<MaterialRequestBloc>(() => MaterialRequestBloc(
-      sl<GetMaterialRequestUseCase>(), sl<CreateMaterialRequestUseCase>()));
+      sl<GetMaterialRequestsUseCase>(), sl<CreateMaterialRequestUseCase>()));
 
   sl.registerFactory<LoginBloc>(
     () => LoginBloc(sl<LoginUseCase>()),

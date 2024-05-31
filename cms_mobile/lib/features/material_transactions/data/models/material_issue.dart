@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cms_mobile/features/home/domain/entities/project.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
-import 'package:cms_mobile/features/projects/data/models/project.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/items/data/models/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';

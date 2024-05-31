@@ -1,41 +1,94 @@
+import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/items/data/models/item.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
+import 'package:flutter/material.dart';
 
 class MaterialRequestModel extends MaterialRequestEntity {
   const MaterialRequestModel({
     required String id,
+    required String? projectId,
     required String? serialNumber,
-    required DateTime? date,
-    required String? from,
-    required String? to,
+    required MaterialRequestStatus? status,
+    required String? requestedById,
+    required UserModel? requestedBy,
+    required String? approvedById,
+    required UserModel? approvedBy,
+    required DateTime? createdAt,
+    required DateTime? updatedAt,
     required List<MaterialRequestItem>? items,
-  }) : super(id: id);
+  }) : super(
+          id: id,
+          projectId: projectId,
+          serialNumber: serialNumber,
+          status: status,
+          requestedById: requestedById,
+          requestedBy: requestedBy,
+          approvedById: approvedById,
+          approvedBy: approvedBy,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          items: items,
+        );
 
   @override
   List<Object?> get props {
     return [
       id,
+      projectId,
+      serialNumber,
+      status,
+      requestedById,
+      requestedBy,
+      approvedById,
+      approvedBy,
+      createdAt,
+      updatedAt,
     ];
   }
 
   factory MaterialRequestModel.fromJson(Map<String, dynamic> json) {
-    return MaterialRequestModel(
+    final UserModel? requestedBy = json['requestedBy'] != null
+        ? UserModel.fromJson(json['requestedBy'])
+        : null;
+    final UserModel? approvedBy = json['approvedBy'] != null
+        ? UserModel.fromJson(json['approvedBy'])
+        : null;
+
+    final List<MaterialRequestItem> items = json['items']
+        .map<MaterialRequestItem>(
+            (item) => MaterialRequestItemModel.fromJson(item))
+        .toList();
+
+    final MaterialRequestModel materialRequestModel = MaterialRequestModel(
       id: json['id'],
+      projectId: json['projectId'],
       serialNumber: json['serialNumber'],
-      date: DateTime.parse(json['date']),
-      from: json['from'],
-      to: json['to'],
-      items: json['items']
-          .map<MaterialRequestItemModel>(
-              (item) => MaterialRequestItemModel.fromJson(item))
-          .toList(),
+      status: toMaterialRequestStatus(json['status']),
+      requestedById: json['requestedById'],
+      requestedBy: requestedBy,
+      approvedById: json['approvedById'],
+      approvedBy: approvedBy,
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      items: items,
     );
+
+    return materialRequestModel;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'serialNumber': serialNumber,
+      'status': fromMaterialRequestStatus(status),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'items': items,
+      'projectId': projectId,
+      'requestedById': requestedById,
+      'requestedBy': requestedBy,
+      'approvedById': approvedById,
+      'approvedBy': approvedBy,
     };
   }
 }
@@ -43,66 +96,58 @@ class MaterialRequestModel extends MaterialRequestEntity {
 class MaterialRequestItemModel extends MaterialRequestItem {
   const MaterialRequestItemModel({
     required String id,
-    required int listNo,
-    required String description,
-    required String unitOfMeasure,
-    required double quantityRequested,
-    required double unitCost,
-    required double totalCost,
-    required double inStockQuanity,
-    required double toBePurchasedQuantity,
-    required MaterialRequestModel materialRequestVoucher,
-    required String materialRequestVoucherId,
+    required double quantity,
+    required String productVariantId,
+    required ProductVariantModel productVariant,
     required String remark,
+    required DateTime? createdAt,
+    required DateTime? updatedAt,
   }) : super(
           id: id,
-          listNo: listNo,
-          description: description,
-          unitOfMeasure: unitOfMeasure,
-          inStockQuantity: inStockQuanity,
-          quantityRequested: quantityRequested,
-          materialRequestVoucher: materialRequestVoucher,
-          materialRequestVoucherId: materialRequestVoucherId,
+          productVariantId: productVariantId,
+          quantity: quantity,
           remark: remark,
-          toBePurchasedQuantity: toBePurchasedQuantity,
+          productVariant: productVariant,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
         );
 
   @override
   List<Object?> get props {
     return [
       id,
+      quantity,
+      productVariantId,
+      productVariant,
+      remark,
+      createdAt,
+      updatedAt,
     ];
   }
 
   factory MaterialRequestItemModel.fromJson(Map<String, dynamic> json) {
-    return MaterialRequestItemModel(
+    debugPrint('json $json');
+
+    final MaterialRequestItemModel materialRequestItemModel =
+        MaterialRequestItemModel(
       id: json['id'],
-      listNo: json['listNo'],
-      description: json['description'],
-      unitOfMeasure: json['unitOfMeasure'],
-      unitCost: json['unitCost'],
-      totalCost: json['totalCost'],
-      inStockQuanity: json['inStockQuanity'],
-      toBePurchasedQuantity: json['toBePurchasedQuantity'],
-      materialRequestVoucher:
-          MaterialRequestModel.fromJson(json['materialRequestVoucher']),
-      materialRequestVoucherId: json['materialRequestVoucherId'],
+      quantity: json['quantity'],
+      productVariantId: json['productVariantId'],
+      productVariant: ProductVariantModel.fromJson(json['productVariant']),
       remark: json['remark'],
-      quantityRequested: json['quantityRequested'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
     );
+
+    return materialRequestItemModel;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'listNo': listNo,
-      'description': description,
-      'unitOfMeasure': unitOfMeasure,
-      'quantityRequested': quantityRequested,
-      'inStockQuanity': inStockQuantity,
-      'toBePurchasedQuantity': toBePurchasedQuantity,
-      'materialRequestVoucher': materialRequestVoucher,
-      'materialRequestVoucherId': materialRequestVoucherId,
+      'quantity': quantity,
+      'productVariantId': productVariantId,
+      'productVariant': productVariant,
       'remark': remark,
     };
   }
@@ -159,5 +204,131 @@ class CreateMaterialRequestParamsModel
                   remark: e.remark,
                 ))
             .toList());
+  }
+}
+
+class ProductVariantModel extends ProductVariantEntity {
+  const ProductVariantModel({
+    required String id,
+    required String? name,
+    required String? description,
+    required UnitOfMeasure? unitOfMeasure,
+    required String? variant,
+    required DateTime? createdAt,
+    required DateTime? updatedAt,
+    required String? productId,
+  }) : super(
+          id: id,
+          name: name,
+          description: description,
+          unitOfMeasure: unitOfMeasure,
+          variant: variant,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          productId: productId,
+        );
+
+  factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
+    final ProductVariantModel productVariantModel = ProductVariantModel(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      unitOfMeasure: toUnitOfMeasure(json['unitOfMeasure']),
+      variant: json['variant'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      productId: json['productId'],
+    );
+
+    return productVariantModel;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'unitOfMeasure': fromUnitOfMeasure(unitOfMeasure),
+      'variant': variant,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'productId': productId,
+    };
+  }
+}
+
+enum UnitOfMeasure { berga, kg, liter, m2, m3, pcs, packet, quintal }
+
+UnitOfMeasure toUnitOfMeasure(String value) {
+  switch (value) {
+    case 'BERGA':
+      return UnitOfMeasure.berga;
+    case 'KG':
+      return UnitOfMeasure.kg;
+    case 'LITER':
+      return UnitOfMeasure.liter;
+    case 'M2':
+      return UnitOfMeasure.m2;
+    case 'M3':
+      return UnitOfMeasure.m3;
+    case 'PCS':
+      return UnitOfMeasure.pcs;
+    case 'PACKET':
+      return UnitOfMeasure.packet;
+    case 'QUINTAL':
+      return UnitOfMeasure.quintal;
+    default:
+      throw Exception('Invalid UnitOfMeasure');
+  }
+}
+
+String fromUnitOfMeasure(UnitOfMeasure? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case UnitOfMeasure.berga:
+      return 'BERGA';
+    case UnitOfMeasure.kg:
+      return 'KG';
+    case UnitOfMeasure.liter:
+      return 'LITER';
+    case UnitOfMeasure.m2:
+      return 'M2';
+    case UnitOfMeasure.m3:
+      return 'M3';
+    case UnitOfMeasure.pcs:
+      return 'PCS';
+    case UnitOfMeasure.packet:
+      return 'PACKET';
+    case UnitOfMeasure.quintal:
+      return 'QUINTAL';
+  }
+}
+
+String fromMaterialRequestStatus(MaterialRequestStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case MaterialRequestStatus.completed:
+      return 'COMPLETED';
+    case MaterialRequestStatus.pending:
+      return 'PENDING';
+    case MaterialRequestStatus.declined:
+      return 'DECLINED';
+  }
+}
+
+MaterialRequestStatus toMaterialRequestStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return MaterialRequestStatus.completed;
+    case 'PENDING':
+      return MaterialRequestStatus.pending;
+    case 'DECLINED':
+      return MaterialRequestStatus.declined;
+    default:
+      throw Exception('Invalid MaterialRequestStatus');
   }
 }

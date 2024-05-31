@@ -2,15 +2,29 @@ import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:equatable/equatable.dart';
 
+
 abstract class MaterialRequestState extends Equatable {
-  final List<MaterialRequestEntity>? materialRequests;
+  final MaterialRequestEntityListWithMeta? materialRequests;
+  final MaterialRequestEntity? materialRequest;
+
   final Failure? error;
 
-  const MaterialRequestState({this.materialRequests, this.error});
+  const MaterialRequestState(
+      {this.materialRequests, this.error, this.materialRequest});
 
   @override
   List<Object?> get props => [materialRequests, error];
 }
+
+// abstract class MaterialRequestState extends Equatable {
+//   final List<MaterialRequestEntity>? materialRequests;
+//   final Failure? error;
+
+//   const MaterialRequestState({this.materialRequests, this.error});
+
+//   @override
+//   List<Object?> get props => [materialRequests, error];
+// }
 
 class MaterialRequestInitial extends MaterialRequestState {
   const MaterialRequestInitial();
@@ -22,7 +36,7 @@ class MaterialRequestLoading extends MaterialRequestState {
 
 class MaterialRequestSuccess extends MaterialRequestState {
   const MaterialRequestSuccess(
-      {required List<MaterialRequestEntity> materialRequests})
+       {required MaterialRequestEntityListWithMeta materialRequests})
       : super(materialRequests: materialRequests);
 }
 

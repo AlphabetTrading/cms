@@ -27,10 +27,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<void> _onRefresh() async {}
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a key
-  final PersistentTabController _persistentTabController =
-      PersistentTabController(initialIndex: 1);
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -75,7 +73,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.request_page_outlined),
-            label: 'Requests',
+            label: 'Transactions',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),

@@ -24,33 +24,6 @@ class _MaterialTransactionsTabScreenState
         .add(const GetMaterialTransactions());
   }
 
-  // final List<MaterialTransactionEntity> materialTransactions = [
-  //   const MaterialTransactionEntity(
-  //     approvedCount: 10,
-  //     declinedCount: 30,
-  //     pendingCount: 39,
-  //     type: "Material Requests",
-  //   ),
-  //   const MaterialTransactionEntity(
-  //     approvedCount: 10,
-  //     declinedCount: 30,
-  //     pendingCount: 39,
-  //     type: "Material Returns",
-  //   ),
-  //   const MaterialTransactionEntity(
-  //     approvedCount: 10,
-  //     declinedCount: 30,
-  //     pendingCount: 39,
-  //     type: "Material Issues",
-  //   ),
-  //   const MaterialTransactionEntity(
-  //     approvedCount: 10,
-  //     declinedCount: 30,
-  //     pendingCount: 39,
-  //     type: "Material Receives",
-  //   ),
-  // ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,10 +33,10 @@ class _MaterialTransactionsTabScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Requests',
+              'Documents',
               style: TextStyle(
-                color: Color(0xFF111416),
-                fontSize: 28,
+                color: Color.fromARGB(255, 40, 41, 41),
+                fontSize: 20,
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w700,
               ),
@@ -100,11 +73,6 @@ class _MaterialTransactionsTabScreenState
                   }
 
                   return const SizedBox();
-
-                  // return Expanded(
-                  //   child: MaterialTransactionsList(
-                  //       materialRequests: state.materialTransactions!),
-                  // );
                 },
               ),
             )

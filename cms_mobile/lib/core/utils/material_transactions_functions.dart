@@ -6,8 +6,8 @@ class MaterialTransactionsHelperFunctions {
     switch (materialRequestType) {
       case 'MATERIAL_REQUEST':
         return {
-          'path': RoutePaths.materialRequest,
-          'routeName': RouteNames.materialRequest,
+          'path': RoutePaths.materialRequests,
+          'routeName': RouteNames.materialRequests,
           'title': 'Material Requests',
         };
       case 'MATERIAL_ISSUE':
@@ -34,10 +34,16 @@ class MaterialTransactionsHelperFunctions {
           'routeName': RouteNames.purchaseOrder,
           'title': 'Purchase Orders',
         };
+      case 'MATERIAL_TRANSFER':
+        return {
+          'path': RoutePaths.materialTransfer,
+          'routeName': RouteNames.materialTransfer,
+          'title': 'Material Transfers',
+        };
       default:
         return {
-          'path': RoutePaths.materialRequest,
-          'routeName': RouteNames.materialRequest,
+          'path': RoutePaths.materialRequests,
+          'routeName': RouteNames.materialRequests,
           'title': 'Material Requests',
         };
     }

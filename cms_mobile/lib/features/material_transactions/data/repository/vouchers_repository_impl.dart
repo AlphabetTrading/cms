@@ -54,7 +54,7 @@ class VoucherRepositoryImpl extends VouchersRepository {
   }
 
   @override
-  Future<DataState<List<MaterialRequestEntity>>> getMaterialRequests(
+  Future<DataState<MaterialRequestEntityListWithMeta>> getMaterialRequests(
       FilterMaterialRequestInput? filterMaterialRequestInput,
       OrderByMaterialRequestInput? orderBy,
       PaginationInput? paginationInput) {

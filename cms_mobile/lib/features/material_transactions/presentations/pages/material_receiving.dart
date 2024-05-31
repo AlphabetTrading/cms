@@ -37,11 +37,11 @@ class MaterialReceivingPage extends StatelessWidget {
 
         if (state is MaterialRequestSuccess) {
           return ListView.builder(
-            itemCount: state.materialRequests!.length,
+            itemCount: state.materialRequests!.items.length,
             itemBuilder: (_, index) {
-              final materialRequest = state.materialRequests![index];
+              final materialRequest = state.materialRequests?.items[index];
               return ListTile(
-                title: Text(materialRequest.id!),
+                title: Text(materialRequest?.id ?? ''),
               );
             },
           );

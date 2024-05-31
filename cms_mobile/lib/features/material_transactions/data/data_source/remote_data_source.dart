@@ -5,11 +5,12 @@ import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class VoucherDataSource {
-  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests(
+  Future<DataState<MaterialRequestEntityListWithMeta>> fetchMaterialRequests(
     FilterMaterialRequestInput? filterMaterialRequestInput,
     OrderByMaterialRequestInput? orderBy,
     PaginationInput? paginationInput,
@@ -29,7 +30,7 @@ class VoucherDataSourceImpl extends VoucherDataSource {
   }
 
   @override
-  Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests(
+  Future<DataState<MaterialRequestEntityListWithMeta>> fetchMaterialRequests(
     FilterMaterialRequestInput? filterMaterialRequestInput,
     OrderByMaterialRequestInput? orderBy,
     PaginationInput? paginationInput,
@@ -37,64 +38,84 @@ class VoucherDataSourceImpl extends VoucherDataSource {
     String fetchMaterialRequestsQuery;
 
     fetchMaterialRequestsQuery = r'''
-      query GetMaterialRequests($orderBy: OrderByMaterialRequestInput, $filterMaterialRequestInput: FilterMaterialRequestInput, $paginationInput: PaginationInput) {
-          getMaterialRequests(orderBy: $orderBy, filterMaterialRequestInput: $filterMaterialRequestInput, paginationInput: $paginationInput) {
-            meta {
-              count
-              limit
-              page
+      query GetMaterialRequests($filterMaterialRequestInput: FilterMaterialRequestInput, $orderBy: OrderByMaterialRequestInput, $paginationInput: PaginationInput) {
+        getMaterialRequests(filterMaterialRequestInput: $filterMaterialRequestInput, orderBy: $orderBy, paginationInput: $paginationInput) {
+          items {
+            approvedBy {
+              fullName
+              email
+              phoneNumber
+              role
+              updatedAt
+              id
+              createdAt
             }
+            approvedById
+            createdAt
+            id
             items {
-              approvedBy {
-                createdAt
-                email
-                fullName
-                id
-                phoneNumber
-                role
-                updatedAt
-              }
-              approvedById
               createdAt
               id
-              items {
+              productVariant {
                 createdAt
+                description
                 id
-                productVariant {
+                product {
                   createdAt
-                  description
                   id
-                  productId
-                  unitOfMeasure
+                  name
+                  productType
                   updatedAt
-                  variant
                 }
-                productVariantId
-                quantity
-                remark
+                productId
+                unitOfMeasure
                 updatedAt
+                variant
               }
-              projectId
-              requestedBy {
-                createdAt
-                email
-                fullName
-                id
-                phoneNumber
-                role
-                updatedAt
-              }
-              requestedById
-              serialNumber
-              status
+              productVariantId
+              quantity
+              remark
               updatedAt
             }
+            projectId
+            requestedBy {
+              createdAt
+              email
+              fullName
+              id
+              phoneNumber
+              role
+              updatedAt
+            }
+            requestedById
+            serialNumber
+            status
+            updatedAt
+          }
+          meta {
+            count
+            limit
+            page
           }
         }
-    ''';
+      }
+        ''';
+
+    final filterInput = filterMaterialRequestInput?.toJson();
+    debugPrint('filterInput: $filterInput');
+
+    final selectedProjectId =
+        await GQLClient.getFromLocalStorage('selected_project_id');
+
+    filterInput!["projectId"] = selectedProjectId;
 
     final response = await _client.query(QueryOptions(
       document: gql(fetchMaterialRequestsQuery),
+      variables: {
+        'filterMaterialRequestInput': filterInput,
+        'orderBy': orderBy?.toJson() ?? {},
+        'paginationInput': paginationInput?.toJson() ?? {},
+      },
     ));
 
     if (response.hasException) {
@@ -105,10 +126,19 @@ class VoucherDataSourceImpl extends VoucherDataSource {
       );
     }
 
-    final requests = response.data!['getMaterialRequests'] as List;
+    final requests = response.data!['getMaterialRequests']["items"] as List;
+    final meta = response.data!['getMaterialRequests']["meta"];
+    final items =
+        requests.map((e) => MaterialRequestModel.fromJson(e)).toList();
+
+    debugPrint('fetchMaterialRequests: ${items.length}-itemsss');
 
     return DataSuccess(
-        requests.map((e) => MaterialRequestModel.fromJson(e)).toList());
+      MaterialRequestEntityListWithMeta(
+        items: items,
+        meta: Meta.fromJson(meta),
+      ),
+    );
   }
 
   @override
@@ -268,17 +298,26 @@ class OrderByMaterialIssueInput {
 class FilterMaterialRequestInput {
   final StringFilter? createdAt;
   final StringFilter? requestedBy;
+  final StringFilter? approvedBy;
   final StringFilter? serialNumber;
   final List<String>? status;
 
   FilterMaterialRequestInput(
-      {this.createdAt, this.requestedBy, this.serialNumber, this.status});
+      {this.createdAt,
+      this.requestedBy,
+      this.approvedBy,
+      this.serialNumber,
+      this.status});
 
   Map<String, dynamic> toJson() {
     return {
       if (requestedBy != null)
         'requestedBy': {
           'fullName': requestedBy!.toJson(),
+        },
+      if (approvedBy != null)
+        'approvedBy': {
+          'fullName': approvedBy!.toJson(),
         },
       if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
       if (status != null) 'status': status,

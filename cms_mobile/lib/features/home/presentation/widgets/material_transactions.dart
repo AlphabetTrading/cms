@@ -75,7 +75,7 @@ class MaterialTransactionsList extends StatelessWidget {
           onPressed: () {
             debugPrint(
                 'Material Requests ' + materialTransactionInfo['routeName']);
-                
+
             context.goNamed(materialTransactionInfo['routeName']!);
           },
         ),

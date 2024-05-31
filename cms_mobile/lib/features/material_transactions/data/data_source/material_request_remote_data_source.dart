@@ -23,7 +23,6 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
   Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests() async {
     String fetchMaterialRequestsQuery;
 
-
     fetchMaterialRequestsQuery = r'''
       query GetMaterialRequests($orderBy: OrderByMaterialRequestInput, $filterMaterialRequestInput: FilterMaterialRequestInput, $paginationInput: PaginationInput) {
         getMaterialRequests(orderBy: $orderBy, filterMaterialRequestInput: $filterMaterialRequestInput, paginationInput: $paginationInput) {
@@ -103,7 +102,6 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
   Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsModel
           createMaterialRequestParamsModel}) async {
-
     const String _createMaterialRequestMutation = r'''
       mutation CreateMaterialRequest($createMaterialRequestInput: CreateMaterialRequestInput!) {
         createMaterialRequest(createMaterialRequestInput: $createMaterialRequestInput) {

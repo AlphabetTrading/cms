@@ -91,7 +91,7 @@ class AppRouter {
                   name: RouteNames.materialIssueDetails,
                   path: RoutePaths.materialIssueDetails,
                   builder: (BuildContext context, GoRouterState state) {
-                    return  MaterialIssueDetailsPage(
+                    return MaterialIssueDetailsPage(
                         materialIssueId:
                             state.pathParameters['materialIssueId']!);
                   },
@@ -106,15 +106,22 @@ class AppRouter {
               ],
             ),
             GoRoute(
-              name: RouteNames.materialRequest,
-              path: RoutePaths.materialRequest,
+              name: RouteNames.materialRequests,
+              path: RoutePaths.materialRequests,
               builder: (BuildContext context, GoRouterState state) {
                 return const MaterialRequestsPage();
               },
               routes: <RouteBase>[
                 GoRoute(
-                  name: RouteNames.createMaterialRequest,
-                  path: RoutePaths.createMaterialRequest,
+                  name: RouteNames.materialRequestCreate,
+                  path: RoutePaths.materialRequestCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialRequestEdit,
+                  path: RoutePaths.materialRequestEdit,
                   builder: (BuildContext context, GoRouterState state) {
                     return const CreateMaterialRequestPage();
                   },

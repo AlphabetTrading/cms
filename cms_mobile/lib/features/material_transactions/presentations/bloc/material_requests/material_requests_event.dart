@@ -1,3 +1,5 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 
 abstract class MaterialRequestEvent {
@@ -9,7 +11,12 @@ class GetMaterialRequestsEvent extends MaterialRequestEvent {
 }
 
 class GetMaterialRequestEvent extends MaterialRequestEvent {
-  const GetMaterialRequestEvent();
+  final FilterMaterialRequestInput filterMaterialRequestInput;
+  final OrderByMaterialRequestInput orderBy;
+  final PaginationInput paginationInput;
+  
+  const GetMaterialRequestEvent(
+      this.filterMaterialRequestInput, this.orderBy, this.paginationInput);
 }
 
 class CreateMaterialRequestEvent extends MaterialRequestEvent {

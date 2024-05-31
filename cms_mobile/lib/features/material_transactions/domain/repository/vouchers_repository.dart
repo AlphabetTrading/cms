@@ -11,8 +11,8 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/purcha
 abstract class VouchersRepository {
   Future<DataState<List<MaterialTransactionEntity>>> getMaterialTransactions();
   Future<DataState<List<PurchaseOrderEntity>>> getPurchaseOrders();
-  Future<DataState<List<MaterialRequestEntity>>> getMaterialRequests(
-    FilterMaterialRequestInput? filterMaterialReturnInput,
+  Future<DataState<MaterialRequestEntityListWithMeta>> getMaterialRequests(
+    FilterMaterialRequestInput? filterMaterialRequestInput,
     OrderByMaterialRequestInput? orderBy,
     PaginationInput? paginationInput,
   );
