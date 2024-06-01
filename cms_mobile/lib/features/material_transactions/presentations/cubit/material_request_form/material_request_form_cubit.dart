@@ -1,6 +1,6 @@
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form/material_request_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/create_material_request_form.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
@@ -34,8 +34,8 @@ class MaterialRequestFormCubit extends Cubit<MaterialRequestFormState> {
     );
   }
 
-  void materialChanged(WarehouseItemEntity materialEntity) {
-    final MaterialDropdown materialDropdown = MaterialDropdown.dirty(materialEntity.itemVariant.id!);
+  void materialChanged(WarehouseProductEntity materialEntity) {
+    final MaterialDropdown materialDropdown = MaterialDropdown.dirty(materialEntity.productVariant.id!);
 
     emit(
       state.copyWith(

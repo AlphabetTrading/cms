@@ -17,4 +17,9 @@ class MaterialRequestRepositoryImpl extends MaterialRequestRepository {
       createMaterialRequestParamsModel:CreateMaterialRequestParamsModel.fromEntity(params)
     );
   }
+    @override
+  Future<DataState<MaterialRequestModel>> getMaterialRequestDetails({required String params}) {
+    return dataSource.getMaterialRequestDetails(params:params);
+  }
+  
 }

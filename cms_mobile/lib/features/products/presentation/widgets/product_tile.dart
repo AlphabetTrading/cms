@@ -1,11 +1,11 @@
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
-import 'package:cms_mobile/features/items/presentation/widgets/item_detail.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
+import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class ItemTile extends StatelessWidget {
-  final WarehouseItemEntity warehouseItemEntity;
-  const ItemTile({super.key, required this.warehouseItemEntity});
+class ProductTile extends StatelessWidget {
+  final WarehouseProductEntity warehouseProductEntity;
+  const ProductTile({super.key, required this.warehouseProductEntity});
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +29,16 @@ class ItemTile extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6)),
             ),
-            child: warehouseItemEntity.itemVariant.item?.iconSrc != null
+            child: warehouseProductEntity.productVariant.product?.iconSrc != null
                 ? SvgPicture.asset(
-                    warehouseItemEntity.itemVariant.item!.iconSrc!,
+                    warehouseProductEntity.productVariant.product!.iconSrc!,
                   )
                 : const SizedBox(),
           ),
           title: Text(
-              '${warehouseItemEntity.itemVariant.item!.name} ${warehouseItemEntity.itemVariant.variant}'),
+              '${warehouseProductEntity.productVariant.product?.name??""} ${warehouseProductEntity.productVariant.variant??""}'),
           subtitle: Text(
-              '${warehouseItemEntity.quantity.toString()} ${warehouseItemEntity.itemVariant.unit}'),
+              '${warehouseProductEntity.quantity.toString()} ${warehouseProductEntity.productVariant.unitOfMeasure}'),
           trailing: TextButton(
             onPressed: () => showModalBottomSheet(
               context: context,
@@ -47,22 +47,22 @@ class ItemTile extends StatelessWidget {
                 child: Wrap(children: [
                   Column(
                     children: [
-                      ItemDetail(
+                      ProductDetail(
                           title: "Name",
                           value:
-                              '${warehouseItemEntity.itemVariant.item!.name} - ${warehouseItemEntity.itemVariant.variant}'),
+                              '${warehouseProductEntity.productVariant.product?.name} - ${warehouseProductEntity.productVariant.variant}'),
                       const SizedBox(
                         height: 10,
                       ),
-                      ItemDetail(
+                      ProductDetail(
                           title: "Quantity",
                           value:
-                              '${warehouseItemEntity.quantity.toString()} ${warehouseItemEntity.itemVariant.unit}'),
+                              '${warehouseProductEntity.quantity.toString()} ${warehouseProductEntity.productVariant.unitOfMeasure}'),
                       const SizedBox(
                         height: 10,
                       ),
-                      // itemDetailItem(
-                      //     title: "Unit", value: itemEntity.unit),
+                      // productDetailProduct(
+                      //     title: "Unit", value: productEntity.unit),
                     ],
                   )
                 ]),

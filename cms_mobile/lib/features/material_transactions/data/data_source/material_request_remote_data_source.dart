@@ -8,6 +8,8 @@ abstract class MaterialRequestDataSource {
           createMaterialRequestParamsModel});
 
   Future<DataState<List<MaterialRequestModel>>> fetchMaterialRequests();
+  Future<DataState<MaterialRequestModel>> getMaterialRequestDetails(
+      {required String params});
 }
 
 class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
@@ -115,7 +117,7 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
             .map((materialRequestMaterial) {
       return {
         "quantity": materialRequestMaterial.requestedQuantity,
-        "productVariantId": materialRequestMaterial.material!.itemVariant.id,
+        "productVariantId": materialRequestMaterial.material!.productVariant.id,
         "remark": materialRequestMaterial.remark,
       };
     }).toList();
@@ -147,5 +149,70 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
       // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
+  }
+
+  @override
+  Future<DataState<MaterialRequestModel>> getMaterialRequestDetails(
+      {required String params}) {
+    String fetchMaterialRequestDetailsQuery = r'''
+query GetMaterialRequestById($getMaterialRequestByIdId: String!) {
+  getMaterialRequestById(id: $getMaterialRequestByIdId) {
+    id
+    items {
+      id
+      quantity
+      remark
+      productVariant {
+        id
+        unitOfMeasure
+        variant
+        product {
+          id
+          name
+        }
+      }
+    }
+    serialNumber
+    status
+    requestedBy {
+      id
+      fullName
+      email
+      phoneNumber
+      role
+    }
+    createdAt
+    approvedBy {
+      phoneNumber
+      id
+      fullName
+      email
+      role
+    }
+  }
+}
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(fetchMaterialRequestDetailsQuery),
+      variables: {"getMaterialRequestByIdId": params},
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      print("****************************");
+      print(response.data!['getMaterialRequestById']);
+      final materialRequest = MaterialRequestModel.fromJson(
+          response.data!['getMaterialRequestById']);
+
+      return DataSuccess(materialRequest);
+    });
   }
 }

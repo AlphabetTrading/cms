@@ -3,11 +3,11 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_state.dart';
+import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_event.dart';
@@ -107,12 +107,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
             final preparedBy = materialIssue?.preparedBy;
             final approvedBy = materialIssue?.approvedBy;
             final materialIssueMaterials = materialIssue?.items ?? [];
-            
             selectedWarehouse ??= materialIssue?.warehouse;
-
-
-                      
-                                               
             return BlocBuilder<WarehouseBloc, WarehouseState>(
               builder: (warehouseContext, warehouseState) {
                 if (warehouseState is WarehousesFailed) {
@@ -134,24 +129,24 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                         // final warehouseForm = warehouseFormContext
                         //     .watch<MaterialIssueWarehouseFormCubit>();
 
-                        context.read<ItemBloc>().add(
-                              GetWarehouseItems(
-                                getItemsInputEntity:
-                                    GetWarehouseItemsInputEntity(
-                                  filterWarehouseItemInput:
-                                      FilterWarehouseItemInput(
+                        context.read<ProductBloc>().add(
+                              GetWarehouseProducts(
+                                getProductsInputEntity:
+                                    GetWarehouseProductsInputEntity(
+                                  filterWarehouseProductInput:
+                                      FilterWarehouseProductInput(
                                           warehouseId:
                                               materialIssue?.warehouse?.id),
                                 ),
                               ),
                             );
 
-                        return BlocBuilder<ItemBloc, ItemState>(
+                        return BlocBuilder<ProductBloc, ProductState>(
                             builder: (itemContext, itemState) {
-                          if (itemState is WarehouseItemsFailed) {
+                          if (itemState is WarehouseProductsFailed) {
                             return Text(itemState.error.toString());
                           }
-                          if (itemState is WarehouseItemsLoading) {
+                          if (itemState is WarehouseProductsLoading) {
                             return const Center(
                                 child: Column(
                               children: [
@@ -160,7 +155,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                               ],
                             ));
                           }
-                          if (itemState is WarehouseItemsSuccess) {
+                          if (itemState is WarehouseProductsSuccess) {
                             localContext.read<MaterialIssueLocalBloc>().add(
                                     AddMaterialIssueMaterialsLocal(
                                         materialIssueMaterials.map(
@@ -168,9 +163,9 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                     return MaterialIssueMaterialEntity(
                                         quantity: e.quantity!,
                                         useType: e.useType!,
-                                        material: itemState.warehouseItems!
+                                        material: itemState.warehouseProducts!
                                             .firstWhere((element) =>
-                                                element.itemVariant.id ==
+                                                element.productVariant.id ==
                                                 e.productVariant?.id),
                                         remark: e.remark,
                                         subStructureDescription:
@@ -211,12 +206,12 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                                       value.id);
                                               selectedWarehouse = value;
 
-                                              context.read<ItemBloc>().add(
-                                                    GetWarehouseItems(
-                                                      getItemsInputEntity:
-                                                          GetWarehouseItemsInputEntity(
-                                                        filterWarehouseItemInput:
-                                                            FilterWarehouseItemInput(
+                                              context.read<ProductBloc>().add(
+                                                    GetWarehouseProducts(
+                                                      getProductsInputEntity:
+                                                          GetWarehouseProductsInputEntity(
+                                                        filterWarehouseProductInput:
+                                                            FilterWarehouseProductInput(
                                                                 warehouseId:
                                                                     value.id),
                                                       ),

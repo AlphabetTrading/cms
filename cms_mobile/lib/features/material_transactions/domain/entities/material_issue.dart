@@ -1,8 +1,8 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
@@ -54,7 +54,7 @@ class MaterialIssueEntity extends Equatable {
 
 class IssueVoucherMaterialEntity extends Equatable {
   final String? id;
-  final ItemVariantEntity? productVariant;
+  final ProductVariantEntity? productVariant;
   final double? quantity;
   final String? remark;
   final double? totalCost;
@@ -108,7 +108,7 @@ class MaterialIssueEntityListWithMeta {
 class MaterialIssueMaterialEntity extends Equatable {
   final double quantity;
   final String? remark;
-  final WarehouseItemEntity? material;
+  final WarehouseProductEntity? material;
   final UseType useType;
   final SubStructureUseDescription? subStructureDescription;
   final SuperStructureUseDescription? superStructureDescription;

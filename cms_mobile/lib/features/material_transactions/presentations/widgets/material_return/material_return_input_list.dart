@@ -19,12 +19,12 @@ class MaterialReturnInputList extends StatelessWidget {
       itemCount: materialReturns.length,
       itemBuilder: (context, index) {
         final materialReturn = materialReturns[index];
-        final itemVariant = materialReturn.material!.itemVariant;
+        final productVariant = materialReturn.material!.productVariant;
         return MaterialTransactionMaterialItem(
-          title: '${itemVariant.item!.name} - ${itemVariant.variant}',
+          title: '${productVariant.product!.name} - ${productVariant.variant}',
           subtitle:
-              'Amount: ${materialReturn.quantity} ${materialReturn.material!.itemVariant.unit}',
-          iconSrc: itemVariant.item?.iconSrc,
+              'Amount: ${materialReturn.quantity} ${materialReturn.material!.productVariant.unitOfMeasure}',
+          iconSrc: productVariant.product?.iconSrc,
           onDelete: () => BlocProvider.of<MaterialReturnLocalBloc>(context)
               .add(DeleteMaterialReturnMaterialLocal(index)),
           onEdit: () => showModalBottomSheet(
@@ -38,7 +38,7 @@ class MaterialReturnInputList extends StatelessWidget {
                   ),
                   BlocProvider<MaterialReturnFormCubit>(
                     create: (_) => MaterialReturnFormCubit(
-                      materialId: materialReturn.material!.itemVariant.id,
+                      materialId: materialReturn.material!.productVariant.id,
                       quantity: materialReturn.quantity,
                       remark: materialReturn.remark,
                       inStock: materialReturn.material!.quantity,

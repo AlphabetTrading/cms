@@ -33,7 +33,7 @@ mutation CreateMaterialReturn($createMaterialReturnInput: CreateMaterialReturnIn
         createMaterialReturnParamsModel.materialReturnMaterials
             .map((materialReturnMaterial) {
       return {
-        "productVariantId": materialReturnMaterial.material!.itemVariant.id,
+        "productVariantId": materialReturnMaterial.material!.productVariant.id,
         "quantity": materialReturnMaterial.quantity,
         "remark": materialReturnMaterial.remark,
         "unitCost": materialReturnMaterial.unitCost,

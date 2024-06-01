@@ -1,21 +1,13 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
-import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_return_form/material_return_form_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/form_info_item.dart';
-import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +33,8 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
   Widget build(BuildContext context) {
     final materialReturnFormCubit = context.watch<MaterialReturnFormCubit>();
     final quantityField = materialReturnFormCubit.state.quantityField;
-    final materialIssueDropdown = materialReturnFormCubit.state.materialIssueDropdown;
+    final materialIssueDropdown =
+        materialReturnFormCubit.state.materialIssueDropdown;
 
     final materialDropdown = materialReturnFormCubit.state.materialDropdown;
     // final warehouseDropdown = materialReturnFormCubit.state.warehouseDropdown;
@@ -54,10 +47,15 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
         builder: (warehouseContext, warehouseState) {
           return BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
             builder: (context, state) {
-              List<IssueVoucherMaterialEntity> materialIssueMaterials =  state.materialIssues?.items.firstWhere((element) =>
-                            element.id == materialIssueDropdown.value).items ??[];
-              IssueVoucherMaterialEntity? selectedMaterial = materialIssueMaterials.firstWhere((element) =>
-                            element.id == materialDropdown.value);
+              List<IssueVoucherMaterialEntity> materialIssueMaterials = state
+                      .materialIssues?.items
+                      .firstWhere((element) =>
+                          element.id == materialIssueDropdown.value)
+                      .items ??
+                  [];
+              IssueVoucherMaterialEntity? selectedMaterial =
+                  materialIssueMaterials.firstWhere(
+                      (element) => element.id == materialDropdown.value);
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,8 +70,7 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                     },
                     dropdownMenuEntries: state.materialIssues?.items
                             .map((e) => DropdownMenuEntry<MaterialIssueEntity>(
-                                label:
-                                    e.serialNumber ?? e.id ?? "N/A",
+                                label: e.serialNumber ?? e.id ?? "N/A",
                                 value: e))
                             .toList() ??
                         [],
@@ -90,24 +87,26 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
 
                   //material issue materials
                   CustomDropdown(
-                    initialSelection: materialDropdown.value != "" && materialIssueDropdown.value != ""
+                    initialSelection: materialDropdown.value != "" &&
+                            materialIssueDropdown.value != ""
                         ? selectedMaterial
                         : null,
                     onSelected: (dynamic value) {
                       materialReturnFormCubit.materialChanged(value);
                     },
-                    dropdownMenuEntries: state.materialIssues?.items.firstWhere((element) =>
-                            element.id == materialIssueDropdown.value).items
-                            ?.map((e) => DropdownMenuEntry<IssueVoucherMaterialEntity>(
-                                label:
-                                    e.id ?? "N/A",
-                                value: e))
+                    dropdownMenuEntries: state.materialIssues?.items
+                            .firstWhere((element) =>
+                                element.id == materialIssueDropdown.value)
+                            .items
+                            ?.map((e) =>
+                                DropdownMenuEntry<IssueVoucherMaterialEntity>(
+                                    label: e.id ?? "N/A", value: e))
                             .toList() ??
                         [],
                     enableFilter: false,
                     errorMessage: materialDropdown.errorMessage,
                     label: 'Material',
-             
+
                     // label: "Material"
                   ),
                   const SizedBox(
@@ -118,9 +117,7 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       FormInfoItem(
-                          title: "Unit",
-                          value: selectedMaterial.id ??
-                              "N/A"),
+                          title: "Unit", value: selectedMaterial.id ?? "N/A"),
                       FormInfoItem(title: "Quantity Issued", value: "N/A"),
                     ],
                   ),
@@ -150,7 +147,6 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                           errorMessage: quantityField.errorMessage,
                         ),
                       ),
-        
                       FormInfoItem(
                           title: "Total Cost(To be returned)", value: "N/A"),
                     ],
@@ -180,7 +176,7 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                             //     (element) =>
                             //         element.itemVariant.id ==
                             //         materialDropdown.value),
-                            material:null,
+                            material: null,
                             issueVoucherId: "",
                             unitCost: 0,
                             quantity: double.parse(quantityField.value),
@@ -295,7 +291,8 @@ class MaterialDropdown extends FormzInput<String, MaterialDropdownError> {
 
 enum MaterialIssueDropdownError { invalid }
 
-class MaterialIssueDropdown extends FormzInput<String, MaterialIssueDropdownError> {
+class MaterialIssueDropdown
+    extends FormzInput<String, MaterialIssueDropdownError> {
   const MaterialIssueDropdown.pure([String value = '']) : super.pure(value);
   const MaterialIssueDropdown.dirty([String value = '']) : super.dirty(value);
 

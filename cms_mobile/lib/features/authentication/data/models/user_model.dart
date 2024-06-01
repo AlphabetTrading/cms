@@ -55,7 +55,7 @@ class UserModel extends UserEntity {
         );
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    try{
+    // try{
 
 return UserModel(
       id: json['id'],
@@ -63,8 +63,8 @@ return UserModel(
       email: json['email'],
       phoneNumber: json['phoneNumber'],
       role: getRole(json['role']),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
+      updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
       purchaseOrders: json['purchaseOrders'],
       purchaseOrdersApproved: json['purchaseOrdersApproved'],
       materialIssueVouchers: json['materialIssueVouchers'],
@@ -80,33 +80,33 @@ return UserModel(
       projects: json['projects'],
       tasks: json['tasks'],
     );
-    }
-    catch(e){
-      print('********** Error in UserModel.fromJson: $e');
-    }
-   return UserModel(
-      id: json['id'],
-      fullName: json['fullName'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      role: getRole(json['role']),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      purchaseOrders: json['purchaseOrders'],
-      purchaseOrdersApproved: json['purchaseOrdersApproved'],
-      materialIssueVouchers: json['materialIssueVouchers'],
-      materialIssueVouchersApproved: json['materialIssueVouchersApproved'],
-      materialReceiveVouchers: json['materialReceiveVouchers'],
-      materialReceiveVouchersApproved: json['materialReceiveVouchersApproved'],
-      materialRequestVouchers: json['materialRequestVouchers'],
-      materialRequestVouchersApproved: json['materialRequestVouchersApproved'],
-      materialReturnVouchers: json['materialReturnVouchers'],
-      materialReturnVouchersReceived: json['materialReturnVouchersReceived'],
-      materialReturnVouchersApproved: json['materialReturnVouchersApproved'],
-      materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
-      projects: json['projects'],
-      tasks: json['tasks'],
-    );;
+  //   }
+  //   catch(e){
+  //     print('********** Error in UserModel.fromJson: $e');
+  //   }
+  //  return UserModel(
+  //     id: json['id'],
+  //     fullName: json['fullName'],
+  //     email: json['email'],
+  //     phoneNumber: json['phoneNumber'],
+  //     role: getRole(json['role']),
+  //     createdAt: DateTime.parse(json['createdAt']),
+  //     updatedAt: DateTime.parse(json['updatedAt']),
+  //     purchaseOrders: json['purchaseOrders'],
+  //     purchaseOrdersApproved: json['purchaseOrdersApproved'],
+  //     materialIssueVouchers: json['materialIssueVouchers'],
+  //     materialIssueVouchersApproved: json['materialIssueVouchersApproved'],
+  //     materialReceiveVouchers: json['materialReceiveVouchers'],
+  //     materialReceiveVouchersApproved: json['materialReceiveVouchersApproved'],
+  //     materialRequestVouchers: json['materialRequestVouchers'],
+  //     materialRequestVouchersApproved: json['materialRequestVouchersApproved'],
+  //     materialReturnVouchers: json['materialReturnVouchers'],
+  //     materialReturnVouchersReceived: json['materialReturnVouchersReceived'],
+  //     materialReturnVouchersApproved: json['materialReturnVouchersApproved'],
+  //     materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
+  //     projects: json['projects'],
+  //     tasks: json['tasks'],
+  //   );;
     
   }
 

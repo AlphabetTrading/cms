@@ -1,7 +1,8 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
+import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 import 'package:equatable/equatable.dart';
 
 enum MaterialRequestStatus { pending, completed, declined }
@@ -18,6 +19,7 @@ class MaterialRequestEntity extends Equatable {
   final MaterialRequestStatus? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final ProjectEntity? project;
 
   const MaterialRequestEntity({
     this.id,
@@ -31,6 +33,7 @@ class MaterialRequestEntity extends Equatable {
     this.projectId,
     this.createdAt,
     this.updatedAt,
+    this.project,
   });
 
   @override
@@ -76,7 +79,7 @@ class MaterialRequestItem extends Equatable {
 
 class MaterialRequestMaterialEntity extends Equatable {
   final double requestedQuantity;
-  final WarehouseItemEntity? material;
+  final WarehouseProductEntity? material;
   final String? remark;
   // final String unit;
 
@@ -117,26 +120,4 @@ class MaterialRequestEntityListWithMeta {
   });
 }
 
-class ProductVariantEntity extends Equatable {
-  final String id;
-  final String? name;
-  final String? description;
-  final UnitOfMeasure? unitOfMeasure;
-  final String? variant;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final String? productId;
 
-  const ProductVariantEntity(
-      {required this.id,
-      required this.variant,
-      required this.name,
-      required this.description,
-      required this.unitOfMeasure,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.productId});
-
-  @override
-  List<Object?> get props => [id, name, description, variant, productId];
-}

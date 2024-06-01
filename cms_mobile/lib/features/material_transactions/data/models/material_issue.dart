@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/items/data/models/item.dart';
+import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 
@@ -141,7 +141,7 @@ class MaterialIssueModel extends MaterialIssueEntity {
 class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
   const IssueVoucherMaterialModel({
     required String? id,
-    required ItemVariantModel? productVariant,
+    required ProductVariantModel? productVariant,
     required double? quantity,
     required String? remark,
     required double? totalCost,
@@ -166,7 +166,7 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
     try {
       return IssueVoucherMaterialModel(
           id: json['id'],
-          productVariant: ItemVariantModel.fromJson(json['productVariant']),
+          productVariant: ProductVariantModel.fromJson(json['productVariant']),
           quantity: json['quantity'],
           remark: json['remark'],
           totalCost: json['totalCost'],
@@ -182,7 +182,7 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
     }
     return IssueVoucherMaterialModel(
         id: json['id'],
-        productVariant: ItemVariantModel.fromJson(json['productVariant']),
+        productVariant: ProductVariantModel.fromJson(json['productVariant']),
         quantity: json['quantity'],
         remark: json['remark'],
         totalCost: json['totalCost'],
@@ -231,7 +231,7 @@ class MaterialIssueMaterialModel extends MaterialIssueMaterialEntity {
   const MaterialIssueMaterialModel(
       {required double quantity,
       String? remark,
-      WarehouseItemModel? material,
+      WarehouseProductModel? material,
       required UseType useType,
       SubStructureUseDescription? subStructureDescription,
       SuperStructureUseDescription? superStructureDescription})
@@ -249,7 +249,7 @@ class MaterialIssueMaterialModel extends MaterialIssueMaterialEntity {
     return {
       'quantity': quantity,
       'remark': remark,
-      "productVariantId": material!.itemVariant.id,
+      "productVariantId": material!.productVariant.id,
       "useType": useType.name,
       "unitCost": material!.currentPrice,
       "totalCost": material!.currentPrice * quantity,
@@ -309,7 +309,7 @@ class CreateMaterialIssueParamsModel
         materialIssueMaterials: entity.materialIssueMaterials
             .map((e) => MaterialIssueMaterialModel(
                 quantity: e.quantity,
-                material: e.material as WarehouseItemModel,
+                material: e.material as WarehouseProductModel,
                 remark: e.remark,
                 useType: e.useType,
                 subStructureDescription: e.subStructureDescription,
@@ -361,7 +361,7 @@ class EditMaterialIssueParamsModel
         materialIssueMaterials: entity.materialIssueMaterials
             .map((e) => MaterialIssueMaterialModel(
                 quantity: e.quantity,
-                material: e.material as WarehouseItemModel,
+                material: e.material as WarehouseProductModel,
                 remark: e.remark,
                 useType: e.useType,
                 subStructureDescription: e.subStructureDescription,
