@@ -14,10 +14,22 @@ export class MaterialRequestService {
   async createMaterialRequest(
     createMaterialRequest: CreateMaterialRequestInput,
   ): Promise<MaterialRequestVoucher> {
-    const currentSerialNumber =
-      (await this.prisma.materialRequestVoucher.count()) + 1;
+    const lastMaterialRequestVoucher =
+      await this.prisma.materialRequestVoucher.findFirst({
+        select: {
+          serialNumber: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    let currentSerialNumber = 1;
+    if (lastMaterialRequestVoucher) {
+      currentSerialNumber =
+        parseInt(lastMaterialRequestVoucher.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'MRQ/' + currentSerialNumber.toString().padStart(3, '0');
+      'MRQ/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdMaterialRequest =
       await this.prisma.materialRequestVoucher.create({

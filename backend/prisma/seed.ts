@@ -825,7 +825,7 @@ async function seedMaterialIssueVouchers() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'ISS/' + currentSerialNumber.toString().padStart(3, '0');
+      'ISS/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -943,7 +943,7 @@ async function seedMaterialReturnVouchers() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'RTN/' + currentSerialNumber.toString().padStart(3, '0');
+      'RTN/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -1065,7 +1065,7 @@ async function seedMaterialReceiveVouchers() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'REC/' + currentSerialNumber.toString().padStart(3, '0');
+      'REC/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -1183,7 +1183,7 @@ async function seedMaterialRequestVouchers() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'MRQ/' + currentSerialNumber.toString().padStart(3, '0');
+      'MRQ/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -1276,7 +1276,7 @@ async function seedPurchaseOrders() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'PO/' + currentSerialNumber.toString().padStart(3, '0');
+      'PO/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -1393,7 +1393,7 @@ async function seedProformas() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'PRO/' + currentSerialNumber.toString().padStart(3, '0');
+      'PRO/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -1443,7 +1443,7 @@ async function seedMaterialTransferVouchers() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'TN/' + currentSerialNumber.toString().padStart(3, '0');
+      'TN/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;

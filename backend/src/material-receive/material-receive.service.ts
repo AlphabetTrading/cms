@@ -14,10 +14,22 @@ export class MaterialReceiveService {
   async createMaterialReceive(
     createMaterialReceive: CreateMaterialReceiveInput,
   ): Promise<MaterialReceiveVoucher> {
-    const currentSerialNumber =
-      (await this.prisma.materialReceiveVoucher.count()) + 1;
+    const lastMaterialReceiveVoucher =
+      await this.prisma.materialReceiveVoucher.findFirst({
+        select: {
+          serialNumber: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    let currentSerialNumber = 1;
+    if (lastMaterialReceiveVoucher) {
+      currentSerialNumber =
+        parseInt(lastMaterialReceiveVoucher.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'REC/' + currentSerialNumber.toString().padStart(3, '0');
+      'REC/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdMaterialReceive =
       await this.prisma.materialReceiveVoucher.create({
@@ -169,8 +181,8 @@ export class MaterialReceiveService {
         productVariantId: item.productVariantId,
       }));
 
-      const updatedMaterialReceive =
-        await prisma.materialReceiveVoucher.update({
+      const updatedMaterialReceive = await prisma.materialReceiveVoucher.update(
+        {
           where: { id: materialReceiveId },
           data: {
             ...updateData,
@@ -200,7 +212,8 @@ export class MaterialReceiveService {
             purchaseOrder: true,
             WarehouseStore: true,
           },
-        });
+        },
+      );
 
       return updatedMaterialReceive;
     });

@@ -14,10 +14,22 @@ export class MaterialReturnService {
   async createMaterialReturn(
     createMaterialReturn: CreateMaterialReturnInput,
   ): Promise<MaterialReturnVoucher> {
-    const currentSerialNumber =
-      (await this.prisma.materialReturnVoucher.count()) + 1;
+    const lastMaterialReturnVoucher =
+      await this.prisma.materialReturnVoucher.findFirst({
+        select: {
+          serialNumber: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    let currentSerialNumber = 1;
+    if (lastMaterialReturnVoucher) {
+      currentSerialNumber =
+        parseInt(lastMaterialReturnVoucher.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'RTN/' + currentSerialNumber.toString().padStart(3, '0');
+      'RTN/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdMaterialReturn =
       await this.prisma.materialReturnVoucher.create({

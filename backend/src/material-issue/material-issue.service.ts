@@ -14,10 +14,22 @@ export class MaterialIssueService {
   async createMaterialIssue(
     createMaterialIssueInput: CreateMaterialIssueInput,
   ): Promise<MaterialIssueVoucher> {
-    const currentSerialNumber =
-      (await this.prisma.materialIssueVoucher.count()) + 1;
+    const lastMaterialIssueVoucher =
+      await this.prisma.materialIssueVoucher.findFirst({
+        select: {
+          serialNumber: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    let currentSerialNumber = 1;
+    if (lastMaterialIssueVoucher) {
+      currentSerialNumber =
+        parseInt(lastMaterialIssueVoucher.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'ISS/' + currentSerialNumber.toString().padStart(3, '0');
+      'ISS/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdMaterialIssue = await this.prisma.materialIssueVoucher.create({
       data: {
@@ -147,7 +159,7 @@ export class MaterialIssueService {
     input: UpdateMaterialIssueInput,
   ): Promise<MaterialIssueVoucher> {
     const { id: materialIssueId, ...updateData } = input;
-    
+
     return await this.prisma.$transaction(async (prisma) => {
       const existingMaterialIssue =
         await prisma.materialIssueVoucher.findUnique({

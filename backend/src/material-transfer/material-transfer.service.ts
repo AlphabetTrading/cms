@@ -14,10 +14,22 @@ export class MaterialTransferService {
   async createMaterialTransfer(
     createMaterialTransferInput: CreateMaterialTransferInput,
   ): Promise<MaterialTransferVoucher> {
-    const currentSerialNumber =
-      (await this.prisma.materialTransferVoucher.count()) + 1;
+    const lastMaterialTransferVoucher =
+      await this.prisma.materialTransferVoucher.findFirst({
+        select: {
+          serialNumber: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    let currentSerialNumber = 1;
+    if (lastMaterialTransferVoucher) {
+      currentSerialNumber =
+        parseInt(lastMaterialTransferVoucher.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'TN/' + currentSerialNumber.toString().padStart(3, '0');
+      'TN/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdMaterialTransfer =
       await this.prisma.materialTransferVoucher.create({

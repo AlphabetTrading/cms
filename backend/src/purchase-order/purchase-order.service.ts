@@ -14,9 +14,21 @@ export class PurchaseOrderService {
   async createPurchaseOrder(
     createPurchaseOrder: CreatePurchaseOrderInput,
   ): Promise<PurchaseOrderVoucher> {
-    const currentSerialNumber = (await this.prisma.purchaseOrder.count()) + 1;
+    const lastPurchaseOrderVoucher = await this.prisma.purchaseOrder.findFirst({
+      select: {
+        serialNumber: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    let currentSerialNumber = 1;
+    if (lastPurchaseOrderVoucher) {
+      currentSerialNumber =
+        parseInt(lastPurchaseOrderVoucher.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'PO/' + currentSerialNumber.toString().padStart(3, '0');
+      'PO/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdPurchaseOrder = await this.prisma.purchaseOrder.create({
       data: {

@@ -12,9 +12,22 @@ export class ProformaService {
   async createProforma(
     createProformaInput: CreateProformaInput,
   ): Promise<Proforma> {
-    const currentSerialNumber = await this.prisma.proforma.count() + 1;
+    const lastProforma =
+      await this.prisma.proforma.findFirst({
+        select: {
+          serialNumber: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    let currentSerialNumber = 1;
+    if (lastProforma) {
+      currentSerialNumber =
+        parseInt(lastProforma.serialNumber.split('/')[1]) + 1;
+    }
     const serialNumber =
-      'PRO/' + currentSerialNumber.toString().padStart(3, '0');
+      'PRO/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdProforma = await this.prisma.proforma.create({
       data: {
