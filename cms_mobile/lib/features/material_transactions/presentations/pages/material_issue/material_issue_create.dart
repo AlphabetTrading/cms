@@ -2,9 +2,9 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
-import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
+import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
@@ -118,12 +118,12 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
                                   CustomDropdown(
                                     onSelected: (dynamic value) {
                                       warehouseForm.warehouseChanged(value);
-                                      context.read<ItemBloc>().add(
-                                            GetWarehouseItems(
-                                              getItemsInputEntity:
-                                                  GetWarehouseItemsInputEntity(
-                                                filterWarehouseItemInput:
-                                                    FilterWarehouseItemInput(
+                                      context.read<ProductBloc>().add(
+                                            GetWarehouseProducts(
+                                              getProductsInputEntity:
+                                                  GetWarehouseProductsInputEntity(
+                                                filterWarehouseProductInput:
+                                                    FilterWarehouseProductInput(
                                                         warehouseId: value.id),
                                               ),
                                             ),
@@ -164,8 +164,7 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
                                       : MaterialIssueInputList(
                                           materialIssues: localState
                                               .materialIssueMaterials!,
-                                          warehouseFormContext:
-                                              warehouseFormContext,
+                        
                                         ),
                                 ],
                               ),
@@ -296,6 +295,7 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
 enum WarehouseDropdownError { invalid }
 
 class WarehouseDropdown extends FormzInput<String, WarehouseDropdownError> {
+  
   const WarehouseDropdown.pure([String value = '']) : super.pure(value);
   const WarehouseDropdown.dirty([String value = '']) : super.dirty(value);
 

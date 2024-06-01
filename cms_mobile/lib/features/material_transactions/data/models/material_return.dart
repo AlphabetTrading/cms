@@ -1,12 +1,12 @@
 
-import 'package:cms_mobile/features/items/data/models/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+import 'package:cms_mobile/features/products/data/models/product.dart';
 
 class MaterialReturnMaterialModel extends MaterialReturnMaterialEntity {
   const MaterialReturnMaterialModel({
     required double quantity,
     String? remark,
-    required WarehouseItemModel material,
+    required WarehouseProductModel material,
     required String issueVoucherId,
     required double unitCost,
   }) : super(
@@ -58,7 +58,7 @@ class CreateMaterialReturnParamsModel
                 quantity: e.quantity,
                 remark: e.remark,
                 issueVoucherId: e.issueVoucherId,
-                material: e.material as WarehouseItemModel,
+                material: e.material as WarehouseProductModel,
                 unitCost: e.unitCost))
             .toList());
   }

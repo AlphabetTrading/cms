@@ -1,6 +1,6 @@
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:equatable/equatable.dart';
 
 enum MaterialReturnStatus { pending, approved, declined }
@@ -79,7 +79,7 @@ class MaterialReturnItem extends Equatable {
 
 class MaterialReturnMaterialEntity extends Equatable {
   final String issueVoucherId;
-  final WarehouseItemEntity? material;
+  final WarehouseProductEntity? material;
   final double quantity;
   final double unitCost;
   final String? remark;

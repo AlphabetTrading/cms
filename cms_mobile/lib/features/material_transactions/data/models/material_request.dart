@@ -1,6 +1,7 @@
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
+import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/items/data/models/item.dart';
+import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:flutter/material.dart';
 
 class MaterialRequestModel extends MaterialRequestEntity {
@@ -47,17 +48,19 @@ class MaterialRequestModel extends MaterialRequestEntity {
   }
 
   factory MaterialRequestModel.fromJson(Map<String, dynamic> json) {
-    final UserModel? requestedBy = json['requestedBy'] != null
+    UserModel? requestedBy = json['requestedBy'] != null
         ? UserModel.fromJson(json['requestedBy'])
         : null;
     final UserModel? approvedBy = json['approvedBy'] != null
         ? UserModel.fromJson(json['approvedBy'])
         : null;
 
-    final List<MaterialRequestItem> items = json['items']
-        .map<MaterialRequestItem>(
-            (item) => MaterialRequestItemModel.fromJson(item))
-        .toList();
+    final List<MaterialRequestItem> items = json['items'] != null
+        ? json['items']
+            .map<MaterialRequestItem>(
+                (item) => MaterialRequestItemModel.fromJson(item))
+            .toList()
+        : null;
 
     final MaterialRequestModel materialRequestModel = MaterialRequestModel(
       id: json['id'],
@@ -68,8 +71,10 @@ class MaterialRequestModel extends MaterialRequestEntity {
       requestedBy: requestedBy,
       approvedById: json['approvedById'],
       approvedBy: approvedBy,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       items: items,
     );
 
@@ -95,11 +100,11 @@ class MaterialRequestModel extends MaterialRequestEntity {
 
 class MaterialRequestItemModel extends MaterialRequestItem {
   const MaterialRequestItemModel({
-    required String id,
-    required double quantity,
-    required String productVariantId,
-    required ProductVariantModel productVariant,
-    required String remark,
+    required String? id,
+    required double? quantity,
+    required String? productVariantId,
+    required ProductVariantModel? productVariant,
+    required String? remark,
     required DateTime? createdAt,
     required DateTime? updatedAt,
   }) : super(
@@ -133,10 +138,14 @@ class MaterialRequestItemModel extends MaterialRequestItem {
       id: json['id'],
       quantity: json['quantity'],
       productVariantId: json['productVariantId'],
-      productVariant: ProductVariantModel.fromJson(json['productVariant']),
+      productVariant: json['productVariant'] != null
+          ? ProductVariantModel.fromJson(json['productVariant'])
+          : null,
       remark: json['remark'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
 
     return materialRequestItemModel;
@@ -156,7 +165,7 @@ class MaterialRequestItemModel extends MaterialRequestItem {
 class MaterialRequestMaterialModel extends MaterialRequestMaterialEntity {
   const MaterialRequestMaterialModel({
     required double requestedQuantity,
-    WarehouseItemModel? material,
+    WarehouseProductModel? material,
     required String? remark,
     // required String unit
   }) : super(
@@ -200,109 +209,10 @@ class CreateMaterialRequestParamsModel
         materialRequestMaterials: entity.materialRequestMaterials
             .map((e) => MaterialRequestMaterialModel(
                   requestedQuantity: e.requestedQuantity,
-                  material: e.material as WarehouseItemModel,
+                  material: e.material as WarehouseProductModel,
                   remark: e.remark,
                 ))
             .toList());
-  }
-}
-
-class ProductVariantModel extends ProductVariantEntity {
-  const ProductVariantModel({
-    required String id,
-    required String? name,
-    required String? description,
-    required UnitOfMeasure? unitOfMeasure,
-    required String? variant,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
-    required String? productId,
-  }) : super(
-          id: id,
-          name: name,
-          description: description,
-          unitOfMeasure: unitOfMeasure,
-          variant: variant,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          productId: productId,
-        );
-
-  factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
-    final ProductVariantModel productVariantModel = ProductVariantModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      unitOfMeasure: toUnitOfMeasure(json['unitOfMeasure']),
-      variant: json['variant'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      productId: json['productId'],
-    );
-
-    return productVariantModel;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'unitOfMeasure': fromUnitOfMeasure(unitOfMeasure),
-      'variant': variant,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
-      'productId': productId,
-    };
-  }
-}
-
-enum UnitOfMeasure { berga, kg, liter, m2, m3, pcs, packet, quintal }
-
-UnitOfMeasure toUnitOfMeasure(String value) {
-  switch (value) {
-    case 'BERGA':
-      return UnitOfMeasure.berga;
-    case 'KG':
-      return UnitOfMeasure.kg;
-    case 'LITER':
-      return UnitOfMeasure.liter;
-    case 'M2':
-      return UnitOfMeasure.m2;
-    case 'M3':
-      return UnitOfMeasure.m3;
-    case 'PCS':
-      return UnitOfMeasure.pcs;
-    case 'PACKET':
-      return UnitOfMeasure.packet;
-    case 'QUINTAL':
-      return UnitOfMeasure.quintal;
-    default:
-      throw Exception('Invalid UnitOfMeasure');
-  }
-}
-
-String fromUnitOfMeasure(UnitOfMeasure? value) {
-  if (value == null) {
-    return '';
-  }
-  switch (value) {
-    case UnitOfMeasure.berga:
-      return 'BERGA';
-    case UnitOfMeasure.kg:
-      return 'KG';
-    case UnitOfMeasure.liter:
-      return 'LITER';
-    case UnitOfMeasure.m2:
-      return 'M2';
-    case UnitOfMeasure.m3:
-      return 'M3';
-    case UnitOfMeasure.pcs:
-      return 'PCS';
-    case UnitOfMeasure.packet:
-      return 'PACKET';
-    case UnitOfMeasure.quintal:
-      return 'QUINTAL';
   }
 }
 

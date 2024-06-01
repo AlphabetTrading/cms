@@ -1,8 +1,8 @@
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_issue_form/material_issue_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_create.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -14,6 +14,7 @@ class MaterialIssueWarehouseFormCubit
   }) : super(MaterialIssueWarehouseFormState(
           warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
         ));
+ 
   void warehouseChanged(WarehouseEntity warehouseEntity) {
     final WarehouseDropdown warehouseDropdown =
         WarehouseDropdown.dirty(warehouseEntity.id);
@@ -105,9 +106,9 @@ class MaterialIssueFormCubit extends Cubit<MaterialIssueFormState> {
     );
   }
 
-  void materialChanged(WarehouseItemEntity materialEntity) {
+  void materialChanged(WarehouseProductEntity materialEntity) {
     final MaterialDropdown materialDropdown =
-        MaterialDropdown.dirty(materialEntity.itemVariant.id!);
+        MaterialDropdown.dirty(materialEntity.productVariant.id!);
 
     emit(
       state.copyWith(

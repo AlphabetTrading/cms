@@ -4,4 +4,6 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 abstract class MaterialRequestRepository {
   Future<DataState<String>> createMaterialRequest(
       {required CreateMaterialRequestParamsEntity params});
+  Future<DataState<MaterialRequestEntity>> getMaterialRequestDetails(
+      {required String params});
 }

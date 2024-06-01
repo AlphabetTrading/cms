@@ -235,9 +235,9 @@ class VoucherDataSourceImpl extends VoucherDataSource {
         );
       }
 
-      debugPrint('fetchMaterialIssuesQuery: ${response.data}');
+      // debugPrint('fetchMaterialIssuesQuery: ${response.data}');
       final issues = response.data!['getMaterialIssues']["items"] as List;
-      debugPrint('fetchMaterialIssuesQuery: $issues');
+      // debugPrint('fetchMaterialIssuesQuery: $issues');
       final meta = response.data!['getMaterialIssues']["meta"];
       final items = issues.map((e) => MaterialIssueModel.fromJson(e)).toList();
       debugPrint(

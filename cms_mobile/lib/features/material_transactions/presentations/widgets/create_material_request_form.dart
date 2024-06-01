@@ -1,13 +1,14 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_state.dart';
+
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form/material_request_form_cubit.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -31,7 +32,7 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ItemBloc>(context).add(const GetAllWarehouseItems(""));
+    BlocProvider.of<ProductBloc>(context).add(const GetAllWarehouseProducts(""));
   }
 
   @override
@@ -48,7 +49,7 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
 
     // Build a Form widget using the _formKey created above.
     return Form(
-      child: BlocBuilder<ItemBloc, ItemState>(
+      child: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -56,21 +57,21 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
             children: [
               CustomDropdown(
                 initialSelection: materialDropdown.value != ""
-                    ? state.allWarehouseItems?.firstWhere((element) =>
-                        element.itemVariant.id == materialDropdown.value)
+                    ? state.allWarehouseProducts?.firstWhere((element) =>
+                        element.productVariant.id == materialDropdown.value)
                     : null,
                 onSelected: (dynamic value) =>
                     materialRequestFormCubit.materialChanged(value),
-                dropdownMenuEntries: state.allWarehouseItems
-                        ?.map((e) => DropdownMenuEntry<WarehouseItemEntity>(
+                dropdownMenuEntries: state.allWarehouseProducts
+                        ?.map((e) => DropdownMenuEntry<WarehouseProductEntity>(
                             label:
-                                '${e.itemVariant.item!.name} - ${e.itemVariant.variant}',
+                                '${e.productVariant.product!.name} - ${e.productVariant.variant}',
                             value: e))
                         .toList() ??
                     [],
                 enableFilter: false,
                 errorMessage: materialDropdown.errorMessage, label: 'Material',
-                trailingIcon: state is AllWarehouseItemsLoading
+                trailingIcon: state is AllWarehouseProductsLoading
                     ? const CircularProgressIndicator()
                     : null,
                 // label: "Material"
@@ -87,12 +88,12 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                         Text("Unit",
                             style: Theme.of(context).textTheme.labelMedium),
                         materialDropdown.value != ""
-                            ? Text(state.allWarehouseItems
+                            ? Text(state.allWarehouseProducts
                                     ?.firstWhere((element) =>
-                                        element.itemVariant.id ==
+                                        element.productVariant.id ==
                                         materialDropdown.value)
-                                    .itemVariant
-                                    .unit ??
+                                    .productVariant
+                                    .unitOfMeasure?.name ??
                                 "N/A")
                             : Text("N/A")
                       ],
@@ -104,9 +105,9 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                         Text("In Stock",
                             style: Theme.of(context).textTheme.labelMedium),
                         materialDropdown.value != ""
-                            ? Text(state.allWarehouseItems
+                            ? Text(state.allWarehouseProducts
                                     ?.firstWhere((element) =>
-                                        element.itemVariant.id ==
+                                        element.productVariant.id ==
                                         materialDropdown.value)
                                     .quantity
                                     .toString() ??
@@ -144,9 +145,9 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                       materialDropdown.value != "" &&
                               double.tryParse(quantityField.value) != null
                           ? Text((double.parse(quantityField.value) -
-                                  (state.allWarehouseItems!
+                                  (state.allWarehouseProducts!
                                       .firstWhere((element) =>
-                                          element.itemVariant.id ==
+                                          element.productVariant.id ==
                                           materialDropdown.value)
                                       .quantity))
                               .toString())
@@ -177,9 +178,9 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                   if (materialRequestFormCubit.state.isValid) {
                     if (widget.isEdit) {
                       final updated = MaterialRequestMaterialEntity(
-                        material: state.allWarehouseItems!.firstWhere(
+                        material: state.allWarehouseProducts!.firstWhere(
                             (element) =>
-                                element.itemVariant.id ==
+                                element.productVariant.id ==
                                 materialDropdown.value),
                         // unit: unitDropdown.value,
                         requestedQuantity: double.parse(quantityField.value),
@@ -193,9 +194,9 @@ class _CreateMaterialRequestFormState extends State<CreateMaterialRequestForm> {
                       BlocProvider.of<MaterialRequestLocalBloc>(context).add(
                         AddMaterialRequestMaterialLocal(
                           MaterialRequestMaterialEntity(
-                            material: state.allWarehouseItems?.firstWhere(
+                            material: state.allWarehouseProducts?.firstWhere(
                                 (element) =>
-                                    element.itemVariant.id ==
+                                    element.productVariant.id ==
                                     materialDropdown.value),
                             // unit: unitDropdown.value,
                             requestedQuantity:

@@ -8,9 +8,9 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
@@ -67,8 +67,8 @@ void main() async {
           BlocProvider<WarehouseBloc>(
             create: (context) => sl<WarehouseBloc>(),
           ),
-          BlocProvider<ItemBloc>(
-            create: (context) => sl<ItemBloc>(),
+          BlocProvider<ProductBloc>(
+            create: (context) => sl<ProductBloc>(),
           ),
         ],
         child: EasyLocalization(

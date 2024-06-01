@@ -22,4 +22,14 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
   Future<DataState<MaterialIssueModel>> getMaterialIssueDetails({required String params}) {
     return dataSource.getMaterialIssueDetails(params:params);
   }
+  
+  @override
+  Future<DataState<String>> editMaterialIssue({required EditMaterialIssueParamsEntity params}) {
+    return dataSource.editMaterialIssue(editMaterialIssueParamsModel:EditMaterialIssueParamsModel.fromEntity(params));
+  }
+  
+  @override
+  Future<DataState<String>> deleteMaterialIssue({required String materialId}) {
+    return dataSource.deleteMaterialIssue(materialId:materialId);
+  }
 }

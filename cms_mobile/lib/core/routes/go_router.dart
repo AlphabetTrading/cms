@@ -12,7 +12,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
-import 'package:cms_mobile/features/items/presentation/pages/ItemsPage.dart';
+import 'package:cms_mobile/features/products/presentation/pages/products_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -62,7 +62,7 @@ class AppRouter {
               name: RouteNames.items,
               path: RoutePaths.items,
               builder: (BuildContext context, GoRouterState state) {
-                return ItemsPage(
+                return ProductsPage(
                   warehouseId: state.pathParameters['warehouseId']!,
                 );
               },
@@ -100,7 +100,8 @@ class AppRouter {
                   name: RouteNames.materialIssueEdit,
                   path: RoutePaths.materialIssueEdit,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const MaterialIssueEditPage();
+                    return  MaterialIssueEditPage( materialIssueId:
+                            state.pathParameters['materialIssueId']!);
                   },
                 ),
               ],
@@ -130,7 +131,10 @@ class AppRouter {
                   name: RouteNames.materialRequestDetails,
                   path: RoutePaths.materialRequestDetails,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const MaterialRequestDetailsPage();
+                    return  MaterialRequestDetailsPage(
+                      materialRequestId:
+                            state.pathParameters['materialRequestId']!
+                    );
                   },
                 ),
               ],

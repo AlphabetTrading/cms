@@ -1,4 +1,5 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
@@ -12,6 +13,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/cubit/ma
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/create_material_request_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -23,7 +25,7 @@ class CreateMaterialRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title:const Text("Create Material Request")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocConsumer<MaterialRequestBloc, MaterialRequestState>(
@@ -69,14 +71,14 @@ class CreateMaterialRequestPage extends StatelessWidget {
                             itemBuilder: (context, index) {
                               final materialRequest =
                                   localState.materialRequestMaterials![index];
-                              final itemVariant =
-                                  materialRequest.material!.itemVariant;
+                              final productVariant =
+                                  materialRequest.material!.productVariant;
                               return MaterialTransactionMaterialItem(
                                 title:
-                                    '${itemVariant.item!.name} - ${itemVariant.variant}',
+                                    '${productVariant.product!.name} - ${productVariant.variant}',
                                 subtitle:
-                                    'Requested Amount: ${materialRequest.requestedQuantity} ${materialRequest.material!.itemVariant.unit}',
-                                iconSrc: itemVariant.item?.iconSrc,
+                                    'Requested Amount: ${materialRequest.requestedQuantity} ${materialRequest.material!.productVariant.unitOfMeasure}',
+                                iconSrc: productVariant.product?.iconSrc,
                                 onDelete: () =>
                                     BlocProvider.of<MaterialRequestLocalBloc>(
                                             context)
@@ -88,7 +90,7 @@ class CreateMaterialRequestPage extends StatelessWidget {
                                       BlocProvider<MaterialRequestFormCubit>(
                                     create: (_) => MaterialRequestFormCubit(
                                       materialId: materialRequest
-                                          .material!.itemVariant.id,
+                                          .material!.productVariant.id,
                                       requestedQuantity:
                                           materialRequest.requestedQuantity,
                                       remark: materialRequest.remark,
@@ -140,9 +142,9 @@ class CreateMaterialRequestPage extends StatelessWidget {
                                         createMaterialRequestParamsEntity:
                                             CreateMaterialRequestParamsEntity(
                                                 projectId:
-                                                    "7e887f9a-4141-426a-83cb-3de082ee1171",
+                                                   context.read<ProjectBloc>().state.selectedProjectId??"",
                                                 requestedById:
-                                                    "0c5b5d84-0da5-409a-b701-fa87c9340868",
+                                                   USER_ID,
                                                 materialRequestMaterials: localState
                                                     .materialRequestMaterials!
                                                     .map((e) =>

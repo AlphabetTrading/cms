@@ -1,9 +1,9 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
-import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_bloc.dart';
-import 'package:cms_mobile/features/items/presentation/bloc/item_event.dart';
+import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
+import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
@@ -104,12 +104,12 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                                   CustomDropdown(
                                     onSelected: (dynamic value) {
                                       warehouseForm.warehouseChanged(value);
-                                      context.read<ItemBloc>().add(
-                                            GetWarehouseItems(
-                                              getItemsInputEntity:
-                                                  GetWarehouseItemsInputEntity(
-                                                filterWarehouseItemInput:
-                                                    FilterWarehouseItemInput(
+                                      context.read<ProductBloc>().add(
+                                            GetWarehouseProducts(
+                                              getProductsInputEntity:
+                                                  GetWarehouseProductsInputEntity(
+                                                filterWarehouseProductInput:
+                                                    FilterWarehouseProductInput(
                                                         warehouseId: value.id),
                                               ),
                                             ),

@@ -7,6 +7,9 @@ abstract class MaterialIssueDataSource {
       {required CreateMaterialIssueParamsModel createMaterialIssueParamsModel});
   Future<DataState<MaterialIssueModel>> getMaterialIssueDetails(
       {required String params});
+  Future<DataState<String>> editMaterialIssue(
+      {required EditMaterialIssueParamsModel editMaterialIssueParamsModel});
+  Future<DataState<String>> deleteMaterialIssue({required String materialId});
 }
 
 class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
@@ -24,6 +27,13 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
     }
 
   ''';
+
+  static const String _deleteMaterialIssueMutation = r'''
+  mutation DeleteMaterialIssue($deleteMaterialIssueId: String!) {
+  deleteMaterialIssue(id: $deleteMaterialIssueId) {
+    id
+  }
+}''';
 
   // Override the function in the implementation class
   @override
@@ -109,6 +119,11 @@ query GetMaterialIssueById($getMaterialIssueByIdId: String!) {
               role
               updatedAt
     }
+        warehouseStore {
+      id
+      location
+      name
+    }
 
   }
 }
@@ -130,8 +145,64 @@ query GetMaterialIssueById($getMaterialIssueByIdId: String!) {
 
       final materialIssue =
           MaterialIssueModel.fromJson(response.data!['getMaterialIssueById']);
+      print(response.data!['getMaterialIssueById']);
 
       return DataSuccess(materialIssue);
     });
+  }
+
+  @override
+  Future<DataState<String>> editMaterialIssue(
+      {required EditMaterialIssueParamsModel
+          editMaterialIssueParamsModel}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_createMaterialIssueMutation),
+      variables: {
+        "createMaterialIssueInput": editMaterialIssueParamsModel.toJson()
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['updateMaterialIssue']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
+  }
+
+  @override
+  Future<DataState<String>> deleteMaterialIssue(
+      {required String materialId}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_deleteMaterialIssueMutation),
+      variables: {"deleteMaterialIssueId": materialId},
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['deleteMaterialIssue']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }

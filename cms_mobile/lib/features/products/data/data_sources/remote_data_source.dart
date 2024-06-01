@@ -1,26 +1,26 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/items/data/models/item.dart';
-import 'package:cms_mobile/features/items/domain/entities/get_items_input.dart';
+import 'package:cms_mobile/features/products/data/models/product.dart';
+import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-abstract class ItemDataSource {
-  Future<DataState<List<WarehouseItemModel>>> fetchItems(
-      GetWarehouseItemsInputEntity? getItemsInput);
+abstract class ProductDataSource {
+  Future<DataState<List<WarehouseProductModel>>> fetchProducts(
+      GetWarehouseProductsInputEntity? getProductsInput);
 
-  Future<DataState<List<WarehouseItemModel>>> fetchAllStockItems(
+  Future<DataState<List<WarehouseProductModel>>> fetchAllStockProducts(
       String projectId);
 }
 
-class ItemDataSourceImpl extends ItemDataSource {
+class ProductDataSourceImpl extends ProductDataSource {
   late final GraphQLClient _client;
-  ItemDataSourceImpl({required GraphQLClient client}) {
+  ProductDataSourceImpl({required GraphQLClient client}) {
     _client = client;
   }
 
   @override
-  Future<DataState<List<WarehouseItemModel>>> fetchItems(
-      GetWarehouseItemsInputEntity? getItemsInput) async {
-    String fetchItemsQuery =
+  Future<DataState<List<WarehouseProductModel>>> fetchProducts(
+      GetWarehouseProductsInputEntity? getProductsInput) async {
+    String fetchProductsQuery =
         r'''query GetWarehouseProducts($filterWarehouseProductInput: FilterWarehouseProductInput, $paginationInput: PaginationInput) {
   getWarehouseProducts(filterWarehouseProductInput: $filterWarehouseProductInput, paginationInput: $paginationInput) {
     items {
@@ -40,12 +40,12 @@ class ItemDataSourceImpl extends ItemDataSource {
   }
 }''';
 
-    // print(getItemsInput.toJson());
+    // print(getProductsInput.toJson());
     return _client
         .query(
       QueryOptions(
-          document: gql(fetchItemsQuery),
-          variables: getItemsInput?.toJson() ?? {}),
+          document: gql(fetchProductsQuery),
+          variables: getProductsInput?.toJson() ?? {}),
     )
         .then((response) {
       if (response.hasException) {
@@ -56,16 +56,16 @@ class ItemDataSourceImpl extends ItemDataSource {
         );
       }
       final requests = response.data!['getWarehouseProducts']['items'] as List;
-      // print(requests.map((e) => WarehouseItemModel.fromJson(e)).toList());
+      // print(requests.map((e) => WarehouseProductModel.fromJson(e)).toList());
       return DataSuccess(
-          requests.map((e) => WarehouseItemModel.fromJson(e)).toList());
+          requests.map((e) => WarehouseProductModel.fromJson(e)).toList());
     });
   }
 
   @override
-  Future<DataState<List<WarehouseItemModel>>> fetchAllStockItems(
+  Future<DataState<List<WarehouseProductModel>>> fetchAllStockProducts(
       String projectId) async {
-    String fetchAllStockItemsQuery =
+    String fetchAllStockProductsQuery =
         r'''query GetAllWarehouseProductsStock($projectId: String!) {
   getAllWarehouseProductsStock(projectId: $projectId) {
     currentPrice
@@ -84,7 +84,7 @@ class ItemDataSourceImpl extends ItemDataSource {
   }
 }''';
     final response = await _client
-        .query(QueryOptions(document: gql(fetchAllStockItemsQuery), variables: {
+        .query(QueryOptions(document: gql(fetchAllStockProductsQuery), variables: {
       'projectId': '2cf44029-fe54-4e91-a031-f8fd7c65bce5',
     }));
 
@@ -99,6 +99,6 @@ class ItemDataSourceImpl extends ItemDataSource {
     final requests = response.data!['getAllWarehouseProductsStock'] as List;
 
     return DataSuccess(
-        requests.map((e) => WarehouseItemModel.fromJson(e)).toList());
+        requests.map((e) => WarehouseProductModel.fromJson(e)).toList());
   }
 }

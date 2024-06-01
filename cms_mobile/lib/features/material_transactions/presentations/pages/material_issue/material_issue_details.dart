@@ -1,14 +1,11 @@
-import 'package:cms_mobile/features/items/presentation/widgets/item_detail.dart';
 import 'package:cms_mobile/features/material_transactions/data/repository/material_issue_repository_impl.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
-// import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
-// import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
-// import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
+import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -137,13 +134,13 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
                         itemBuilder: (context, index) {
                           final materialIssueMaterial =
                               materialIssueMaterials[index];
-                          final itemVariant =
+                          final productVariant =
                               materialIssueMaterial.productVariant;
                           return MaterialTransactionMaterialItem(
                             title:
-                                '${itemVariant?.item?.name} - ${itemVariant?.variant}',
+                                '${productVariant?.product?.name} - ${productVariant?.variant}',
                             subtitle:
-                                'Issued Quantity: ${materialIssueMaterial.quantity} ${itemVariant?.unit}',
+                                'Issued Quantity: ${materialIssueMaterial.quantity} ${productVariant?.unitOfMeasure}',
                             iconSrc:
                                 'assets/icons/transactions/light/material_issues.svg',
                             onDelete: () {},
@@ -156,14 +153,14 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
                                   child: Wrap(children: [
                                     Column(
                                       children: [
-                                        ItemDetail(
+                                        ProductDetail(
                                             title: "Name",
                                             value:
-                                                '${itemVariant?.item?.name} - ${itemVariant?.variant}'),
+                                                '${productVariant?.product?.name} - ${productVariant?.variant}'),
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        ItemDetail(
+                                        ProductDetail(
                                             title: "Use Type",
                                             value: useTypeDisplay[
                                                     materialIssueMaterial
@@ -174,13 +171,13 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
                                         ),
                                         materialIssueMaterial.useType ==
                                                 UseType.SUB_STRUCTURE
-                                            ? ItemDetail(
+                                            ? ProductDetail(
                                                 title: "Use Description",
                                                 value: subStructureUseDescriptionDisplay[
                                                         materialIssueMaterial
                                                             .subStructureDescription] ??
                                                     'N/A')
-                                            : ItemDetail(
+                                            : ProductDetail(
                                                 title: "Use Description",
                                                 value: superStructureUseDescriptionDisplay[
                                                         materialIssueMaterial
@@ -189,21 +186,21 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        ItemDetail(
+                                        ProductDetail(
                                             title: "Issued Quantity",
                                             value:
-                                                '${materialIssueMaterial.quantity} ${itemVariant?.unit}'),
+                                                '${materialIssueMaterial.quantity} ${productVariant?.unitOfMeasure}'),
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        ItemDetail(
+                                        ProductDetail(
                                             title: "Unit Cost",
                                             value:
                                                 '${materialIssueMaterial.unitCost.toString()} ETB'),
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        ItemDetail(
+                                        ProductDetail(
                                             title: "Total Cost",
                                             value:
                                                 '${materialIssueMaterial.totalCost.toString()} ETB'),

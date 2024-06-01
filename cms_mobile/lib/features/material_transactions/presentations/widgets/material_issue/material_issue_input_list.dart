@@ -9,11 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialIssueInputList extends StatelessWidget {
   final List<MaterialIssueMaterialEntity> materialIssues;
-  final BuildContext warehouseFormContext;
-  const MaterialIssueInputList(
-      {super.key,
-      required this.materialIssues,
-      required this.warehouseFormContext});
+  const MaterialIssueInputList({
+    super.key,
+    required this.materialIssues,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +21,12 @@ class MaterialIssueInputList extends StatelessWidget {
       itemCount: materialIssues.length,
       itemBuilder: (context, index) {
         final materialIssue = materialIssues[index];
-        final itemVariant = materialIssue.material!.itemVariant;
+        final productVariant = materialIssue.material!.productVariant;
         return MaterialTransactionMaterialItem(
-          title: '${itemVariant.item!.name} - ${itemVariant.variant}',
+          title: '${productVariant.product!.name} - ${productVariant.variant}',
           subtitle:
-              'Amount: ${materialIssue.quantity} ${materialIssue.material!.itemVariant.unit}',
-          iconSrc: itemVariant.item?.iconSrc,
+              'Amount: ${materialIssue.quantity} ${materialIssue.material!.productVariant.unitOfMeasure}',
+          iconSrc: productVariant.product?.iconSrc,
           onDelete: () => BlocProvider.of<MaterialIssueLocalBloc>(context)
               .add(DeleteMaterialIssueMaterialLocal(index)),
           onEdit: () => showModalBottomSheet(
@@ -35,12 +34,9 @@ class MaterialIssueInputList extends StatelessWidget {
             context: context,
             builder: (context) => MultiBlocProvider(
                 providers: [
-                  BlocProvider.value(
-                    value: warehouseFormContext.read<MaterialIssueWarehouseFormCubit>(),
-                  ),
                   BlocProvider<MaterialIssueFormCubit>(
                     create: (_) => MaterialIssueFormCubit(
-                      materialId: materialIssue.material!.itemVariant.id,
+                      materialId: materialIssue.material!.productVariant.id,
                       quantity: materialIssue.quantity,
                       remark: materialIssue.remark,
                       subUseDescription: materialIssue.subStructureDescription,

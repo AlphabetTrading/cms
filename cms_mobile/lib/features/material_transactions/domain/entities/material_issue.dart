@@ -1,9 +1,10 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
+import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialIssueEntity extends Equatable {
@@ -22,6 +23,7 @@ class MaterialIssueEntity extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final ProjectEntity? project;
+  final WarehouseEntity? warehouse;
 
   const MaterialIssueEntity({
     this.id,
@@ -38,7 +40,8 @@ class MaterialIssueEntity extends Equatable {
     this.receivedById,
     this.updatedAt,
     this.createdAt,
-    this.project
+    this.project,
+    this.warehouse,
   });
 
   @override
@@ -51,7 +54,7 @@ class MaterialIssueEntity extends Equatable {
 
 class IssueVoucherMaterialEntity extends Equatable {
   final String? id;
-  final ItemVariantEntity? productVariant;
+  final ProductVariantEntity? productVariant;
   final double? quantity;
   final String? remark;
   final double? totalCost;
@@ -105,7 +108,7 @@ class MaterialIssueEntityListWithMeta {
 class MaterialIssueMaterialEntity extends Equatable {
   final double quantity;
   final String? remark;
-  final WarehouseItemEntity? material;
+  final WarehouseProductEntity? material;
   final UseType useType;
   final SubStructureUseDescription? subStructureDescription;
   final SuperStructureUseDescription? superStructureDescription;
@@ -146,3 +149,25 @@ class CreateMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
   @override
   List<Object?> get props => [preparedById, projectId, materialIssueMaterials];
 }
+
+class EditMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
+    extends Equatable {
+  final String updateMaterialIssueId;
+  final String warehouseStoreId;
+  final String approved;
+  final String approvedById;
+  final List<T> materialIssueMaterials;
+
+  const EditMaterialIssueParamsEntity(
+      {required this.updateMaterialIssueId,
+      required this.approved,
+      required this.approvedById,
+      required this.materialIssueMaterials,
+      required this.warehouseStoreId});
+
+  @override
+  List<Object?> get props => [updateMaterialIssueId,warehouseStoreId ,approved, approvedById, materialIssueMaterials];
+}
+
+
+

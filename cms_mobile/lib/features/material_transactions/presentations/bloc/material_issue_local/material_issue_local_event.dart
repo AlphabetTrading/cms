@@ -18,6 +18,11 @@ class AddMaterialIssueMaterialLocal extends MaterialIssueLocalEvent{
   const AddMaterialIssueMaterialLocal(this.materialIssueMaterial);
 }
 
+class AddMaterialIssueMaterialsLocal extends MaterialIssueLocalEvent{
+  final List<MaterialIssueMaterialEntity> materialIssueMaterials;
+  const AddMaterialIssueMaterialsLocal(this.materialIssueMaterials);
+}
+
 class EditMaterialIssueMaterialLocal extends MaterialIssueLocalEvent{
   final MaterialIssueMaterialEntity materialIssueMaterial;
   final int index;
