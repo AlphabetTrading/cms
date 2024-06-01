@@ -9,11 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MaterialIssueInputList extends StatelessWidget {
   final List<MaterialIssueMaterialEntity> materialIssues;
-  final BuildContext warehouseFormContext;
-  const MaterialIssueInputList(
-      {super.key,
-      required this.materialIssues,
-      required this.warehouseFormContext});
+  const MaterialIssueInputList({
+    super.key,
+    required this.materialIssues,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +34,6 @@ class MaterialIssueInputList extends StatelessWidget {
             context: context,
             builder: (context) => MultiBlocProvider(
                 providers: [
-                  BlocProvider.value(
-                    value: warehouseFormContext.read<MaterialIssueWarehouseFormCubit>(),
-                  ),
                   BlocProvider<MaterialIssueFormCubit>(
                     create: (_) => MaterialIssueFormCubit(
                       materialId: materialIssue.material!.itemVariant.id,

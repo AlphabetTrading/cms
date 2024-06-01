@@ -62,9 +62,12 @@ class _MyLoginFormState extends State<LoginForm> {
   }
 
   Future<void> _onSubmit() async {
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
+try{
+
 
     setState(() {
       _loginFormState =
@@ -87,8 +90,10 @@ class _MyLoginFormState extends State<LoginForm> {
     FocusScope.of(context)
       ..nextFocus()
       ..unfocus();
+  }catch(e){
+    debugPrint("********* ***** ** * Print Login ${e}");
   }
-
+  }
   Future<void> _submitForm() async {
     context.read<LoginBloc>().add(
           LoginEvent(

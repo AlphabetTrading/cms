@@ -4,6 +4,7 @@ import 'package:cms_mobile/features/items/domain/entities/item.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
+import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialIssueEntity extends Equatable {
@@ -22,6 +23,7 @@ class MaterialIssueEntity extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final ProjectEntity? project;
+  final WarehouseEntity? warehouse;
 
   const MaterialIssueEntity({
     this.id,
@@ -38,7 +40,8 @@ class MaterialIssueEntity extends Equatable {
     this.receivedById,
     this.updatedAt,
     this.createdAt,
-    this.project
+    this.project,
+    this.warehouse,
   });
 
   @override

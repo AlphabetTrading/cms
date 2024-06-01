@@ -38,20 +38,20 @@ class MaterialIssuesEmpty extends MaterialIssueState {
 }
 
 // Get Material Issue Details
-class MaterialIssueDetailsLoading extends MaterialIssueState {
-  const MaterialIssueDetailsLoading();
-}
+// class MaterialIssueDetailsLoading extends MaterialIssueState {
+//   const MaterialIssueDetailsLoading();
+// }
 
-class MaterialIssueDetailsSuccess extends MaterialIssueState {
-  const MaterialIssueDetailsSuccess(
-      {required MaterialIssueEntity materialIssue})
-      : super(materialIssue: materialIssue);
-}
+// class MaterialIssueDetailsSuccess extends MaterialIssueState {
+//   const MaterialIssueDetailsSuccess(
+//       {required MaterialIssueEntity materialIssue})
+//       : super(materialIssue: materialIssue);
+// }
 
-class MaterialIssueDetailsFailed extends MaterialIssueState {
-  const MaterialIssueDetailsFailed({required Failure error})
-      : super(error: error);
-}
+// class MaterialIssueDetailsFailed extends MaterialIssueState {
+//   const MaterialIssueDetailsFailed({required Failure error})
+//       : super(error: error);
+// }
 
 // Create Material Issue
 class CreateMaterialIssueLoading extends MaterialIssueState {

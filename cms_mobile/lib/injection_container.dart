@@ -27,11 +27,13 @@ import 'package:cms_mobile/features/material_transactions/domain/repository/vouc
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_return.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/delete_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
@@ -217,6 +219,11 @@ Future<void> initializeDependencies() async {
       sl<MaterialIssueRepository>(),
     ),
   );
+    sl.registerLazySingleton<DeleteMaterialIssueUseCase>(
+    () => DeleteMaterialIssueUseCase(
+      sl<MaterialIssueRepository>(),
+    ),
+  );
 
   sl.registerLazySingleton<GetWarehousesUseCase>(
     () => GetWarehousesUseCase(
@@ -304,6 +311,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<MaterialIssueDetailsCubit>(
     () => MaterialIssueDetailsCubit(sl<GetMaterialIssueDetailsUseCase>()),
+  );
+
+    sl.registerFactory<MaterialIssueDeleteCubit>(
+    () => MaterialIssueDeleteCubit(sl<DeleteMaterialIssueUseCase>()),
   );
 
   sl.registerFactory<MaterialRequestFormCubit>(

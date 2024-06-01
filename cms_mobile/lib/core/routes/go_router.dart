@@ -100,7 +100,8 @@ class AppRouter {
                   name: RouteNames.materialIssueEdit,
                   path: RoutePaths.materialIssueEdit,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const MaterialIssueEditPage();
+                    return  MaterialIssueEditPage( materialIssueId:
+                            state.pathParameters['materialIssueId']!);
                   },
                 ),
               ],

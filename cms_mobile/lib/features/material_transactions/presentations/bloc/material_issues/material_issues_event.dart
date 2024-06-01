@@ -50,13 +50,13 @@ class CreateMaterialIssueEvent extends MaterialIssueEvent {
       {required this.createMaterialIssueParamsEntity});
 }
 
-class UpdateMaterialIssueEvent extends MaterialIssueEvent {
-  final String id;
-  const UpdateMaterialIssueEvent(this.id);
-}
+// class UpdateMaterialIssueEvent extends MaterialIssueEvent {
+//   final String id;
+//   const UpdateMaterialIssueEvent(this.id);
+// }
 
-class DeleteMaterialIssueEvent extends MaterialIssueEvent {
-  final String id;
-  const DeleteMaterialIssueEvent(this.id);
-}
+// class DeleteMaterialIssueEvent extends MaterialIssueEvent {
+//   final String id;
+//   const DeleteMaterialIssueEvent(this.id);
+// }
 

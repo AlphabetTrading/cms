@@ -18,14 +18,19 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
 
   void onGetWarehouseItems(GetWarehouseItems event, Emitter<ItemState> emit) async {
     emit(const WarehouseItemsLoading());
+    print("******** Get Warehouse Items Called Bloc Loading");
     
     final dataState = await _getItemsUseCase(params: event.getItemsInputEntity);
     
     
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
+    print("******** Get Warehouse Items Called Bloc Success");
+
       emit(WarehouseItemsSuccess(warehouseItems: dataState.data!));
     }
     if (dataState is DataFailed) {
+    print("******** Get Warehouse Items Called Bloc Failed");
+
       emit(WarehouseItemsFailed(error: dataState.error!));
     }
   }

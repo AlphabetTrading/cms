@@ -16,7 +16,7 @@ class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
       : super(const MaterialIssueInitial()) {
     on<GetMaterialIssues>(onGetMaterialIssues);
     on<CreateMaterialIssueEvent>(onCreateMaterialIssue);
-    on<GetMaterialIssueDetailsEvent>(onGetMaterialIssueDetails);
+    // on<GetMaterialIssueDetailsEvent>(onGetMaterialIssueDetails);
   }
 
   void onGetMaterialIssues(
@@ -38,20 +38,20 @@ class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
     }
   }
 
-  void onGetMaterialIssueDetails(GetMaterialIssueDetailsEvent event,
-      Emitter<MaterialIssueState> emit) async {
-    emit(const MaterialIssueDetailsLoading());
+  // void onGetMaterialIssueDetails(GetMaterialIssueDetailsEvent event,
+  //     Emitter<MaterialIssueState> emit) async {
+  //   emit(const MaterialIssueDetailsLoading());
 
-    final dataState =
-        await _getMaterialIssueDetailsUseCase(params: event.materialIssueId);
-    if (dataState is DataSuccess) {
-      emit(MaterialIssueDetailsSuccess(materialIssue: dataState.data!));
-    }
+  //   final dataState =
+  //       await _getMaterialIssueDetailsUseCase(params: event.materialIssueId);
+  //   if (dataState is DataSuccess) {
+  //     emit(MaterialIssueDetailsSuccess(materialIssue: dataState.data!));
+  //   }
 
-    if (dataState is DataFailed) {
-      emit(MaterialIssueDetailsFailed(error: dataState.error!));
-    }
-  }
+  //   if (dataState is DataFailed) {
+  //     emit(MaterialIssueDetailsFailed(error: dataState.error!));
+  //   }
+  // }
 
   void onCreateMaterialIssue(
       CreateMaterialIssueEvent event, Emitter<MaterialIssueState> emit) async {

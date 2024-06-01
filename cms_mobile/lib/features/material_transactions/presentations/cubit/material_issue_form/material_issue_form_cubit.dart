@@ -14,6 +14,7 @@ class MaterialIssueWarehouseFormCubit
   }) : super(MaterialIssueWarehouseFormState(
           warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
         ));
+ 
   void warehouseChanged(WarehouseEntity warehouseEntity) {
     final WarehouseDropdown warehouseDropdown =
         WarehouseDropdown.dirty(warehouseEntity.id);

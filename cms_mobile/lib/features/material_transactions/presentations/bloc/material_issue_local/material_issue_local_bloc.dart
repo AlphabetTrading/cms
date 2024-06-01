@@ -15,6 +15,11 @@ class MaterialIssueLocalBloc
       emit(MaterialIssueLocalState(materialIssueMaterials: updatedList));
     });
 
+    on<AddMaterialIssueMaterialsLocal>((event, emit) {
+
+      emit(MaterialIssueLocalState(materialIssueMaterials: event.materialIssueMaterials));
+    });
+
     on<DeleteMaterialIssueMaterialLocal>((event, emit) {
       final updatedList = List<MaterialIssueMaterialEntity>.from(
           state.materialIssueMaterials ?? [])
