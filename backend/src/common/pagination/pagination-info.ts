@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { DailyStockBalance } from 'src/daily-stock-balance/model/daily-stock-balance.model';
 import { MaterialIssueVoucher } from 'src/material-issue/model/material-issue.model';
 import { MaterialReceiveVoucher } from 'src/material-receive/model/material-receive.model';
 import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
@@ -26,6 +27,15 @@ export class PaginationInfo {
 
   @Field(() => Int, { nullable: true })
   count?: number;
+}
+
+@ObjectType()
+export class PaginationDailyStockBalances {
+  @Field(() => [DailyStockBalance])
+  items: DailyStockBalance[];
+
+  @Field(() => PaginationInfo, { nullable: true })
+  meta?: PaginationInfo;
 }
 
 @ObjectType()
