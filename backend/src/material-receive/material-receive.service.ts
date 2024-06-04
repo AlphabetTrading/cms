@@ -238,6 +238,20 @@ export class MaterialReceiveService {
     return existingMaterialReceive;
   }
 
+  async getMaterialReceiveApprovers(
+    projectId?: string,
+  ) {
+    const approvers = await this.prisma.project.findMany({
+      where: {
+        id: projectId,
+      },
+      select: {
+        ProjectManager: true,
+      },
+    });
+    return approvers;
+  }
+
   async approveMaterialReceive(
     materialReceiveId: string,
     userId: string,

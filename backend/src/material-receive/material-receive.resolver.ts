@@ -17,7 +17,7 @@ export class MaterialReceiveResolver {
   constructor(
     private readonly materialReceiveService: MaterialReceiveService,
   ) {}
-  
+
   @UseGuards(GqlAuthGuard)
   @Query(() => PaginationMaterialReceives)
   async getMaterialReceives(
@@ -34,24 +34,26 @@ export class MaterialReceiveResolver {
     orderBy?: OrderByMaterialReceiveInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ): Promise<PaginationMaterialReceives> {
-    const where: Prisma.MaterialReceiveVoucherWhereInput = {
-      AND: [
+    let approverIds: string[] = [];
+
+    if (filterMaterialReceiveInput?.projectId) {
+      const approvers =
+        await this.materialReceiveService.getMaterialReceiveApprovers(
+          filterMaterialReceiveInput.projectId,
+        );
+      approverIds = approvers.map((approver) => approver.ProjectManager.id);
+    }
+
+    try {
+      const baseConditions: Prisma.MaterialReceiveVoucherWhereInput[] = [
         {
           id: filterMaterialReceiveInput?.id,
         },
         {
-          projectId: filterMaterialReceiveInput?.projectId
-        },
-        {
-          OR: [
-            {
-              purchasedById: user.id,
-            },
-            {
-              approvedById: user.id,
-            },
-          ],
+          projectId: filterMaterialReceiveInput?.projectId,
         },
         {
           OR: [
@@ -93,15 +95,33 @@ export class MaterialReceiveResolver {
                 in: filterMaterialReceiveInput?.status,
               },
             },
-        ],
+          ],
         },
         {
           createdAt: filterMaterialReceiveInput?.createdAt,
         },
-      ],
-    };
+      ].filter(Boolean);
 
-    try {
+      if (mine) {
+        baseConditions.push({
+          OR: [
+            { purchasedById: user.id },
+            { approvedById: user.id },
+            ...(approverIds.includes(user.id)
+              ? [
+                  {
+                    projectId: filterMaterialReceiveInput?.projectId,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
+
+      const where: Prisma.MaterialReceiveVoucherWhereInput = {
+        AND: baseConditions,
+      };
+
       const materialReceives =
         await this.materialReceiveService.getMaterialReceives({
           where,
@@ -163,7 +183,6 @@ export class MaterialReceiveResolver {
     }
   }
 
-  
   @Mutation(() => MaterialReceiveVoucher)
   async approveMaterialReceive(
     @UserEntity() user: User,

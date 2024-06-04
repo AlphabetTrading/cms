@@ -227,6 +227,19 @@ export class MaterialIssueService {
     return existingMaterialIssue;
   }
 
+  async getMaterialIssueApprovers() // warehouseStoreId: string,
+  // projectId?: string,
+  {
+    const approvers = await this.prisma.warehouseStoreManager.findMany({
+      select: {
+        StoreManager: true,
+      },
+    });
+
+    console.log(approvers, 239)
+    return approvers;
+  }
+
   async approveMaterialIssue(
     materialIssueId: string,
     userId: string,

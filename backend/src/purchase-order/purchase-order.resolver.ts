@@ -32,26 +32,27 @@ export class PurchaseOrderResolver {
     orderBy?: OrderByPurchaseOrderInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ): Promise<PaginationPurchaseOrders> {
-    const where: Prisma.PurchaseOrderWhereInput = {
-      AND: [
+    let approverIds: string[] = [];
+
+    if (filterPurchaseOrderInput?.projectId) {
+      const approvers =
+        await this.purchaseOrderService.getPurchaseOrderApprovers(
+          filterPurchaseOrderInput.projectId,
+        );
+      approverIds = approvers.map((approver) => approver.ProjectManager.id);
+    }
+
+    try {
+      const baseConditions: Prisma.PurchaseOrderWhereInput[] = [
         {
           id: filterPurchaseOrderInput?.id,
         },
         {
           projectId: filterPurchaseOrderInput?.projectId,
         },
-        {
-          OR: [
-            {
-              preparedById: user.id,
-            },
-            {
-              approvedById: user.id,
-            },
-          ],
-        },
-
         {
           OR: [
             {
@@ -91,10 +92,28 @@ export class PurchaseOrderResolver {
         {
           createdAt: filterPurchaseOrderInput?.createdAt,
         },
-      ],
-    };
+      ].filter(Boolean);
 
-    try {
+      if (mine) {
+        baseConditions.push({
+          OR: [
+            { preparedById: user.id },
+            { approvedById: user.id },
+            ...(approverIds.includes(user.id)
+              ? [
+                  {
+                    projectId: filterPurchaseOrderInput?.projectId,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
+
+      const where: Prisma.PurchaseOrderWhereInput = {
+        AND: baseConditions,
+      };
+
       const purchaseOrders = await this.purchaseOrderService.getPurchaseOrders({
         where,
         orderBy,

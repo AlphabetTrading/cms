@@ -34,6 +34,8 @@ export class MaterialTransferResolver {
     orderBy?: OrderByMaterialTransferInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ): Promise<PaginationMaterialTransfers> {
     try {
       const where: Prisma.MaterialTransferVoucherWhereInput = {
@@ -44,16 +46,20 @@ export class MaterialTransferResolver {
           {
             projectId: filterMaterialTransferInput?.projectId,
           },
-          {
-            OR: [
-              {
-                preparedById: user.id,
-              },
-              {
-                approvedById: user.id,
-              },
-            ],
-          },
+          ...(mine
+            ? [
+                {
+                  OR: [
+                    {
+                      preparedById: user.id,
+                    },
+                    {
+                      approvedById: user.id,
+                    },
+                  ],
+                },
+              ]
+            : []),
           {
             OR: [
               {

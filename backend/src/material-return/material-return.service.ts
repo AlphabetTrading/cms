@@ -226,6 +226,15 @@ export class MaterialReturnService {
     return existingMaterialReturn;
   }
 
+  async getMaterialReturnApprovers() {
+    const approvers = await this.prisma.warehouseStoreManager.findMany({
+      select: {
+        StoreManager: true,
+      },
+    });
+    return approvers;
+  }
+
   async approveMaterialReturn(
     materialReturnId: string,
     userId: string,

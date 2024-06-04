@@ -226,6 +226,21 @@ export class PurchaseOrderService {
     return existingPurchaseOrder;
   }
 
+  async getPurchaseOrderApprovers(
+    projectId?: string,
+  ) {
+    const approvers = await this.prisma.project.findMany({
+      where: {
+        id: projectId,
+      },
+      select: {
+        ProjectManager: true,
+      },
+    });
+    return approvers;
+  }
+
+
   async approvePurchaseOrder(
     purchaseOrderId: string,
     userId: string,

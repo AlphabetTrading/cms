@@ -100,7 +100,7 @@ model WarehouseStore {
 }
 
 model WarehouseStoreManager {
-  id               String
+  id               String         @id @default(uuid())
   warehouseStoreId String
   WarehouseStore   WarehouseStore @relation(fields: [warehouseStoreId], references: [id])
   storeManagerId   String

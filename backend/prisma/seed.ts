@@ -19,6 +19,7 @@ async function main() {
   await prisma.warehouseProduct.deleteMany();
   await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
+  await prisma.warehouseStoreManager.deleteMany();
   await prisma.warehouseStore.deleteMany();
   await prisma.task.deleteMany();
   await prisma.milestone.deleteMany();
@@ -37,6 +38,7 @@ async function main() {
   await seedMilestones();
   await seedTasks();
   await seedWarehouseStores();
+  await seedWarehouseStoreManagers();
   await seedWarehouseProducts();
   await seedMaterialIssueVouchers();
   await seedMaterialReturnVouchers();
@@ -146,6 +148,30 @@ async function seedUsers() {
           password:
             '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
           role: 'CONSULTANT',
+        },
+        {
+          email: 'store_manager3@example.com',
+          fullName: 'Store Manager 3',
+          phoneNumber: '0912345682',
+          password:
+            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
+          role: 'STORE_MANAGER',
+        },
+        {
+          email: 'store_manager4@example.com',
+          fullName: 'Store Manager 4',
+          phoneNumber: '0912345683',
+          password:
+            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
+          role: 'STORE_MANAGER',
+        },
+        {
+          email: 'store_manager5@example.com',
+          fullName: 'Store Manager 5',
+          phoneNumber: '0912345684',
+          password:
+            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
+          role: 'STORE_MANAGER',
         },
       ],
     });
@@ -770,6 +796,29 @@ async function seedWarehouseStores() {
     console.log('WarehouseStore models seeded successfully');
   } catch (error) {
     console.error('Error seeding WarehouseStore models:', error);
+  }
+}
+
+async function seedWarehouseStoreManagers() {
+  const warehouseStores = await prisma.warehouseStore.findMany();
+  const storeManagers = await prisma.user.findMany({
+    where: {
+      role: UserRole.STORE_MANAGER,
+    },
+  });
+  try {
+    for (let i = 0; i < 5; i++) {
+      await prisma.warehouseStoreManager.create({
+        data: {
+          storeManagerId: storeManagers[i].id,
+          warehouseStoreId: warehouseStores[i].id,
+        },
+      });
+    }
+
+    console.log('WarehouseStoreManager models seeded successfully');
+  } catch (error) {
+    console.error('Error seeding WarehouseStoreManager models:', error);
   }
 }
 

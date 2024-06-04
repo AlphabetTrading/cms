@@ -1018,15 +1018,15 @@ type Query {
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
   getAllWarehouseProductsStock(projectId: String!): [WarehouseProductStock!]!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
-  getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
+  getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, mine: Boolean! = false, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
-  getMaterialReceives(filterMaterialReceiveInput: FilterMaterialReceiveInput, orderBy: OrderByMaterialReceiveInput, paginationInput: PaginationInput): PaginationMaterialReceives!
+  getMaterialReceives(filterMaterialReceiveInput: FilterMaterialReceiveInput, mine: Boolean! = false, orderBy: OrderByMaterialReceiveInput, paginationInput: PaginationInput): PaginationMaterialReceives!
   getMaterialRequestById(id: String!): MaterialRequestVoucher!
-  getMaterialRequests(filterMaterialRequestInput: FilterMaterialRequestInput, orderBy: OrderByMaterialRequestInput, paginationInput: PaginationInput): PaginationMaterialRequests!
+  getMaterialRequests(filterMaterialRequestInput: FilterMaterialRequestInput, mine: Boolean! = false, orderBy: OrderByMaterialRequestInput, paginationInput: PaginationInput): PaginationMaterialRequests!
   getMaterialReturnById(id: String!): MaterialReturnVoucher!
-  getMaterialReturns(filterMaterialReturnInput: FilterMaterialReturnInput, orderBy: OrderByMaterialReturnInput, paginationInput: PaginationInput): PaginationMaterialReturns!
+  getMaterialReturns(filterMaterialReturnInput: FilterMaterialReturnInput, mine: Boolean! = false, orderBy: OrderByMaterialReturnInput, paginationInput: PaginationInput): PaginationMaterialReturns!
   getMaterialTransferById(id: String!): MaterialTransferVoucher!
-  getMaterialTransfers(filterMaterialTransferInput: FilterMaterialTransferInput, orderBy: OrderByMaterialTransferInput, paginationInput: PaginationInput): PaginationMaterialTransfers!
+  getMaterialTransfers(filterMaterialTransferInput: FilterMaterialTransferInput, mine: Boolean! = false, orderBy: OrderByMaterialTransferInput, paginationInput: PaginationInput): PaginationMaterialTransfers!
   getMilestone(id: String!): Milestone!
   getMilestones(filterMilestoneInput: FilterMilestoneInput, orderBy: OrderByMilestoneInput, paginationInput: PaginationInput): PaginationMilestones!
   getPriceHistory(id: String!): PriceHistory!
@@ -1040,7 +1040,7 @@ type Query {
   getProject(id: String!): Project!
   getProjects(filterProjectInput: FilterProjectInput, orderBy: OrderByProjectInput, paginationInput: PaginationInput): PaginationProjects!
   getPurchaseOrderById(id: String!): PurchaseOrderVoucher!
-  getPurchaseOrders(filterPurchaseOrderInput: FilterPurchaseOrderInput, orderBy: OrderByPurchaseOrderInput, paginationInput: PaginationInput): PaginationPurchaseOrders!
+  getPurchaseOrders(filterPurchaseOrderInput: FilterPurchaseOrderInput, mine: Boolean! = false, orderBy: OrderByPurchaseOrderInput, paginationInput: PaginationInput): PaginationPurchaseOrders!
   getTask(id: String!): Task!
   getTasks(filterTaskInput: FilterTaskInput, orderBy: OrderByTaskInput, paginationInput: PaginationInput): PaginationTasks!
   getUserByEmail(email: String!): User!

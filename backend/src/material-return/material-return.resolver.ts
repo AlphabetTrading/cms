@@ -32,26 +32,23 @@ export class MaterialReturnResolver {
     orderBy?: OrderByMaterialReturnInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ) {
-    const where: Prisma.MaterialReturnVoucherWhereInput = {
-      AND: [
+    let approverIds: string[] = [];
+
+    const approvers =
+      await this.materialReturnService.getMaterialReturnApprovers();
+    approverIds = approvers.map((approver) => approver.StoreManager.id);
+
+    try {
+      const baseConditions: Prisma.MaterialReturnVoucherWhereInput[] = [
         {
           id: filterMaterialReturnInput?.id,
         },
         {
           projectId: filterMaterialReturnInput?.projectId,
         },
-        {
-          OR: [
-            {
-              receivedById: user.id,
-            },
-            {
-              returnedById: user.id,
-            },
-          ],
-        },
-
         {
           OR: [
             {
@@ -82,10 +79,28 @@ export class MaterialReturnResolver {
         {
           createdAt: filterMaterialReturnInput?.createdAt,
         },
-      ],
-    };
+      ].filter(Boolean);
 
-    try {
+      if (mine) {
+        baseConditions.push({
+          OR: [
+            { returnedById: user.id },
+            { receivedById: user.id },
+            ...(approverIds.includes(user.id)
+              ? [
+                  {
+                    projectId: filterMaterialReturnInput?.projectId,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
+
+      const where: Prisma.MaterialReturnVoucherWhereInput = {
+        AND: baseConditions,
+      };
+
       const materialReturns =
         await this.materialReturnService.getMaterialReturns({
           where,

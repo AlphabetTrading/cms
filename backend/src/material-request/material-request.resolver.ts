@@ -34,26 +34,27 @@ export class MaterialRequestResolver {
     orderBy?: OrderByMaterialRequestInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ) {
-    const where: Prisma.MaterialRequestVoucherWhereInput = {
-      AND: [
+    let approverIds: string[] = [];
+
+    if (filterMaterialRequestInput?.projectId) {
+      const approvers =
+        await this.materialRequestService.getMaterialRequestApprovers(
+          filterMaterialRequestInput.projectId,
+        );
+      approverIds = approvers.map((approver) => approver.ProjectManager.id);
+    }
+
+    try {
+      const baseConditions: Prisma.MaterialRequestVoucherWhereInput[] = [
         {
           id: filterMaterialRequestInput?.id,
         },
         {
           projectId: filterMaterialRequestInput?.projectId,
         },
-        {
-          OR: [
-            {
-              requestedById: user.id,
-            },
-            {
-              approvedById: user.id,
-            },
-          ],
-        },
-
         {
           OR: [
             {
@@ -81,10 +82,28 @@ export class MaterialRequestResolver {
         {
           createdAt: filterMaterialRequestInput?.createdAt,
         },
-      ],
-    };
+      ].filter(Boolean);
 
-    try {
+      if (mine) {
+        baseConditions.push({
+          OR: [
+            { requestedById: user.id },
+            { approvedById: user.id },
+            ...(approverIds.includes(user.id)
+              ? [
+                  {
+                    projectId: filterMaterialRequestInput?.projectId,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
+
+      const where: Prisma.MaterialRequestVoucherWhereInput = {
+        AND: baseConditions,
+      };
+
       const materialRequests =
         await this.materialRequestService.getMaterialRequests({
           where,

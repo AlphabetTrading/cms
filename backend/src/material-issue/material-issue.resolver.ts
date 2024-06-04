@@ -32,60 +32,56 @@ export class MaterialIssueResolver {
     orderBy?: OrderByMaterialIssueInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ): Promise<PaginationMaterialIssues> {
+    let approverIds: string[] = [];
+
+    const approvers =
+      await this.materialIssueService.getMaterialIssueApprovers();
+    approverIds = approvers.map((approver) => approver.StoreManager.id);
+
     try {
+      const baseConditions: Prisma.MaterialIssueVoucherWhereInput[] = [
+        { id: filterMaterialIssueInput?.id },
+        { projectId: filterMaterialIssueInput?.projectId },
+        {
+          OR: [
+            { serialNumber: filterMaterialIssueInput?.serialNumber },
+            { warehouseStoreId: filterMaterialIssueInput?.warehouseStoreId },
+            { warehouseStore: filterMaterialIssueInput?.warehouseStore },
+            { preparedById: filterMaterialIssueInput?.preparedById },
+            { approvedById: filterMaterialIssueInput?.approvedById },
+            { preparedBy: filterMaterialIssueInput?.preparedBy },
+            { approvedBy: filterMaterialIssueInput?.approvedBy },
+            {
+              status: {
+                in: filterMaterialIssueInput?.status,
+              },
+            },
+          ],
+        },
+        { createdAt: filterMaterialIssueInput?.createdAt },
+      ].filter(Boolean);
+
+      if (mine) {
+        baseConditions.push({
+          OR: [
+            { preparedById: user.id },
+            { approvedById: user.id },
+            ...(approverIds.includes(user.id)
+              ? [
+                  {
+                    projectId: filterMaterialIssueInput?.projectId,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
+
       const where: Prisma.MaterialIssueVoucherWhereInput = {
-        AND: [
-          {
-            id: filterMaterialIssueInput?.id,
-          },
-          {
-            projectId: filterMaterialIssueInput?.projectId,
-          },
-          {
-            OR: [
-              {
-                preparedById: user.id,
-              },
-              {
-                approvedById: user.id,
-              },
-            ],
-          },
-          {
-            OR: [
-              {
-                serialNumber: filterMaterialIssueInput?.serialNumber,
-              },
-              {
-                warehouseStoreId: filterMaterialIssueInput?.warehouseStoreId,
-              },
-              {
-                warehouseStore: filterMaterialIssueInput?.warehouseStore,
-              },
-              {
-                preparedById: filterMaterialIssueInput?.preparedById,
-              },
-              {
-                approvedById: filterMaterialIssueInput?.approvedById,
-              },
-              {
-                preparedBy: filterMaterialIssueInput?.preparedBy,
-              },
-              {
-                approvedBy: filterMaterialIssueInput?.approvedBy,
-              },
-              {
-                status: {
-                  in: filterMaterialIssueInput?.status,
-                },
-              },
-            ],
-          },
-          {
-            createdAt: filterMaterialIssueInput?.createdAt,
-          },
-        ],
+        AND: baseConditions,
       };
 
       const materialIssues = await this.materialIssueService.getMaterialIssues({
@@ -106,6 +102,7 @@ export class MaterialIssueResolver {
         },
       };
     } catch (e) {
+      console.log(e);
       throw new BadRequestException('Error loading material issues!');
     }
   }
