@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
 import { Prisma } from '@prisma/client';
-import { DailyStockBalance } from './model/daily-stock-balance.model';
+import { PrismaService } from 'src/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { DailyStockBalance } from './model/daily-stock-balance.model';
+import { DailyStockBalanceItem } from './model/daily-stock-balance-item.model';
 
 @Injectable()
 export class DailyStockBalanceService {
@@ -35,7 +36,7 @@ export class DailyStockBalanceService {
         await prisma.dailyStockBalance.create({
           data: {
             projectId: project.id,
-            changes: changeSummary,
+            changes: JSON.stringify(changeSummary),
           },
         });
       }
@@ -64,6 +65,47 @@ export class DailyStockBalanceService {
       ...dailyStockBalance,
       changes: JSON.parse(dailyStockBalance.changes as any),
     }));
+  }
+
+  async getDailyStockBalancesById(
+    dailyStockBalanceId: string,
+  ): Promise<DailyStockBalanceItem[]> {
+    const dailyStockBalance = await this.prisma.dailyStockBalance.findUnique({
+      where: { id: dailyStockBalanceId },
+      include: {
+        Project: true,
+      },
+    });
+
+    const changes = JSON.parse(dailyStockBalance.changes.toString());
+
+    const currentStocks = await this.prisma.warehouseProduct.findMany({
+      where: {
+        projectId: dailyStockBalance.projectId,
+      },
+      include: {
+        productVariant: {
+          include: {
+            product: true,
+          },
+        },
+        warehouse: true,
+      },
+    });
+
+    const stockBalances = currentStocks.map((stockItem) => {
+      const dailyStockBalanceItem: DailyStockBalanceItem = {
+        productVariantId: stockItem.productVariantId,
+        previousQuantity: changes[stockItem.productVariantId] || 0,
+        quantityIssuedToday:
+          stockItem.quantity - changes[stockItem.productVariantId] || 0,
+        currentQuantity: stockItem.quantity,
+        productVariant: stockItem.productVariant,
+      };
+      return dailyStockBalanceItem;
+    });
+
+    return stockBalances;
   }
 
   async count(where?: Prisma.DailyStockBalanceWhereInput): Promise<number> {

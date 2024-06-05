@@ -1,15 +1,8 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
-import { Project } from 'src/project/model/project.model';
 
 @ObjectType()
 export class DailyStockBalanceItem {
-  @Field(() => String, { nullable: true })
-  projectId?: string;
-
-  @Field(() => Project, { nullable: true })
-  project?: Project;
-
   @Field(() => String, { nullable: true })
   productVariantId?: string;
 
