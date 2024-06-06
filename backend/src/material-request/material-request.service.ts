@@ -228,9 +228,7 @@ export class MaterialRequestService {
     return existingMaterialRequest;
   }
 
-  async getMaterialRequestApprovers(
-    projectId?: string,
-  ) {
+  async getMaterialRequestApprovers(projectId?: string) {
     const approvers = await this.prisma.project.findMany({
       where: {
         id: projectId,
@@ -242,12 +240,11 @@ export class MaterialRequestService {
     return approvers;
   }
 
-
   async approveMaterialRequest(
     materialRequestId: string,
     userId: string,
     status: ApprovalStatus,
-  ) {
+  ): Promise<MaterialRequestVoucher> {
     const materialRequest = await this.prisma.materialRequestVoucher.findUnique(
       {
         where: { id: materialRequestId },

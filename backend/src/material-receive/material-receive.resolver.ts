@@ -179,7 +179,7 @@ export class MaterialReceiveResolver {
         updateMaterialReceiveInput,
       );
     } catch (e) {
-      throw new BadRequestException('Error updating material receive!');
+      throw new BadRequestException(e.message || 'Error updating material receive!');
     }
   }
 
