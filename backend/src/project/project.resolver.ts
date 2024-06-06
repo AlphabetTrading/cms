@@ -84,7 +84,7 @@ export class ProjectResolver {
         },
       };
     } catch (e) {
-      console.log(e, "ERROR")
+      console.log(e, 'ERROR');
       throw new BadRequestException('Error loading projects!');
     }
   }

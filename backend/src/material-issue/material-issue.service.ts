@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialIssueInput } from './dto/create-material-issue.input';
 import { UpdateMaterialIssueInput } from './dto/update-material-issue.input';
@@ -227,16 +231,14 @@ export class MaterialIssueService {
     return existingMaterialIssue;
   }
 
-  async getMaterialIssueApprovers() // warehouseStoreId: string,
-  // projectId?: string,
-  {
+  async getMaterialIssueApprovers() { // projectId?: string, // warehouseStoreId: string,
     const approvers = await this.prisma.warehouseStoreManager.findMany({
       select: {
         StoreManager: true,
       },
     });
 
-    console.log(approvers, 239)
+    console.log(approvers, 239);
     return approvers;
   }
 
@@ -244,9 +246,16 @@ export class MaterialIssueService {
     materialIssueId: string,
     userId: string,
     status: ApprovalStatus,
-  ) {
+  ): Promise<MaterialIssueVoucher> {
     const materialIssue = await this.prisma.materialIssueVoucher.findUnique({
       where: { id: materialIssueId },
+      include: {
+        items: {
+          include: {
+            productVariant: true,
+          },
+        },
+      },
     });
 
     if (!materialIssue) {
@@ -257,15 +266,54 @@ export class MaterialIssueService {
       throw new NotFoundException('Already decided on this material issue!');
     }
 
-    const updatedMaterialIssue = await this.prisma.materialIssueVoucher.update({
-      where: { id: materialIssueId },
-      data: {
-        approvedById: userId,
-        status: status,
-      },
-    });
+    if (status === ApprovalStatus.COMPLETED) {
+      return await this.prisma.$transaction(async (prisma) => {
+        for (const item of materialIssue.items) {
+          const stock = await prisma.warehouseProduct.findUnique({
+            where: {
+              productVariantId_warehouseId_projectId: {
+                productVariantId: item.productVariantId,
+                warehouseId: materialIssue.warehouseStoreId,
+                projectId: materialIssue.projectId,
+              },
+            },
+          });
 
-    return updatedMaterialIssue;
+          if (!stock || stock.quantity < item.quantity) {
+            throw new ConflictException(
+              `Not enough stock available for ${item.productVariant.variant}`,
+            );
+          }
+
+          await prisma.warehouseProduct.update({
+            where: {
+              id: stock.id,
+              version: stock.version,
+            },
+            data: {
+              quantity: stock.quantity - item.quantity,
+              version: stock.version + 1,
+            },
+          });
+        }
+        const updatedMaterialIssue = await prisma.materialIssueVoucher.update({
+          where: { id: materialIssueId },
+          data: { status: status, approvedById: userId },
+        });
+
+        return updatedMaterialIssue;
+      });
+    } else {
+      const updatedMaterialIssue =
+        await this.prisma.materialIssueVoucher.update({
+          where: { id: materialIssueId },
+          data: {
+            approvedById: userId,
+            status: status,
+          },
+        });
+      return updatedMaterialIssue;
+    }
   }
 
   async count(where?: Prisma.MaterialIssueVoucherWhereInput): Promise<number> {

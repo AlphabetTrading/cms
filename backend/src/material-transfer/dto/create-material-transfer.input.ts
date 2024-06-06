@@ -18,7 +18,7 @@ export class CreateMaterialTransferInput {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  sendingStore?: string;
+  sendingWarehouseStoreId?: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })
@@ -26,7 +26,7 @@ export class CreateMaterialTransferInput {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  receivingStore?: string;
+  receivingWarehouseStoreId?: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

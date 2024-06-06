@@ -24,6 +24,9 @@ import { ProductModule } from './product/product.module';
 import { WarehouseProductModule } from './warehouse-product/warehouse-product.module';
 import { PriceHistoryModule } from './price-history/price-history.module';
 import { ProductVariantModule } from './product-variant/product-variant.module';
+import { DailySiteDataModule } from './daily-site-data/daily-site-data.module';
+import { DailyStockBalanceModule } from './daily-stock-balance/daily-stock-balance.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -38,6 +41,7 @@ import { ProductVariantModule } from './product-variant/product-variant.module';
         res,
       }),
     }),
+    ScheduleModule.forRoot(),
     ConfigModule,
     AuthModule,
     UserModule,
@@ -59,6 +63,8 @@ import { ProductVariantModule } from './product-variant/product-variant.module';
     WarehouseProductModule,
     PriceHistoryModule,
     ProductVariantModule,
+    DailyStockBalanceModule,
+    DailySiteDataModule,
   ],
 })
 export class AppModule {}

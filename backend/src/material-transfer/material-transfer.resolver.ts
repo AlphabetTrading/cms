@@ -66,10 +66,20 @@ export class MaterialTransferResolver {
                 serialNumber: filterMaterialTransferInput?.serialNumber,
               },
               {
-                receivingStore: filterMaterialTransferInput?.receivingStore,
+                receivingWarehouseStoreId:
+                  filterMaterialTransferInput?.receivingWarehouseStoreId,
               },
               {
-                sendingStore: filterMaterialTransferInput?.sendingStore,
+                receivingWarehouseStore:
+                  filterMaterialTransferInput?.receivingWarehouseStore,
+              },
+              {
+                sendingWarehouseStoreId:
+                  filterMaterialTransferInput?.sendingWarehouseStoreId,
+              },
+              {
+                sendingWarehouseStore:
+                  filterMaterialTransferInput?.sendingWarehouseStore,
               },
               {
                 preparedById: filterMaterialTransferInput?.preparedById,

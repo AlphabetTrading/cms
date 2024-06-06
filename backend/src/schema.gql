@@ -19,6 +19,11 @@ type Auth {
   userId: String!
 }
 
+input CreateDailySiteDatumInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateMaterialIssueInput {
   approvedById: String
   items: [CreateMaterialIssueItemInput!]!
@@ -74,7 +79,7 @@ input CreateMaterialReturnInput {
   items: [CreateMaterialReturnItemInput!]!
   projectId: String!
   receivedById: String
-  receivingStore: String!
+  receivingWarehouseStoreId: String!
   returnedById: String!
 }
 
@@ -94,9 +99,9 @@ input CreateMaterialTransferInput {
   materialReceiveId: String!
   preparedById: String!
   projectId: String!
-  receivingStore: String
+  receivingWarehouseStoreId: String
   requisitionNumber: String
-  sendingStore: String
+  sendingWarehouseStoreId: String
   sentThroughName: String
   vehiclePlateNo: String
 }
@@ -213,6 +218,32 @@ input CreateWarehouseStoreInput {
   name: String!
 }
 
+type DailySiteDatum {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type DailyStockBalance {
+  changes: JSONObject!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  project: Project
+  projectId: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type DailyStockBalanceItem {
+  currentQuantity: Float
+  previousQuantity: Float
+  productVariant: ProductVariant
+  productVariantId: String
+  quantityIssuedToday: Float
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -240,6 +271,14 @@ enum DocumentType {
   MATERIAL_RETURN
   MATERIAL_TRANSFER
   PURCHASE_ORDER
+}
+
+input FilterDailyStockBalanceInput {
+  createdAt: DateTimeFilter
+  id: String
+  project: FilterProjectInput
+  projectId: String
+  updatedAt: DateTimeFilter
 }
 
 input FilterMaterialIssueInput {
@@ -296,7 +335,8 @@ input FilterMaterialReturnInput {
   projectId: String
   receivedBy: FilterUserDocumentsInput
   receivedById: String
-  receivingStore: StringFilter
+  receivingWarehouseStore: FilterWarehouseProductInput
+  receivingWarehouseStoreId: String
   returnedBy: FilterUserDocumentsInput
   returnedById: String
   serialNumber: StringFilter
@@ -312,8 +352,10 @@ input FilterMaterialTransferInput {
   preparedById: String
   project: FilterProjectInput
   projectId: String
-  receivingStore: StringFilter
-  sendingStore: StringFilter
+  receivingWarehouseStore: FilterWarehouseStoreInput
+  receivingWarehouseStoreId: String
+  sendingWarehouseStore: FilterWarehouseStoreInput
+  sendingWarehouseStoreId: String
   serialNumber: StringFilter
   status: [ApprovalStatus!]
 }
@@ -427,6 +469,11 @@ input FilterWarehouseStoreInput {
   location: StringFilter
   name: StringFilter
 }
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 """
 A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
@@ -560,7 +607,8 @@ type MaterialReturnVoucher {
   projectId: String
   receivedBy: User
   receivedById: String
-  receivingStore: String
+  receivingWarehouseStore: WarehouseStore
+  receivingWarehouseStoreId: String
   returnedBy: User
   returnedById: String
   serialNumber: String
@@ -602,8 +650,12 @@ type MaterialTransferVoucher {
   preparedById: String
   projectId: String
   receivingStore: String
+  receivingWarehouseStore: WarehouseStore
+  receivingWarehouseStoreId: String
   requisitionNumber: String
   sendingStore: String
+  sendingWarehouseStore: WarehouseStore
+  sendingWarehouseStoreId: String
   sentThroughName: String
   serialNumber: String
   status: ApprovalStatus
@@ -636,6 +688,7 @@ type Mutation {
   approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
   approveMaterialTransfer(decision: ApprovalStatus!, materialTransferId: String!): MaterialTransferVoucher!
   approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
+  createDailySiteDatum(createDailySiteDatumInput: CreateDailySiteDatumInput!): DailySiteDatum!
   createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
   createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
@@ -671,6 +724,8 @@ type Mutation {
   deleteWarehouseStore(id: String!): WarehouseStore!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
+  removeDailySiteDatum(id: Int!): DailySiteDatum!
+  updateDailySiteDatum(updateDailySiteDatumInput: UpdateDailySiteDatumInput!): DailySiteDatum!
   updateMaterialIssue(updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
   updateMaterialReceive(updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
@@ -696,6 +751,11 @@ input NumberFilter {
   gte: Float
   lt: Float
   lte: Float
+}
+
+input OrderByDailyStockBalanceInput {
+  createdAt: OrderDirection
+  updatedAt: OrderDirection
 }
 
 input OrderByMaterialIssueInput {
@@ -801,6 +861,11 @@ Possible directions in which to order a list of items when provided an `orderBy`
 enum OrderDirection {
   asc
   desc
+}
+
+type PaginationDailyStockBalances {
+  items: [DailyStockBalance!]!
+  meta: PaginationInfo
 }
 
 type PaginationInfo {
@@ -1017,8 +1082,12 @@ type PurchaseOrderVoucher {
 }
 
 type Query {
+  dailySiteData: [DailySiteDatum!]!
+  dailySiteDatum(id: Int!): DailySiteDatum!
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
   getAllWarehouseProductsStock(projectId: String!): [WarehouseProductStock!]!
+  getDailyStockBalaceById(id: String!): [DailyStockBalanceItem!]!
+  getDailyStockBalances(filterDailyStockBalanceInput: FilterDailyStockBalanceInput, orderBy: OrderByDailyStockBalanceInput, paginationInput: PaginationInput): PaginationDailyStockBalances!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, mine: Boolean! = false, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -1123,6 +1192,12 @@ enum UnitOfMeasure {
   QUINTAL
 }
 
+input UpdateDailySiteDatumInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
 input UpdateMaterialIssueInput {
   approved: ApprovalStatus
   approvedById: String
@@ -1185,7 +1260,7 @@ input UpdateMaterialReturnInput {
   items: [UpdateMaterialReturnItemInput!]
   projectId: String
   receivedById: String
-  receivingStore: String
+  receivingWarehouseStoreId: String
   returnedById: String
   status: String
 }
@@ -1207,9 +1282,9 @@ input UpdateMaterialTransferInput {
   materialReceiveId: String
   preparedById: String
   projectId: String
-  receivingStore: String
+  receivingWarehouseStoreId: String
   requisitionNumber: String
-  sendingStore: String
+  sendingWarehouseStoreId: String
   sentThroughName: String
   vehiclePlateNo: String
 }

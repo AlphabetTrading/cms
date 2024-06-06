@@ -30,13 +30,16 @@ model User {
   MaterialRequestVouchersApproved  MaterialRequestVoucher[]  @relation("ApprovedByRequest")
   MaterialReturnVouchers           MaterialReturnVoucher[]   @relation("ReturnedByReturn")
   MaterialReturnVouchersReceived   MaterialReturnVoucher[]   @relation("ReceivedByReturn")
+  MaterialTransferVoucherPrepared  MaterialTransferVoucher[] @relation("PreparedByTransfer")
+  MaterialTransferVoucherApproved  MaterialTransferVoucher[] @relation("ApprovedByTransfer")
   ProjectClient                    Project[]                 @relation("Client")
   ProjectProjectManager            Project[]                 @relation("ProjectManager")
   Task                             Task[]
   ProjectUser                      ProjectUser[]
   WarehouseStoreManager            WarehouseStoreManager[]
-  MaterialTransferVoucherPrepared  MaterialTransferVoucher[] @relation("PreparedByTransfer")
-  MaterialTransferVoucherApproved  MaterialTransferVoucher[] @relation("ApprovedByTransfer")
+  DailySiteDataPrepared            DailySiteData[]           @relation("PreparedByDailySiteData")
+  DailySiteDataChecked             DailySiteData[]           @relation("CheckedByDailySiteData")
+  DailySiteDataApproved            DailySiteData[]           @relation("ApprovedByDailySiteData")
 }
 
 model ProjectUser {
@@ -63,23 +66,25 @@ model Product {
 }
 
 model ProductVariant {
-  id                   String                 @id @default(uuid())
-  productId            String
-  product              Product                @relation(fields: [productId], references: [id])
-  variant              String
-  description          String?
-  unitOfMeasure        UnitOfMeasure
-  PriceHistory         PriceHistory[]
-  WarehouseProduct     WarehouseProduct[]
-  MaterialRequestItem  MaterialRequestItem[]
-  MaterialReceiveItem  MaterialReceiveItem[]
-  IssueVoucherItem     IssueVoucherItem[]
-  ReturnVoucherItem    ReturnVoucherItem[]
-  PurchaseOrderItem    PurchaseOrderItem[]
-  MaterialTransferItem MaterialTransferItem[]
+  id                         String                       @id @default(uuid())
+  productId                  String
+  product                    Product                      @relation(fields: [productId], references: [id])
+  variant                    String
+  description                String?
+  unitOfMeasure              UnitOfMeasure
+  PriceHistory               PriceHistory[]
+  WarehouseProduct           WarehouseProduct[]
+  MaterialRequestItem        MaterialRequestItem[]
+  MaterialReceiveItem        MaterialReceiveItem[]
+  ReturnVoucherItem          ReturnVoucherItem[]
+  PurchaseOrderItem          PurchaseOrderItem[]
+  MaterialTransferItem       MaterialTransferItem[]
+  DailySiteDataTaskMaterial  DailySiteDataTaskMaterial[]
+  DailySiteDataTaskEquipment DailySiteDataTaskEquipment[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  IssueVoucherItem IssueVoucherItem[]
 
   @@unique([productId, variant])
 }
@@ -93,8 +98,11 @@ model WarehouseStore {
   MaterialIssueVoucher   MaterialIssueVoucher[]
   WarehouseStoreManager  WarehouseStoreManager[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt                        DateTime                  @default(now())
+  updatedAt                        DateTime                  @updatedAt
+  MaterialReturnVoucher            MaterialReturnVoucher[]
+  MaterialTransferVoucherSending   MaterialTransferVoucher[] @relation("SendingWarehouseStore")
+  MaterialTransferVoucherReceiving MaterialTransferVoucher[] @relation("ReceivingWarehouseStore")
 
   @@unique([name, location])
 }
@@ -119,6 +127,7 @@ model WarehouseProduct {
   warehouse        WarehouseStore @relation(fields: [warehouseId], references: [id])
   projectId        String
   project          Project        @relation(fields: [projectId], references: [id])
+  version          Int            @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -195,17 +204,18 @@ model PurchaseOrderItem {
 }
 
 model MaterialReturnVoucher {
-  id             String              @id @default(uuid())
-  serialNumber   String              @unique
-  projectId      String
-  Project        Project             @relation(fields: [projectId], references: [id])
-  receivingStore String
-  items          ReturnVoucherItem[]
-  status         ApprovalStatus      @default(PENDING)
-  returnedById   String
-  returnedBy     User                @relation(fields: [returnedById], references: [id], name: "ReturnedByReturn")
-  receivedById   String?
-  receivedBy     User?               @relation(fields: [receivedById], references: [id], name: "ReceivedByReturn")
+  id                        String              @id @default(uuid())
+  serialNumber              String              @unique
+  projectId                 String
+  Project                   Project             @relation(fields: [projectId], references: [id])
+  receivingWarehouseStoreId String
+  receivingWarehouseStore   WarehouseStore      @relation(fields: [receivingWarehouseStoreId], references: [id])
+  items                     ReturnVoucherItem[]
+  status                    ApprovalStatus      @default(PENDING)
+  returnedById              String
+  returnedBy                User                @relation(fields: [returnedById], references: [id], name: "ReturnedByReturn")
+  receivedById              String?
+  receivedBy                User?               @relation(fields: [receivedById], references: [id], name: "ReceivedByReturn")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -312,24 +322,26 @@ model MaterialReceiveItem {
 }
 
 model MaterialTransferVoucher {
-  id                String                 @id @default(uuid())
-  serialNumber      String                 @unique
-  projectId         String
-  Project           Project                @relation(fields: [projectId], references: [id])
-  requisitionNumber String?
-  materialGroup     String?
-  sendingStore      String?
-  receivingStore    String?
-  vehiclePlateNo    String?
-  materialReceiveId String
-  materialReceive   MaterialReceiveVoucher @relation(fields: [materialReceiveId], references: [id], onDelete: Cascade)
-  items             MaterialTransferItem[]
-  preparedById      String
-  preparedBy        User                   @relation(fields: [preparedById], references: [id], name: "PreparedByTransfer")
-  approvedById      String?
-  approvedBy        User?                  @relation(fields: [approvedById], references: [id], name: "ApprovedByTransfer")
-  sentThroughName   String?
-  status            ApprovalStatus         @default(PENDING)
+  id                        String                 @id @default(uuid())
+  serialNumber              String                 @unique
+  projectId                 String
+  Project                   Project                @relation(fields: [projectId], references: [id])
+  requisitionNumber         String?
+  materialGroup             String?
+  sendingWarehouseStoreId   String?
+  receivingWarehouseStoreId String?
+  sendingWarehouseStore     WarehouseStore?        @relation(fields: [sendingWarehouseStoreId], references: [id], name: "SendingWarehouseStore")
+  receivingWarehouseStore   WarehouseStore?        @relation(fields: [receivingWarehouseStoreId], references: [id], name: "ReceivingWarehouseStore")
+  vehiclePlateNo            String?
+  materialReceiveId         String
+  materialReceive           MaterialReceiveVoucher @relation(fields: [materialReceiveId], references: [id], onDelete: Cascade)
+  items                     MaterialTransferItem[]
+  preparedById              String
+  preparedBy                User                   @relation(fields: [preparedById], references: [id], name: "PreparedByTransfer")
+  approvedById              String?
+  approvedBy                User?                  @relation(fields: [approvedById], references: [id], name: "ApprovedByTransfer")
+  sentThroughName           String?
+  status                    ApprovalStatus         @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -387,6 +399,94 @@ model MaterialRequestItem {
   @@unique([id, productVariantId])
 }
 
+model DailyStockBalance {
+  id        String  @id @default(uuid())
+  projectId String
+  Project   Project @relation(fields: [projectId], references: [id])
+  changes   Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DailySiteData {
+  id           String              @id @default(uuid())
+  projectId    String
+  Project      Project             @relation(fields: [projectId], references: [id])
+  contractor   String?
+  tasks        DailySiteDataTask[]
+  preparedById String
+  preparedBy   User                @relation(fields: [preparedById], references: [id], name: "PreparedByDailySiteData")
+  checkedById  String?
+  checkedBy    User?               @relation(fields: [checkedById], references: [id], name: "CheckedByDailySiteData")
+  approvedById String?
+  approvedBy   User?               @relation(fields: [approvedById], references: [id], name: "ApprovedByDailySiteData")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DailySiteDataTask {
+  id               String                       @id @default(uuid())
+  executedBy       String?
+  description      String
+  executedQuantity Float?
+  unit             String?
+  laborDetails     DailySiteDataTaskLabor[]
+  materialDetails  DailySiteDataTaskMaterial[]
+  equipmentDetails DailySiteDataTaskEquipment[]
+  dailySiteDataId  String
+  DailySiteData    DailySiteData                @relation(fields: [dailySiteDataId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DailySiteDataTaskLabor {
+  id                  String            @id @default(uuid())
+  trade               String?
+  morning             Float?
+  afternoon           Float?
+  overtime            Float?
+  dailySiteDataTaskId String
+  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, trade])
+}
+
+model DailySiteDataTaskMaterial {
+  id                  String            @id @default(uuid())
+  productVariantId    String
+  productVariant      ProductVariant    @relation(fields: [productVariantId], references: [id])
+  quantity            Float
+  dailySiteDataTaskId String
+  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, productVariantId])
+}
+
+model DailySiteDataTaskEquipment {
+  id                  String            @id @default(uuid())
+  productVariantId    String
+  productVariant      ProductVariant    @relation(fields: [productVariantId], references: [id])
+  quantity            Float
+  morning             Float?
+  afternoon           Float?
+  dailySiteDataTaskId String
+  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, productVariantId])
+}
+
 model Project {
   id                      String                    @id @default(uuid())
   name                    String                    @unique
@@ -409,6 +509,8 @@ model Project {
   Proforma                Proforma[]
   PriceHistory            PriceHistory[]
   WarehouseProduct        WarehouseProduct[]
+  DailyStockBalance       DailyStockBalance[]
+  DailySiteData           DailySiteData[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

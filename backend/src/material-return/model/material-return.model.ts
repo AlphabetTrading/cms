@@ -4,6 +4,7 @@ import { BaseModel } from 'src/common/models/base.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
+import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model';
 
 @ObjectType()
 export class MaterialReturnVoucher extends BaseModel {
@@ -17,7 +18,10 @@ export class MaterialReturnVoucher extends BaseModel {
   serialNumber?: string;
 
   @Field(() => String, { nullable: true })
-  receivingStore?: string;
+  receivingWarehouseStoreId?: string;
+
+  @Field(() => WarehouseStore, { nullable: true })
+  receivingWarehouseStore?: WarehouseStore;
 
   @Field(() => [MaterialReturnItem])
   items?: MaterialReturnItem[];

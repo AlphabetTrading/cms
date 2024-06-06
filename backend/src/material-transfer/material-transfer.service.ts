@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialTransferInput } from './dto/create-material-transfer.input';
 import { UpdateMaterialTransferInput } from './dto/update-material-transfer.input';
@@ -233,6 +237,9 @@ export class MaterialTransferService {
     const materialTransfer =
       await this.prisma.materialTransferVoucher.findUnique({
         where: { id: materialTransferId },
+        include: {
+          items: true,
+        },
       });
 
     if (!materialTransfer) {
@@ -243,16 +250,98 @@ export class MaterialTransferService {
       throw new NotFoundException('Already decided on this material transfer!');
     }
 
-    const updatedMaterialTransfer =
-      await this.prisma.materialTransferVoucher.update({
-        where: { id: materialTransferId },
-        data: {
-          approvedById: userId,
-          status: status,
-        },
-      });
+    if (status === ApprovalStatus.COMPLETED) {
+      await this.prisma.$transaction(async (prisma) => {
+        for (const item of materialTransfer.items) {
+          const outgoingStock = await prisma.warehouseProduct.findUnique({
+            where: {
+              productVariantId_warehouseId_projectId: {
+                productVariantId: item.productVariantId,
+                warehouseId: materialTransfer.sendingWarehouseStoreId,
+                projectId: materialTransfer.projectId,
+              },
+            },
+          });
 
-    return updatedMaterialTransfer;
+          if (
+            !outgoingStock ||
+            outgoingStock.quantity < item.quantityRequested
+          ) {
+            throw new ConflictException(
+              `Not enough stock available for product variant ID ${item.productVariantId}`,
+            );
+          }
+          await prisma.warehouseProduct.update({
+            where: {
+              id: outgoingStock.id,
+              version: outgoingStock.version,
+            },
+            data: {
+              quantity: outgoingStock.quantity - item.quantityTransferred,
+              version: outgoingStock.version + 1,
+            },
+          });
+
+          const incomingStock = await prisma.warehouseProduct.findUnique({
+            where: {
+              productVariantId_warehouseId_projectId: {
+                productVariantId: item.productVariantId,
+                warehouseId: materialTransfer.receivingWarehouseStoreId,
+                projectId: materialTransfer.projectId,
+              },
+            },
+          });
+
+          if (!incomingStock) {
+            await prisma.warehouseProduct.create({
+              data: {
+                projectId: materialTransfer.projectId,
+                warehouseId: materialTransfer.receivingWarehouseStoreId,
+                productVariantId: item.productVariantId,
+                quantity: item.quantityTransferred,
+                currentPrice: item.unitCost,
+              },
+            });
+          } else {
+            const totalValueOfExistingStock =
+              incomingStock.currentPrice * incomingStock.quantity;
+            const totalValueOfNewStock =
+              item.unitCost * item.quantityTransferred;
+            const totalQuantityOfStock =
+              incomingStock.quantity + item.quantityTransferred;
+            const newAveragePrice =
+              (totalValueOfExistingStock + totalValueOfNewStock) /
+              totalQuantityOfStock;
+
+            await prisma.warehouseProduct.update({
+              where: { id: incomingStock.id },
+              data: {
+                quantity: totalQuantityOfStock,
+                currentPrice: newAveragePrice,
+              },
+            });
+          }
+        }
+
+        const updatedMaterialTransfer =
+          await prisma.materialTransferVoucher.update({
+            where: { id: materialTransferId },
+            data: { status: status, approvedById: userId },
+          });
+
+        return updatedMaterialTransfer;
+      });
+    } else {
+      const updatedMaterialTransfer =
+        await this.prisma.materialReceiveVoucher.update({
+          where: { id: materialTransferId },
+          data: {
+            approvedById: userId,
+            status: status,
+          },
+        });
+      return updatedMaterialTransfer;
+    }
   }
 
   async count(

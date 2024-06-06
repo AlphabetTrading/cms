@@ -5,6 +5,7 @@ import { registerEnumType } from '@nestjs/graphql';
 import { ApprovalStatus, Prisma } from '@prisma/client';
 import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 import { FilterProjectInput } from 'src/project/dto/filter-project.input';
+import { FilterWarehouseStoreInput } from 'src/warehouse-store/dto/filter-warehouse-store.input';
 
 registerEnumType(ApprovalStatus, {
   name: 'ApprovalStatus',
@@ -25,11 +26,17 @@ export class FilterMaterialTransferInput {
   @Field(() => StringFilter, { nullable: true })
   serialNumber?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  receivingStore?: StringFilter;
+  @Field({ nullable: true })
+  receivingWarehouseStoreId?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  sendingStore?: StringFilter;
+  @Field(() => FilterWarehouseStoreInput, { nullable: true })
+  receivingWarehouseStore?: Prisma.WarehouseStoreWhereInput;
+
+  @Field({ nullable: true })
+  sendingWarehouseStoreId?: string;
+
+  @Field(() => FilterWarehouseStoreInput, { nullable: true })
+  sendingWarehouseStore?: Prisma.WarehouseStoreWhereInput;
 
   @Field(() => String, { nullable: true })
   preparedById?: string;
