@@ -541,7 +541,7 @@ type MaterialReturnItem {
   materialReturnVoucherId: String
   productVariant: ProductVariant
   productVariantId: String
-  quantityReturned: Float
+  quantity: Float
   remark: String
   totalCost: Float
   unitCost: Float
@@ -983,7 +983,7 @@ type PurchaseOrderItem {
   productVariant: ProductVariant
   productVariantId: String
   purchaseOrderId: String
-  quantityRequested: Float
+  quantity: Float
   remark: String
   totalPrice: Float
   unitPrice: Float
@@ -994,6 +994,7 @@ type PurchaseOrderItem {
 
 type PurchaseOrderVoucher {
   Project: Project
+  approvedBy: User
   approvedById: String
 
   """Identifies the date and time when the object was created."""
@@ -1002,6 +1003,7 @@ type PurchaseOrderVoucher {
   id: ID!
   items: [PurchaseOrderItem!]
   materialRequestId: String
+  preparedBy: User
   preparedById: String
   projectId: String
   serialNumber: String

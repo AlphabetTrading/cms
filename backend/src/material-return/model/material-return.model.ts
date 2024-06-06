@@ -53,7 +53,7 @@ export class MaterialReturnItem extends BaseModel {
   issueVoucherId?: string;
 
   @Field(() => Number, { nullable: true })
-  quantityReturned?: number;
+  quantity?: number;
 
   @Field(() => Number, { nullable: true })
   unitCost?: number;

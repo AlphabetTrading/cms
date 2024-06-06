@@ -3,6 +3,7 @@ import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
+import { User } from 'src/user/user.model';
 
 @ObjectType()
 export class PurchaseOrderVoucher extends BaseModel {
@@ -36,8 +37,14 @@ export class PurchaseOrderVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   preparedById?: string;
 
+  @Field(() => User, { nullable: true })
+  preparedBy?: User;
+
   @Field(() => String, { nullable: true })
   approvedById?: string;
+
+  @Field(() => User, { nullable: true })
+  approvedBy?: User;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,
@@ -55,7 +62,7 @@ export class PurchaseOrderItem extends BaseModel {
   productVariant?: ProductVariant;
 
   @Field(() => Number, { nullable: true })
-  quantityRequested?: number;
+  quantity?: number;
 
   @Field(() => Number, { nullable: true })
   unitPrice?: number;

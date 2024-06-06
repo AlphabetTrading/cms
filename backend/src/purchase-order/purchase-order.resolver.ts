@@ -12,11 +12,11 @@ import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { UserEntity } from 'src/common/decorators';
 
+@UseGuards(GqlAuthGuard)
 @Resolver('PurchaseOrder')
 export class PurchaseOrderResolver {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => PaginationPurchaseOrders)
   async getPurchaseOrders(
     @UserEntity() user: User,
@@ -71,10 +71,10 @@ export class PurchaseOrderResolver {
               subTotal: filterPurchaseOrderInput?.subTotal,
             },
             {
-              preparedById: filterPurchaseOrderInput?.preparedById || user.id,
+              preparedById: filterPurchaseOrderInput?.preparedById,
             },
             {
-              approvedById: filterPurchaseOrderInput?.approvedById || user.id,
+              approvedById: filterPurchaseOrderInput?.approvedById,
             },
             {
               preparedBy: filterPurchaseOrderInput?.preparedBy,
