@@ -159,15 +159,17 @@ export class MaterialIssueResolver {
     @Args('materialIssueId') materialIssueId: string,
     @Args('decision', { type: () => ApprovalStatus })
     decision: ApprovalStatus,
-  ) {
+  ): Promise<MaterialIssueVoucher> {
     try {
-      return this.materialIssueService.approveMaterialIssue(
+      return await this.materialIssueService.approveMaterialIssue(
         materialIssueId,
         user.id,
         decision,
       );
     } catch (e) {
-      throw new BadRequestException('Error approving material issue!');
+      throw new BadRequestException(
+        e.message || 'Error approving material issue!',
+      );
     }
   }
 }

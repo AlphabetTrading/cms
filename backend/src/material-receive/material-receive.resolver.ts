@@ -189,9 +189,9 @@ export class MaterialReceiveResolver {
     @Args('materialReceiveId') materialReceiveId: string,
     @Args('decision', { type: () => ApprovalStatus })
     decision: ApprovalStatus,
-  ) {
+  ): Promise<MaterialReceiveVoucher> {
     try {
-      return this.materialReceiveService.approveMaterialReceive(
+      return await this.materialReceiveService.approveMaterialReceive(
         materialReceiveId,
         user.id,
         decision,
@@ -204,7 +204,7 @@ export class MaterialReceiveResolver {
   @Mutation(() => MaterialReceiveVoucher)
   async deleteMaterialReceive(@Args('id') materialReceiveId: string) {
     try {
-      return this.materialReceiveService.deleteMaterialReceive(
+      return await this.materialReceiveService.deleteMaterialReceive(
         materialReceiveId,
       );
     } catch (e) {

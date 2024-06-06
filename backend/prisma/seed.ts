@@ -1,4 +1,4 @@
-import { ApprovalStatus, PrismaClient, UserRole } from '@prisma/client';
+import { ApprovalStatus, PrismaClient, SuperStructureUseDescription, UseType, UserRole } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -949,31 +949,42 @@ async function seedMaterialIssueVouchers() {
           },
         ];
 
-        const productVariants = await prisma.productVariant.findMany();
-
+        
         for (const data of issueVouchers) {
+          const warehouseProducts = await prisma.warehouseProduct.findMany({
+            where: {
+              projectId: project.id, 
+              warehouseId: data.warehouseStoreId
+            },
+          });
+          const items = []
+          for (const product of warehouseProducts.slice(0, 2)) {
+            items.push(
+              {
+                quantity:
+                  Math.floor(
+                    Math.random() * (product.quantity - 1),
+                  ) + 1,
+                productVariant: {
+                  connect: { id: product.productVariantId },
+                },
+                useType: UseType.SUPER_STRUCTURE,
+                superStructureDescription: SuperStructureUseDescription.SANITARY_INSTALLATION,
+                totalCost: 0,
+                unitCost: product.currentPrice,
+              }
+            )
+          }
+
+          for (const item of items) {
+            item.totalCost = item.quantity * item.unitCost;
+          }
+
           await prisma.materialIssueVoucher.create({
             data: {
               ...data,
               items: {
-                create: [
-                  {
-                    quantity: 2,
-                    productVariantId: productVariants[0].id,
-                    useType: 'SUPER_STRUCTURE',
-                    superStructureDescription: 'SANITARY_INSTALLATION',
-                    totalCost: 100,
-                    unitCost: 50,
-                  },
-                  {
-                    quantity: 20,
-                    productVariantId: productVariants[1].id,
-                    useType: 'SUB_STRUCTURE',
-                    subStructureDescription: 'CONCRETE_WORK',
-                    totalCost: 100,
-                    unitCost: 5,
-                  },
-                ],
+                create: items,
               },
             },
           });
@@ -1003,7 +1014,12 @@ async function seedMaterialReturnVouchers() {
     where: { role: 'STORE_MANAGER' },
   });
   const warehouse_stores = await prisma.warehouseStore.findMany();
-  const material_issues = await prisma.materialIssueVoucher.findMany();
+  const material_issues = await prisma.materialIssueVoucher.findMany({
+    include: {
+      items: true,
+      warehouseStore: true
+    }
+  });
   try {
     for (const project of projects) {
       const site_managers = await prisma.user.findMany({
@@ -1079,11 +1095,11 @@ async function seedMaterialReturnVouchers() {
                     quantity: 10,
                     issueVoucherId: material_issues[0].id,
                     productVariantId: productVariants[0].id,
-                    totalCost: 100,
+                    totalCost: 500,
                     unitCost: 50,
                   },
                   {
-                    quantity: 10,
+                    quantity: 20,
                     issueVoucherId: material_issues[1].id,
                     productVariantId: productVariants[1].id,
                     totalCost: 100,
@@ -1200,12 +1216,12 @@ async function seedMaterialReceiveVouchers() {
                     quantity: 10,
                     productVariantId: productVariants[0].id,
                     totalCost: 100,
-                    unitCost: 50,
+                    unitCost: 10,
                   },
                   {
                     quantity: 10,
                     productVariantId: productVariants[1].id,
-                    totalCost: 100,
+                    totalCost: 50,
                     unitCost: 5,
                   },
                   {

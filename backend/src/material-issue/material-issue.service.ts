@@ -231,16 +231,14 @@ export class MaterialIssueService {
     return existingMaterialIssue;
   }
 
-  async getMaterialIssueApprovers() // warehouseStoreId: string,
-  // projectId?: string,
-  {
+  async getMaterialIssueApprovers() { // projectId?: string, // warehouseStoreId: string,
     const approvers = await this.prisma.warehouseStoreManager.findMany({
       select: {
         StoreManager: true,
       },
     });
 
-    console.log(approvers, 239)
+    console.log(approvers, 239);
     return approvers;
   }
 
@@ -248,10 +246,16 @@ export class MaterialIssueService {
     materialIssueId: string,
     userId: string,
     status: ApprovalStatus,
-  ) {
+  ): Promise<MaterialIssueVoucher> {
     const materialIssue = await this.prisma.materialIssueVoucher.findUnique({
       where: { id: materialIssueId },
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            productVariant: true,
+          },
+        },
+      },
     });
 
     if (!materialIssue) {
@@ -263,7 +267,7 @@ export class MaterialIssueService {
     }
 
     if (status === ApprovalStatus.COMPLETED) {
-      await this.prisma.$transaction(async (prisma) => {
+      return await this.prisma.$transaction(async (prisma) => {
         for (const item of materialIssue.items) {
           const stock = await prisma.warehouseProduct.findUnique({
             where: {
@@ -277,7 +281,7 @@ export class MaterialIssueService {
 
           if (!stock || stock.quantity < item.quantity) {
             throw new ConflictException(
-              `Not enough stock available for product variant ID ${item.productVariantId}`,
+              `Not enough stock available for ${item.productVariant.variant}`,
             );
           }
 

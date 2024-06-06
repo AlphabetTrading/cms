@@ -238,9 +238,7 @@ export class MaterialReceiveService {
     return existingMaterialReceive;
   }
 
-  async getMaterialReceiveApprovers(
-    projectId?: string,
-  ) {
+  async getMaterialReceiveApprovers(projectId?: string) {
     const approvers = await this.prisma.project.findMany({
       where: {
         id: projectId,
@@ -256,7 +254,7 @@ export class MaterialReceiveService {
     materialReceiveId: string,
     userId: string,
     status: ApprovalStatus,
-  ) {
+  ): Promise<MaterialReceiveVoucher> {
     const materialReceive = await this.prisma.materialReceiveVoucher.findUnique(
       {
         where: { id: materialReceiveId },
@@ -273,7 +271,7 @@ export class MaterialReceiveService {
     }
 
     if (status === ApprovalStatus.COMPLETED) {
-      await this.prisma.$transaction(async (prisma) => {
+      return await this.prisma.$transaction(async (prisma) => {
         for (const item of materialReceive.items) {
           const stock = await prisma.warehouseProduct.findUnique({
             where: {
