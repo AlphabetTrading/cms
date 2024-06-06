@@ -1598,36 +1598,39 @@ async function seedMaterialTransferVouchers() {
           },
         ];
 
-        const productVariants = await prisma.productVariant.findMany();
-
         for (const data of transferVouchers) {
+          const warehouseProducts = await prisma.warehouseProduct.findMany({
+            where: {
+              projectId: project.id, 
+              warehouseId: data.sendingWarehouseStoreId
+            },
+          });
+          const items = []
+          for (const product of warehouseProducts.slice(0, 2)) {
+            items.push(
+              {
+                quantityTransferred: Math.floor(
+                  Math.random() * (product.quantity - 1),
+                ) + 1,
+                quantityRequested: 10,
+                totalCost: 0,
+                unitCost: product.currentPrice,
+                productVariant: {
+                  connect: { id: product.productVariantId },
+                },
+              }
+            )
+          }
+
+          for (const item of items) {
+            item.totalCost = item.quantity * item.unitCost;
+          }
+
           await prisma.materialTransferVoucher.create({
             data: {
               ...data,
               items: {
-                create: [
-                  {
-                    productVariantId: productVariants[0].id,
-                    quantityTransferred: 8,
-                    quantityRequested: 10,
-                    totalCost: 400,
-                    unitCost: 50,
-                  },
-                  {
-                    productVariantId: productVariants[1].id,
-                    quantityTransferred: 5,
-                    quantityRequested: 5,
-                    totalCost: 100,
-                    unitCost: 20,
-                  },
-                  {
-                    productVariantId: productVariants[2].id,
-                    quantityTransferred: 2,
-                    quantityRequested: 12,
-                    totalCost: 250,
-                    unitCost: 125,
-                  },
-                ],
+                create: items,
               },
             },
           });

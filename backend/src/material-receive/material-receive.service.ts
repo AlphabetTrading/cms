@@ -258,7 +258,13 @@ export class MaterialReceiveService {
     const materialReceive = await this.prisma.materialReceiveVoucher.findUnique(
       {
         where: { id: materialReceiveId },
-        include: { items: true },
+        include: {
+          items: {
+            include: {
+              productVariant: true,
+            },
+          },
+        },
       },
     );
 

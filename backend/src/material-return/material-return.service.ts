@@ -239,11 +239,15 @@ export class MaterialReturnService {
     materialReturnId: string,
     userId: string,
     status: ApprovalStatus,
-  ) {
+  ): Promise<MaterialReturnVoucher> {
     const materialReturn = await this.prisma.materialReturnVoucher.findUnique({
       where: { id: materialReturnId },
       include: {
-        items: true,
+        items: {
+          include: {
+            productVariant: true,
+          },
+        },
       },
     });
 
@@ -256,7 +260,7 @@ export class MaterialReturnService {
     }
 
     if (status === ApprovalStatus.COMPLETED) {
-      await this.prisma.$transaction(async (prisma) => {
+      return await this.prisma.$transaction(async (prisma) => {
         for (const item of materialReturn.items) {
           const stock = await prisma.warehouseProduct.findUnique({
             where: {

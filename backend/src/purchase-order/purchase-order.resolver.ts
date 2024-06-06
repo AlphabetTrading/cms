@@ -196,7 +196,7 @@ export class PurchaseOrderResolver {
         decision,
       );
     } catch (e) {
-      throw new BadRequestException('Error approving purchase order!');
+      throw new BadRequestException(e.message || 'Error approving purchase order!');
     }
   }
 }

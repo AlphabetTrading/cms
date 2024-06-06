@@ -193,7 +193,7 @@ export class MaterialTransferResolver {
         decision,
       );
     } catch (e) {
-      throw new BadRequestException('Error approving material transfer!');
+      throw new BadRequestException(e.message || 'Error approving material transfer!');
     }
   }
 }

@@ -189,7 +189,7 @@ export class MaterialReturnResolver {
         decision,
       );
     } catch (e) {
-      throw new BadRequestException('Error approving material return!');
+      throw new BadRequestException(e.message || 'Error approving material return!');
     }
   }
 }

@@ -233,12 +233,16 @@ export class MaterialTransferService {
     materialTransferId: string,
     userId: string,
     status: ApprovalStatus,
-  ) {
+  ): Promise<MaterialTransferVoucher> {
     const materialTransfer =
       await this.prisma.materialTransferVoucher.findUnique({
         where: { id: materialTransferId },
         include: {
-          items: true,
+          items: {
+            include: {
+              productVariant: true,
+            },
+          },
         },
       });
 
@@ -251,7 +255,7 @@ export class MaterialTransferService {
     }
 
     if (status === ApprovalStatus.COMPLETED) {
-      await this.prisma.$transaction(async (prisma) => {
+      return await this.prisma.$transaction(async (prisma) => {
         for (const item of materialTransfer.items) {
           const outgoingStock = await prisma.warehouseProduct.findUnique({
             where: {
@@ -268,7 +272,7 @@ export class MaterialTransferService {
             outgoingStock.quantity < item.quantityRequested
           ) {
             throw new ConflictException(
-              `Not enough stock available for product variant ID ${item.productVariantId}`,
+              `Not enough stock available for ${item.productVariant.variant}`,
             );
           }
           await prisma.warehouseProduct.update({
