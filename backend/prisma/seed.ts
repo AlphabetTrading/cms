@@ -1,4 +1,10 @@
-import { ApprovalStatus, PrismaClient, SuperStructureUseDescription, UseType, UserRole } from '@prisma/client';
+import {
+  ApprovalStatus,
+  PrismaClient,
+  SuperStructureUseDescription,
+  UseType,
+  UserRole,
+} from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -949,31 +955,26 @@ async function seedMaterialIssueVouchers() {
           },
         ];
 
-        
         for (const data of issueVouchers) {
           const warehouseProducts = await prisma.warehouseProduct.findMany({
             where: {
-              projectId: project.id, 
-              warehouseId: data.warehouseStoreId
+              projectId: project.id,
+              warehouseId: data.warehouseStoreId,
             },
           });
-          const items = []
+          const items = [];
           for (const product of warehouseProducts.slice(0, 2)) {
-            items.push(
-              {
-                quantity:
-                  Math.floor(
-                    Math.random() * (product.quantity - 1),
-                  ) + 1,
-                productVariant: {
-                  connect: { id: product.productVariantId },
-                },
-                useType: UseType.SUPER_STRUCTURE,
-                superStructureDescription: SuperStructureUseDescription.SANITARY_INSTALLATION,
-                totalCost: 0,
-                unitCost: product.currentPrice,
-              }
-            )
+            items.push({
+              quantity: Math.floor(Math.random() * (product.quantity - 1)) + 1,
+              productVariant: {
+                connect: { id: product.productVariantId },
+              },
+              useType: UseType.SUPER_STRUCTURE,
+              superStructureDescription:
+                SuperStructureUseDescription.SANITARY_INSTALLATION,
+              totalCost: 0,
+              unitCost: product.currentPrice,
+            });
           }
 
           for (const item of items) {
@@ -1017,8 +1018,8 @@ async function seedMaterialReturnVouchers() {
   const material_issues = await prisma.materialIssueVoucher.findMany({
     include: {
       items: true,
-      warehouseStore: true
-    }
+      warehouseStore: true,
+    },
   });
   try {
     for (const project of projects) {
@@ -1217,18 +1218,27 @@ async function seedMaterialReceiveVouchers() {
                     productVariantId: productVariants[0].id,
                     totalCost: 100,
                     unitCost: 10,
+                    loadingCost: 800,
+                    unloadingCost: 1100,
+                    transportationCost: 1500,
                   },
                   {
                     quantity: 10,
                     productVariantId: productVariants[1].id,
                     totalCost: 50,
                     unitCost: 5,
+                    loadingCost: 1200,
+                    unloadingCost: 600,
+                    transportationCost: 1000,
                   },
                   {
                     quantity: 100,
                     productVariantId: productVariants[2].id,
                     totalCost: 150,
                     unitCost: 1.5,
+                    loadingCost: 1000,
+                    unloadingCost: 1000,
+                    transportationCost: 2000,
                   },
                 ],
               },
@@ -1328,9 +1338,8 @@ async function seedMaterialRequestVouchers() {
           });
         }
       }
-
-      console.log('Material Request models seeded successfully');
     }
+    console.log('Material Request models seeded successfully');
   } catch (error) {
     console.error('Error seeding material Request models:', error);
   } finally {
@@ -1601,29 +1610,26 @@ async function seedMaterialTransferVouchers() {
         for (const data of transferVouchers) {
           const warehouseProducts = await prisma.warehouseProduct.findMany({
             where: {
-              projectId: project.id, 
-              warehouseId: data.sendingWarehouseStoreId
+              projectId: project.id,
+              warehouseId: data.sendingWarehouseStoreId,
             },
           });
-          const items = []
+          const items = [];
           for (const product of warehouseProducts.slice(0, 2)) {
-            items.push(
-              {
-                quantityTransferred: Math.floor(
-                  Math.random() * (product.quantity - 1),
-                ) + 1,
-                quantityRequested: 10,
-                totalCost: 0,
-                unitCost: product.currentPrice,
-                productVariant: {
-                  connect: { id: product.productVariantId },
-                },
-              }
-            )
+            items.push({
+              quantityTransferred:
+                Math.floor(Math.random() * (product.quantity - 1)) + 1,
+              quantityRequested: 10,
+              totalCost: 0,
+              unitCost: product.currentPrice,
+              productVariant: {
+                connect: { id: product.productVariantId },
+              },
+            });
           }
 
           for (const item of items) {
-            item.totalCost = item.quantity * item.unitCost;
+            item.totalCost = item.quantityTransferred * item.unitCost;
           }
 
           await prisma.materialTransferVoucher.create({

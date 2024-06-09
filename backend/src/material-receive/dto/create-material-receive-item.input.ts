@@ -19,4 +19,16 @@ export class CreateMaterialReceiveItemInput {
   @Field(() => Number)
   @IsNotEmpty()
   totalCost: number;
+
+  @Field(() => Number)
+  @IsNotEmpty()
+  unloadingCost: number;
+
+  @Field(() => Number)
+  @IsNotEmpty()
+  loadingCost: number;
+
+  @Field(() => Number)
+  @IsNotEmpty()
+  transportationCost: number;
 }

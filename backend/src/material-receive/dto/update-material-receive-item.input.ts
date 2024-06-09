@@ -18,4 +18,13 @@ export class UpdateMaterialReceiveItemInput extends PartialType(
 
   @Field(() => Number, { nullable: true })
   totalCost?: number;
+
+  @Field(() => Number, { nullable: true })
+  unloadingCost?: number;
+
+  @Field(() => Number, { nullable: true })
+  loadingCost?: number;
+
+  @Field(() => Number, { nullable: true })
+  transportationCost?: number;
 }
