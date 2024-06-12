@@ -56,10 +56,13 @@ input CreateMaterialReceiveInput {
 }
 
 input CreateMaterialReceiveItemInput {
+  loadingCost: Float!
   productVariantId: String!
   quantity: Float!
   totalCost: Float!
+  transportationCost: Float!
   unitCost: Float!
+  unloadingCost: Float!
 }
 
 input CreateMaterialRequestInput {
@@ -526,6 +529,24 @@ type MaterialIssueVoucher {
   warehouseStoreId: String
 }
 
+type MaterialReceiveItem {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  loadingCost: Float
+  materialReceiveVoucherId: String
+  productVariant: ProductVariant
+  productVariantId: String
+  quantity: Float
+  totalCost: Float
+  transportationCost: Float
+  unitCost: Float
+  unloadingCost: Float
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
 type MaterialReceiveVoucher {
   Project: Project
   approvedBy: User
@@ -535,6 +556,7 @@ type MaterialReceiveVoucher {
   createdAt: DateTime!
   id: ID!
   invoiceId: String
+  items: [MaterialReceiveItem!]
   materialRequestId: String
   projectId: String
   purchaseOrderId: String
@@ -1234,10 +1256,13 @@ input UpdateMaterialReceiveInput {
 }
 
 input UpdateMaterialReceiveItemInput {
+  loadingCost: Float
   productVariantId: String
   quantity: Float
   totalCost: Float
+  transportationCost: Float
   unitCost: Float
+  unloadingCost: Float
 }
 
 input UpdateMaterialRequestInput {

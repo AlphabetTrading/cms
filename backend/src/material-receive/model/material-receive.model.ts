@@ -22,6 +22,9 @@ export class MaterialReceiveVoucher extends BaseModel {
   @Field(() => String, { nullable: true })
   invoiceId?: string;
 
+  @Field(() => [MaterialReceiveItem], { nullable: true })
+  items?: MaterialReceiveItem[];
+
   @Field(() => String, { nullable: true })
   materialRequestId?: string;
 
@@ -72,7 +75,7 @@ export class MaterialReceiveItem extends BaseModel {
 
   @Field(() => Number, { nullable: true })
   transportationCost?: number;
-  
+
   @Field(() => String, { nullable: true })
   materialReceiveVoucherId?: string;
 }
