@@ -66,21 +66,20 @@ model Product {
 }
 
 model ProductVariant {
-  id                         String                       @id @default(uuid())
-  productId                  String
-  product                    Product                      @relation(fields: [productId], references: [id])
-  variant                    String
-  description                String?
-  unitOfMeasure              UnitOfMeasure
-  PriceHistory               PriceHistory[]
-  WarehouseProduct           WarehouseProduct[]
-  MaterialRequestItem        MaterialRequestItem[]
-  MaterialReceiveItem        MaterialReceiveItem[]
-  ReturnVoucherItem          ReturnVoucherItem[]
-  PurchaseOrderItem          PurchaseOrderItem[]
-  MaterialTransferItem       MaterialTransferItem[]
-  DailySiteDataTaskMaterial  DailySiteDataTaskMaterial[]
-  DailySiteDataTaskEquipment DailySiteDataTaskEquipment[]
+  id                        String                      @id @default(uuid())
+  productId                 String
+  product                   Product                     @relation(fields: [productId], references: [id])
+  variant                   String
+  description               String?
+  unitOfMeasure             UnitOfMeasure
+  PriceHistory              PriceHistory[]
+  WarehouseProduct          WarehouseProduct[]
+  MaterialRequestItem       MaterialRequestItem[]
+  MaterialReceiveItem       MaterialReceiveItem[]
+  ReturnVoucherItem         ReturnVoucherItem[]
+  PurchaseOrderItem         PurchaseOrderItem[]
+  MaterialTransferItem      MaterialTransferItem[]
+  DailySiteDataTaskMaterial DailySiteDataTaskMaterial[]
 
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
@@ -414,10 +413,12 @@ model DailyStockBalance {
 
 model DailySiteData {
   id           String              @id @default(uuid())
+  date         DateTime
   projectId    String
   Project      Project             @relation(fields: [projectId], references: [id])
   contractor   String?
   tasks        DailySiteDataTask[]
+  status       ApprovalStatus      @default(PENDING)
   preparedById String
   preparedBy   User                @relation(fields: [preparedById], references: [id], name: "PreparedByDailySiteData")
   checkedById  String?
@@ -430,16 +431,14 @@ model DailySiteData {
 }
 
 model DailySiteDataTask {
-  id               String                       @id @default(uuid())
-  executedBy       String?
+  id               String                      @id @default(uuid())
   description      String
   executedQuantity Float?
   unit             String?
   laborDetails     DailySiteDataTaskLabor[]
   materialDetails  DailySiteDataTaskMaterial[]
-  equipmentDetails DailySiteDataTaskEquipment[]
   dailySiteDataId  String
-  DailySiteData    DailySiteData                @relation(fields: [dailySiteDataId], references: [id])
+  dailySiteData    DailySiteData               @relation(fields: [dailySiteDataId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -452,7 +451,7 @@ model DailySiteDataTaskLabor {
   afternoon           Float?
   overtime            Float?
   dailySiteDataTaskId String
-  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id])
+  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -463,26 +462,11 @@ model DailySiteDataTaskLabor {
 model DailySiteDataTaskMaterial {
   id                  String            @id @default(uuid())
   productVariantId    String
-  productVariant      ProductVariant    @relation(fields: [productVariantId], references: [id])
-  quantity            Float
+  productVariant      ProductVariant    @relation(fields: [productVariantId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  quantityUsed        Float
+  quantityWasted      Float
   dailySiteDataTaskId String
-  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([id, productVariantId])
-}
-
-model DailySiteDataTaskEquipment {
-  id                  String            @id @default(uuid())
-  productVariantId    String
-  productVariant      ProductVariant    @relation(fields: [productVariantId], references: [id])
-  quantity            Float
-  morning             Float?
-  afternoon           Float?
-  dailySiteDataTaskId String
-  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id])
+  DailySiteDataTask   DailySiteDataTask @relation(fields: [dailySiteDataTaskId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

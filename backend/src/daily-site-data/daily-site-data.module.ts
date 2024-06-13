@@ -4,5 +4,6 @@ import { DailySiteDataResolver } from './daily-site-data.resolver';
 
 @Module({
   providers: [DailySiteDataResolver, DailySiteDataService],
+  exports: [DailySiteDataService],
 })
 export class DailySiteDataModule {}

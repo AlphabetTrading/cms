@@ -19,9 +19,35 @@ type Auth {
   userId: String!
 }
 
-input CreateDailySiteDatumInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input CreateDailySiteDataInput {
+  approvedById: String
+  checkedById: String
+  contractor: String
+  date: DateTime!
+  preparedById: String!
+  projectId: String!
+  tasks: [CreateDailySiteDataTaskInput!]!
+}
+
+input CreateDailySiteDataTaskInput {
+  description: String!
+  executedQuantity: Float
+  laborDetails: [CreateDailySiteDataTaskLaborInput!]!
+  materialDetails: [CreateDailySiteDataTaskMaterialInput!]!
+  unit: String
+}
+
+input CreateDailySiteDataTaskLaborInput {
+  afternoon: Float
+  morning: Float
+  overtime: Float
+  trade: String!
+}
+
+input CreateDailySiteDataTaskMaterialInput {
+  productVariantId: String!
+  quantityUsed: Float!
+  quantityWasted: Float
 }
 
 input CreateMaterialIssueInput {
@@ -221,9 +247,73 @@ input CreateWarehouseStoreInput {
   name: String!
 }
 
-type DailySiteDatum {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type DailySiteData {
+  Project: Project
+  approvedBy: User
+  approvedById: String
+  checkedBy: User
+  checkedById: String
+  contractor: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  date: DateTime
+  id: ID!
+  preparedBy: User
+  preparedById: String
+  projectId: String
+  status: ApprovalStatus
+  tasks: [DailySiteDataTask!]
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type DailySiteDataTask {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  dailySiteData: DailySiteData
+  dailySiteDataId: String
+  description: String
+  executedQuantity: Float
+  id: ID!
+  laborDetails: [DailySiteDataTaskLabor!]
+  materialDetails: [DailySiteDataTaskMaterial!]
+  unit: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type DailySiteDataTaskLabor {
+  afternoon: Float
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  dailySiteDataTask: DailySiteDataTask
+  dailySiteDataTaskId: String
+  id: ID!
+  morning: Float
+  overtime: Float
+  trade: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type DailySiteDataTaskMaterial {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  dailySiteDataTask: DailySiteDataTask
+  dailySiteDataTaskId: String
+  id: ID!
+  productVariant: ProductVariant
+  productVariantId: String
+  quantityUsed: Float
+  quantityWasted: Float
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
 }
 
 type DailyStockBalance {
@@ -274,6 +364,22 @@ enum DocumentType {
   MATERIAL_RETURN
   MATERIAL_TRANSFER
   PURCHASE_ORDER
+}
+
+input FilterDailySiteDataInput {
+  approvedBy: FilterUserDocumentsInput
+  approvedById: String
+  checkedBy: FilterUserDocumentsInput
+  checkedById: String
+  contractor: StringFilter
+  createdAt: DateTimeFilter
+  date: DateTimeFilter
+  id: String
+  preparedBy: FilterUserDocumentsInput
+  preparedById: String
+  project: FilterProjectInput
+  projectId: String
+  status: [ApprovalStatus!]
 }
 
 input FilterDailyStockBalanceInput {
@@ -704,13 +810,14 @@ type Milestone {
 }
 
 type Mutation {
+  approveDailySiteData(dailySiteDataId: String!, decision: ApprovalStatus!): DailySiteData!
   approveMaterialIssue(decision: ApprovalStatus!, materialIssueId: String!): MaterialIssueVoucher!
   approveMaterialReceive(decision: ApprovalStatus!, materialReceiveId: String!): MaterialReceiveVoucher!
   approveMaterialRequest(decision: ApprovalStatus!, materialRequestId: String!): MaterialRequestVoucher!
   approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
   approveMaterialTransfer(decision: ApprovalStatus!, materialTransferId: String!): MaterialTransferVoucher!
   approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
-  createDailySiteDatum(createDailySiteDatumInput: CreateDailySiteDatumInput!): DailySiteDatum!
+  createDailySiteData(createDailySiteDataInput: CreateDailySiteDataInput!): DailySiteData!
   createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
   createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
   createMaterialRequest(createMaterialRequestInput: CreateMaterialRequestInput!): MaterialRequestVoucher!
@@ -727,6 +834,7 @@ type Mutation {
   createUser(createUser: CreateUserInput!): User!
   createWarehouseProduct(createWarehouseProductInput: CreateWarehouseProductInput!): WarehouseProduct!
   createWarehouseStore(createWarehouseStoreInput: CreateWarehouseStoreInput!): WarehouseStore!
+  deleteDailySiteData(id: String!): DailySiteData!
   deleteFile(url: String!): Boolean!
   deleteMaterialIssue(id: String!): MaterialIssueVoucher!
   deleteMaterialReceive(id: String!): MaterialReceiveVoucher!
@@ -746,8 +854,7 @@ type Mutation {
   deleteWarehouseStore(id: String!): WarehouseStore!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
-  removeDailySiteDatum(id: Int!): DailySiteDatum!
-  updateDailySiteDatum(updateDailySiteDatumInput: UpdateDailySiteDatumInput!): DailySiteDatum!
+  updateDailySiteData(updateDailySiteDataInput: UpdateDailySiteDataInput!): DailySiteData!
   updateMaterialIssue(updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
   updateMaterialReceive(updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
@@ -773,6 +880,12 @@ input NumberFilter {
   gte: Float
   lt: Float
   lte: Float
+}
+
+input OrderByDailySiteDataInput {
+  createdAt: OrderDirection
+  date: OrderDirection
+  updatedAt: OrderDirection
 }
 
 input OrderByDailyStockBalanceInput {
@@ -883,6 +996,11 @@ Possible directions in which to order a list of items when provided an `orderBy`
 enum OrderDirection {
   asc
   desc
+}
+
+type PaginationDailySiteData {
+  items: [DailySiteData!]!
+  meta: PaginationInfo
 }
 
 type PaginationDailyStockBalances {
@@ -1104,10 +1222,10 @@ type PurchaseOrderVoucher {
 }
 
 type Query {
-  dailySiteData: [DailySiteDatum!]!
-  dailySiteDatum(id: Int!): DailySiteDatum!
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
   getAllWarehouseProductsStock(projectId: String!): [WarehouseProductStock!]!
+  getDailySiteDataById(id: String!): DailySiteData!
+  getDailySiteDatas(filterDailySiteDataInput: FilterDailySiteDataInput, mine: Boolean! = false, orderBy: OrderByDailySiteDataInput, paginationInput: PaginationInput): PaginationDailySiteData!
   getDailyStockBalaceById(id: String!): [DailyStockBalanceItem!]!
   getDailyStockBalances(filterDailyStockBalanceInput: FilterDailyStockBalanceInput, orderBy: OrderByDailyStockBalanceInput, paginationInput: PaginationInput): PaginationDailyStockBalances!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
@@ -1214,10 +1332,40 @@ enum UnitOfMeasure {
   QUINTAL
 }
 
-input UpdateDailySiteDatumInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input UpdateDailySiteDataInput {
+  approvedById: String
+  checkedById: String
+  contractor: String
+  date: DateTime
+  id: String!
+  preparedById: String
+  projectId: String
+  status: ApprovalStatus
+  tasks: [UpdateDailySiteDataTaskInput!]
+}
+
+input UpdateDailySiteDataTaskInput {
+  description: String
+  executedQuantity: Float
+  id: String!
+  laborDetails: [UpdateDailySiteDataTaskLaborInput!]
+  materialDetails: [UpdateDailySiteDataTaskMaterialInput!]
+  unit: String
+}
+
+input UpdateDailySiteDataTaskLaborInput {
+  afternoon: Float
+  id: String!
+  morning: Float
+  overtime: Float
+  trade: String
+}
+
+input UpdateDailySiteDataTaskMaterialInput {
+  id: String!
+  productVariantId: String
+  quantityUsed: Float
+  quantityWasted: Float
 }
 
 input UpdateMaterialIssueInput {
