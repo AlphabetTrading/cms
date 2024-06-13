@@ -1678,84 +1678,86 @@ async function seedDailySiteData() {
       if (consultants.length > 0) {
         const preparedBy = consultants[0];
 
-        await prisma.dailySiteData.create({
-          data: {
-            projectId: project.id,
-            contractor: 'Contractor Contractor',
-            preparedById: preparedBy.id,
-            date: new Date(),
-            tasks: {
-              create: [
-                {
-                  description: 'Task 1',
-                  executedQuantity: 100,
-                  unit: UnitOfMeasure.M2,
-                  laborDetails: {
-                    create: [
-                      {
-                        trade: 'Carpenter',
-                        morning: 5,
-                        afternoon: 4,
-                        overtime: 2,
-                      },
-                      {
-                        trade: 'Mason',
-                        morning: 3,
-                        afternoon: 4,
-                        overtime: 1,
-                      },
-                    ],
+        await prisma.$transaction(async () => {
+          await prisma.dailySiteData.create({
+            data: {
+              projectId: project.id,
+              contractor: 'Contractor Contractor',
+              preparedById: preparedBy.id,
+              date: new Date(),
+              tasks: {
+                create: [
+                  {
+                    description: 'Task 1',
+                    executedQuantity: 100,
+                    unit: UnitOfMeasure.M2,
+                    laborDetails: {
+                      create: [
+                        {
+                          trade: 'Carpenter',
+                          morning: 5,
+                          afternoon: 4,
+                          overtime: 2,
+                        },
+                        {
+                          trade: 'Mason',
+                          morning: 3,
+                          afternoon: 4,
+                          overtime: 1,
+                        },
+                      ],
+                    },
+                    materialDetails: {
+                      create: [
+                        {
+                          productVariantId: productVariants[1].id,
+                          quantityUsed: 20,
+                          quantityWasted: 2,
+                        },
+                        {
+                          productVariantId: productVariants[2].id,
+                          quantityUsed: 50,
+                          quantityWasted: 5,
+                        },
+                      ],
+                    },
                   },
-                  materialDetails: {
-                    create: [
-                      {
-                        productVariantId: productVariants[1].id,
-                        quantityUsed: 20,
-                        quantityWasted: 2,
-                      },
-                      {
-                        productVariantId: productVariants[2].id,
-                        quantityUsed: 50,
-                        quantityWasted: 5,
-                      },
-                    ],
+                  {
+                    description: 'Task 2',
+                    executedQuantity: 200,
+                    unit: UnitOfMeasure.M3,
+                    laborDetails: {
+                      create: [
+                        {
+                          trade: 'Laborer',
+                          morning: 4,
+                          afternoon: 2,
+                          overtime: 1,
+                        },
+                      ],
+                    },
+                    materialDetails: {
+                      create: [
+                        {
+                          productVariantId: productVariants[0].id,
+                          quantityUsed: 30,
+                          quantityWasted: 3,
+                        },
+                      ],
+                    },
                   },
-                },
-                {
-                  description: 'Task 2',
-                  executedQuantity: 200,
-                  unit: UnitOfMeasure.M3,
-                  laborDetails: {
-                    create: [
-                      {
-                        trade: 'Laborer',
-                        morning: 4,
-                        afternoon: 2,
-                        overtime: 1,
-                      },
-                    ],
-                  },
-                  materialDetails: {
-                    create: [
-                      {
-                        productVariantId: productVariants[0].id,
-                        quantityUsed: 30,
-                        quantityWasted: 3,
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          include: {
-            tasks: {
-              include: {
-                laborDetails: true,
-                materialDetails: true,
+                ],
               },
             },
-          },
+            include: {
+              tasks: {
+                include: {
+                  laborDetails: true,
+                  materialDetails: true,
+                },
+              },
+            },
+          });
         });
       }
     }
