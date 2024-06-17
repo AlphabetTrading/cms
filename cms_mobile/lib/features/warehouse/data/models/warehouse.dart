@@ -5,10 +5,14 @@ class WarehouseModel extends WarehouseEntity {
     required String id,
     required String name,
     required String location,
+    required DateTime? createdAt,
+    required DateTime? updatedAt,
   }) : super(
           id: id,
           name: name,
           location: location,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
         );
 
   factory WarehouseModel.fromJson(Map<String, dynamic> map) {
@@ -16,6 +20,8 @@ class WarehouseModel extends WarehouseEntity {
       id: map['id'],
       name: map['name'],
       location: map['location'],
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 
@@ -24,6 +30,18 @@ class WarehouseModel extends WarehouseEntity {
       id: entity.id,
       name: entity.name,
       location: entity.location,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'location': location,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+    };
   }
 }

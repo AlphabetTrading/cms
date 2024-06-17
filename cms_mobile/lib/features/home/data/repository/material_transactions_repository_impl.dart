@@ -6,7 +6,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 
 class MaterialTransactionRepositoryImpl extends MaterialTransactionRepository {
   final MaterialTransactionsDataSource dataSource;
@@ -27,7 +27,7 @@ class MaterialTransactionRepositoryImpl extends MaterialTransactionRepository {
   }
 
   @override
-  Future<DataState<List<MaterialReceivingEntity>>> getMaterialReceivings() {
+  Future<DataState<List<MaterialReceiveEntity>>> getMaterialReceivings() {
     // TODO: implement getMaterialReceivings
     throw UnimplementedError();
   }

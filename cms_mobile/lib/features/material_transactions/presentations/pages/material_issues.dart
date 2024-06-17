@@ -2,7 +2,7 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';

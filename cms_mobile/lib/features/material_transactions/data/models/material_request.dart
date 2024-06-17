@@ -1,6 +1,7 @@
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:flutter/material.dart';
 
@@ -112,7 +113,7 @@ class MaterialRequestItemModel extends MaterialRequestItem {
           productVariantId: productVariantId,
           quantity: quantity,
           remark: remark,
-          productVariant: productVariant,
+          productVariant: productVariant as ProductVariantEntity?,
           createdAt: createdAt,
           updatedAt: updatedAt,
         );

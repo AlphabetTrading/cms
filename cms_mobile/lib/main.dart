@@ -4,10 +4,12 @@ import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
@@ -46,6 +48,9 @@ void main() async {
           BlocProvider<MaterialRequestBloc>(
             create: (context) => sl<MaterialRequestBloc>(),
           ),
+          BlocProvider<MaterialReceiveBloc>(
+            create: (context) => sl<MaterialReceiveBloc>(),
+          ),
           BlocProvider<MaterialTransactionBloc>(
             create: (context) => sl<MaterialTransactionBloc>(),
           ),
@@ -58,6 +63,9 @@ void main() async {
           BlocProvider<MaterialRequestLocalBloc>(
             create: (context) => sl<MaterialRequestLocalBloc>(),
           ),
+          BlocProvider<MaterialReceiveLocalBloc>(
+            create: (context) => sl<MaterialReceiveLocalBloc>(),
+          ),
           BlocProvider<MaterialIssueLocalBloc>(
             create: (context) => sl<MaterialIssueLocalBloc>(),
           ),
@@ -69,6 +77,9 @@ void main() async {
           ),
           BlocProvider<ProductBloc>(
             create: (context) => sl<ProductBloc>(),
+          ),
+          BlocProvider<PurchaseOrderBloc>(
+            create: (context) => sl<PurchaseOrderBloc>(),
           ),
         ],
         child: EasyLocalization(

@@ -2,5 +2,7 @@
   "passwordLabel": "የ ይለፍ ቃል",
   "phoneNumberLabel": "የ ስልክ ቁጥር",
   "emailLabel": "ኢሜል",
-  "loginButton": "ግባ"
+  "loginButton": "ግባ",
+  "passwordPlaceholder": "የ ይለፍ ቃል ያስገቡ",
+  "phoneNumberPlaceholder": "የ ስልክ ቁጥር ያስገቡ"
 }

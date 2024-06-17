@@ -1,12 +1,12 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_state.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,13 +25,13 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   @override
   void initState() {
     super.initState();
-    // context.read<MaterialIssueBloc>().add(
-    //       GetMaterialRequests(
-    //         filterMaterialIssueInput: FilterMaterialIssueInput(),
-    //         orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
-    //         paginationInput: PaginationInput(skip: 0, take: 20),
-    //       ),
-    //     );
+    context.read<PurchaseOrderBloc>().add(
+          GetPurchaseOrders(
+            filterPurchaseOrderInput: FilterPurchaseOrderInput(),
+            orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 20),
+          ),
+        );
 
     // read auth state
     debugPrint("Auth state: ${context.read<AuthBloc>().state.userId}");
@@ -47,17 +47,16 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
         .listen((
       query,
     ) {
-      // context.read<MaterialIssueBloc>().add(
-      // GetMaterialRequests(
-      // orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
-      // paginationInput: PaginationInput(skip: 0, take: 10),
-      // filterMaterialIssueInput: FilterMaterialIssueInput(
-      //   preparedBy: StringFilter(contains: query),
-      //   approvedBy: StringFilter(contains: query),
-      //   serialNumber: StringFilter(contains: query),
-      // ),
-      // ),
-      // );
+      context.read<PurchaseOrderBloc>().add(
+            GetPurchaseOrders(
+                orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
+                paginationInput: PaginationInput(skip: 0, take: 10),
+                filterPurchaseOrderInput: FilterPurchaseOrderInput(
+                  preparedBy: StringFilter(contains: query),
+                  approvedBy: StringFilter(contains: query),
+                  serialNumber: StringFilter(contains: query),
+                )),
+          );
     });
 
     return Scaffold(
@@ -66,12 +65,12 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            context.goNamed(RouteNames.materialIssueCreate);
+            context.goNamed(RouteNames.purchaseOrderCreate);
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Create Material Request'),
+          child: const Text('Create Purchase Order'),
         ),
       ),
       body: Container(
@@ -122,31 +121,31 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: const Text('Material Requests'),
+      title: const Text('Purchase Orders'),
     );
   }
 
   _buildBody(BuildContext context) {
-    return BlocBuilder<MaterialRequestBloc, MaterialRequestState>(
+    return BlocBuilder<PurchaseOrderBloc, PurchaseOrderState>(
       builder: (_, state) {
-        debugPrint('MaterialRequestBlocBuilder state: $state');
-        if (state is MaterialRequestInitial) {
+        debugPrint('PurchaseOrderBlocBuilder state: $state');
+        if (state is PurchaseOrderInitial) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (state is MaterialRequestLoading) {
+        if (state is PurchaseOrderLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (state is MaterialRequestSuccess) {
+        if (state is PurchaseOrderSuccess) {
           debugPrint(
-              'MaterialRequestSuccess ${state.materialRequests?.items.length} ');
+              'PurchaseOrderSuccess ${state.purchaseOrders?.items.length} ');
 
-          return state.materialRequests!.items.isNotEmpty
+          return state.purchaseOrders!.items.isNotEmpty
               ? Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -159,15 +158,15 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.vertical,
-                            itemCount: state.materialRequests!.items.length,
+                            itemCount: state.purchaseOrders!.items.length,
                             separatorBuilder: (_, index) => const SizedBox(
                               height: 10,
                             ),
                             itemBuilder: (_, index) {
-                              final materialRequest =
-                                  state.materialRequests!.items[index];
+                              final purchaseOrder =
+                                  state.purchaseOrders!.items[index];
                               return _buildRequestListItem(
-                                  context, materialRequest);
+                                  context, purchaseOrder);
                             },
                           ),
                         ],
@@ -176,11 +175,11 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                   ),
                 )
               : const Center(
-                  child: Text('No Material Requests found'),
+                  child: Text('No Purchase Order found'),
                 );
         }
 
-        if (state is MaterialRequestFailed) {
+        if (state is PurchaseOrderFailed) {
           return Center(
             child: Text(state.error!.errorMessage),
           );
@@ -192,7 +191,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   }
 
   _buildRequestListItem(
-      BuildContext context, MaterialRequestEntity materialRequest) {
+      BuildContext context, PurchaseOrderEntity purchaseOrder) {
     return Container(
       width: MediaQuery.of(context).size.width - 20,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -210,7 +209,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                materialRequest.serialNumber ?? 'N/A',
+                purchaseOrder.serialNumber ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 18,
@@ -223,9 +222,9 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                   PopupMenuItem(
                       onTap: () {
-                        context.goNamed(RouteNames.materialIssueEdit,
+                        context.goNamed(RouteNames.purchaseOrderEdit,
                             pathParameters: {
-                              'materialIssueId': materialRequest.id.toString()
+                              'purchaseOrderId': purchaseOrder.id.toString()
                             });
                       },
                       child: const ListTile(
@@ -248,7 +247,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
             ],
           ),
           Text(
-            DateFormat.yMMMMd().format(materialRequest.createdAt!),
+            DateFormat.yMMMMd().format(purchaseOrder.createdAt!),
             style: const TextStyle(
               color: Color(0xFF637587),
               fontSize: 12,
@@ -260,7 +259,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'By ${materialRequest.approvedBy?.fullName ?? 'N/A'}',
+                'By ${purchaseOrder.approvedById ?? 'N/A'}',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 15,
@@ -269,7 +268,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 ),
               ),
               Text(
-                materialRequest.approvedBy?.email ?? 'N/A',
+                purchaseOrder.preparedById ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF637587),
                   fontSize: 12,
@@ -278,7 +277,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 ),
               ),
               //  Text(
-              //   "From ${materialIssue.?.fullName ?? 'N/A'}",
+              //   "From ${purchaseOrder.?.fullName ?? 'N/A'}",
               //   style: const TextStyle(
               //     color: Color(0xFF637587),
               //     fontSize: 12,
@@ -300,12 +299,11 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: ShapeDecoration(
-                  color: materialRequest.status == MaterialRequestStatus.pending
+                  color: purchaseOrder.status == PurchaseOrderStatus.pending
                       ? const Color.fromARGB(31, 255, 183, 0)
-                      : materialRequest.status == MaterialRequestStatus.completed
+                      : purchaseOrder.status == PurchaseOrderStatus.completed
                           ? const Color.fromARGB(30, 0, 179, 66)
-                          : materialRequest.status ==
-                                  MaterialRequestStatus.declined
+                          : purchaseOrder.status == PurchaseOrderStatus.declined
                               ? const Color.fromARGB(30, 208, 2, 26)
                               : const Color.fromARGB(31, 17, 20, 22),
                   shape: RoundedRectangleBorder(
@@ -313,18 +311,16 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                   ),
                 ),
                 child: Text(
-                  materialRequest.status.toString(),
+                  purchaseOrder.status.toString(),
                   style: TextStyle(
-                    color:
-                        materialRequest.status == MaterialRequestStatus.pending
-                            ? const Color(0xFFFFB700)
-                            : materialRequest.status ==
-                                    MaterialRequestStatus.completed
-                                ? const Color(0xFF00B341)
-                                : materialRequest.status ==
-                                        MaterialRequestStatus.declined
-                                    ? const Color(0xFFD0021B)
-                                    : const Color(0xFF111416),
+                    color: purchaseOrder.status == PurchaseOrderStatus.pending
+                        ? const Color(0xFFFFB700)
+                        : purchaseOrder.status == PurchaseOrderStatus.completed
+                            ? const Color(0xFF00B341)
+                            : purchaseOrder.status ==
+                                    PurchaseOrderStatus.declined
+                                ? const Color(0xFFD0021B)
+                                : const Color(0xFF111416),
                     fontSize: 10,
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w600,
@@ -333,9 +329,9 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
               ),
               TextButton(
                 onPressed: () {
-                  context.goNamed(RouteNames.materialRequestDetails,
+                  context.goNamed(RouteNames.purchaseOrderDetails,
                       pathParameters: {
-                        'materialRequestId': materialRequest.id.toString()
+                        'purchaseOrderId': purchaseOrder.id.toString()
                       });
                 },
                 child: const Text(
@@ -379,16 +375,16 @@ class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
   List<String> selectedStatuses = [];
 
   void _onStatusSelected() {
-    context.read<MaterialIssueBloc>().add(
-          GetMaterialIssues(
-            filterMaterialIssueInput: FilterMaterialIssueInput(
+    context.read<PurchaseOrderBloc>().add(
+          GetPurchaseOrders(
+            filterPurchaseOrderInput: FilterPurchaseOrderInput(
               status: selectedStatuses.contains('All')
                   ? null
                   : selectedStatuses
                       .map((status) => status.toUpperCase())
                       .toList(),
             ),
-            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+            orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 10),
           ),
         );

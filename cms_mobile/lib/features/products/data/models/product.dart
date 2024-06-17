@@ -1,3 +1,4 @@
+import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 
 class ProductModel extends ProductEntity {
@@ -19,61 +20,6 @@ class ProductModel extends ProductEntity {
 
   Map<String, dynamic> toJson() {
     return {'id': id, 'name': name, 'iconSrc': iconSrc};
-  }
-}
-
-class ProductVariantModel extends ProductVariantEntity {
-  const ProductVariantModel({
-    required String id,
-    required String? description,
-    required UnitOfMeasure? unitOfMeasure,
-    required String? variant,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
-    required String? productId,
-    required ProductModel? product,
-  }) : super(
-            id: id,
-            description: description,
-            unitOfMeasure: UnitOfMeasure.kg,
-            variant: variant,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            productId: productId,
-            product: product);
-
-  factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
-    final ProductVariantModel productVariantModel = ProductVariantModel(
-      id: json['id'],
-      description: json['description'],
-      unitOfMeasure: json['unitOfMeasure'] != null
-          ? toUnitOfMeasure(json['unitOfMeasure'])
-          : null,
-      variant: json['variant'],
-      createdAt:
-          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      productId: json['productId'],
-      product: json['product'] != null
-          ? ProductModel.fromJson(json['product'])
-          : null,
-    );
-
-    return productVariantModel;
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'description': description,
-      'unitOfMeasure': fromUnitOfMeasure(unitOfMeasure),
-      'variant': variant,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
-      'productId': productId,
-      'product': product,
-    };
   }
 }
 

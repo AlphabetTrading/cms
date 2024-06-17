@@ -1,6 +1,6 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
@@ -13,7 +13,6 @@ class MaterialIssueEntity extends Equatable {
   final String? status;
   final String? approvedById;
   final UserEntity? approvedBy;
-  final String? projectDetails;
   final String? requisitionNumber;
   final List<IssueVoucherMaterialEntity>? items;
   final String? preparedById;
@@ -28,7 +27,6 @@ class MaterialIssueEntity extends Equatable {
   const MaterialIssueEntity({
     this.id,
     this.serialNumber,
-    this.projectDetails,
     this.requisitionNumber,
     this.items,
     this.preparedById,
@@ -65,18 +63,16 @@ class IssueVoucherMaterialEntity extends Equatable {
   final String? materialIssueVoucherId;
 
   const IssueVoucherMaterialEntity(
-      {
-      required this.id,
-      required this.productVariant,
-      required this.quantity,
+      {required this.id,
+      this.productVariant,
+      this.quantity,
       this.remark,
-      required this.totalCost,
-      required this.unitCost,
+      this.totalCost,
+      this.unitCost,
       this.subStructureDescription,
       this.superStructureDescription,
-      required this.useType,
-      this.materialIssueVoucherId
-      });
+      this.useType,
+      this.materialIssueVoucherId});
 
   @override
   List<Object?> get props {
@@ -166,8 +162,11 @@ class EditMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
       required this.warehouseStoreId});
 
   @override
-  List<Object?> get props => [updateMaterialIssueId,warehouseStoreId ,approved, approvedById, materialIssueMaterials];
+  List<Object?> get props => [
+        updateMaterialIssueId,
+        warehouseStoreId,
+        approved,
+        approvedById,
+        materialIssueMaterials
+      ];
 }
-
-
-

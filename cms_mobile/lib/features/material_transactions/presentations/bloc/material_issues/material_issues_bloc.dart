@@ -1,7 +1,7 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/create_material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issue_details.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/get_material_issues.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/create_material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,21 +37,6 @@ class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
       emit(MaterialIssuesFailed(error: dataState.error!));
     }
   }
-
-  // void onGetMaterialIssueDetails(GetMaterialIssueDetailsEvent event,
-  //     Emitter<MaterialIssueState> emit) async {
-  //   emit(const MaterialIssueDetailsLoading());
-
-  //   final dataState =
-  //       await _getMaterialIssueDetailsUseCase(params: event.materialIssueId);
-  //   if (dataState is DataSuccess) {
-  //     emit(MaterialIssueDetailsSuccess(materialIssue: dataState.data!));
-  //   }
-
-  //   if (dataState is DataFailed) {
-  //     emit(MaterialIssueDetailsFailed(error: dataState.error!));
-  //   }
-  // }
 
   void onCreateMaterialIssue(
       CreateMaterialIssueEvent event, Emitter<MaterialIssueState> emit) async {

@@ -4,7 +4,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:equatable/equatable.dart';
 
 enum UserRole {
@@ -28,8 +28,8 @@ class UserEntity extends Equatable {
   final List<PurchaseOrderEntity>? purchaseOrdersApproved;
   final List<MaterialIssueEntity>? materialIssueVouchers;
   final List<MaterialIssueEntity>? materialIssueVouchersApproved;
-  final List<MaterialReceivingEntity>? materialReceiveVouchers;
-  final List<MaterialReceivingEntity>? materialReceiveVouchersApproved;
+  final List<MaterialReceiveEntity>? materialReceiveVouchers;
+  final List<MaterialReceiveEntity>? materialReceiveVouchersApproved;
 
   final List<MaterialRequestEntity>? materialRequestVouchers;
   final List<MaterialRequestEntity>? materialRequestVouchersApproved;
@@ -72,4 +72,58 @@ class UserEntity extends Equatable {
 
   @override
   bool get stringify => true;
+
+  // fromJSON, and toJSON methods
+
+  factory UserEntity.fromJson(Map<String, dynamic> json) {
+    return UserEntity(
+      id: json['id'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+      fullName: json['fullName'],
+      role: json['role'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      purchaseOrders: json['purchaseOrders'],
+      purchaseOrdersApproved: json['purchaseOrdersApproved'],
+      materialIssueVouchers: json['materialIssueVouchers'],
+      materialIssueVouchersApproved: json['materialIssueVouchersApproved'],
+      materialReceiveVouchers: json['materialReceiveVouchers'],
+      materialReceiveVouchersApproved: json['materialReceiveVouchersApproved'],
+      materialRequestVouchers: json['materialRequestVouchers'],
+      materialRequestVouchersApproved: json['materialRequestVouchersApproved'],
+      materialReturnVouchers: json['materialReturnVouchers'],
+      materialReturnVouchersReceived: json['materialReturnVouchersReceived'],
+      materialReturnVouchersApproved: json['materialReturnVouchersApproved'],
+      materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
+      projects: json['projects'],
+      tasks: json['tasks'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'fullName': fullName,
+      'role': role,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'purchaseOrders': purchaseOrders,
+      'purchaseOrdersApproved': purchaseOrdersApproved,
+      'materialIssueVouchers': materialIssueVouchers,
+      'materialIssueVouchersApproved': materialIssueVouchersApproved,
+      'materialReceiveVouchers': materialReceiveVouchers,
+      'materialReceiveVouchersApproved': materialReceiveVouchersApproved,
+      'materialRequestVouchers': materialRequestVouchers,
+      'materialRequestVouchersApproved': materialRequestVouchersApproved,
+      'materialReturnVouchers': materialReturnVouchers,
+      'materialReturnVouchersReceived': materialReturnVouchersReceived,
+      'materialReturnVouchersApproved': materialReturnVouchersApproved,
+      'materialReturnVouchersReturned': materialReturnVouchersReturned,
+      'projects': projects,
+      'tasks': tasks,
+    };
+  }
 }

@@ -4,9 +4,6 @@ class RoutePaths {
   static const String forgotPassword = 'forgotPassword';
   static const String resetPassword = 'resetPassword';
   static const String home = '/';
-  static const String materialReturn = 'material_return';
-  static const String materialReceiving = 'material_receiving';
-  static const String purchaseOrder = 'purchase_order';
   static const String items = 'items/:warehouseId';
 
   // material request
@@ -26,6 +23,25 @@ class RoutePaths {
   static const String materialTransferDetails = ':materialTransferId';
   static const String materialTransferCreate = 'create';
   static const String materialTransferEdit = 'edit';
+
+  // material receiving
+  static const String materialReceivingCreate = 'create';
+  static const String materialReceivingEdit = 'edit';
+  static const String materialReceivingDetails = ':materialReceivingId';
+  static const String materialReceiving = 'material_receiving';
+ 
+  // purchase order
+  static const String purchaseOrder = 'purchase_order';
+  static const String purchaseOrderCreate = 'create';
+  static const String purchaseOrderDetails = ':purchaseOrderId';
+  static const String purchaseOrderEdit = 'edit/:purchaseOrderId';
+
+  // material return
+  static const String materialReturnCreate = 'create';
+  static const String materialReturnDetails = ':materialReturnId';
+  static const String materialReturnEdit = 'edit/:materialReturnId';
+  static const String materialReturn = 'material_return';
+
 }
 
 class RouteNames {
@@ -35,9 +51,6 @@ class RouteNames {
   static const String signup = 'signup';
   static const String forgotPassword = 'forgotPassword';
   static const String resetPassword = 'resetPassword';
-  static const String materialReturn = 'material_return';
-  static const String materialReceiving = 'material_receiving';
-  static const String purchaseOrder = 'purchase_order';
   static const String items = 'items';
 
   // material request
@@ -57,4 +70,24 @@ class RouteNames {
   static const String materialTransferCreate = 'material_transfer_create';
   static const String materialTransferDetails = 'material_transfer_details';
   static const String materialTransferEdit = 'material_transfer_edit';
+
+  // material receiving
+  static const String materialReceiving = 'material_receiving';
+  static const String materialReceivingCreate = 'material_receiving_create';
+  static const String materialReceivingDetails = 'material_receiving_details';
+  static const String materialReceivingEdit = 'material_receiving_edit';
+
+  // purchase order
+  static const String purchaseOrder = 'purchase_order';
+  static const String purchaseOrderCreate = 'purchase_order_create';
+  static const String purchaseOrderDetails = 'purchase_order_details';
+  static const String purchaseOrderEdit = 'purchase_order_edit';
+
+
+  // material return
+  static const String materialReturnCreate = 'material_return_create';
+  static const String materialReturnDetails = 'material_return_details';
+  static const String materialReturnEdit = 'material_return_edit';
+  static const String materialReturn = 'material_return';
+
 }

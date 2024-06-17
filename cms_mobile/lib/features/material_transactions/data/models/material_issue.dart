@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
-import 'package:cms_mobile/features/projects/data/models/project.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 import 'package:flutter/widgets.dart';
 
@@ -12,28 +13,26 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/use_ty
 
 class MaterialIssueModel extends MaterialIssueEntity {
   const MaterialIssueModel({
-    required String? id,
-    required String? serialNumber,
-    required String? status,
-    required String? approvedById,
+    required String id,
+    String? serialNumber,
+    String? status,
+    String? approvedById,
     UserModel? approvedBy,
-    required String? projectDetails,
-    required String? requisitionNumber,
+    String? requisitionNumber,
     List<IssueVoucherMaterialModel>? items,
-    required String? preparedById,
+    String? preparedById,
     UserModel? preparedBy,
-    required String? receivedById,
+    String? receivedById,
     UserModel? receivedBy,
+    WarehouseModel? warehouse,
     required DateTime? createdAt,
     required DateTime? updatedAt,
-    WarehouseModel? warehouse,
   }) : super(
             id: id,
             serialNumber: serialNumber,
             status: status,
             approvedById: approvedById,
             approvedBy: approvedBy,
-            projectDetails: projectDetails,
             requisitionNumber: requisitionNumber,
             items: items,
             preparedById: preparedById,
@@ -52,70 +51,36 @@ class MaterialIssueModel extends MaterialIssueEntity {
   }
 
   factory MaterialIssueModel.fromJson(Map<String, dynamic> json) {
-    try {
-      return MaterialIssueModel(
-          id: json['id'],
-          serialNumber: json['serialNumber'],
-          projectDetails: json['projectDetails'],
-          requisitionNumber: json['requisitionNumber'],
-          items: json['items'].map<IssueVoucherMaterialModel>((item) {
-            return IssueVoucherMaterialModel.fromJson(item);
-          }).toList() as List<IssueVoucherMaterialModel>,
-          preparedById: json['preparedById'],
-          preparedBy: json['preparedBy'] != null
-              ? UserModel.fromJson(json['preparedBy'])
-              : null,
-          approvedById: json['approvedById'],
-          approvedBy: json['approvedBy'] != null
-              ? UserModel.fromJson(json['approvedBy'])
-              : null,
-          status: json['status'],
-          receivedById: json['receivedById'],
-          receivedBy: json['receivedBy'] != null
-              ? UserModel.fromJson(json['receivedBy'])
-              : null,
-          createdAt: json['createdAt'] != null
-              ? DateTime.parse(json['createdAt'])
-              : null,
-          updatedAt: json['updatedAt'] != null
-              ? DateTime.parse(json['updatedAt'])
-              : null,
-          warehouse: json['warehouseStore'] != null
-              ? WarehouseModel.fromJson(json['warehouseStore'])
-              : null);
-    } catch (e) {
-      debugPrint(
-          '********** Error: in Material Issue Model $e \n $json[items]');
-      return MaterialIssueModel(
-          id: json['id'],
-          serialNumber: json['serialNumber'],
-          projectDetails: json['projectDetails'],
-          requisitionNumber: json['requisitionNumber'],
-          items: json['items'] ??
-              json['items']
-                  .map<IssueVoucherMaterialModel>(
-                      (item) => IssueVoucherMaterialModel.fromJson(item))
-                  .toList(),
-          preparedById: json['preparedById'],
-          preparedBy:
-              json['preparedBy'] ?? UserModel.fromJson(json['preparedBy']),
-          approvedById: json['approvedById'],
-          approvedBy:
-              json['approvedBy'] ?? UserModel.fromJson(json['approvedBy']),
-          status: json['status'],
-          receivedById: json['receivedById'],
-          receivedBy:
-              json['receivedBy'] ?? UserModel.fromJson(json['receivedBy']),
-          createdAt: json['createdAt'] != null
-              ? DateTime.parse(json['createdAt'])
-              : null,
-          updatedAt: json['updatedAt'] != null
-              ? DateTime.parse(json['updatedAt'])
-              : null,
-          warehouse: json['warehouseStore'] != null
-              ? WarehouseModel.fromJson(json['warehouseStore'])
-              : null);
-    }
+    debugPrint('Material Issue Model: ${json}');
+    return MaterialIssueModel(
+        id: json['id'],
+        serialNumber: json['serialNumber'],
+        requisitionNumber: json['requisitionNumber'] ?? '',
+        items: json['items'].map<IssueVoucherMaterialModel>((item) {
+          return IssueVoucherMaterialModel.fromJson(item);
+        }).toList(),
+        preparedById: json['preparedById'],
+        preparedBy: json['preparedBy'] != null
+            ? UserModel.fromJson(json['preparedBy'])
+            : null,
+        approvedById: json['approvedById'],
+        approvedBy: json['approvedBy'] != null
+            ? UserModel.fromJson(json['approvedBy'])
+            : null,
+        status: json['status'],
+        receivedById: json['receivedById'],
+        receivedBy: json['receivedBy'] != null
+            ? UserModel.fromJson(json['receivedBy'])
+            : null,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : null,
+        warehouse: json['warehouseStore'] != null
+            ? WarehouseModel.fromJson(json['warehouseStore'])
+            : null);
   }
 
   Map<String, dynamic> toJson() {
@@ -125,7 +90,6 @@ class MaterialIssueModel extends MaterialIssueEntity {
       'status': status,
       'approvedById': approvedById,
       'approvedBy': approvedBy,
-      'projectDetails': projectDetails,
       'requisitionNumber': requisitionNumber,
       'items': items,
       'preparedById': preparedById,
@@ -152,7 +116,7 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
     required String? materialIssueVoucherId,
   }) : super(
             id: id,
-            productVariant: productVariant,
+            productVariant: productVariant as ProductVariantEntity,
             quantity: quantity,
             remark: remark,
             totalCost: totalCost,
@@ -369,29 +333,3 @@ class EditMaterialIssueParamsModel
             .toList());
   }
 }
-
-
-
-
-
-/**
- * 
- *   final String? id;
-  final String? serialNumber;
-  final DateTime? date;
-  final String? projectDetails;
-  final String? issuedToId;
-  final UserEntity? issuedTo;
-  final String? requisitionNumber;
-  final List<IssueVoucherItem>? items;
-  final String? preparedById;
-  final UserEntity? preparedBy;
-  final String? approvedById;
-  final UserEntity? approvedBy;
-  final String? status;
-  final List<MaterialReturnItem>? returnVoucherItems;
-  final String? userId;
-  final UserEntity? user;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
- */

@@ -1,29 +1,34 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_return/material_return_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 
-abstract class MaterialReturnEvent{
+abstract class MaterialReturnEvent {
   const MaterialReturnEvent();
 }
 
-class GetMaterialReturns extends MaterialReturnEvent{
-  const GetMaterialReturns();
+class GetMaterialReturns extends MaterialReturnEvent {
+  const GetMaterialReturns(
+      {required FilterMaterialReturnInput filterMaterialReturnInput,
+      required PaginationInput paginationInput,
+      required OrderByMaterialReturnInput orderBy});
 }
 
-class GetMaterialReturn extends MaterialReturnEvent{
+class GetMaterialReturn extends MaterialReturnEvent {
   final String id;
   const GetMaterialReturn(this.id);
 }
 
-class CreateMaterialReturn extends MaterialReturnEvent{
+class CreateMaterialReturn extends MaterialReturnEvent {
   final String id;
   const CreateMaterialReturn(this.id);
 }
 
-class UpdateMaterialReturn extends MaterialReturnEvent{
+class UpdateMaterialReturn extends MaterialReturnEvent {
   final String id;
   const UpdateMaterialReturn(this.id);
 }
 
-class DeleteMaterialReturn extends MaterialReturnEvent{
+class DeleteMaterialReturn extends MaterialReturnEvent {
   final String id;
   const DeleteMaterialReturn(this.id);
 }
@@ -44,4 +49,3 @@ class DeleteMaterialReturnEvent extends MaterialReturnEvent {
   final String id;
   const DeleteMaterialReturnEvent(this.id);
 }
-

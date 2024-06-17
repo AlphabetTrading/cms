@@ -1,9 +1,9 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class PurchaseOrderState extends Equatable {
-  final List<PurchaseOrderEntity>? purchaseOrders;
+  final PurchaseOrderEntityListWithMeta? purchaseOrders;
   final Failure? error;
 
   const PurchaseOrderState({this.purchaseOrders, this.error});
@@ -22,7 +22,7 @@ class PurchaseOrderLoading extends PurchaseOrderState {
 
 class PurchaseOrderSuccess extends PurchaseOrderState {
   const PurchaseOrderSuccess(
-      {required List<PurchaseOrderEntity> purchaseOrders})
+      {required PurchaseOrderEntityListWithMeta purchaseOrders})
       : super(purchaseOrders: purchaseOrders);
 }
 

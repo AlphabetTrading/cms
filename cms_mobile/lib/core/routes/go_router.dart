@@ -100,7 +100,8 @@ class AppRouter {
                   name: RouteNames.materialIssueEdit,
                   path: RoutePaths.materialIssueEdit,
                   builder: (BuildContext context, GoRouterState state) {
-                    return  MaterialIssueEditPage( materialIssueId:
+                    return MaterialIssueEditPage(
+                        materialIssueId:
                             state.pathParameters['materialIssueId']!);
                   },
                 ),
@@ -131,10 +132,41 @@ class AppRouter {
                   name: RouteNames.materialRequestDetails,
                   path: RoutePaths.materialRequestDetails,
                   builder: (BuildContext context, GoRouterState state) {
-                    return  MaterialRequestDetailsPage(
-                      materialRequestId:
-                            state.pathParameters['materialRequestId']!
-                    );
+                    return MaterialRequestDetailsPage(
+                        materialRequestId:
+                            state.pathParameters['materialRequestId']!);
+                  },
+                ),
+              ],
+            ),
+            GoRoute(
+              name: RouteNames.materialTransfer,
+              path: RoutePaths.materialTransfer,
+              builder: (BuildContext context, GoRouterState state) {
+                return const MaterialRequestsPage();
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.materialTransferCreate,
+                  path: RoutePaths.materialTransferCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialTransferEdit,
+                  path: RoutePaths.materialTransferEdit,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialTransferDetails,
+                  path: RoutePaths.materialTransferDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return MaterialRequestDetailsPage(
+                        materialRequestId:
+                            state.pathParameters['materialTransferId']!);
                   },
                 ),
               ],
@@ -145,6 +177,31 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return const MaterialReceivingPage();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.materialReceivingCreate,
+                  path: RoutePaths.materialReceivingCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialReceivingEdit,
+                  path: RoutePaths.materialReceivingEdit,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialReceivingDetails,
+                  path: RoutePaths.materialReceivingDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return MaterialRequestDetailsPage(
+                        materialRequestId:
+                            state.pathParameters['materialReceivingId']!);
+                  },
+                ),
+              ],
             ),
             GoRoute(
               name: RouteNames.materialReturn,
@@ -159,6 +216,31 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return const PurchaseOrdersPage();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.purchaseOrderCreate,
+                  path: RoutePaths.purchaseOrderCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.purchaseOrderEdit,
+                  path: RoutePaths.purchaseOrderEdit,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const CreateMaterialRequestPage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.purchaseOrderDetails,
+                  path: RoutePaths.purchaseOrderDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return MaterialRequestDetailsPage(
+                        materialRequestId:
+                            state.pathParameters['purchaseOrderId']!);
+                  },
+                ),
+              ],
             ),
           ],
         ),

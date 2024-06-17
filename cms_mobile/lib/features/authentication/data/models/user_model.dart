@@ -5,7 +5,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
@@ -20,8 +20,8 @@ class UserModel extends UserEntity {
     List<PurchaseOrderEntity>? purchaseOrdersApproved,
     List<MaterialIssueEntity>? materialIssueVouchers,
     List<MaterialIssueEntity>? materialIssueVouchersApproved,
-    List<MaterialReceivingEntity>? materialReceiveVouchers,
-    List<MaterialReceivingEntity>? materialReceiveVouchersApproved,
+    List<MaterialReceiveEntity>? materialReceiveVouchers,
+    List<MaterialReceiveEntity>? materialReceiveVouchersApproved,
     List<MaterialRequestEntity>? materialRequestVouchers,
     List<MaterialRequestEntity>? materialRequestVouchersApproved,
     List<MaterialReturnEntity>? materialReturnVouchers,
@@ -57,14 +57,16 @@ class UserModel extends UserEntity {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     // try{
 
-return UserModel(
+    return UserModel(
       id: json['id'],
       fullName: json['fullName'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
       role: getRole(json['role']),
-      createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
-      updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       purchaseOrders: json['purchaseOrders'],
       purchaseOrdersApproved: json['purchaseOrdersApproved'],
       materialIssueVouchers: json['materialIssueVouchers'],
@@ -80,34 +82,33 @@ return UserModel(
       projects: json['projects'],
       tasks: json['tasks'],
     );
-  //   }
-  //   catch(e){
-  //     print('********** Error in UserModel.fromJson: $e');
-  //   }
-  //  return UserModel(
-  //     id: json['id'],
-  //     fullName: json['fullName'],
-  //     email: json['email'],
-  //     phoneNumber: json['phoneNumber'],
-  //     role: getRole(json['role']),
-  //     createdAt: DateTime.parse(json['createdAt']),
-  //     updatedAt: DateTime.parse(json['updatedAt']),
-  //     purchaseOrders: json['purchaseOrders'],
-  //     purchaseOrdersApproved: json['purchaseOrdersApproved'],
-  //     materialIssueVouchers: json['materialIssueVouchers'],
-  //     materialIssueVouchersApproved: json['materialIssueVouchersApproved'],
-  //     materialReceiveVouchers: json['materialReceiveVouchers'],
-  //     materialReceiveVouchersApproved: json['materialReceiveVouchersApproved'],
-  //     materialRequestVouchers: json['materialRequestVouchers'],
-  //     materialRequestVouchersApproved: json['materialRequestVouchersApproved'],
-  //     materialReturnVouchers: json['materialReturnVouchers'],
-  //     materialReturnVouchersReceived: json['materialReturnVouchersReceived'],
-  //     materialReturnVouchersApproved: json['materialReturnVouchersApproved'],
-  //     materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
-  //     projects: json['projects'],
-  //     tasks: json['tasks'],
-  //   );;
-    
+    //   }
+    //   catch(e){
+    //     print('********** Error in UserModel.fromJson: $e');
+    //   }
+    //  return UserModel(
+    //     id: json['id'],
+    //     fullName: json['fullName'],
+    //     email: json['email'],
+    //     phoneNumber: json['phoneNumber'],
+    //     role: getRole(json['role']),
+    //     createdAt: DateTime.parse(json['createdAt']),
+    //     updatedAt: DateTime.parse(json['updatedAt']),
+    //     purchaseOrders: json['purchaseOrders'],
+    //     purchaseOrdersApproved: json['purchaseOrdersApproved'],
+    //     materialIssueVouchers: json['materialIssueVouchers'],
+    //     materialIssueVouchersApproved: json['materialIssueVouchersApproved'],
+    //     materialReceiveVouchers: json['materialReceiveVouchers'],
+    //     materialReceiveVouchersApproved: json['materialReceiveVouchersApproved'],
+    //     materialRequestVouchers: json['materialRequestVouchers'],
+    //     materialRequestVouchersApproved: json['materialRequestVouchersApproved'],
+    //     materialReturnVouchers: json['materialReturnVouchers'],
+    //     materialReturnVouchersReceived: json['materialReturnVouchersReceived'],
+    //     materialReturnVouchersApproved: json['materialReturnVouchersApproved'],
+    //     materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
+    //     projects: json['projects'],
+    //     tasks: json['tasks'],
+    //   );;
   }
 
   Map<String, dynamic> toJson() {

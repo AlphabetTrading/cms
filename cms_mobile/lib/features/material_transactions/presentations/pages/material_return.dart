@@ -1,12 +1,15 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/data_source/remote_data_source.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_return/material_return_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_state.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,13 +28,13 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
   @override
   void initState() {
     super.initState();
-    // context.read<MaterialIssueBloc>().add(
-    //       GetMaterialRequests(
-    //         filterMaterialIssueInput: FilterMaterialIssueInput(),
-    //         orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
-    //         paginationInput: PaginationInput(skip: 0, take: 20),
-    //       ),
-    //     );
+    context.read<MaterialReturnBloc>().add(
+          GetMaterialReturns(
+            filterMaterialReturnInput: FilterMaterialReturnInput(),
+            orderBy: OrderByMaterialReturnInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 10),
+          ),
+        );
 
     // read auth state
     debugPrint("Auth state: ${context.read<AuthBloc>().state.userId}");
@@ -47,17 +50,16 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
         .listen((
       query,
     ) {
-      // context.read<MaterialIssueBloc>().add(
-      // GetMaterialRequests(
-      // orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
-      // paginationInput: PaginationInput(skip: 0, take: 10),
-      // filterMaterialIssueInput: FilterMaterialIssueInput(
-      //   preparedBy: StringFilter(contains: query),
-      //   approvedBy: StringFilter(contains: query),
-      //   serialNumber: StringFilter(contains: query),
-      // ),
-      // ),
-      // );
+      context.read<MaterialReturnBloc>().add(
+            GetMaterialReturns(
+              orderBy: OrderByMaterialReturnInput(createdAt: "desc"),
+              paginationInput: PaginationInput(skip: 0, take: 10),
+              filterMaterialReturnInput: FilterMaterialReturnInput(
+                approvedBy: StringFilter(contains: query),
+                serialNumber: StringFilter(contains: query),
+              ),
+            ),
+          );
     });
 
     return Scaffold(
@@ -71,7 +73,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Create Material Request'),
+          child: const Text('Create Material Return'),
         ),
       ),
       body: Container(
@@ -122,31 +124,31 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: const Text('Material Requests'),
+      title: const Text('Material Return'),
     );
   }
 
   _buildBody(BuildContext context) {
-    return BlocBuilder<MaterialRequestBloc, MaterialRequestState>(
+    return BlocBuilder<MaterialReturnBloc, MaterialReturnState>(
       builder: (_, state) {
-        debugPrint('MaterialRequestBlocBuilder state: $state');
-        if (state is MaterialRequestInitial) {
+        debugPrint('MaterialReturnBlocBuilder state: $state');
+        if (state is MaterialReturnInitial) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (state is MaterialRequestLoading) {
+        if (state is MaterialReturnLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if (state is MaterialRequestSuccess) {
+        if (state is MaterialReturnSuccess) {
           debugPrint(
-              'MaterialRequestSuccess ${state.materialRequests?.items.length} ');
+              'MaterialReturnSuccess ${state.materialReturns?.items.length} ');
 
-          return state.materialRequests!.items.isNotEmpty
+          return state.materialReturns!.items.isNotEmpty
               ? Expanded(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -159,15 +161,15 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.vertical,
-                            itemCount: state.materialRequests!.items.length,
+                            itemCount: state.materialReturns!.items.length,
                             separatorBuilder: (_, index) => const SizedBox(
                               height: 10,
                             ),
                             itemBuilder: (_, index) {
-                              final materialRequest =
-                                  state.materialRequests!.items[index];
+                              final materialReturn =
+                                  state.materialReturns!.items[index];
                               return _buildRequestListItem(
-                                  context, materialRequest);
+                                  context, materialReturn);
                             },
                           ),
                         ],
@@ -180,7 +182,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                 );
         }
 
-        if (state is MaterialRequestFailed) {
+        if (state is MaterialReturnFailed) {
           return Center(
             child: Text(state.error!.errorMessage),
           );
@@ -192,7 +194,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
   }
 
   _buildRequestListItem(
-      BuildContext context, MaterialRequestEntity materialRequest) {
+      BuildContext context, MaterialReturnEntity materialReturn) {
     return Container(
       width: MediaQuery.of(context).size.width - 20,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -210,7 +212,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                materialRequest.serialNumber ?? 'N/A',
+                materialReturn.serialNumber ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 18,
@@ -225,7 +227,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                       onTap: () {
                         context.goNamed(RouteNames.materialIssueEdit,
                             pathParameters: {
-                              'materialIssueId': materialRequest.id.toString()
+                              'materialIssueId': materialReturn.id.toString()
                             });
                       },
                       child: const ListTile(
@@ -248,7 +250,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
             ],
           ),
           Text(
-            DateFormat.yMMMMd().format(materialRequest.createdAt!),
+            DateFormat.yMMMMd().format(materialReturn.createdAt),
             style: const TextStyle(
               color: Color(0xFF637587),
               fontSize: 12,
@@ -260,7 +262,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'By ${materialRequest.approvedBy?.fullName ?? 'N/A'}',
+                'By ${materialReturn.receivedBy?.fullName ?? 'N/A'}',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 15,
@@ -269,7 +271,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                 ),
               ),
               Text(
-                materialRequest.approvedBy?.email ?? 'N/A',
+                materialReturn.receivedById ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF637587),
                   fontSize: 12,
@@ -300,12 +302,12 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: ShapeDecoration(
-                  color: materialRequest.status == MaterialRequestStatus.pending
+                  color: materialReturn.status == MaterialReturnStatus.pending
                       ? const Color.fromARGB(31, 255, 183, 0)
-                      : materialRequest.status == MaterialRequestStatus.completed
+                      : materialReturn.status == MaterialReturnStatus.approved
                           ? const Color.fromARGB(30, 0, 179, 66)
-                          : materialRequest.status ==
-                                  MaterialRequestStatus.declined
+                          : materialReturn.status ==
+                                  MaterialReturnStatus.declined
                               ? const Color.fromARGB(30, 208, 2, 26)
                               : const Color.fromARGB(31, 17, 20, 22),
                   shape: RoundedRectangleBorder(
@@ -313,18 +315,16 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                   ),
                 ),
                 child: Text(
-                  materialRequest.status.toString(),
+                  materialReturn.status.toString(),
                   style: TextStyle(
-                    color:
-                        materialRequest.status == MaterialRequestStatus.pending
-                            ? const Color(0xFFFFB700)
-                            : materialRequest.status ==
-                                    MaterialRequestStatus.completed
-                                ? const Color(0xFF00B341)
-                                : materialRequest.status ==
-                                        MaterialRequestStatus.declined
-                                    ? const Color(0xFFD0021B)
-                                    : const Color(0xFF111416),
+                    color: materialReturn.status == MaterialReturnStatus.pending
+                        ? const Color(0xFFFFB700)
+                        : materialReturn.status == MaterialReturnStatus.approved
+                            ? const Color(0xFF00B341)
+                            : materialReturn.status ==
+                                    MaterialReturnStatus.declined
+                                ? const Color(0xFFD0021B)
+                                : const Color(0xFF111416),
                     fontSize: 10,
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w600,
@@ -333,9 +333,9 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
               ),
               TextButton(
                 onPressed: () {
-                  context.goNamed(RouteNames.materialRequestDetails,
+                  context.goNamed(RouteNames.materialReturnDetails,
                       pathParameters: {
-                        'materialRequestId': materialRequest.id.toString()
+                        'materialReturnId': materialReturn.id.toString()
                       });
                 },
                 child: const Text(
