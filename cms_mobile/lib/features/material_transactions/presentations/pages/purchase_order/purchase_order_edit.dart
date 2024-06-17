@@ -100,7 +100,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
             final preparedBy = materialIssue?.preparedBy;
             final approvedBy = materialIssue?.approvedBy;
             final materialIssueMaterials = materialIssue?.items ?? [];
-            selectedWarehouse ??= materialIssue?.warehouse;
+            selectedWarehouse ??= materialIssue?.warehouseStore;
             return BlocBuilder<WarehouseBloc, WarehouseState>(
               builder: (warehouseContext, warehouseState) {
                 if (warehouseState is WarehousesFailed) {
@@ -129,7 +129,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                   filterWarehouseProductInput:
                                       FilterWarehouseProductInput(
                                           warehouseId:
-                                              materialIssue?.warehouse?.id),
+                                              materialIssue?.warehouseStore?.id),
                                 ),
                               ),
                             );

@@ -11,6 +11,8 @@ abstract class MaterialReceiveDetailsState extends Equatable {
   List<Object> get props => [];
 }
 
+
+
 class MaterialReceiveDetailsInitial extends MaterialReceiveDetailsState {}
 
 class MaterialReceiveDetailsLoading extends MaterialReceiveDetailsState {}

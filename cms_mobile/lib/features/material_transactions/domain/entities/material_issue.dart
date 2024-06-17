@@ -17,12 +17,11 @@ class MaterialIssueEntity extends Equatable {
   final List<IssueVoucherMaterialEntity>? items;
   final String? preparedById;
   final UserEntity? preparedBy;
-  final String? receivedById;
-  final UserEntity? receivedBy;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String? warehouseStoreId;
   final ProjectEntity? project;
-  final WarehouseEntity? warehouse;
+  final WarehouseEntity? warehouseStore;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   const MaterialIssueEntity({
     this.id,
@@ -34,24 +33,32 @@ class MaterialIssueEntity extends Equatable {
     this.approvedById,
     this.approvedBy,
     this.status,
-    this.receivedBy,
-    this.receivedById,
-    this.updatedAt,
-    this.createdAt,
     this.project,
-    this.warehouse,
+    this.warehouseStoreId,
+    this.warehouseStore,
+    required this.updatedAt,
+    required this.createdAt,
   });
 
   @override
   List<Object?> get props {
     return [
       id,
+      serialNumber,
+      status,
+      approvedById,
+      approvedBy,
+      requisitionNumber,
+      items,
+      preparedById,
+      preparedBy,
     ];
   }
 }
 
 class IssueVoucherMaterialEntity extends Equatable {
   final String? id;
+  final String? productVariantId;
   final ProductVariantEntity? productVariant;
   final double? quantity;
   final String? remark;
@@ -61,18 +68,24 @@ class IssueVoucherMaterialEntity extends Equatable {
   final SuperStructureUseDescription? superStructureDescription;
   final UseType? useType;
   final String? materialIssueVoucherId;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  const IssueVoucherMaterialEntity(
-      {required this.id,
-      this.productVariant,
-      this.quantity,
-      this.remark,
-      this.totalCost,
-      this.unitCost,
-      this.subStructureDescription,
-      this.superStructureDescription,
-      this.useType,
-      this.materialIssueVoucherId});
+  const IssueVoucherMaterialEntity({
+    required this.id,
+    this.productVariantId,
+    this.productVariant,
+    this.quantity,
+    this.remark,
+    this.totalCost,
+    this.unitCost,
+    this.subStructureDescription,
+    this.superStructureDescription,
+    this.useType,
+    this.materialIssueVoucherId,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   @override
   List<Object?> get props {
@@ -86,7 +99,7 @@ class IssueVoucherMaterialEntity extends Equatable {
       subStructureDescription,
       superStructureDescription,
       useType,
-      materialIssueVoucherId
+      materialIssueVoucherId,
     ];
   }
 }

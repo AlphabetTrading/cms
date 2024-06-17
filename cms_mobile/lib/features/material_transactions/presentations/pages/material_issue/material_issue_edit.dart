@@ -1,10 +1,6 @@
-import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
-import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
-import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
@@ -15,14 +11,11 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_issue_form/material_issue_form_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_issue_form/material_issue_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/material_issue_input_list.dart';
-import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';
@@ -47,7 +40,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
     BlocProvider.of<WarehouseBloc>(context).add(const GetWarehousesEvent());
   }
 
-  WarehouseDropdown warehouseDropdown = WarehouseDropdown.pure('');
+  WarehouseDropdown warehouseDropdown = const WarehouseDropdown.pure('');
   WarehouseEntity? selectedWarehouse;
 
   _buildOnEditSuccess(BuildContext context) {
@@ -60,7 +53,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 3,
-        backgroundColor: Color.fromARGB(255, 1, 135, 23),
+        backgroundColor: const Color.fromARGB(255, 1, 135, 23),
         textColor: Colors.white,
         fontSize: 16.0);
   }
@@ -107,7 +100,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
             final preparedBy = materialIssue?.preparedBy;
             final approvedBy = materialIssue?.approvedBy;
             final materialIssueMaterials = materialIssue?.items ?? [];
-            selectedWarehouse ??= materialIssue?.warehouse;
+            selectedWarehouse ??= materialIssue?.warehouseStore;
             return BlocBuilder<WarehouseBloc, WarehouseState>(
               builder: (warehouseContext, warehouseState) {
                 if (warehouseState is WarehousesFailed) {
@@ -136,7 +129,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                   filterWarehouseProductInput:
                                       FilterWarehouseProductInput(
                                           warehouseId:
-                                              materialIssue?.warehouse?.id),
+                                              materialIssue?.warehouseStoreId),
                                 ),
                               ),
                             );
@@ -269,13 +262,13 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                               },
                             );
                           }
-                          return SizedBox();
+                          return const SizedBox();
                         });
                       });
                     },
                   );
                 }
-                return SizedBox();
+                return const SizedBox();
               },
             );
           }

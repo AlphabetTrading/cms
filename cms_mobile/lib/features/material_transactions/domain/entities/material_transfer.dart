@@ -68,7 +68,6 @@ class MaterialTransferEntity extends Equatable {
 }
 
 class MaterialTransferItemEntity extends Equatable {
-  String? createdAt;
   String? id;
   String? materialTransferVoucherId;
   ProductVariantEntity? productVariant;
@@ -78,20 +77,22 @@ class MaterialTransferItemEntity extends Equatable {
   String? remark;
   int? totalCost;
   int? unitCost;
-  String? updatedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
 
-  MaterialTransferItemEntity(
-      {this.createdAt,
-      this.id,
-      this.materialTransferVoucherId,
-      this.productVariant,
-      this.productVariantId,
-      this.quantityRequested,
-      this.quantityTransferred,
-      this.remark,
-      this.totalCost,
-      this.unitCost,
-      this.updatedAt});
+  MaterialTransferItemEntity({
+    this.id,
+    this.materialTransferVoucherId,
+    this.productVariant,
+    this.productVariantId,
+    this.quantityRequested,
+    this.quantityTransferred,
+    this.remark,
+    this.totalCost,
+    this.unitCost,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   @override
   List<Object?> get props => [
@@ -118,8 +119,8 @@ class MaterialTransferItemEntity extends Equatable {
     String? remark,
     int? totalCost,
     int? unitCost,
-    String? createdAt,
-    String? updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return MaterialTransferItemEntity(
       id: id ?? this.id,
@@ -158,7 +159,6 @@ class MaterialTransferItemEntity extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'createdAt': createdAt,
       'materialTransferVoucherId': materialTransferVoucherId,
       'productVariant': productVariant!.toJson(),
       'productVariantId': productVariantId,
@@ -167,6 +167,7 @@ class MaterialTransferItemEntity extends Equatable {
       'remark': remark,
       'totalCost': totalCost,
       'unitCost': unitCost,
+      'createdAt': createdAt,
       'updatedAt': updatedAt
     };
   }

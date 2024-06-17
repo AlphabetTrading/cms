@@ -11,6 +11,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/material_request_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
 import 'package:cms_mobile/features/products/presentation/pages/products_page.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +144,7 @@ class AppRouter {
               name: RouteNames.materialTransfer,
               path: RoutePaths.materialTransfer,
               builder: (BuildContext context, GoRouterState state) {
-                return const MaterialRequestsPage();
+                return const MaterialTransferPage();
               },
               routes: <RouteBase>[
                 GoRoute(

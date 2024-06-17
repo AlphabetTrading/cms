@@ -1,21 +1,21 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/edit/edit_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_state.dart';
 import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/edit/edit_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_issue_form/material_issue_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_receive_form/material_receive_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/material_issue_input_list.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_receive/create_material_receive_form.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_receive/material_receive_input_list.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';
@@ -25,15 +25,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
-class MaterialIssueEditPage extends StatefulWidget {
-  final String materialIssueId;
-  const MaterialIssueEditPage({super.key, required this.materialIssueId});
+class MaterialReceiveEditPage extends StatefulWidget {
+  final String materialReceiveId;
+  const MaterialReceiveEditPage({super.key, required this.materialReceiveId});
 
   @override
-  State<MaterialIssueEditPage> createState() => _MaterialIssueEditPageState();
+  State<MaterialReceiveEditPage> createState() =>
+      _MaterialReceiveEditPageState();
 }
 
-class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
+class _MaterialReceiveEditPageState extends State<MaterialReceiveEditPage> {
   @override
   void initState() {
     super.initState();
@@ -44,12 +45,12 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
   WarehouseEntity? selectedWarehouse;
 
   _buildOnEditSuccess(BuildContext context) {
-    context.goNamed(RouteNames.materialIssue);
+    context.goNamed(RouteNames.materialReceiving);
 
-    BlocProvider.of<MaterialIssueLocalBloc>(context)
-        .add(const ClearMaterialIssueMaterialsLocal());
+    BlocProvider.of<MaterialReceiveLocalBloc>(context)
+        .add(const ClearMaterialReceiveMaterialsLocal());
     Fluttertoast.showToast(
-        msg: "Material Issue Editd",
+        msg: "Material Receive Editd",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 3,
@@ -60,7 +61,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
 
   _buildOnEditFailed(BuildContext context) {
     Fluttertoast.showToast(
-        msg: "Edit Material Issue Failed",
+        msg: "Edit Material Receive Failed",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 3,
@@ -71,36 +72,37 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final materialIssueFormCubit = context.watch<MaterialIssueFormCubit>();
-    // final warehouseDropdown = materialIssueFormCubit.state.warehouseDropdown;
+    // final materialReceiveFormCubit = context.watch<MaterialReceiveFormCubit>();
+    // final warehouseDropdown = materialReceiveFormCubit.state.warehouseDropdown;
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<MaterialIssueDetailsCubit>(
-          create: (context) => sl<MaterialIssueDetailsCubit>()
-            ..onGetMaterialIssueDetails(
-                materialIssueId: widget.materialIssueId),
+        BlocProvider<MaterialReceiveDetailsCubit>(
+          create: (context) => sl<MaterialReceiveDetailsCubit>()
+            ..onGetMaterialReceiveDetails(
+                materialReceiveId: widget.materialReceiveId),
         )
       ],
-      child: BlocBuilder<MaterialIssueDetailsCubit, MaterialIssueDetailsState>(
+      child:
+          BlocBuilder<MaterialReceiveDetailsCubit, MaterialReceiveDetailsState>(
         builder: (context, state) {
-          if (state is MaterialIssueDetailsLoading) {
+          if (state is MaterialReceiveDetailsLoading) {
             return const Center(
                 child: Column(
               children: [
-                Text("Loading Material Issue Details"),
+                Text("Loading Material Receive Details"),
                 CircularProgressIndicator(),
               ],
             ));
-          } else if (state is MaterialIssueDetailsFailed) {
+          } else if (state is MaterialReceiveDetailsFailed) {
             return Text(state.error);
-          } else if (state is MaterialIssueDetailsSuccess) {
-            final materialIssue = state.materialIssue;
-            final project = materialIssue?.project;
-            final preparedBy = materialIssue?.preparedBy;
-            final approvedBy = materialIssue?.approvedBy;
-            final materialIssueMaterials = materialIssue?.items ?? [];
-            selectedWarehouse ??= materialIssue?.warehouse;
+          } else if (state is MaterialReceiveDetailsSuccess) {
+            final materialReceive = state.materialReceive;
+            final project = materialReceive?.project;
+            final preparedBy = materialReceive?.preparedBy;
+            final approvedBy = materialReceive?.approvedBy;
+            final materialReceiveMaterials = materialReceive?.items ?? [];
+            selectedWarehouse ??= materialReceive?.warehouse;
             return BlocBuilder<WarehouseBloc, WarehouseState>(
               builder: (warehouseContext, warehouseState) {
                 if (warehouseState is WarehousesFailed) {
@@ -115,12 +117,12 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                     ],
                   ));
                 } else if (warehouseState is WarehousesSuccess) {
-                  return BlocBuilder<MaterialIssueLocalBloc,
-                      MaterialIssueLocalState>(
+                  return BlocBuilder<MaterialReceiveLocalBloc,
+                      MaterialReceiveLocalState>(
                     builder: (localContext, localState) {
                       return Builder(builder: (context) {
                         // final warehouseForm = warehouseFormContext
-                        //     .watch<MaterialIssueWarehouseFormCubit>();
+                        //     .watch<MaterialReceiveWarehouseFormCubit>();
 
                         context.read<ProductBloc>().add(
                               GetWarehouseProducts(
@@ -129,7 +131,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                   filterWarehouseProductInput:
                                       FilterWarehouseProductInput(
                                           warehouseId:
-                                              materialIssue?.warehouse?.id),
+                                              materialReceive?.warehouse?.id),
                                 ),
                               ),
                             );
@@ -149,11 +151,11 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                             ));
                           }
                           if (itemState is WarehouseProductsSuccess) {
-                            localContext.read<MaterialIssueLocalBloc>().add(
-                                    AddMaterialIssueMaterialsLocal(
-                                        materialIssueMaterials.map(
+                            localContext.read<MaterialReceiveLocalBloc>().add(
+                                    AddMaterialReceiveMaterialsLocal(
+                                        materialReceiveMaterials.map(
                                   (e) {
-                                    return MaterialIssueMaterialEntity(
+                                    return MaterialReceiveMaterialEntity(
                                         quantity: e.quantity!,
                                         useType: e.useType!,
                                         material: itemState.warehouseProducts!
@@ -168,22 +170,24 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                   },
                                 ).toList()));
 
-                            return BlocConsumer<MaterialIssueBloc,
-                                MaterialIssueState>(
-                              listener: (issueContext, issueState) {
-                                if (issueState is EditMaterialIssueSuccess) {
-                                  _buildOnEditSuccess(issueContext);
-                                } else if (issueState
-                                    is EditMaterialIssueFailed) {
-                                  _buildOnEditFailed(issueContext);
+                            return BlocConsumer<MaterialReceiveBloc,
+                                MaterialReceiveState>(
+                              listener: (receiveContext, receiveState) {
+                                if (receiveState
+                                    is EditMaterialReceiveSuccess) {
+                                  _buildOnEditSuccess(receiveContext);
+                                } else if (receiveState
+                                    is EditMaterialReceiveFailed) {
+                                  _buildOnEditFailed(receiveContext);
                                 }
                               },
-                              builder: (issueContext, issueState) {
+                              builder: (receiveContext, receiveState) {
                                 return Scaffold(
                                   appBar: AppBar(
-                                      title: const Text("Edit Material Issue")),
+                                      title:
+                                          const Text("Edit Material Receive")),
                                   bottomSheet: _buildButtons(
-                                      issueContext, localState, issueState),
+                                      receiveContext, localState, receiveState),
                                   body: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Padding(
@@ -234,7 +238,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                             height: 20,
                                           ),
                                           Text(
-                                            "Materials to be issued:",
+                                            "Materials to be received:",
                                             textAlign: TextAlign.start,
                                             style: Theme.of(context)
                                                 .textTheme
@@ -243,15 +247,15 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                           const SizedBox(
                                             height: 10,
                                           ),
-                                          (localState.materialIssueMaterials ==
+                                          (localState.materialReceiveMaterials ==
                                                       null ||
                                                   localState
-                                                      .materialIssueMaterials!
+                                                      .materialReceiveMaterials!
                                                       .isEmpty)
                                               ? const EmptyList()
-                                              : MaterialIssueInputList(
-                                                  materialIssues: localState
-                                                          .materialIssueMaterials ??
+                                              : MaterialReceiveInputList(
+                                                  materialReceives: localState
+                                                          .materialReceiveMaterials ??
                                                       [],
                                                 ),
                                         ],
@@ -280,8 +284,8 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
 
   _buildButtons(
     BuildContext context,
-    MaterialIssueLocalState localState,
-    MaterialIssueState state,
+    MaterialReceiveLocalState localState,
+    MaterialReceiveState state,
   ) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -293,8 +297,8 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
             isScrollControlled: true,
             builder: (context) => MultiBlocProvider(
                 providers: [
-                  BlocProvider<MaterialIssueFormCubit>(
-                    create: (_) => MaterialIssueFormCubit(),
+                  BlocProvider<MaterialReceiveFormCubit>(
+                    create: (_) => MaterialReceiveFormCubit(),
                   )
                 ],
                 child: Column(
@@ -302,7 +306,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(32.0),
-                      child: CreateMaterialIssueForm(),
+                      child: CreateMaterialReceiveForm(),
                     )
                   ],
                 )),
@@ -314,21 +318,23 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
         ),
         const SizedBox(height: 10),
         ElevatedButton(
-          onPressed: (state is EditMaterialIssueLoading ||
-                  localState.materialIssueMaterials == null ||
-                  localState.materialIssueMaterials!.isEmpty)
+          onPressed: (state is EditMaterialReceiveLoading ||
+                  localState.materialReceiveMaterials == null ||
+                  localState.materialReceiveMaterials!.isEmpty)
               ? null
               : () {
-                  context.read<EditMaterialIssueCubit>().onEditMaterialIssue(
-                          editMaterialIssueParamsEntity:
-                              EditMaterialIssueParamsEntity(
-                        updateMaterialIssueId: widget.materialIssueId,
+                  context
+                      .read<EditMaterialReceiveCubit>()
+                      .onEditMaterialReceive(
+                          editMaterialReceiveParamsEntity:
+                              EditMaterialReceiveParamsEntity(
+                        updateMaterialReceiveId: widget.materialReceiveId,
                         approved: "approved",
                         approvedById: "approvedById",
                         warehouseStoreId: warehouseDropdown?.value ?? "",
-                        materialIssueMaterials:
-                            localState.materialIssueMaterials!
-                                .map((e) => MaterialIssueMaterialEntity(
+                        materialReceiveMaterials:
+                            localState.materialReceiveMaterials!
+                                .map((e) => MaterialReceiveMaterialEntity(
                                       quantity: e.quantity,
                                       remark: e.remark,
                                       useType: e.useType,
@@ -347,7 +353,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              state is EditMaterialIssueLoading
+              state is EditMaterialReceiveLoading
                   ? const Padding(
                       padding: EdgeInsets.only(right: 8),
                       child: SizedBox(
@@ -358,7 +364,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                           )),
                     )
                   : const SizedBox(),
-              const Text('Edit Material Issue')
+              const Text('Edit Material Receive')
             ],
           ),
         )

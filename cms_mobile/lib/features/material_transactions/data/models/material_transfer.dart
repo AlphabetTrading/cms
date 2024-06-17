@@ -7,7 +7,6 @@ import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 class MaterialTransferItemModel extends MaterialTransferItemEntity {
   MaterialTransferItemModel(
       {String? id,
-      String? createdAt,
       String? materialTransferVoucherId,
       ProductVariantModel? productVariant,
       String? productVariantId,
@@ -16,10 +15,10 @@ class MaterialTransferItemModel extends MaterialTransferItemEntity {
       String? remark,
       int? totalCost,
       int? unitCost,
-      String? updatedAt})
+      required DateTime createdAt,
+      required DateTime updatedAt})
       : super(
             id: id,
-            createdAt: createdAt,
             materialTransferVoucherId: materialTransferVoucherId,
             productVariant: productVariant,
             productVariantId: productVariantId,
@@ -28,6 +27,7 @@ class MaterialTransferItemModel extends MaterialTransferItemEntity {
             remark: remark,
             totalCost: totalCost,
             unitCost: unitCost,
+            createdAt: createdAt,
             updatedAt: updatedAt);
 
   factory MaterialTransferItemModel.fromJson(Map<String, dynamic> json) {

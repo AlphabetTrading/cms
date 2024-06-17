@@ -2,12 +2,12 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/delete/delete_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_transfer/material_transfer_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_transfer.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_state.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -16,22 +16,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
-class MaterialIssuesPage extends StatefulWidget {
-  const MaterialIssuesPage({Key? key}) : super(key: key);
+class MaterialTransferPage extends StatefulWidget {
+  const MaterialTransferPage({Key? key}) : super(key: key);
 
   @override
-  State<MaterialIssuesPage> createState() => _MaterialIssuesPageState();
+  State<MaterialTransferPage> createState() => _MaterialTransferPageState();
 }
 
-class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
+class _MaterialTransferPageState extends State<MaterialTransferPage> {
   @override
   void initState() {
     super.initState();
-    context.read<MaterialIssueBloc>().add(
-          GetMaterialIssues(
-            filterMaterialIssueInput: FilterMaterialIssueInput(),
-            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
-            paginationInput: PaginationInput(skip: 0, take: 20),
+    context.read<MaterialTransferBloc>().add(
+          GetMaterialTransfers(
+            filterMaterialTransferInput: FilterMaterialTransferInput(),
+            orderBy: OrderByMaterialTransferInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 10),
           ),
         );
 
@@ -49,12 +49,11 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
         .listen((
       query,
     ) {
-      context.read<MaterialIssueBloc>().add(
-            GetMaterialIssues(
-                orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+      context.read<MaterialTransferBloc>().add(
+            GetMaterialTransfers(
+                orderBy: OrderByMaterialTransferInput(createdAt: "desc"),
                 paginationInput: PaginationInput(skip: 0, take: 10),
-                filterMaterialIssueInput: FilterMaterialIssueInput(
-                  preparedBy: StringFilter(contains: query),
+                filterMaterialTransferInput: FilterMaterialTransferInput(
                   approvedBy: StringFilter(contains: query),
                   serialNumber: StringFilter(contains: query),
                 )),
@@ -67,12 +66,12 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            context.goNamed(RouteNames.materialIssueCreate);
+            context.goNamed(RouteNames.materialTransferCreate);
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Create Material Issue'),
+          child: const Text('Create Material Transfer'),
         ),
       ),
       body: Container(
@@ -123,44 +122,43 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: const Text('Material Issues'),
-      
+      title: const Text('Material Transfers'),
     );
   }
-  
+
   _buildBody(BuildContext context) {
-    return BlocProvider<MaterialIssueDeleteCubit>(
-      create: (context) => sl<MaterialIssueDeleteCubit>(),
-      child: BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
+    return BlocProvider<MaterialTransferDeleteCubit>(
+      create: (context) => sl<MaterialTransferDeleteCubit>(),
+      child: BlocBuilder<MaterialTransferBloc, MaterialTransferState>(
         builder: (_, state) {
           debugPrint('MaterialRequestBlocBuilder state: $state');
-          if (state is MaterialIssueInitial) {
+          if (state is MaterialTransferInitial) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          if (state is MaterialIssuesLoading) {
+          if (state is MaterialTransfersLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          if (state is MaterialIssuesSuccess) {
+          if (state is MaterialTransfersSuccess) {
             debugPrint(
-                'MaterialRequestSuccess ${state.materialIssues?.items.length} ');
+                'MaterialRequestSuccess ${state.materialTransfer?.items!.length} ');
 
-            return state.materialIssues!.items.isNotEmpty
+            return state.materialTransfer!.items!.isNotEmpty
                 ? Expanded(
-                    child: BlocListener<MaterialIssueDeleteCubit,
-                        MaterialIssueDeleteState>(
+                    child: BlocListener<MaterialTransferDeleteCubit,
+                        MaterialTransferDeleteState>(
                       listener: (context, state) {
-                        if (state is MaterialIssueDeleteSuccess) {
-                          context.read<MaterialIssueBloc>().add(
-                                GetMaterialIssues(
-                                  filterMaterialIssueInput:
-                                      FilterMaterialIssueInput(),
-                                  orderBy: OrderByMaterialIssueInput(
+                        if (state is MaterialTransferDeleteSuccess) {
+                          context.read<MaterialTransferBloc>().add(
+                                GetMaterialTransfers(
+                                  filterMaterialTransferInput:
+                                      FilterMaterialTransferInput(),
+                                  orderBy: OrderByMaterialTransferInput(
                                       createdAt: "desc"),
                                   paginationInput:
                                       PaginationInput(skip: 0, take: 10),
@@ -179,15 +177,16 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 scrollDirection: Axis.vertical,
-                                itemCount: state.materialIssues!.items.length,
+                                itemCount:
+                                    state.materialTransfer!.items!.length,
                                 separatorBuilder: (_, index) => const SizedBox(
                                   height: 10,
                                 ),
                                 itemBuilder: (_, index) {
-                                  final materialIssue =
-                                      state.materialIssues!.items[index];
-                                  return _buildIssueListItem(
-                                      context, materialIssue);
+                                  final materialTransfer =
+                                      state.materialTransfer!.items![index];
+                                  return _buildTransferListItem(
+                                      context, materialTransfer);
                                 },
                               ),
                             ],
@@ -197,11 +196,11 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                     ),
                   )
                 : const Center(
-                    child: Text('No Material Issues'),
+                    child: Text('No Material Transfers'),
                   );
           }
 
-          if (state is MaterialIssuesFailed) {
+          if (state is MaterialTransfersFailed) {
             return Center(
               child: Text(state.error!.errorMessage),
             );
@@ -213,7 +212,8 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
     );
   }
 
-  _buildIssueListItem(BuildContext context, MaterialIssueEntity materialIssue) {
+  _buildTransferListItem(
+      BuildContext context, MaterialTransferItemEntity materialTransfer) {
     return Container(
       width: MediaQuery.of(context).size.width - 20,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -231,7 +231,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                materialIssue.serialNumber ?? 'N/A',
+                materialTransfer.quantityRequested.toString() ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 18,
@@ -244,9 +244,10 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
                   PopupMenuItem(
                       onTap: () {
-                        context.goNamed(RouteNames.materialIssueEdit,
+                        context.goNamed(RouteNames.materialTransferEdit,
                             pathParameters: {
-                              'materialIssueId': materialIssue.id.toString()
+                              'materialTransferId':
+                                  materialTransfer.id.toString()
                             });
                       },
                       child: const ListTile(
@@ -257,9 +258,9 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                   PopupMenuItem(
                     onTap: () {
                       context
-                          .read<MaterialIssueDeleteCubit>()
-                          .onMaterialIssueDelete(
-                              materialIssueId: materialIssue.id ?? "");
+                          .read<MaterialTransferDeleteCubit>()
+                          .onMaterialTransferDelete(
+                              materialTransferId: materialTransfer.id ?? "");
                     },
                     child: const ListTile(
                       leading: Icon(Icons.delete, color: Colors.red),
@@ -272,7 +273,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             ],
           ),
           Text(
-            DateFormat.yMMMMd().format(materialIssue.createdAt!),
+            DateFormat.yMMMMd().format(materialTransfer.createdAt!),
             style: const TextStyle(
               color: Color(0xFF637587),
               fontSize: 12,
@@ -284,7 +285,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'By ${materialIssue.preparedBy?.fullName ?? 'N/A'}',
+                'By ${materialTransfer.quantityRequested ?? 'N/A'}',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 15,
@@ -293,7 +294,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 ),
               ),
               Text(
-                materialIssue.preparedBy?.email ?? 'N/A',
+                materialTransfer.productVariant?.variant ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF637587),
                   fontSize: 12,
@@ -302,7 +303,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 ),
               ),
               //  Text(
-              //   "From ${materialIssue.?.fullName ?? 'N/A'}",
+              //   "From ${materialTransfer.?.fullName ?? 'N/A'}",
               //   style: const TextStyle(
               //     color: Color(0xFF637587),
               //     fontSize: 12,
@@ -324,11 +325,11 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: ShapeDecoration(
-                  color: materialIssue.status == 'PENDING'
+                  color: materialTransfer.remark == 'PENDING'
                       ? const Color.fromARGB(31, 255, 183, 0)
-                      : materialIssue.status == 'COMPLETED'
+                      : materialTransfer.remark == 'COMPLETED'
                           ? const Color.fromARGB(30, 0, 179, 66)
-                          : materialIssue.status == 'DECLINED'
+                          : materialTransfer.remark == 'DECLINED'
                               ? const Color.fromARGB(30, 208, 2, 26)
                               : const Color.fromARGB(31, 17, 20, 22),
                   shape: RoundedRectangleBorder(
@@ -336,13 +337,13 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                   ),
                 ),
                 child: Text(
-                  materialIssue.status ?? 'N/A',
+                  materialTransfer.remark ?? 'N/A',
                   style: TextStyle(
-                    color: materialIssue.status == 'PENDING'
+                    color: materialTransfer.remark == 'PENDING'
                         ? const Color(0xFFFFB700)
-                        : materialIssue.status == 'COMPLETED'
+                        : materialTransfer.remark == 'COMPLETED'
                             ? const Color(0xFF00B341)
-                            : materialIssue.status == 'DECLINED'
+                            : materialTransfer.remark == 'DECLINED'
                                 ? const Color(0xFFD0021B)
                                 : const Color(0xFF111416),
                     fontSize: 10,
@@ -353,9 +354,9 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
               ),
               TextButton(
                 onPressed: () {
-                  context.goNamed(RouteNames.materialIssueDetails,
+                  context.goNamed(RouteNames.materialTransferDetails,
                       pathParameters: {
-                        'materialIssueId': materialIssue.id.toString()
+                        'materialTransferId': materialTransfer.id.toString()
                       });
                 },
                 child: const Text(
@@ -399,16 +400,16 @@ class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
   List<String> selectedStatuses = [];
 
   void _onStatusSelected() {
-    context.read<MaterialIssueBloc>().add(
-          GetMaterialIssues(
-            filterMaterialIssueInput: FilterMaterialIssueInput(
+    context.read<MaterialTransferBloc>().add(
+          GetMaterialTransfers(
+            filterMaterialTransferInput: FilterMaterialTransferInput(
               status: selectedStatuses.contains('All')
                   ? null
                   : selectedStatuses
                       .map((status) => status.toUpperCase())
                       .toList(),
             ),
-            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+            orderBy: OrderByMaterialTransferInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 10),
           ),
         );

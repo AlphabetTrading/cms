@@ -234,20 +234,29 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
     String fetchMaterialIssuesQuery;
 
     fetchMaterialIssuesQuery = r'''
-     query GetMaterialReturns($filterMaterialReturnInput: FilterMaterialReturnInput, $mine: Boolean!, $orderBy: OrderByMaterialReturnInput, $paginationInput: PaginationInput) {
-        getMaterialReturns(filterMaterialReturnInput: $filterMaterialReturnInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
+      query GetMaterialIssues($mine: Boolean!, $filterMaterialIssueInput: FilterMaterialIssueInput, $orderBy: OrderByMaterialIssueInput, $paginationInput: PaginationInput) {
+        getMaterialIssues(mine: $mine, filterMaterialIssueInput: $filterMaterialIssueInput, orderBy: $orderBy, paginationInput: $paginationInput) {
           items {
-            createdAt
             id
-            items {
+            approvedBy {
               createdAt
+              email
+              fullName
               id
-              issueVoucherId
-              materialReturnVoucherId
+              phoneNumber
+              role
+              updatedAt
+            }
+            approvedById
+            createdAt
+            items {
+              id
+              createdAt
+              materialIssueVoucherId
               productVariant {
+                id
                 createdAt
                 description
-                id
                 product {
                   createdAt
                   id
@@ -261,44 +270,38 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
                 variant
               }
               productVariantId
+              quantity
               remark
+              subStructureDescription
+              superStructureDescription
               totalCost
               unitCost
               updatedAt
-              quantity
+              useType
             }
+            preparedBy {
+              id
+              createdAt
+              email
+              fullName
+              phoneNumber
+              role
+              updatedAt
+            }
+            preparedById
             projectId
-            receivedBy {
-              createdAt
-              email
-              fullName
-              id
-              phoneNumber
-              role
-              updatedAt
-            }
-            receivedById
-            returnedBy {
-              createdAt
-              email
-              fullName
-              id
-              phoneNumber
-              role
-              updatedAt
-            }
-            returnedById
+            requisitionNumber
             serialNumber
             status
             updatedAt
-            receivingWarehouseStore {
+            warehouseStore {
               createdAt
               id
               location
               name
               updatedAt
             }
-            receivingWarehouseStoreId
+            warehouseStoreId
           }
           meta {
             count

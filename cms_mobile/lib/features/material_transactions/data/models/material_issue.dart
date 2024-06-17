@@ -3,7 +3,6 @@ import 'package:cms_mobile/features/material_transactions/data/models/product_va
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
@@ -14,34 +13,33 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/use_ty
 class MaterialIssueModel extends MaterialIssueEntity {
   const MaterialIssueModel({
     required String id,
-    String? serialNumber,
-    String? status,
     String? approvedById,
     UserModel? approvedBy,
+    String? serialNumber,
+    String? status,
     String? requisitionNumber,
     List<IssueVoucherMaterialModel>? items,
     String? preparedById,
     UserModel? preparedBy,
-    String? receivedById,
-    UserModel? receivedBy,
-    WarehouseModel? warehouse,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
+    String? warehouseStoreId,
+    WarehouseModel? warehouseStore,
+    required DateTime createdAt,
+    required DateTime updatedAt,
   }) : super(
-            id: id,
-            serialNumber: serialNumber,
-            status: status,
-            approvedById: approvedById,
-            approvedBy: approvedBy,
-            requisitionNumber: requisitionNumber,
-            items: items,
-            preparedById: preparedById,
-            preparedBy: preparedBy,
-            receivedById: receivedById,
-            receivedBy: receivedBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            warehouse: warehouse);
+          id: id,
+          serialNumber: serialNumber,
+          status: status,
+          approvedById: approvedById,
+          approvedBy: approvedBy,
+          requisitionNumber: requisitionNumber,
+          items: items,
+          preparedById: preparedById,
+          preparedBy: preparedBy,
+          warehouseStoreId: warehouseStoreId,
+          warehouseStore: warehouseStore,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        );
 
   @override
   List<Object?> get props {
@@ -51,36 +49,29 @@ class MaterialIssueModel extends MaterialIssueEntity {
   }
 
   factory MaterialIssueModel.fromJson(Map<String, dynamic> json) {
-    debugPrint('Material Issue Model: ${json}');
     return MaterialIssueModel(
-        id: json['id'],
-        serialNumber: json['serialNumber'],
-        requisitionNumber: json['requisitionNumber'] ?? '',
-        items: json['items'].map<IssueVoucherMaterialModel>((item) {
-          return IssueVoucherMaterialModel.fromJson(item);
-        }).toList(),
-        preparedById: json['preparedById'],
-        preparedBy: json['preparedBy'] != null
-            ? UserModel.fromJson(json['preparedBy'])
-            : null,
-        approvedById: json['approvedById'],
-        approvedBy: json['approvedBy'] != null
-            ? UserModel.fromJson(json['approvedBy'])
-            : null,
-        status: json['status'],
-        receivedById: json['receivedById'],
-        receivedBy: json['receivedBy'] != null
-            ? UserModel.fromJson(json['receivedBy'])
-            : null,
-        createdAt: json['createdAt'] != null
-            ? DateTime.parse(json['createdAt'])
-            : null,
-        updatedAt: json['updatedAt'] != null
-            ? DateTime.parse(json['updatedAt'])
-            : null,
-        warehouse: json['warehouseStore'] != null
-            ? WarehouseModel.fromJson(json['warehouseStore'])
-            : null);
+      id: json['id'],
+      serialNumber: json['serialNumber'],
+      requisitionNumber: json['requisitionNumber'] ?? '',
+      items: json['items'].map<IssueVoucherMaterialModel>((item) {
+        return IssueVoucherMaterialModel.fromJson(item);
+      }).toList(),
+      preparedById: json['preparedById'],
+      preparedBy: json['preparedBy'] != null
+          ? UserModel.fromJson(json['preparedBy'])
+          : null,
+      approvedById: json['approvedById'],
+      approvedBy: json['approvedBy'] != null
+          ? UserModel.fromJson(json['approvedBy'])
+          : null,
+      status: json['status'],
+      warehouseStoreId: json['warehouseStoreId'],
+      warehouseStore: json['warehouseStore'] != null
+          ? WarehouseModel.fromJson(json['warehouseStore'])
+          : null,
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -94,8 +85,8 @@ class MaterialIssueModel extends MaterialIssueEntity {
       'items': items,
       'preparedById': preparedById,
       'preparedBy': preparedBy,
-      'receivedById': receivedById,
-      'receivedBy': receivedBy,
+      'warehouseStoreId': warehouseStoreId,
+      'warehouseStore': warehouseStore,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -114,49 +105,40 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
     required SuperStructureUseDescription? superStructureDescription,
     required UseType? useType,
     required String? materialIssueVoucherId,
+    required DateTime createdAt,
+    required DateTime updatedAt,
   }) : super(
-            id: id,
-            productVariant: productVariant as ProductVariantEntity,
-            quantity: quantity,
-            remark: remark,
-            totalCost: totalCost,
-            unitCost: unitCost,
-            subStructureDescription: subStructureDescription,
-            superStructureDescription: superStructureDescription,
-            useType: useType,
-            materialIssueVoucherId: materialIssueVoucherId);
+          id: id,
+          productVariant: productVariant as ProductVariantEntity,
+          quantity: quantity,
+          remark: remark,
+          totalCost: totalCost,
+          unitCost: unitCost,
+          subStructureDescription: subStructureDescription,
+          superStructureDescription: superStructureDescription,
+          useType: useType,
+          materialIssueVoucherId: materialIssueVoucherId,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        );
 
   factory IssueVoucherMaterialModel.fromJson(Map<String, dynamic> json) {
-    try {
-      return IssueVoucherMaterialModel(
-          id: json['id'],
-          productVariant: ProductVariantModel.fromJson(json['productVariant']),
-          quantity: json['quantity'],
-          remark: json['remark'],
-          totalCost: json['totalCost'],
-          unitCost: json['unitCost'],
-          subStructureDescription: subStructureUseDescriptionFromString(
-              json['subStructureDescription']),
-          superStructureDescription: superStructureUseDescriptionFromString(
-              json['superStructureDescription']),
-          useType: useTypeFromString(json['useType']),
-          materialIssueVoucherId: json['materialIssueVoucherId']);
-    } catch (e) {
-      print('Error in Issue Voucer Material Model ${e}');
-    }
     return IssueVoucherMaterialModel(
-        id: json['id'],
-        productVariant: ProductVariantModel.fromJson(json['productVariant']),
-        quantity: json['quantity'],
-        remark: json['remark'],
-        totalCost: json['totalCost'],
-        unitCost: json['unitCost'],
-        subStructureDescription: subStructureUseDescriptionFromString(
-            json['subStructureDescription']),
-        superStructureDescription: superStructureUseDescriptionFromString(
-            json['superStructureDescription']),
-        useType: useTypeFromString(json['useType']),
-        materialIssueVoucherId: json['materialIssueVoucherId']);
+      id: json['id'],
+      productVariant: ProductVariantModel.fromJson(json['productVariant']),
+      quantity: json['quantity'],
+      remark: json['remark'],
+      totalCost: json['totalCost'],
+      unitCost: json['unitCost'],
+      subStructureDescription:
+          subStructureUseDescriptionFromString(json['subStructureDescription']),
+      superStructureDescription: superStructureUseDescriptionFromString(
+          json['superStructureDescription']),
+      useType: useTypeFromString(json['useType']),
+      materialIssueVoucherId: json['materialIssueVoucherId'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
   }
 
   Map<String, dynamic> toJson() {

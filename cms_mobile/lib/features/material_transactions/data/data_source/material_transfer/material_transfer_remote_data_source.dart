@@ -204,7 +204,8 @@ class FilterMaterialTransferInput {
   final List<String>? status;
 
   FilterMaterialTransferInput(
-      {this.createdAt,
+      {
+        this.createdAt,
       this.requestedBy,
       this.approvedBy,
       this.serialNumber,
