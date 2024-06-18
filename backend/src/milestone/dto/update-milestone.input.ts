@@ -1,20 +1,27 @@
+import { UseType } from '@prisma/client';
 import { CreateMilestoneInput } from './create-milestone.input';
 import { InputType, Field, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateMilestoneInput extends PartialType(CreateMilestoneInput) {
-  @Field({ nullable: true })
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String, { nullable: true })
   name?: string;
 
-  @Field({ nullable: true })
+  @Field(() => UseType, { nullable: true })
+  stage?: UseType;
+
+  @Field(() => String, { nullable: true })
   description?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   dueDate?: Date;
 
-  @Field({ nullable: true })
-  status?: string;
-
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   projectId?: string;
+
+  @Field(() => String, { nullable: true })
+  createdById?: string;
 }

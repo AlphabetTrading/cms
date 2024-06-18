@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { CompletionStatus, Priority } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
 
@@ -11,22 +12,19 @@ export class FilterTaskInput {
   name?: StringFilter;
 
   @Field(() => DateTimeFilter, { nullable: true })
-  startDate?: DateTimeFilter;
-
-  @Field(() => DateTimeFilter, { nullable: true })
   dueDate?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  assignedToId?: StringFilter;
+  @Field(() => [CompletionStatus], { nullable: true })
+  status?: CompletionStatus[];
 
-  @Field(() => StringFilter, { nullable: true })
-  priority?: StringFilter;
+  @Field(() => [Priority], { nullable: true })
+  priority?: Priority[];
 
-  @Field(() => StringFilter, { nullable: true })
-  milestoneId?: StringFilter;
+  @Field(() => String, { nullable: true })
+  milestoneId?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  status?: StringFilter;
+  @Field(() => String, { nullable: true })
+  assignedToId?: string;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

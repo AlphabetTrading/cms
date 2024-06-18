@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMilestoneInput } from './dto/create-milestone.input';
 import { Milestone } from './model/milestone.model';
 import { UpdateMilestoneInput } from './dto/update-milestone.input';
-import { Prisma } from '@prisma/client';
+import { CompletionStatus, Prisma } from '@prisma/client';
 
 @Injectable()
 export class MilestoneService {
@@ -31,6 +31,15 @@ export class MilestoneService {
       data: {
         ...createMilestoneInput,
       },
+      include: {
+        Project: true,
+        Tasks: {
+          include: {
+            assignedTo: true,
+          },
+        },
+        createdBy: true,
+      },
     });
 
     return newMilestone;
@@ -53,11 +62,30 @@ export class MilestoneService {
       where,
       orderBy,
       include: {
-        Tasks: true,
+        Tasks: {
+          include: {
+            assignedTo: true,
+          },
+        },
         Project: true,
+        createdBy: true,
       },
     });
-    return milestones;
+
+    const milestonesWithProgress = milestones.map((milestone) => {
+      const totalTasks = milestone.Tasks.length;
+      const completedTasks = milestone.Tasks.filter(
+        (task) => task.status === CompletionStatus.COMPLETED,
+      ).length;
+      const progress = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+
+      return {
+        ...milestone,
+        progress,
+      };
+    });
+
+    return milestonesWithProgress;
   }
 
   async findOne(id: string): Promise<Milestone> {
@@ -66,11 +94,26 @@ export class MilestoneService {
         id,
       },
       include: {
-        Tasks: true,
+        Tasks: {
+          include: {
+            assignedTo: true,
+          },
+        },
         Project: true,
+        createdBy: true,
       },
     });
-    return milestone;
+
+    const totalTasks = milestone.Tasks.length;
+    const completedTasks = milestone.Tasks.filter(
+      (task) => task.status === CompletionStatus.COMPLETED,
+    ).length;
+    const progress = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+
+    return {
+      ...milestone,
+      progress,
+    };
   }
 
   async update(
@@ -90,8 +133,23 @@ export class MilestoneService {
       data: {
         ...updateData,
       },
+      include: {
+        Project: true,
+        Tasks: true,
+        createdBy: true,
+      },
     });
 
+    const totalTasks = updatedMilestone.Tasks.length;
+    const completedTasks = updatedMilestone.Tasks.filter(
+      (task) => task.status === CompletionStatus.COMPLETED,
+    ).length;
+    const progress = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+
+    return {
+      ...updatedMilestone,
+      progress,
+    };
     return updatedMilestone;
   }
 

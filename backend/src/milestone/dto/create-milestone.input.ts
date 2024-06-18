@@ -1,19 +1,23 @@
-import { InputType, Field } from "@nestjs/graphql";
+import { InputType, Field } from '@nestjs/graphql';
+import { UseType } from '@prisma/client';
 
 @InputType()
 export class CreateMilestoneInput {
-  @Field()
+  @Field(() => String)
   name: string;
 
-  @Field({ nullable: true })
+  @Field(() => UseType)
+  stage: UseType;
+
+  @Field(() => String, { nullable: true })
   description?: string;
 
-  @Field()
+  @Field(() => Date)
   dueDate: Date;
 
-  @Field()
-  status: string;
-
-  @Field()
+  @Field(() => String)
   projectId: string;
+
+  @Field(() => String)
+  createdById: string;
 }

@@ -19,6 +19,12 @@ type Auth {
   userId: String!
 }
 
+enum CompletionStatus {
+  COMPLETED
+  ONGOING
+  TODO
+}
+
 input CreateDailySiteDataInput {
   approvedById: String
   checkedById: String
@@ -145,11 +151,12 @@ input CreateMaterialTransferItemInput {
 }
 
 input CreateMilestoneInput {
+  createdById: String!
   description: String
   dueDate: DateTime!
   name: String!
   projectId: String!
-  status: String!
+  stage: UseType!
 }
 
 input CreatePriceHistoryInput {
@@ -221,7 +228,6 @@ input CreateTaskInput {
   milestoneId: String!
   name: String!
   priority: String!
-  startDate: DateTime!
   status: String!
 }
 
@@ -471,11 +477,14 @@ input FilterMaterialTransferInput {
 
 input FilterMilestoneInput {
   createdAt: DateTimeFilter
+  createdBy: FilterUserDocumentsInput
+  createdById: String
   dueDate: DateTimeFilter
   id: String
   name: StringFilter
-  projectId: StringFilter
-  status: StringFilter
+  project: FilterProjectInput
+  projectId: String
+  stage: UseType
 }
 
 input FilterPriceHistoryInput {
@@ -541,15 +550,14 @@ input FilterPurchaseOrderInput {
 }
 
 input FilterTaskInput {
-  assignedToId: StringFilter
+  assignedToId: String
   createdAt: DateTimeFilter
   dueDate: DateTimeFilter
   id: String
-  milestoneId: StringFilter
+  milestoneId: String
   name: StringFilter
-  priority: StringFilter
-  startDate: DateTimeFilter
-  status: StringFilter
+  priority: [Priority!]
+  status: [CompletionStatus!]
 }
 
 input FilterUserDocumentsInput {
@@ -795,15 +803,19 @@ type MaterialTransferVoucher {
 
 type Milestone {
   Project: Project
+  Tasks: [Task!]
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
+  createdBy: User
+  createdById: String
   description: String
   dueDate: DateTime
   id: ID!
   name: String
+  progress: Float
   projectId: String
-  status: String
+  stage: UseType
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -1108,6 +1120,13 @@ type PriceHistory {
   updatedAt: DateTime!
 }
 
+enum Priority {
+  CRITICAL
+  HIGH
+  LOW
+  MEDIUM
+}
+
 type Product {
   ProductVariant: [ProductVariant!]
 
@@ -1305,7 +1324,6 @@ type Task {
   milestoneId: String
   name: String
   priority: String
-  startDate: DateTime
   status: String
 
   """Identifies the date and time when the object was last updated."""
@@ -1472,11 +1490,13 @@ input UpdateMaterialTransferItemInput {
 }
 
 input UpdateMilestoneInput {
+  createdById: String
   description: String
   dueDate: DateTime
+  id: String!
   name: String
   projectId: String
-  status: String
+  stage: UseType
 }
 
 input UpdatePriceHistoryInput {
@@ -1548,6 +1568,7 @@ input UpdateTaskInput {
   assignedToId: String
   description: String
   dueDate: DateTime
+  id: String!
   milestoneId: String
   name: String
   priority: String

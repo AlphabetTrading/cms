@@ -1,4 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
+import { CompletionStatus, Priority } from '@prisma/client';
 
 @InputType()
 export class CreateTaskInput {
@@ -9,16 +10,13 @@ export class CreateTaskInput {
   description?: string;
 
   @Field()
-  startDate: Date;
-
-  @Field()
   dueDate: Date;
 
   @Field()
-  status: string;
+  status: CompletionStatus;
 
   @Field()
-  priority: string;
+  priority: Priority;
 
   @Field()
   assignedToId: string;

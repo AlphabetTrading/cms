@@ -87,6 +87,10 @@ export class TaskService {
       data: {
         ...updateData,
       },
+      include: {
+        assignedTo: true,
+        Milestone: true
+      }
     });
 
     return updatedTask;

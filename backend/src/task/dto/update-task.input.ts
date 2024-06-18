@@ -1,8 +1,12 @@
+import { CompletionStatus, Priority } from '@prisma/client';
 import { CreateTaskInput } from './create-task.input';
 import { InputType, Field, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateTaskInput extends PartialType(CreateTaskInput) {
+  @Field()
+  id: string;
+
   @Field({ nullable: true })
   name?: string;
 
@@ -16,10 +20,10 @@ export class UpdateTaskInput extends PartialType(CreateTaskInput) {
   dueDate?: Date;
 
   @Field({ nullable: true })
-  status?: string;
+  status?: CompletionStatus;
 
   @Field({ nullable: true })
-  priority?: string;
+  priority?: Priority;
 
   @Field({ nullable: true })
   assignedToId?: string;

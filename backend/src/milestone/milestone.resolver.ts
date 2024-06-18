@@ -40,13 +40,22 @@ export class MilestoneResolver {
               name: filterMilestoneInput?.name,
             },
             {
+              stage: filterMilestoneInput?.stage,
+            },
+            {
               dueDate: filterMilestoneInput?.dueDate,
             },
             {
               projectId: filterMilestoneInput?.projectId,
             },
             {
-              status: filterMilestoneInput?.status,
+              Project: filterMilestoneInput?.project,
+            },
+            {
+              createdById: filterMilestoneInput?.createdById,
+            },
+            {
+              createdBy: filterMilestoneInput?.createdBy,
             },
           ],
         },

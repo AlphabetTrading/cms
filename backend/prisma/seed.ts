@@ -300,45 +300,51 @@ async function seedMilestones() {
       data: [
         {
           name: 'Milestone 1',
+          stage: UseType.SUB_STRUCTURE,
           description: 'This is milestone 1',
           dueDate: new Date(),
-          status: 'IN_PROGRESS',
           projectId: projects[0].id,
+          createdById: projects[0].projectManagerId
         },
         {
           name: 'Milestone 2',
+          stage: UseType.SUPER_STRUCTURE,
           description: 'This is milestone 2',
           dueDate: new Date(),
-          status: 'COMPLETED',
           projectId: projects[0].id,
+          createdById: projects[0].projectManagerId
         },
         {
           name: 'Milestone 3',
+          stage: UseType.SUPER_STRUCTURE,
           description: 'This is milestone 3',
           dueDate: new Date(),
-          status: 'COMPLETED',
           projectId: projects[1].id,
+          createdById: projects[1].projectManagerId
         },
         {
           name: 'Milestone 4',
+          stage: UseType.SUB_STRUCTURE,
           description: 'This is milestone 4',
           dueDate: new Date(),
-          status: 'IN_PROGRESS',
           projectId: projects[1].id,
+          createdById: projects[1].projectManagerId
         },
         {
           name: 'Milestone 5',
+          stage: UseType.SUPER_STRUCTURE,
           description: 'This is milestone 5',
           dueDate: new Date(),
-          status: 'COMPLETED',
-          projectId: projects[2].id,
+          projectId: projects[0].id,
+          createdById: projects[0].projectManagerId
         },
         {
           name: 'Milestone 6',
+          stage: UseType.SUB_STRUCTURE,
           description: 'This is milestone 6',
           dueDate: new Date(),
-          status: 'IN_PROGRESS',
-          projectId: projects[2].id,
+          projectId: projects[1].id,
+          createdById: projects[1].projectManagerId
         },
       ],
     });
@@ -356,9 +362,8 @@ async function seedTasks() {
         {
           name: 'Task 1',
           description: 'This is task 1',
-          startDate: new Date(),
           dueDate: new Date(),
-          status: 'IN_PROGRESS',
+          status: 'TODO',
           priority: 'HIGH',
           assignedToId: users[0].id,
           milestoneId: milestones[0].id,
@@ -366,9 +371,8 @@ async function seedTasks() {
         {
           name: 'Task 2',
           description: 'This is task 2',
-          startDate: new Date(),
           dueDate: new Date(),
-          status: 'COMPLETED',
+          status: 'ONGOING',
           priority: 'MEDIUM',
           assignedToId: users[1].id,
           milestoneId: milestones[0].id,
@@ -376,7 +380,6 @@ async function seedTasks() {
         {
           name: 'Task 3',
           description: 'This is task 3',
-          startDate: new Date(),
           dueDate: new Date(),
           status: 'COMPLETED',
           priority: 'LOW',
@@ -387,10 +390,9 @@ async function seedTasks() {
         {
           name: 'Task 4',
           description: 'This is task 4',
-          startDate: new Date(),
           dueDate: new Date(),
           status: 'COMPLETED',
-          priority: 'LOW',
+          priority: 'CRITICAL',
           assignedToId: users[3].id,
           milestoneId: milestones[1].id,
         },
@@ -398,7 +400,6 @@ async function seedTasks() {
         {
           name: 'Task 5',
           description: 'This is task 5',
-          startDate: new Date(),
           dueDate: new Date(),
           status: 'COMPLETED',
           priority: 'LOW',

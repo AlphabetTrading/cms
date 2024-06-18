@@ -40,9 +40,6 @@ export class TaskResolver {
               name: filterTaskInput?.name,
             },
             {
-              startDate: filterTaskInput?.startDate,
-            },
-            {
               dueDate: filterTaskInput?.dueDate,
             },
             {
@@ -52,10 +49,14 @@ export class TaskResolver {
               milestoneId: filterTaskInput?.milestoneId,
             },
             {
-              priority: filterTaskInput?.priority,
+              status: {
+                in: filterTaskInput?.status,
+              },
             },
             {
-              status: filterTaskInput?.status,
+              priority: {
+                in: filterTaskInput?.priority,
+              },
             },
           ],
         },
