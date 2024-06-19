@@ -211,9 +211,8 @@ class MaterialReturnItem extends Equatable {
 
 class MaterialReturnMaterialEntity extends Equatable {
   final String issueVoucherId;
-  final WarehouseProductEntity? material;
+  final IssueVoucherMaterialEntity? material;
   final double quantity;
-  final double unitCost;
   final String? remark;
 
   const MaterialReturnMaterialEntity({
@@ -221,7 +220,7 @@ class MaterialReturnMaterialEntity extends Equatable {
     required this.material,
     required this.quantity,
     required this.issueVoucherId,
-    required this.unitCost,
+  
   });
 
   @override
@@ -230,7 +229,7 @@ class MaterialReturnMaterialEntity extends Equatable {
         quantity,
         material,
         issueVoucherId,
-        unitCost,
+    
       ];
 }
 

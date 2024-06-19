@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
@@ -118,27 +119,28 @@ class MaterialReturnMaterialModel extends MaterialReturnMaterialEntity {
   const MaterialReturnMaterialModel({
     required double quantity,
     String? remark,
-    required WarehouseProductModel material,
+    required IssueVoucherMaterialModel material,
     required String issueVoucherId,
-    required double unitCost,
   }) : super(
           quantity: quantity,
           remark: remark,
           material: material,
           issueVoucherId: issueVoucherId,
-          unitCost: unitCost,
         );
 
   Map<String, dynamic> toJson() {
     return {
-      'quantity': quantity,
-      'remark': remark,
+      "issueVoucherId": issueVoucherId,
+      "productVariantId": material?.productVariant?.id,
+      "quantity": quantity,
+      "remark": remark,
+      "totalCost": material?.unitCost ?? 0 * quantity,
+      "unitCost": material?.unitCost ?? 0
     };
   }
 
   @override
-  List<Object?> get props =>
-      [remark, quantity, material, issueVoucherId, unitCost];
+  List<Object?> get props => [remark, quantity, material, issueVoucherId];
 }
 
 class CreateMaterialReturnParamsModel
@@ -166,12 +168,21 @@ class CreateMaterialReturnParamsModel
         receivingStoreId: entity.receivingStoreId,
         materialReturnMaterials: entity.materialReturnMaterials
             .map((e) => MaterialReturnMaterialModel(
-                quantity: e.quantity,
-                remark: e.remark,
-                issueVoucherId: e.issueVoucherId,
-                material: e.material as WarehouseProductModel,
-                unitCost: e.unitCost))
+                  quantity: e.quantity,
+                  remark: e.remark,
+                  issueVoucherId: e.issueVoucherId,
+                  material: e.material as IssueVoucherMaterialModel,
+                ))
             .toList());
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "projectId": projectId,
+      "receivingStore": receivingStoreId,
+      "returnedById": returnedById,
+      "items": materialReturnMaterials.map((e) => e.toJson()).toList()
+    };
   }
 }
 

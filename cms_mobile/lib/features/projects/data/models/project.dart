@@ -1,6 +1,6 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/projects/data/models/milestone.dart';
+import 'package:cms_mobile/features/progress/data/models/milestone.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 
 class ProjectModel extends ProjectEntity {

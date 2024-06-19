@@ -1,5 +1,5 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class MaterialReceiveState extends Equatable {
@@ -37,16 +37,3 @@ class MaterialReceivesEmpty extends MaterialReceiveState {
   const MaterialReceivesEmpty();
 }
 
-// Create Material Issue
-class CreateMaterialReceiveLoading extends MaterialReceiveState {
-  const CreateMaterialReceiveLoading();
-}
-
-class CreateMaterialReceiveSuccess extends MaterialReceiveState {
-  const CreateMaterialReceiveSuccess();
-}
-
-class CreateMaterialReceiveFailed extends MaterialReceiveState {
-  const CreateMaterialReceiveFailed({required Failure error})
-      : super(error: error);
-}

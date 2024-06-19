@@ -49,7 +49,7 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
   }
 
   @override
-  Future<DataState<String>> deleteMaterialIssue({required String materialId}) {
-    return dataSource.deleteMaterialIssue(materialId: materialId);
+  Future<DataState<String>> deleteMaterialIssue({required String materialIssueId}) {
+    return dataSource.deleteMaterialIssue(materialIssueId:materialIssueId);
   }
 }

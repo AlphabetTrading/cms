@@ -129,8 +129,8 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
   }
   
   _buildBody(BuildContext context) {
-    return BlocProvider<MaterialIssueDeleteCubit>(
-      create: (context) => sl<MaterialIssueDeleteCubit>(),
+    return BlocProvider<DeleteMaterialIssueCubit>(
+      create: (context) => sl<DeleteMaterialIssueCubit>(),
       child: BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
         builder: (_, state) {
           debugPrint('MaterialRequestBlocBuilder state: $state');
@@ -152,10 +152,10 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
 
             return state.materialIssues!.items.isNotEmpty
                 ? Expanded(
-                    child: BlocListener<MaterialIssueDeleteCubit,
-                        MaterialIssueDeleteState>(
+                    child: BlocListener<DeleteMaterialIssueCubit,
+                        DeleteMaterialIssueState>(
                       listener: (context, state) {
-                        if (state is MaterialIssueDeleteSuccess) {
+                        if (state is DeleteMaterialIssueSuccess) {
                           context.read<MaterialIssueBloc>().add(
                                 GetMaterialIssues(
                                   filterMaterialIssueInput:
@@ -163,7 +163,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                                   orderBy: OrderByMaterialIssueInput(
                                       createdAt: "desc"),
                                   paginationInput:
-                                      PaginationInput(skip: 0, take: 10),
+                                      PaginationInput(skip: 0, take: 20),
                                 ),
                               );
                         }
@@ -257,7 +257,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                   PopupMenuItem(
                     onTap: () {
                       context
-                          .read<MaterialIssueDeleteCubit>()
+                          .read<DeleteMaterialIssueCubit>()
                           .onMaterialIssueDelete(
                               materialIssueId: materialIssue.id ?? "");
                     },

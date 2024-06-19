@@ -1,8 +1,7 @@
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_receive_form/material_receive_form_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receive/material_receive_edit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receive/create_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_receive/create_material_receive_form.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -14,10 +13,10 @@ class MaterialReceiveWarehouseFormCubit
   }) : super(MaterialReceiveWarehouseFormState(
           warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
         ));
+
   void warehouseChanged(WarehouseEntity warehouseEntity) {
     final WarehouseDropdown warehouseDropdown =
         WarehouseDropdown.dirty(warehouseEntity.id);
-
     emit(
       state.copyWith(
         warehouseDropdown: warehouseDropdown,
@@ -31,6 +30,7 @@ class MaterialReceiveWarehouseFormCubit
   void onSubmit() {
     emit(
       state.copyWith(
+        formStatus: FormStatus.validating,
         warehouseDropdown:
             WarehouseDropdown.dirty(state.warehouseDropdown.value),
         isValid: Formz.validate([
@@ -40,91 +40,121 @@ class MaterialReceiveWarehouseFormCubit
     );
   }
 
-  // @override
-  // void onChange(Change<MaterialReceiveFormState> change) {
-  //   super.onChange(change);
-  //   print('Current State: ${change.currentState}');
-  //   print('Next State: ${change.nextState}');
-  // }
-
-  // MaterialReceiveFormState copyWith({
-  //   bool? isValid,
-  //   FormStatus? formStatus,
-  //   QuantityField? quantityField,
-  // }) {
-  //   return MaterialReceiveFormState(
-  //     isValid: isValid ?? this.isValid,
-  //     formStatus: formStatus ?? this.formStatus,
-  //     quantityField: quantityField ?? this.quantityField,
-  //   );
-  // }
+  @override
+  void onChange(Change<MaterialReceiveWarehouseFormState> change) {
+    super.onChange(change);
+    print('warehouse Current State: ${change.currentState}');
+    print('warehouse Next State: ${change.nextState}');
+  }
 }
 
 class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
   MaterialReceiveFormCubit({
     String? materialId,
-    String? materialReceiveId,
+    String? purchaseOrderId,
     // String? warehouseId,
-    double? quantity,
-    double? inStock,
+    double? transportationCost,
+    double? loadingCost,
+    double? unloadingCost,
+    // double? issuedQuantity,
     String? remark,
   }) : super(MaterialReceiveFormState(
-          // materialDropdown: MaterialDropdown.pure(materialId ?? ""),
-          // materialReceiveDropdown:
-          //     MaterialDropdown.pure(materialReceiveId ?? ""),
-          // warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
-          // quantityField: QuantityField.pure(value: quantity.toString()),
-          inStock: inStock ?? 0.0,
-          // remarkField: RemarkField.pure(remark ?? ""),
-        ));
+            materialDropdown: MaterialDropdown.pure(materialId ?? ""),
+            purchaseOrderDropdown:
+                PurchaseOrderDropdown.pure(purchaseOrderId ?? ""),
+            transportationField:
+                NumberField.pure(value: transportationCost.toString()),
+            loadingField: NumberField.pure(value: loadingCost.toString()),
+            unloadingField: NumberField.pure(value: unloadingCost.toString()),
+            remarkField: RemarkField.pure(remark ?? "")));
 
-  void quantityChanged(String value) {
-    final QuantityField quantityField =
-        QuantityField.dirty(value, inStock: state.inStock);
-
-    emit(
-      state.copyWith(
-        // quantityField: quantityField,
-        isValid: Formz.validate([
-          state.materialReceiveDropdown,
-          state.quantityField,
-          state.materialDropdown,
-          state.remarkField
-        ]),
-      ),
-    );
-  }
-
-  void materialChanged(WarehouseProductEntity materialEntity) {
+  void materialChanged(IssueVoucherMaterialEntity materialEntity) {
     final MaterialDropdown materialDropdown =
-        MaterialDropdown.dirty(materialEntity.productVariant.id);
+        MaterialDropdown.dirty(materialEntity.productVariant?.id ?? "");
 
     emit(
       state.copyWith(
-        // materialDropdown: materialDropdown,
-        inStock: materialEntity.quantity,
+        materialDropdown: materialDropdown,
         isValid: Formz.validate([
-          state.materialReceiveDropdown,
-          state.quantityField,
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
           state.materialDropdown,
+          state.purchaseOrderDropdown,
           state.remarkField
         ]),
       ),
     );
   }
 
-  void materialReceiveChanged(MaterialReceiveEntity materialReceiveEntity) {
-    final MaterialDropdown materialReceiveDropdown =
-        MaterialDropdown.dirty(materialReceiveEntity.id!);
+  void purchaseOrderChanged(MaterialIssueEntity materialIssueEntity) {
+    final PurchaseOrderDropdown materialIssueDropdown =
+        PurchaseOrderDropdown.dirty(materialIssueEntity.id!);
 
     emit(
       state.copyWith(
-        // materialReceiveDropdown: materialReceiveDropdown,
+        purchaseOrderDropdown: materialIssueDropdown,
+        materialDropdown: MaterialDropdown.pure(),
         isValid: Formz.validate([
-          state.materialReceiveDropdown,
-          state.quantityField,
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
           state.materialDropdown,
-          state.materialReceiveDropdown,
+          state.purchaseOrderDropdown,
+          state.remarkField
+        ]),
+      ),
+    );
+  }
+
+  void loadingChanged(String value) {
+    final NumberField loadingField = NumberField.dirty(value);
+
+    emit(
+      state.copyWith(
+        loadingField: loadingField,
+        isValid: Formz.validate([
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
+          state.materialDropdown,
+          state.purchaseOrderDropdown,
+          state.remarkField
+        ]),
+      ),
+    );
+  }
+
+  void unloadingChanged(String value) {
+    final NumberField unloadingField = NumberField.dirty(value);
+
+    emit(
+      state.copyWith(
+        unloadingField: unloadingField,
+        isValid: Formz.validate([
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
+          state.materialDropdown,
+          state.purchaseOrderDropdown,
+          state.remarkField
+        ]),
+      ),
+    );
+  }
+
+  void transportationChanged(String value) {
+    final NumberField transportationField = NumberField.dirty(value);
+
+    emit(
+      state.copyWith(
+        transportationField: transportationField,
+        isValid: Formz.validate([
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
+          state.materialDropdown,
+          state.purchaseOrderDropdown,
           state.remarkField
         ]),
       ),
@@ -152,14 +182,13 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
 
     emit(
       state.copyWith(
-        // remarkField: remarkField,
+        remarkField: remarkField,
         isValid: Formz.validate([
-          state.materialReceiveDropdown,
-          state.quantityField,
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
           state.materialDropdown,
-          // state.warehouseDropdown,
-
-          // state.unitDropdown,
+          state.purchaseOrderDropdown,
           state.remarkField
         ]),
       ),
@@ -169,42 +198,30 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
   void onSubmit() {
     emit(
       state.copyWith(
-        formStatus: FormStatus.invalid,
-        // quantityField: QuantityField.dirty(state.quantityField.value,
-        //     inStock: state.inStock),
-        // materialDropdown: MaterialDropdown.dirty(state.materialDropdown.value),
-        // materialReceiveDropdown:
-        //     MaterialReceiveDropdown.dirty(state.materialReceiveDropdown.value),
-        //     WarehouseDropdown.dirty(state.warehouseDropdown.value)
-        // unitDropdown: UnitDropdown.dirty(state.unitDropdown.value),
-        // remarkField: RemarkField.dirty(state.remarkField.value),
+        formStatus: FormStatus.validating,
+        materialDropdown: MaterialDropdown.dirty(state.materialDropdown.value),
+        purchaseOrderDropdown:
+            PurchaseOrderDropdown.dirty(state.purchaseOrderDropdown.value),
+        transportationField: NumberField.dirty(state.transportationField.value),
+        loadingField: NumberField.dirty(state.loadingField.value),
+        unloadingField: NumberField.dirty(state.unloadingField.value),
+        remarkField: RemarkField.dirty(state.remarkField.value),
         isValid: Formz.validate([
-          state.quantityField,
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
           state.materialDropdown,
-          // state.warehouseDropdown,
-          // state.unitDropdown,
+          state.purchaseOrderDropdown,
           state.remarkField
         ]),
       ),
     );
   }
 
-  // @override
-  // void onChange(Change<MaterialReceiveFormState> change) {
-  //   super.onChange(change);
-  //   print('Current State: ${change.currentState}');
-  //   print('Next State: ${change.nextState}');
-  // }
-
-  // MaterialReceiveFormState copyWith({
-  //   bool? isValid,
-  //   FormStatus? formStatus,
-  //   QuantityField? quantityField,
-  // }) {
-  //   return MaterialReceiveFormState(
-  //     isValid: isValid ?? this.isValid,
-  //     formStatus: formStatus ?? this.formStatus,
-  //     quantityField: quantityField ?? this.quantityField,
-  //   );
-  // }
+  @override
+  void onChange(Change<MaterialReceiveFormState> change) {
+    super.onChange(change);
+    print('Current State: ${change.currentState}');
+    print('Next State: ${change.nextState}');
+  }
 }

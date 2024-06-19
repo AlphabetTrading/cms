@@ -3,52 +3,57 @@ import 'package:equatable/equatable.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class MaterialIssueDeleteState extends Equatable {
-  const MaterialIssueDeleteState();
+//state
+abstract class DeleteMaterialIssueState extends Equatable {
+  const DeleteMaterialIssueState();
 
   @override
   List<Object> get props => [];
 }
 
-class MaterialIssueDeleteInitial extends MaterialIssueDeleteState {}
+class DeleteMaterialIssueInitial extends DeleteMaterialIssueState {}
 
-class MaterialIssueDeleteLoading extends MaterialIssueDeleteState {}
+class DeleteMaterialIssueLoading extends DeleteMaterialIssueState {}
 
-class MaterialIssueDeleteSuccess extends MaterialIssueDeleteState {
-  const MaterialIssueDeleteSuccess();
+class DeleteMaterialIssueSuccess extends DeleteMaterialIssueState {
+  const DeleteMaterialIssueSuccess();
 }
 
-class MaterialIssueDeleteFailed extends MaterialIssueDeleteState {
+class DeleteMaterialIssueFailed extends DeleteMaterialIssueState {
   final String error;
 
-  const MaterialIssueDeleteFailed({required this.error});
+  const DeleteMaterialIssueFailed({required this.error});
 
   @override
   List<Object> get props => [error];
 }
 
-class MaterialIssueDeleteEvent {
+
+//event
+class DeleteMaterialIssueEvent {
   final String materialIssueId;
 
-  MaterialIssueDeleteEvent({required this.materialIssueId});
+  DeleteMaterialIssueEvent({required this.materialIssueId});
 }
 
-class MaterialIssueDeleteCubit extends Cubit<MaterialIssueDeleteState> {
+
+//cubit
+class DeleteMaterialIssueCubit extends Cubit<DeleteMaterialIssueState> {
   final DeleteMaterialIssueUseCase _materialIssueDeleteUseCase;
 
-  MaterialIssueDeleteCubit(this._materialIssueDeleteUseCase)
-      : super(MaterialIssueDeleteInitial());
+  DeleteMaterialIssueCubit(this._materialIssueDeleteUseCase)
+      : super(DeleteMaterialIssueInitial());
 
   void onMaterialIssueDelete({required String materialIssueId}) async {
-    emit(MaterialIssueDeleteLoading());
+    emit(DeleteMaterialIssueLoading());
     final dataState =
         await _materialIssueDeleteUseCase(params: materialIssueId);
     if (dataState is DataSuccess) {
-      emit(MaterialIssueDeleteSuccess());
+      emit(DeleteMaterialIssueSuccess());
     } else if (dataState is DataFailed) {
-      emit(MaterialIssueDeleteFailed(
+      emit(DeleteMaterialIssueFailed(
           error: dataState.error?.errorMessage ??
-              'Failed to delete material issue '));
+              'Failed to delete material return '));
     }
   }
 }

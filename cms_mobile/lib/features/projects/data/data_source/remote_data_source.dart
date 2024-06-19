@@ -86,7 +86,7 @@ class ProjectDataSourceImpl extends ProjectDataSource {
     )
         .then((response) {
       if (response.hasException) {
-        debugPrint('fetchProjectsQuery: ${response.exception.toString()}');
+        // debugPrint('fetchProjectsQuery: ${response.exception.toString()}');
         return DataFailed(
           ServerFailure(
             errorMessage: response.exception.toString(),

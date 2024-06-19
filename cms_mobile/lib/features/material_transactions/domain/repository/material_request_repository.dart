@@ -15,4 +15,6 @@ abstract class MaterialRequestRepository {
 
   Future<DataState<MaterialRequestEntity>> getMaterialRequestDetails(
       {required String params});
+  Future<DataState<String>> deleteMaterialRequest(
+      {required String materialRequestId});
 }

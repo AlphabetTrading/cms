@@ -2,7 +2,7 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_create.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_edit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/create_material_request.dart';
@@ -14,6 +14,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
 import 'package:cms_mobile/features/products/presentation/pages/products_page.dart';
+import 'package:cms_mobile/features/progress/presentation/pages/milestone_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -59,6 +60,15 @@ class AppRouter {
             return const HomePage();
           },
           routes: <RouteBase>[
+            GoRoute(
+              name: RouteNames.milestoneDetails,
+              path: RoutePaths.milestoneDetails,
+              builder: (BuildContext context, GoRouterState state) {
+                return MilestoneDetailsPage(
+                  milestoneId: state.pathParameters['milestoneId']!,
+                );
+              },
+            ),
             GoRoute(
               name: RouteNames.items,
               path: RoutePaths.items,

@@ -2,6 +2,7 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/details_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -15,6 +16,13 @@ abstract class MaterialReturnDataSource {
   Future<DataState<String>> createMaterialReturn(
       {required CreateMaterialReturnParamsModel
           createMaterialReturnParamsModel});
+    Future<DataState<String>> deleteMaterialReturn(
+      {required String
+          materialReturnId});
+              
+      Future<DataState<MaterialReturnModel>> getMaterialReturnDetails(
+      {required String
+          params});
 }
 
 class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
@@ -43,12 +51,10 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
         createMaterialReturnParamsModel.materialReturnMaterials
             .map((materialReturnMaterial) {
       return {
-        "productVariantId": materialReturnMaterial.material!.productVariant.id,
+        "productVariantId": materialReturnMaterial.material!.productVariant?.id,
         "quantity": materialReturnMaterial.quantity,
         "remark": materialReturnMaterial.remark,
-        "unitCost": materialReturnMaterial.unitCost,
-        "totalCost":
-            materialReturnMaterial.unitCost * materialReturnMaterial.quantity,
+
       };
     }).toList();
 
@@ -189,6 +195,18 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
 
       return DataSuccess(materialReturnsListWithMeta);
     });
+  }
+  
+  @override
+  Future<DataState<String>> deleteMaterialReturn({required String materialReturnId}) {
+    // TODO: implement deleteMaterialReturn
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<DataState<MaterialReturnModel>> getMaterialReturnDetails({required String params}) {
+    // TODO: implement getMaterialReturnDetails
+    throw UnimplementedError();
   }
 }
 

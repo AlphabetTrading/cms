@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/entities/string_filter.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
@@ -198,51 +199,31 @@ class MaterialReceiveListWithMeta extends MaterialReceiveEntityListWithMeta {
 }
 
 class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
-  const MaterialReceiveMaterialModel(
-      {required double quantity,
-      String? remark,
-      WarehouseProductModel? material,
-      required UseType useType,
-      SubStructureUseDescription? subStructureDescription,
-      SuperStructureUseDescription? superStructureDescription})
-      : super(
-            quantity: quantity,
+  const MaterialReceiveMaterialModel({
+    required String purchaseOrderId,
+    final IssueVoucherMaterialModel? material,
+    final double? transportationCost,
+    final double? loadingCost,
+    final double? unloadingCost,
+    final String? remark,
+  }) : super(
+            purchaseOrderId: purchaseOrderId,
             material: material,
-            remark: remark,
-            useType: useType,
-            subStructureDescription: subStructureDescription,
-            superStructureDescription: superStructureDescription
-            // unit: unit
-            );
+            transportationCost: transportationCost,
+            loadingCost: loadingCost,
+            unloadingCost: unloadingCost,
+            remark: remark);
 
   Map<String, dynamic> toJson() {
     return {
-      'quantity': quantity,
+      'purchaseOrderId': purchaseOrderId,
+      'material': material,
+      'transportationCost': transportationCost,
+      'loadingCost': loadingCost,
+      'unloadingCost': unloadingCost,
       'remark': remark,
-      "productVariantId": material!.productVariant.id,
-      "useType": useType.name,
-      "unitCost": material!.currentPrice,
-      "totalCost": material!.currentPrice * quantity,
-      "subStructureDescription":
-          subStructureDescription != SubStructureUseDescription.DEFAULT_VALUE
-              ? subStructureDescription!.name
-              : null,
-      "superStructureDescription": superStructureDescription !=
-              SuperStructureUseDescription.DEFAULT_VALUE
-          ? superStructureDescription!.name
-          : null,
     };
   }
-
-  @override
-  List<Object?> get props => [
-        remark,
-        quantity,
-        material,
-        useType,
-        subStructureDescription,
-        superStructureDescription
-      ];
 }
 
 class CreateMaterialReceiveParamsModel
@@ -250,96 +231,42 @@ class CreateMaterialReceiveParamsModel
   const CreateMaterialReceiveParamsModel({
     required String projectId,
     required List<MaterialReceiveMaterialModel> materialReceiveMaterials,
-    required String preparedById,
-    required String warehouseStoreId,
+    required String returnedById,
+    required String receivingStoreId,
   }) : super(
-            warehouseStoreId: warehouseStoreId,
-            preparedById: preparedById,
             projectId: projectId,
-            materialReceiveMaterials: materialReceiveMaterials);
+            materialReceiveMaterials: materialReceiveMaterials,
+            returnedById: returnedById,
+            receivingStoreId: receivingStoreId);
 
   Map<String, dynamic> toJson() {
     return {
-      "preparedById": preparedById,
       "projectId": projectId,
-      "warehouseStoreId": warehouseStoreId,
-      "items": materialReceiveMaterials.map((e) => e.toJson()).toList()
     };
   }
 
   @override
-  List<Object?> get props =>
-      [projectId, preparedById, materialReceiveMaterials];
+  List<Object?> get props => [projectId, materialReceiveMaterials];
 
   factory CreateMaterialReceiveParamsModel.fromEntity(
       CreateMaterialReceiveParamsEntity entity) {
     return CreateMaterialReceiveParamsModel(
         projectId: entity.projectId,
-        preparedById: entity.preparedById,
-        warehouseStoreId: entity.warehouseStoreId,
+        returnedById: entity.returnedById,
+        receivingStoreId: entity.receivingStoreId,
         materialReceiveMaterials: entity.materialReceiveMaterials
             .map((e) => MaterialReceiveMaterialModel(
-                quantity: e.quantity,
-                material: e.material as WarehouseProductModel,
-                remark: e.remark,
-                useType: e.useType,
-                subStructureDescription: e.subStructureDescription,
-                superStructureDescription: e.superStructureDescription))
+                purchaseOrderId: e.purchaseOrderId,
+                material: e.material as IssueVoucherMaterialModel,
+                transportationCost: e.transportationCost,
+                loadingCost: e.loadingCost,
+                unloadingCost: e.unloadingCost,
+                remark: e.remark))
             .toList());
   }
 }
 
-class EditMaterialReceiveParamsModel
-    extends EditMaterialReceiveParamsEntity<MaterialReceiveMaterialModel> {
-  const EditMaterialReceiveParamsModel(
-      {required String approved,
-      required List<MaterialReceiveMaterialModel> materialReceiveMaterials,
-      required String approvedById,
-      required String warehouseStoreId,
-      required String updateMaterialReceiveId})
-      : super(
-            approved: approved,
-            warehouseStoreId: warehouseStoreId,
-            approvedById: approvedById,
-            materialReceiveMaterials: materialReceiveMaterials,
-            updateMaterialReceiveId: updateMaterialReceiveId);
 
-  Map<String, dynamic> toJson() {
-    return {
-      "warehouseStoreId": warehouseStoreId,
-      "approved": approved,
-      "approvedById": approvedById,
-      "items": materialReceiveMaterials.map((e) => e.toJson()).toList(),
-    };
-  }
-
-  @override
-  List<Object?> get props => [
-        updateMaterialReceiveId,
-        warehouseStoreId,
-        approved,
-        approvedById,
-        materialReceiveMaterials
-      ];
-
-  factory EditMaterialReceiveParamsModel.fromEntity(
-      EditMaterialReceiveParamsEntity entity) {
-    return EditMaterialReceiveParamsModel(
-        updateMaterialReceiveId: entity.updateMaterialReceiveId,
-        approved: entity.approved,
-        warehouseStoreId: entity.warehouseStoreId,
-        approvedById: entity.approvedById,
-        materialReceiveMaterials: entity.materialReceiveMaterials
-            .map((e) => MaterialReceiveMaterialModel(
-                quantity: e.quantity,
-                material: e.material as WarehouseProductModel,
-                remark: e.remark,
-                useType: e.useType,
-                subStructureDescription: e.subStructureDescription,
-                superStructureDescription: e.superStructureDescription))
-            .toList());
-  }
-}
 
 class FilterMaterialReceiveInput {
   final StringFilter? createdAt;

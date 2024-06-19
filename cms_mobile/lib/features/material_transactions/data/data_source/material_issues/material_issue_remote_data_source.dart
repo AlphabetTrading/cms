@@ -20,7 +20,7 @@ abstract class MaterialIssueDataSource {
       {required String params});
   Future<DataState<String>> editMaterialIssue(
       {required EditMaterialIssueParamsModel editMaterialIssueParamsModel});
-  Future<DataState<String>> deleteMaterialIssue({required String materialId});
+  Future<DataState<String>> deleteMaterialIssue({required String materialIssueId});
 }
 
 class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
@@ -201,10 +201,10 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
 
   @override
   Future<DataState<String>> deleteMaterialIssue(
-      {required String materialId}) async {
+      {required String materialIssueId}) async {
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMaterialIssueMutation),
-      variables: {"deleteMaterialIssueId": materialId},
+      variables: {"deleteMaterialIssueId": materialIssueId},
     );
 
     try {

@@ -1,5 +1,5 @@
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_create.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer/material_transfer_create.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transfer/create_material_transfer_form.dart';
 import 'package:equatable/equatable.dart';
 
 enum FormStatus { invalid, valid, validating }

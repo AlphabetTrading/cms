@@ -12,13 +12,6 @@ class StoreTabScreen extends StatefulWidget {
   @override
   State<StoreTabScreen> createState() => _StoreTabScreenState();
 }
-
-// const List<String> items = <String>[
-//   'Warehouse 1',
-//   'Warehouse 2',
-//   'Warehouse 3',
-// ];
-
 class _StoreTabScreenState extends State<StoreTabScreen> {
   @override
   void initState() {

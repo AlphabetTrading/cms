@@ -3,9 +3,12 @@ import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_requests/material_request_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transactions/material_transactions_event.dart';
+import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -122,68 +125,85 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
     );
   }
 
+
+
   _buildBody(BuildContext context) {
-    return BlocBuilder<MaterialRequestBloc, MaterialRequestState>(
-      builder: (_, state) {
-        debugPrint('MaterialRequestBlocBuilder state: $state');
-        if (state is MaterialRequestInitial) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+    return BlocProvider<MaterialRequestDeleteCubit>(
+      create: (context) => sl<MaterialRequestDeleteCubit>(),
+      child: BlocBuilder<MaterialRequestBloc, MaterialRequestState>(
+        builder: (_, state) {
+          debugPrint('MaterialRequestBlocBuilder state: $state');
+          if (state is MaterialRequestInitial) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        if (state is MaterialRequestLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+          if (state is MaterialRequestLoading) {
+              debugPrint('MaterialRequestBlocBuilder state: loading');
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        if (state is MaterialRequestSuccess) {
-          debugPrint(
-              'MaterialRequestSuccess ${state.materialRequests?.items.length} ');
-
-          return state.materialRequests!.items.isNotEmpty
-              ? Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            itemCount: state.materialRequests!.items.length,
-                            separatorBuilder: (_, index) => const SizedBox(
-                              height: 10,
-                            ),
-                            itemBuilder: (_, index) {
-                              final materialRequest =
-                                  state.materialRequests!.items[index];
-                              return _buildRequestListItem(
-                                  context, materialRequest);
-                            },
+          if (state is MaterialRequestSuccess) {
+            return state.materialRequests!.items.isNotEmpty
+                ? BlocListener<MaterialRequestDeleteCubit,
+                    MaterialRequestDeleteState>(
+                    listener: (context, state) {
+                      if (state is MaterialRequestDeleteSuccess) {
+                        context.read<MaterialRequestBloc>().add(
+                              GetMaterialRequestEvent(
+                                FilterMaterialRequestInput(),
+                                OrderByMaterialRequestInput(createdAt: "desc"),
+                                PaginationInput(skip: 0, take: 20),
+                              ),
+                            );
+                      }
+                    },
+                    child: Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                itemCount: state.materialRequests!.items.length,
+                                separatorBuilder: (_, index) => const SizedBox(
+                                  height: 10,
+                                ),
+                                itemBuilder: (_, index) {
+                                  final materialRequest =
+                                      state.materialRequests!.items[index];
+                                  return _buildRequestListItem(
+                                      context, materialRequest);
+                                },
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                )
-              : const Center(
-                  child: Text('No Material Requests found'),
-                );
-        }
+                  )
+                : const Center(
+                    child: Text('No Material Requests found'),
+                  );
+          }
 
-        if (state is MaterialRequestFailed) {
-          return Center(
-            child: Text(state.error!.errorMessage),
-          );
-        }
+          if (state is MaterialRequestFailed) {
+            return Center(
+              child: Text(state.error!.errorMessage),
+            );
+          }
 
-        return const SizedBox();
-      },
+          return const SizedBox();
+        },
+      ),
     );
   }
 
@@ -231,7 +251,10 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
                       )),
                   PopupMenuItem(
                     onTap: () {
-                      print('Item 2');
+                      context
+                          .read<MaterialRequestDeleteCubit>()
+                          .onMaterialRequestDelete(
+                              materialRequestId: materialRequest.id ?? "");
                     },
                     child: const ListTile(
                       leading: Icon(Icons.delete, color: Colors.red),

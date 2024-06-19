@@ -18,18 +18,15 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   void onGetWarehouseProducts(GetWarehouseProducts event, Emitter<ProductState> emit) async {
     emit(const WarehouseProductsLoading());
-    print("******** Get Warehouse Products Called Bloc Loading");
     
     final dataState = await _getProductsUseCase(params: event.getProductsInputEntity);
     
     
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
-    print("******** Get Warehouse Products Called Bloc Success");
 
       emit(WarehouseProductsSuccess(warehouseProducts: dataState.data!));
     }
     if (dataState is DataFailed) {
-    print("******** Get Warehouse Products Called Bloc Failed");
 
       emit(WarehouseProductsFailed(error: dataState.error!));
     }

@@ -107,6 +107,7 @@ flutter:
     - assets/icons/transactions/light/
     - assets/icons/material/dark/
     - assets/icons/material/light/
+    - assets/icons/progress/
 
     - assets/icons/navigations/
     - assets/fonts/

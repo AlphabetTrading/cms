@@ -132,7 +132,7 @@ class MaterialRequestItemModel extends MaterialRequestItem {
   }
 
   factory MaterialRequestItemModel.fromJson(Map<String, dynamic> json) {
-    debugPrint('json $json');
+    // debugPrint('json $json');
 
     final MaterialRequestItemModel materialRequestItemModel =
         MaterialRequestItemModel(

@@ -19,6 +19,8 @@ abstract class MaterialReceiveDataSource {
 
   Future<DataState<MaterialReceiveModel>> getMaterialReceiveDetails(
       {required String params});
+       Future<DataState<String>> deleteMaterialReceive(
+      {required String materialReceiveId});
 }
 
 class MaterialReceiveDataSourceImpl extends MaterialReceiveDataSource {
@@ -28,51 +30,39 @@ class MaterialReceiveDataSourceImpl extends MaterialReceiveDataSource {
     _client = client;
   }
 
-  // Override the function in the implementation class
+  static const String _createMaterialReceiveMutation = r'''
+mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialReceivingInput!) {
+  createMaterialReceiving(createMaterialReceivingInput: $createMaterialReceivingInput) {
+    id
+  }
+}
+
+  ''';
 
   @override
   Future<DataState<String>> createMaterialReceive(
       {required CreateMaterialReceiveParamsModel
           createMaterialReceiveParamsModel}) async {
-    const String _createMaterialReceiveMutation = r'''
-      mutation CreateMaterialReceive($createMaterialReceiveInput: CreateMaterialReceiveInput!) {
-        createMaterialReceive(createMaterialReceiveInput: $createMaterialReceiveInput) {
-          id
-        }
-      }
-  ''';
-
-    List<Map<String, dynamic>> materialReceiveMaterialsMap =
-        createMaterialReceiveParamsModel.materialReceiveMaterials
-            .map((materialReceiveMaterial) {
-      return {
-        "quantity": materialReceiveMaterial.quantity,
-        "productVariantId": materialReceiveMaterial.material!.productVariant.id,
-        "remark": materialReceiveMaterial.remark,
-      };
-    }).toList();
+    print("createMaterialReceivingParamsModel: $createMaterialReceiveParamsModel");
 
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReceiveMutation),
       variables: {
-        "createMaterialReceiveInput": {
-          "preparedById": createMaterialReceiveParamsModel.preparedById,
-          "projectId": createMaterialReceiveParamsModel.projectId,
-          "items": materialReceiveMaterialsMap
-        }
+        "createMaterialReceivingInput": createMaterialReceiveParamsModel.toJson()
       },
     );
 
     try {
       final QueryResult result = await _client.mutate(options);
+      print(result);
 
       if (result.hasException) {
         return DataFailed(
             ServerFailure(errorMessage: result.exception.toString()));
       }
 
-      // Assuming `MaterialReceiveModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['createMaterialReceive']['id'];
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['createMaterialReceiving']['id'];
 
       return DataSuccess(id);
     } catch (e) {
@@ -260,4 +250,39 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
           response.data!["getMaterialReceives"]));
     });
   }
+
+    static const String _deleteMaterialReceivingMutation = r'''
+  mutation DeleteMaterialReceiving($deleteMaterialReceivingId: String!) {
+  deleteMaterialReceiving(id: $deleteMaterialReceivingId) {
+    id
+  }
+}''';
+
+  @override
+  Future<DataState<String>> deleteMaterialReceive(
+      {required String materialReceiveId}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_deleteMaterialReceivingMutation),
+      variables: {"deleteMaterialReceivingId": materialReceiveId},
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['deleteMaterialReceiving']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
+  }
+  
+
 }

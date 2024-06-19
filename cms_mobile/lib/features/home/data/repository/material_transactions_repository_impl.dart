@@ -3,7 +3,7 @@ import 'package:cms_mobile/features/home/data/data_source/remote_data_source.dar
 import 'package:cms_mobile/features/home/domain/entities/material_transaction.dart';
 import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
