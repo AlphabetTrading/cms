@@ -1,3 +1,4 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_transfer.dart';
@@ -9,7 +10,12 @@ abstract class MaterialTransferDataSource {
       {required CreateMaterialTransferParamsEntity
           createMaterialTransferParamsModel});
 
-  Future<DataState<List<MaterialTransferModel>>> fetchMaterialTransfers();
+  Future<DataState<MaterialTransferEntityListWithMeta>> fetchMaterialTransfers({
+    FilterMaterialTransferInput? filterMaterialTransferInput,
+    OrderByMaterialTransferInput? orderBy,
+    PaginationInput? paginationInput,
+  });
+
   Future<DataState<MaterialTransferModel>> getMaterialTransferDetails(
       {required String params});
 
@@ -28,18 +34,15 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
     _client = client;
   }
   @override
-  Future<DataState<List<MaterialTransferModel>>>
-      fetchMaterialTransfers() async {
+  Future<DataState<MaterialTransferEntityListWithMeta>> fetchMaterialTransfers(
+      {FilterMaterialTransferInput? filterMaterialTransferInput,
+      OrderByMaterialTransferInput? orderBy,
+      PaginationInput? paginationInput}) async {
     String fetchMaterialTransfersQuery;
 
     fetchMaterialTransfersQuery = r'''
-      query GetMaterialTransfers($orderBy: OrderByMaterialTransferInput, $filterMaterialTransferInput: FilterMaterialTransferInput, $paginationInput: PaginationInput) {
-        getMaterialTransfers(orderBy: $orderBy, filterMaterialTransferInput: $filterMaterialTransferInput, paginationInput: $paginationInput) {
-          meta {
-            count
-            limit
-            page
-          }
+     query GetMaterialTransfers($filterMaterialTransferInput: FilterMaterialTransferInput, $mine: Boolean!, $orderBy: OrderByMaterialTransferInput, $paginationInput: PaginationInput) {
+        getMaterialTransfers(filterMaterialTransferInput: $filterMaterialTransferInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
           items {
             approvedBy {
               createdAt
@@ -56,22 +59,34 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
             items {
               createdAt
               id
+              materialTransferVoucherId
               productVariant {
                 createdAt
                 description
                 id
+                product {
+                  createdAt
+                  id
+                  name
+                  productType
+                  updatedAt
+                }
                 productId
                 unitOfMeasure
                 updatedAt
                 variant
               }
               productVariantId
-              quantity
+              quantityRequested
+              quantityTransferred
               remark
+              totalCost
+              unitCost
               updatedAt
             }
-            projectId
-            receiveedBy {
+            materialGroup
+            materialReceiveId
+            preparedBy {
               createdAt
               email
               fullName
@@ -80,10 +95,37 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
               role
               updatedAt
             }
-            receiveedById
+            preparedById
+            projectId
+            receivingStore
+            receivingWarehouseStore {
+              createdAt
+              id
+              location
+              name
+              updatedAt
+            }
+            receivingWarehouseStoreId
+            requisitionNumber
+            sendingStore
+            sendingWarehouseStore {
+              createdAt
+              id
+              location
+              name
+              updatedAt
+            }
+            sendingWarehouseStoreId
+            sentThroughName
             serialNumber
             status
             updatedAt
+            vehiclePlateNo
+          }
+          meta {
+            count
+            limit
+            page
           }
         }
       }
@@ -91,6 +133,12 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
 
     final response = await _client.query(QueryOptions(
       document: gql(fetchMaterialTransfersQuery),
+      variables: {
+        "filterMaterialTransferInput": filterMaterialTransferInput?.toJson(),
+        "orderBy": orderBy?.toJson(),
+        "paginationInput": paginationInput?.toJson(),
+        "mine": false
+      },
     ));
 
     if (response.hasException) {
@@ -101,10 +149,11 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
       );
     }
 
-    final receives = response.data!['getMaterialTransfers'] as List;
+    final receives = response.data!['getMaterialTransfers'];
 
     return DataSuccess(
-        receives.map((e) => MaterialTransferModel.fromJson(e)).toList());
+      MaterialTransferEntityListWithMeta.fromJson(receives),
+    );
   }
 
   @override
@@ -174,8 +223,7 @@ query GetMaterialTransferById($getMaterialTransferByIdId: String!) {
 
   @override
   Future<DataState<String>> createMaterialTransfer(
-      {required CreateMaterialTransferParamsEntity<
-              MaterialTransferEntity>
+      {required CreateMaterialTransferParamsEntity<MaterialTransferEntity>
           createMaterialTransferParamsModel}) {
     // TODO: implement createMaterialTransfer
     throw UnimplementedError();
@@ -204,8 +252,7 @@ class FilterMaterialTransferInput {
   final List<String>? status;
 
   FilterMaterialTransferInput(
-      {
-        this.createdAt,
+      {this.createdAt,
       this.requestedBy,
       this.approvedBy,
       this.serialNumber,

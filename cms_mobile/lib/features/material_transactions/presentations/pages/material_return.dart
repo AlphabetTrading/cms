@@ -4,6 +4,7 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_return/material_return_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
@@ -304,7 +305,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                 decoration: ShapeDecoration(
                   color: materialReturn.status == MaterialReturnStatus.pending
                       ? const Color.fromARGB(31, 255, 183, 0)
-                      : materialReturn.status == MaterialReturnStatus.approved
+                      : materialReturn.status == MaterialReturnStatus.completed
                           ? const Color.fromARGB(30, 0, 179, 66)
                           : materialReturn.status ==
                                   MaterialReturnStatus.declined
@@ -315,11 +316,12 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                   ),
                 ),
                 child: Text(
-                  materialReturn.status.toString(),
+                  fromMaterialReturnStatus(materialReturn.status),
                   style: TextStyle(
                     color: materialReturn.status == MaterialReturnStatus.pending
                         ? const Color(0xFFFFB700)
-                        : materialReturn.status == MaterialReturnStatus.approved
+                        : materialReturn.status ==
+                                MaterialReturnStatus.completed
                             ? const Color(0xFF00B341)
                             : materialReturn.status ==
                                     MaterialReturnStatus.declined

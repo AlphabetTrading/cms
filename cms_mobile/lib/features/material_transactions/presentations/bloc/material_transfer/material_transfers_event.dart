@@ -60,3 +60,15 @@ class CreateMaterialTransferEvent extends MaterialTransferEvent {
 //   const DeleteMaterialTransferEvent(this.id);
 // }
 
+
+// load more event
+class LoadMoreMaterialTransfers extends MaterialTransferEvent {
+  final FilterMaterialTransferInput? filterMaterialTransferInput;
+  final OrderByMaterialTransferInput? orderBy;
+  final PaginationInput? paginationInput;
+  const LoadMoreMaterialTransfers({
+    this.filterMaterialTransferInput,
+    this.orderBy,
+    this.paginationInput,
+  });
+}

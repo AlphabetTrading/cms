@@ -311,7 +311,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                   ),
                 ),
                 child: Text(
-                  purchaseOrder.status.toString(),
+                  fromPurchaseOrderStatus(purchaseOrder.status),
                   style: TextStyle(
                     color: purchaseOrder.status == PurchaseOrderStatus.pending
                         ? const Color(0xFFFFB700)

@@ -11,7 +11,7 @@ import 'package:cms_mobile/features/home/data/repository/material_transactions_r
 import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
 import 'package:cms_mobile/features/home/domain/usecases/get_material_transactions.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/data_source/material_receive/material_request_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_receive/material_receive_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_transfer/material_transfer_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/purchase_order/purchase_order_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/repository/material_receive_repository_impl.dart';
@@ -25,6 +25,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/create_material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/delete_material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/create_material_request.dart';
@@ -41,6 +42,8 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/purcha
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/edit_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order_details.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
@@ -157,7 +160,7 @@ Future<void> initializeDependencies() async {
   );
 
   // warehouse
-  sl.registerLazySingleton<WarehouseDataSourceImpl>(
+  sl.registerLazySingleton<WarehouseDataSource>(
     () => WarehouseDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),
@@ -313,6 +316,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<DeleteMaterialReceiveUseCase>(
+    () => DeleteMaterialReceiveUseCase(
+      sl<MaterialReceiveRepository>(),
+    ),
+  );
+
   // material transaction
   sl.registerLazySingleton<GetMaterialTransactionUseCase>(
     () => GetMaterialTransactionUseCase(
@@ -451,6 +460,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<DeleteMaterialTransferUseCase>(
+    () => DeleteMaterialTransferUseCase(
+      sl<MaterialTransferRepository>(),
+    ),
+  );
+
   // bloc
 
   // sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
@@ -515,6 +530,16 @@ Future<void> initializeDependencies() async {
         sl<GetMaterialReceivesUseCase>(),
         sl<CreateMaterialReceiveUseCase>(),
         sl<GetMaterialReceiveDetailsUseCase>()),
+  );
+
+  sl.registerFactory<MaterialReceiveDetailsCubit>(
+    () => MaterialReceiveDetailsCubit(
+      sl<GetMaterialReceiveDetailsUseCase>(),
+    ),
+  );
+
+  sl.registerFactory<MaterialReceiveDeleteCubit>(
+    () => MaterialReceiveDeleteCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
 
   // material return

@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
@@ -14,7 +15,10 @@ class MaterialTransferEntity extends Equatable {
   UserModel? preparedBy;
   String? preparedById;
   String? projectId;
-  WarehouseEntity? receivingStore;
+  WarehouseEntity? sendingWarehouseStore;
+  String? sendingWarehouseStoreId;
+  WarehouseEntity? receivingWarehouseStore;
+  String? receivingWarehouseStoreId;
   String? requisitionNumber;
   String? sendingStore;
   String? sentThroughName;
@@ -35,7 +39,10 @@ class MaterialTransferEntity extends Equatable {
       this.preparedBy,
       this.preparedById,
       this.projectId,
-      this.receivingStore,
+      this.receivingWarehouseStore,
+      this.receivingWarehouseStoreId,
+      this.sendingWarehouseStoreId,
+      this.sendingWarehouseStore,
       this.requisitionNumber,
       this.sendingStore,
       this.sentThroughName,
@@ -56,7 +63,10 @@ class MaterialTransferEntity extends Equatable {
         preparedBy,
         preparedById,
         projectId,
-        receivingStore,
+        receivingWarehouseStore,
+        receivingWarehouseStoreId,
+        sendingWarehouseStoreId,
+        sendingWarehouseStore,
         requisitionNumber,
         sendingStore,
         sentThroughName,
@@ -226,4 +236,13 @@ class MaterialTransferEntityListWithMeta {
     required this.meta,
     required this.items,
   });
+
+  factory MaterialTransferEntityListWithMeta.fromJson(
+      Map<String, dynamic> json) {
+    return MaterialTransferEntityListWithMeta(
+      meta: Meta.fromJson(json['meta']),
+      items: List<MaterialTransferEntity>.from(
+          json['items'].map((x) => MaterialTransferModel.fromJson(x))),
+    );
+  }
 }

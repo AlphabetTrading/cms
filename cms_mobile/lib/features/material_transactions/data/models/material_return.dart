@@ -1,6 +1,5 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
@@ -34,21 +33,27 @@ class MaterialReturnModel extends MaterialReturnEntity {
         );
 
   factory MaterialReturnModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("MaterialReturnModel.fromJson: $json");
+    debugPrint(
+        "MaterialReturnModel.fromJson: ${toMaterialReturnStatus(json['status'])}");
     return MaterialReturnModel(
       id: json['id'],
       serialNumber: json['serialNumber'],
-      receivingStore: json['receivingWarehouseStore'],
+      receivingStore: json['receivingStore'] != null
+          ? WarehouseModel.fromJson(json['receivingStore'])
+          : null,
       items: json['items']
           .map<MaterialReturnItemModel>(
               (item) => MaterialReturnItemModel.fromJson(item))
           .toList(),
       returnedById: json['returnedById'],
-      returnedBy: UserModel.fromJson(json['returnedBy']),
+      returnedBy: json['returnedBy'] != null
+          ? UserModel.fromJson(json['returnedBy'])
+          : null,
       receivedById: json['receivedById'],
-      receivedBy: UserModel.fromJson(json['receivedBy']),
-      status: MaterialReturnStatus.values
-          .firstWhere((e) => e.toString() == json['status']),
+      receivedBy: json['receivedBy'] != null
+          ? UserModel.fromJson(json['receivedBy'])
+          : null,
+      status: toMaterialReturnStatus(json['status']),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
@@ -56,7 +61,7 @@ class MaterialReturnModel extends MaterialReturnEntity {
 }
 
 class MaterialReturnItemModel extends MaterialReturnItem {
-  MaterialReturnItemModel({
+  const MaterialReturnItemModel({
     required String id,
     String? issueVoucherId,
     UnitOfMeasure? unitOfMeasure,
@@ -122,14 +127,12 @@ class MaterialReturnMaterialModel extends MaterialReturnMaterialEntity {
           material: material,
           issueVoucherId: issueVoucherId,
           unitCost: unitCost,
-
         );
 
   Map<String, dynamic> toJson() {
     return {
       'quantity': quantity,
       'remark': remark,
-      
     };
   }
 
@@ -179,6 +182,8 @@ class MaterialReturnListWithMeta extends MaterialReturnEntityListWithMeta {
   }) : super(meta: meta, items: items);
 
   factory MaterialReturnListWithMeta.fromJson(Map<String, dynamic> json) {
+    debugPrint("MaterialReturnListWithMeta.fromJson: $json");
+
     return MaterialReturnListWithMeta(
       meta: Meta.fromJson(json['meta']),
       items: json['items']
@@ -186,5 +191,33 @@ class MaterialReturnListWithMeta extends MaterialReturnEntityListWithMeta {
               (item) => MaterialReturnModel.fromJson(item))
           .toList(),
     );
+  }
+}
+
+MaterialReturnStatus toMaterialReturnStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return MaterialReturnStatus.completed;
+    case 'PENDING':
+      return MaterialReturnStatus.pending;
+    case 'DECLINED':
+      return MaterialReturnStatus.declined;
+    default:
+      throw Exception('Invalid MaterialReturnStatus');
+  }
+}
+
+
+String fromMaterialReturnStatus(MaterialReturnStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case MaterialReturnStatus.completed:
+      return 'COMPLETED';
+    case MaterialReturnStatus.pending:
+      return 'PENDING';
+    case MaterialReturnStatus.declined:
+      return 'DECLINED';
   }
 }

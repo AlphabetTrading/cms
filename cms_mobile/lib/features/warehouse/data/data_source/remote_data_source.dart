@@ -15,24 +15,34 @@ class WarehouseDataSourceImpl extends WarehouseDataSource {
 
   @override
   Future<DataState<List<WarehouseModel>>> fetchWarehouses() async {
-    
     String fetchWarehousesQuery;
 
     fetchWarehousesQuery = r'''
-        query GetWarehouseStore {
-          getWarehouseStores {
-            items {
-              location
-              name
-              id
-            }
+      query GetWarehouseStores($orderBy: OrderByWarehouseStoreInput, $filterWarehouseStoreInput: FilterWarehouseStoreInput, $paginationInput: PaginationInput) {
+        getWarehouseStores(orderBy: $orderBy, filterWarehouseStoreInput: $filterWarehouseStoreInput, paginationInput: $paginationInput) {
+          items {
+            createdAt
+            id
+            location
+            name
+            updatedAt
+          }
+          meta {
+            count
+            limit
+            page
           }
         }
+      }
     ''';
 
     final response = await _client.query(QueryOptions(
-      document: gql(fetchWarehousesQuery),
-    ));
+        document: gql(fetchWarehousesQuery),
+        variables: {
+          "filterWarehouseStoreInput": {},
+          "orderBy": {},
+          "paginationInput": {}
+        }));
 
     if (response.hasException) {
       return DataFailed(

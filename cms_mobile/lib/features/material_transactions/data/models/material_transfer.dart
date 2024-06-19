@@ -32,19 +32,19 @@ class MaterialTransferItemModel extends MaterialTransferItemEntity {
 
   factory MaterialTransferItemModel.fromJson(Map<String, dynamic> json) {
     return MaterialTransferItemModel(
-      createdAt: json['createdAt'],
       id: json['id'],
       materialTransferVoucherId: json['materialTransferVoucherId'],
+      productVariantId: json['productVariantId'],
       productVariant: json['productVariant'] != null
           ? ProductVariantModel.fromJson(json['productVariant'])
           : null,
-      productVariantId: json['productVariantId'],
       quantityRequested: json['quantityRequested'],
       quantityTransferred: json['quantityTransferred'],
       remark: json['remark'],
       totalCost: json['totalCost'],
       unitCost: json['unitCost'],
-      updatedAt: json['updatedAt'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 
@@ -77,7 +77,10 @@ class MaterialTransferModel extends MaterialTransferEntity {
     UserModel? preparedBy,
     String? preparedById,
     String? projectId,
-    WarehouseModel? receivingStore,
+    WarehouseModel? sendingWarehouseStore,
+    String? sendingWarehouseStoreId,
+    WarehouseModel? receivingWarehouseStore,
+    String? receivingWarehouseStoreId,
     String? requisitionNumber,
     String? sendingStore,
     String? sentThroughName,
@@ -97,7 +100,10 @@ class MaterialTransferModel extends MaterialTransferEntity {
             preparedBy: preparedBy,
             preparedById: preparedById,
             projectId: projectId,
-            receivingStore: receivingStore,
+            receivingWarehouseStore: receivingWarehouseStore,
+            receivingWarehouseStoreId: receivingWarehouseStoreId,
+            sendingWarehouseStore: sendingWarehouseStore,
+            sendingWarehouseStoreId: sendingWarehouseStoreId,
             requisitionNumber: requisitionNumber,
             sendingStore: sendingStore,
             sentThroughName: sentThroughName,
@@ -112,7 +118,6 @@ class MaterialTransferModel extends MaterialTransferEntity {
           ? UserModel.fromJson(json['approvedBy'])
           : null,
       approvedById: json['approvedById'],
-      createdAt: json['createdAt'],
       id: json['id'],
       items: json['items']
           ?.map<MaterialTransferItemModel>(
@@ -125,14 +130,22 @@ class MaterialTransferModel extends MaterialTransferEntity {
           : null,
       preparedById: json['preparedById'],
       projectId: json['projectId'],
-      receivingStore: json['receivingStore'],
+      sendingWarehouseStoreId: json['sendingWarehouseStoreId'],
+      sendingWarehouseStore: json['sendingWarehouseStore'] != null
+          ? WarehouseModel.fromJson(json['sendingWarehouseStore'])
+          : null,
+      receivingWarehouseStoreId: json['receivingWarehouseStoreId'],
+      receivingWarehouseStore: json['receivingWarehouseStore'] != null
+          ? WarehouseModel.fromJson(json['receivingStore'])
+          : null,
       requisitionNumber: json['requisitionNumber'],
       sendingStore: json['sendingStore'],
       sentThroughName: json['sentThroughName'],
       serialNumber: json['serialNumber'],
       status: json['status'],
-      updatedAt: json['updatedAt'],
       vehiclePlateNo: json['vehiclePlateNo'],
+      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -148,7 +161,10 @@ class MaterialTransferModel extends MaterialTransferEntity {
       'preparedBy': preparedBy!.toJson(),
       'preparedById': preparedById,
       'projectId': projectId,
-      'receivingStore': receivingStore,
+      'sendingWarehouseStore': sendingWarehouseStore!.toJson(),
+      'sendingWarehouseStoreId': sendingWarehouseStoreId,
+      'receivingWarehouseStore': receivingWarehouseStore!.toJson(),
+      'receivingWarehouseStoreId': receivingWarehouseStoreId,
       'requisitionNumber': requisitionNumber,
       'sendingStore': sendingStore,
       'sentThroughName': sentThroughName,
@@ -158,5 +174,34 @@ class MaterialTransferModel extends MaterialTransferEntity {
       'vehiclePlateNo': vehiclePlateNo
     };
     return data;
+  }
+}
+
+enum MaterialTransferStatus { completed, pending, declined }
+
+MaterialTransferStatus toMaterialTransferStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return MaterialTransferStatus.completed;
+    case 'PENDING':
+      return MaterialTransferStatus.pending;
+    case 'DECLINED':
+      return MaterialTransferStatus.declined;
+    default:
+      throw Exception('Invalid MaterialTransferStatus');
+  }
+}
+
+String fromMaterialTransferStatus(MaterialTransferStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case MaterialTransferStatus.completed:
+      return 'COMPLETED';
+    case MaterialTransferStatus.pending:
+      return 'PENDING';
+    case MaterialTransferStatus.declined:
+      return 'DECLINED';
   }
 }

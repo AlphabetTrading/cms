@@ -102,7 +102,7 @@ class _MaterialTransferEditPageState extends State<MaterialTransferEditPage> {
             final preparedBy = materialTransfer?.preparedBy;
             final approvedBy = materialTransfer?.approvedBy;
             final materialTransferMaterials = materialTransfer?.items ?? [];
-            selectedWarehouse ??= materialTransfer?.receivingStore;
+            selectedWarehouse ??= materialTransfer?.receivingWarehouseStore;
             return BlocBuilder<WarehouseBloc, WarehouseState>(
               builder: (warehouseContext, warehouseState) {
                 if (warehouseState is WarehousesFailed) {

@@ -74,7 +74,10 @@ class MaterialTransferRepositoryImpl extends MaterialTransferRepository {
       FilterMaterialTransferInput? filterMaterialTransferInput,
       OrderByMaterialTransferInput? orderBy,
       PaginationInput? paginationInput) {
-    // TODO: implement getMaterialTransfers
-    throw UnimplementedError();
+    return dataSource.fetchMaterialTransfers(
+      filterMaterialTransferInput: filterMaterialTransferInput,
+      orderBy: orderBy,
+      paginationInput: paginationInput,
+    );
   }
 }

@@ -9,6 +9,7 @@ import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:flutter/material.dart';
 
 class MaterialReceiveModel extends MaterialReceiveEntity {
   const MaterialReceiveModel({
@@ -52,6 +53,8 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
   }
 
   factory MaterialReceiveModel.fromJson(Map<String, dynamic> json) {
+    debugPrint("MaterialReceiveModel.fromJson: $json");
+
     return MaterialReceiveModel(
         id: json['id'],
         serialNumber: json['serialNumber'],
@@ -378,5 +381,34 @@ class OrderByMaterialReceiveInput {
     return {
       if (createdAt != null) "createdAt": createdAt,
     };
+  }
+}
+
+enum MaterialReceiveStatus { completed, pending, declined }
+
+MaterialReceiveStatus toMaterialReceiveStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return MaterialReceiveStatus.completed;
+    case 'PENDING':
+      return MaterialReceiveStatus.pending;
+    case 'DECLINED':
+      return MaterialReceiveStatus.declined;
+    default:
+      throw Exception('Invalid MaterialReceiveStatus');
+  }
+}
+
+String fromMaterialReceiveStatus(MaterialReceiveStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case MaterialReceiveStatus.completed:
+      return 'COMPLETED';
+    case MaterialReceiveStatus.pending:
+      return 'PENDING';
+    case MaterialReceiveStatus.declined:
+      return 'DECLINED';
   }
 }

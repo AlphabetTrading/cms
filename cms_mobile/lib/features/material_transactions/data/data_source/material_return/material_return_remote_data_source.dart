@@ -2,6 +2,7 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_return.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class MaterialReturnDataSource {
@@ -181,6 +182,8 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
         );
       }
 
+      debugPrint('fetchMaterialReturnsQuery: ${response.data}');
+      
       final materialReturnsListWithMeta = MaterialReturnListWithMeta.fromJson(
           response.data!['getMaterialReturns']);
 

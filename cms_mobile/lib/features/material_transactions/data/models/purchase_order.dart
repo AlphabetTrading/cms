@@ -14,7 +14,7 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
     required String? preparedById,
     required String? projectId,
     required String? serialNumber,
-    required String? status,
+    required PurchaseOrderStatus? status,
     required double? subTotal,
     required String? supplierName,
     required DateTime updatedAt,
@@ -286,3 +286,32 @@ class PurchaseOrdersListWithMeta extends PurchaseOrderEntityListWithMeta {
 
 
 // from enum 
+
+enum PurchaseOrderStatus { completed, pending, declined }
+
+PurchaseOrderStatus toPurchaseOrderStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return PurchaseOrderStatus.completed;
+    case 'PENDING':
+      return PurchaseOrderStatus.pending;
+    case 'DECLINED':
+      return PurchaseOrderStatus.declined;
+    default:
+      throw Exception('Invalid PurchaseOrderStatus');
+  }
+}
+
+String fromPurchaseOrderStatus(PurchaseOrderStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case PurchaseOrderStatus.completed:
+      return 'COMPLETED';
+    case PurchaseOrderStatus.pending:
+      return 'PENDING';
+    case PurchaseOrderStatus.declined:
+      return 'DECLINED';
+  }
+}

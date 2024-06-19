@@ -154,8 +154,13 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
     String fetchMaterialReceiveQuery;
 
     fetchMaterialReceiveQuery = r'''
-      query GetMaterialReceives {
-        getMaterialReceives {
+      query GetMaterialRequests($filterMaterialReceiveInput: FilterMaterialReceiveInput, $mine: Boolean!, $orderBy: OrderByMaterialReceiveInput, $paginationInput: PaginationInput) {
+        getMaterialReceives(filterMaterialReceiveInput: $filterMaterialReceiveInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
+          meta {
+            count
+            limit
+            page
+          }
           items {
             approvedBy {
               createdAt
@@ -170,6 +175,35 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
             createdAt
             id
             invoiceId
+            items {
+              createdAt
+              id
+              loadingCost
+              materialReceiveVoucherId
+              productVariant {
+                createdAt
+                description
+                id
+                product {
+                  createdAt
+                  id
+                  name
+                  productType
+                  updatedAt
+                }
+                productId
+                unitOfMeasure
+                updatedAt
+                variant
+              }
+              productVariantId
+              quantity
+              totalCost
+              transportationCost
+              unitCost
+              unloadingCost
+              updatedAt
+            }
             materialRequestId
             projectId
             purchaseOrderId
@@ -187,11 +221,6 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
             status
             supplierName
             updatedAt
-          }
-          meta {
-            count
-            limit
-            page
           }
         }
       }
@@ -212,6 +241,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
           'filterMaterialRecieveInput': filterInput,
           'orderBy': orderBy ?? {},
           'paginationInput': paginationInput ?? {},
+          "mine": false,
         },
       ),
     )
@@ -226,22 +256,8 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
         );
       }
 
-      debugPrint('fetchMaterialIssuesQuery: ${response.data}');
-      final receivings = response.data!['getMaterialReceives']["items"] as List;
-
-      debugPrint('fetchMaterialReceivingsQuery: $receivings');
-      final meta = response.data!['getMaterialReceives']["meta"];
-
-      final items =
-          receivings.map((e) => MaterialReceiveModel.fromJson(e)).toList();
-      debugPrint(
-          '******************Successfully converted to MaterialReceiveModel: $items');
-      return DataSuccess(
-        MaterialReceiveListWithMeta(
-          items: items,
-          meta: Meta.fromJson(meta),
-        ),
-      );
+      return DataSuccess(MaterialReceiveListWithMeta.fromJson(
+          response.data!["getMaterialReceives"]));
     });
   }
 }

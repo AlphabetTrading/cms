@@ -127,10 +127,55 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
   }
 
   _buildBody(BuildContext context) {
+    final ScrollController _scrollController = ScrollController();
+
     return BlocProvider<MaterialTransferDeleteCubit>(
       create: (context) => sl<MaterialTransferDeleteCubit>(),
       child: BlocBuilder<MaterialTransferBloc, MaterialTransferState>(
         builder: (_, state) {
+          _scrollController.addListener(() {
+            // make sure to check current page is greater than 0
+            if (_scrollController.position.pixels == 10 &&
+                state.materialTransfers!.meta.page > 0) {
+              context.read<MaterialTransferBloc>().add(
+                    GetMaterialTransfers(
+                        orderBy:
+                            OrderByMaterialTransferInput(createdAt: "desc"),
+                        paginationInput: PaginationInput(
+                          skip: 0,
+                          take: state.materialTransfers!.meta.limit,
+                        ),
+                        filterMaterialTransferInput:
+                            FilterMaterialTransferInput(
+                                // approvedBy: StringFilter(contains: query),
+                                // serialNumber: StringFilter(contains: query),
+                                )),
+                  );
+            }
+
+            // make sure to check current page is less than total pages
+            if (_scrollController.position.pixels ==
+                    _scrollController.position.maxScrollExtent &&
+                state.materialTransfers!.meta.page *
+                        state.materialTransfers!.meta.limit <
+                    state.materialTransfers!.meta.count) {
+              context.read<MaterialTransferBloc>().add(
+                    GetMaterialTransfers(
+                        orderBy:
+                            OrderByMaterialTransferInput(createdAt: "desc"),
+                        paginationInput: PaginationInput(
+                          skip: state.materialTransfers!.meta.page + 1,
+                          take: state.materialTransfers!.meta.limit,
+                        ),
+                        filterMaterialTransferInput:
+                            FilterMaterialTransferInput(
+                                // approvedBy: StringFilter(contains: query),
+                                // serialNumber: StringFilter(contains: query),
+                                )),
+                  );
+            }
+          });
+
           debugPrint('MaterialRequestBlocBuilder state: $state');
           if (state is MaterialTransferInitial) {
             return const Center(
@@ -145,10 +190,7 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
           }
 
           if (state is MaterialTransfersSuccess) {
-            debugPrint(
-                'MaterialRequestSuccess ${state.materialTransfer?.items!.length} ');
-
-            return state.materialTransfer!.items!.isNotEmpty
+            return state.materialTransfers!.items.isNotEmpty
                 ? Expanded(
                     child: BlocListener<MaterialTransferDeleteCubit,
                         MaterialTransferDeleteState>(
@@ -170,6 +212,7 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 10),
                         child: SingleChildScrollView(
+                          controller: _scrollController,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -178,13 +221,13 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 itemCount:
-                                    state.materialTransfer!.items!.length,
+                                    state.materialTransfers!.items.length,
                                 separatorBuilder: (_, index) => const SizedBox(
                                   height: 10,
                                 ),
                                 itemBuilder: (_, index) {
                                   final materialTransfer =
-                                      state.materialTransfer!.items![index];
+                                      state.materialTransfers!.items[index];
                                   return _buildTransferListItem(
                                       context, materialTransfer);
                                 },
@@ -213,7 +256,7 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
   }
 
   _buildTransferListItem(
-      BuildContext context, MaterialTransferItemEntity materialTransfer) {
+      BuildContext context, MaterialTransferEntity materialTransfer) {
     return Container(
       width: MediaQuery.of(context).size.width - 20,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -231,7 +274,7 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                materialTransfer.quantityRequested.toString() ?? 'N/A',
+                materialTransfer.serialNumber ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 18,
@@ -285,7 +328,7 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'By ${materialTransfer.quantityRequested ?? 'N/A'}',
+                'By ${materialTransfer.preparedBy?.fullName ?? 'N/A'}',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 15,
@@ -294,7 +337,7 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
                 ),
               ),
               Text(
-                materialTransfer.productVariant?.variant ?? 'N/A',
+                materialTransfer.receivingWarehouseStore?.name ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF637587),
                   fontSize: 12,
@@ -325,11 +368,11 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: ShapeDecoration(
-                  color: materialTransfer.remark == 'PENDING'
+                  color: materialTransfer.status == 'PENDING'
                       ? const Color.fromARGB(31, 255, 183, 0)
-                      : materialTransfer.remark == 'COMPLETED'
+                      : materialTransfer.status == 'COMPLETED'
                           ? const Color.fromARGB(30, 0, 179, 66)
-                          : materialTransfer.remark == 'DECLINED'
+                          : materialTransfer.status == 'DECLINED'
                               ? const Color.fromARGB(30, 208, 2, 26)
                               : const Color.fromARGB(31, 17, 20, 22),
                   shape: RoundedRectangleBorder(
@@ -337,13 +380,13 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
                   ),
                 ),
                 child: Text(
-                  materialTransfer.remark ?? 'N/A',
+                  materialTransfer.status ?? 'N/A',
                   style: TextStyle(
-                    color: materialTransfer.remark == 'PENDING'
+                    color: materialTransfer.status == 'PENDING'
                         ? const Color(0xFFFFB700)
-                        : materialTransfer.remark == 'COMPLETED'
+                        : materialTransfer.status == 'COMPLETED'
                             ? const Color(0xFF00B341)
-                            : materialTransfer.remark == 'DECLINED'
+                            : materialTransfer.status == 'DECLINED'
                                 ? const Color(0xFFD0021B)
                                 : const Color(0xFF111416),
                     fontSize: 10,

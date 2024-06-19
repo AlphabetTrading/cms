@@ -1,10 +1,9 @@
 import 'package:cms_mobile/core/models/meta.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:equatable/equatable.dart';
-
-enum PurchaseOrderStatus { pending, completed, declined }
 
 class PurchaseOrderEntity extends Equatable {
   final String id;
@@ -15,7 +14,7 @@ class PurchaseOrderEntity extends Equatable {
   final String? preparedById;
   final String? projectId;
   final String? serialNumber;
-  final String? status;
+  final PurchaseOrderStatus? status;
   final double? subTotal;
   final String? supplierName;
   final double? vat;

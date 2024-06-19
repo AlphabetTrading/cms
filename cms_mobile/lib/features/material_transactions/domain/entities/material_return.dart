@@ -7,7 +7,7 @@ import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
 
-enum MaterialReturnStatus { pending, approved, declined }
+enum MaterialReturnStatus { pending, completed, declined }
 
 class MaterialReturnEntity extends Equatable {
   final String? id;

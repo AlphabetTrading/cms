@@ -315,3 +315,32 @@ class EditMaterialIssueParamsModel
             .toList());
   }
 }
+
+enum MaterialIssueStatus { completed, pending, declined }
+
+MaterialIssueStatus toMaterialIssueStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return MaterialIssueStatus.completed;
+    case 'PENDING':
+      return MaterialIssueStatus.pending;
+    case 'DECLINED':
+      return MaterialIssueStatus.declined;
+    default:
+      throw Exception('Invalid MaterialIssueStatus');
+  }
+}
+
+String fromMaterialIssueStatus(MaterialIssueStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case MaterialIssueStatus.completed:
+      return 'COMPLETED';
+    case MaterialIssueStatus.pending:
+      return 'PENDING';
+    case MaterialIssueStatus.declined:
+      return 'DECLINED';
+  }
+}
