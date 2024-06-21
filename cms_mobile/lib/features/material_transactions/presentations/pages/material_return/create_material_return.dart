@@ -1,9 +1,6 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
-import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
-import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
-import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
@@ -16,7 +13,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/cubit/ma
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_return/create_material_return_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_return/material_return_input_list.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
@@ -85,16 +82,17 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                 }
               },
               builder: (returnContext, returnState) {
+                 final warehouseForm = warehouseFormContext
+                                .watch<MaterialReturnWarehouseFormCubit>();
                 return Scaffold(
                     appBar: AppBar(title: const Text("Create Material Return")),
                     bottomSheet: _buildButtons(returnContext, localState,
-                        returnState, warehouseFormState, warehouseFormContext),
+                        returnState, warehouseForm),
                     body: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: BlocBuilder<WarehouseBloc, WarehouseState>(
                           builder: (warehouseContext, warehouseState) {
-                            final warehouseForm = warehouseFormContext
-                                .watch<MaterialReturnWarehouseFormCubit>();
+                           
 
                             return Padding(
                               padding:
@@ -104,16 +102,6 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                                   CustomDropdown(
                                     onSelected: (dynamic value) {
                                       warehouseForm.warehouseChanged(value);
-                                      context.read<ProductBloc>().add(
-                                            GetWarehouseProducts(
-                                              getProductsInputEntity:
-                                                  GetWarehouseProductsInputEntity(
-                                                filterWarehouseProductInput:
-                                                    FilterWarehouseProductInput(
-                                                        warehouseId: value.id),
-                                              ),
-                                            ),
-                                          );
                                     },
                                     dropdownMenuEntries: warehouseState
                                             .warehouses
@@ -158,8 +146,7 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
     BuildContext context,
     MaterialReturnLocalState localState,
     MaterialReturnState state,
-    MaterialReturnWarehouseFormState warehouseFormState,
-    BuildContext warehouseFormContext,
+    MaterialReturnWarehouseFormCubit warehouseForm
   ) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -172,8 +159,7 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
             builder: (context) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(
-                    value: warehouseFormContext
-                        .read<MaterialReturnWarehouseFormCubit>(),
+                    value: warehouseForm,
                   ),
                   BlocProvider<MaterialReturnFormCubit>(
                     create: (_) => MaterialReturnFormCubit(),
@@ -201,30 +187,35 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                   localState.materialReturnMaterials!.isEmpty)
               ? null
               : () {
-                  context.read<MaterialReturnBloc>().add(
-                        CreateMaterialReturnEvent(
-                          createMaterialReturnParamsEntity:
-                              CreateMaterialReturnParamsEntity(
-                            projectId: PROJECT_ID,
-                            receivingStoreId:
-                                warehouseFormState.warehouseDropdown.value,
-                            returnedById: USER_ID,
-                            // warehouseStoreId: "",
+                   warehouseForm.onSubmit();
+                  if (warehouseForm.state.isValid) {
+                    context.read<MaterialReturnBloc>().add(
+                          CreateMaterialReturnEvent(
+                            createMaterialReturnParamsEntity:
+                                CreateMaterialReturnParamsEntity(
+                              projectId: context
+                                      .read<ProjectBloc>()
+                                      .state
+                                      .selectedProjectId ??
+                                  "",
+                              receivingStoreId:
+                                  warehouseForm.state.warehouseDropdown.value,
+                              returnedById: USER_ID,
+                              // warehouseStoreId: "",
 
-                            materialReturnMaterials:
-                                localState.materialReturnMaterials!
-                                    .map((e) => MaterialReturnMaterialEntity(
-                                          issueVoucherId: e.issueVoucherId,
-                                          quantity: e.quantity,
-                                          remark: e.remark,
-                                          material: e.material,
-                                          unitCost: e.unitCost
-
-                                        ))
-                                    .toList(),
+                              materialReturnMaterials:
+                                  localState.materialReturnMaterials!
+                                      .map((e) => MaterialReturnMaterialEntity(
+                                            issueVoucherId: e.issueVoucherId,
+                                            quantity: e.quantity,
+                                            remark: e.remark,
+                                            material: e.material,
+                                          ))
+                                      .toList(),
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                  }
                 },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
@@ -262,7 +253,7 @@ class WarehouseDropdown extends FormzInput<String, WarehouseDropdownError> {
     if (isValid || isPure) return null;
 
     if (displayError == WarehouseDropdownError.invalid) {
-      return 'This field is required';
+      return 'Select a warehouse to return the materials';
     }
     return null;
   }

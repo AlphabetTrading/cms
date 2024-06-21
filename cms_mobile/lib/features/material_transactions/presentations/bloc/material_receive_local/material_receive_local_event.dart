@@ -1,5 +1,5 @@
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 
 abstract class MaterialReceiveLocalEvent{
   const MaterialReceiveLocalEvent();

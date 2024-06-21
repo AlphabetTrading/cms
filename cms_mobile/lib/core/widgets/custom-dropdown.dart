@@ -8,6 +8,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final void Function(dynamic value) onSelected;
   final T? initialSelection;
   final Widget? trailingIcon;
+  final TextEditingController? controller;
 
   const CustomDropdown(
       {super.key,
@@ -17,6 +18,7 @@ class CustomDropdown<T> extends StatelessWidget {
       this.errorMessage,
       required this.onSelected,
       this.trailingIcon,
+      this.controller,
       this.initialSelection});
 
   @override
@@ -29,10 +31,11 @@ class CustomDropdown<T> extends StatelessWidget {
           style: Theme.of(context).textTheme.labelSmall,
         ),
         DropdownMenu<T>(
+          controller: controller,
           trailingIcon: trailingIcon ?? const Icon(Icons.arrow_drop_down),
           initialSelection: initialSelection,
           expandedInsets: EdgeInsets.zero,
-          enableFilter: true,
+          enableSearch: true,
           dropdownMenuEntries: dropdownMenuEntries,
           errorText: errorMessage,
           onSelected: onSelected,

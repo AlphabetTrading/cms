@@ -42,6 +42,8 @@ class RoutePaths {
   static const String materialReturnEdit = 'edit/:materialReturnId';
   static const String materialReturn = 'material_return';
 
+  //milestone
+  static const String milestoneDetails = 'milestones/:milestoneId';
 }
 
 class RouteNames {
@@ -90,4 +92,6 @@ class RouteNames {
   static const String materialReturnEdit = 'material_return_edit';
   static const String materialReturn = 'material_return';
 
+  //progress
+  static const String milestoneDetails = 'milestone_details';
 }

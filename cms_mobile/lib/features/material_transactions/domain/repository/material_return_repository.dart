@@ -10,6 +10,9 @@ abstract class MaterialReturnRepository {
     OrderByMaterialReturnInput? orderBy,
     PaginationInput? paginationInput,
   });
+    Future<DataState<String>> deleteMaterialReturn({required String materialReturnId});
+  Future<DataState<MaterialReturnEntity>> getMaterialReturnDetails(
+      {required String params});
 
   Future<DataState<String>> createMaterialReturn(
       {required CreateMaterialReturnParamsEntity params});

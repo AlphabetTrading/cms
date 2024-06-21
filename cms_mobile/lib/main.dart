@@ -12,6 +12,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_state.dart';
@@ -84,6 +85,9 @@ void main() async {
           ),
           BlocProvider<PurchaseOrderBloc>(
             create: (context) => sl<PurchaseOrderBloc>(),
+          ),
+          BlocProvider<MilestonesCubit>(
+            create: (context) => sl<MilestonesCubit>(),
           ),
         ],
         child: EasyLocalization(

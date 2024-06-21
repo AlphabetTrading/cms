@@ -1,6 +1,6 @@
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/home/data/models/milestone.dart';
 import 'package:cms_mobile/features/home/domain/entities/project.dart';
+import 'package:cms_mobile/features/progress/data/models/milestone.dart';
 
 class ProjectModel extends ProjectEntity {
   const ProjectModel({

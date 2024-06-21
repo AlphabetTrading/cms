@@ -21,6 +21,8 @@ abstract class MaterialRequestDataSource {
 
   Future<DataState<MaterialRequestModel>> getMaterialRequestDetails(
       {required String params});
+  Future<DataState<String>> deleteMaterialRequest(
+      {required String materialRequestId});
 }
 
 class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
@@ -249,14 +251,44 @@ query GetMaterialRequestById($getMaterialRequestByIdId: String!) {
           ),
         );
       }
-
-      print("****************************");
-      print(response.data!['getMaterialRequestById']);
       final materialRequest = MaterialRequestModel.fromJson(
           response.data!['getMaterialRequestById']);
 
       return DataSuccess(materialRequest);
     });
+  }
+
+  @override
+  Future<DataState<String>> deleteMaterialRequest(
+      {required String materialRequestId}) async {
+    const String _deleteMaterialRequestMutation = r'''
+  mutation DeleteMaterialRequest($deleteMaterialRequestId: String!) {
+  deleteMaterialRequest(id: $deleteMaterialRequestId) {
+    id
+  }
+}''';
+
+    final MutationOptions options = MutationOptions(
+      document: gql(_deleteMaterialRequestMutation),
+      variables: {"deleteMaterialRequestId": materialRequestId},
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['deleteMaterialRequest']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }
 

@@ -11,7 +11,7 @@ class DeleteMaterialIssueUseCase implements UseCase<String, String> {
   @override
   Future<DataState<String>> call({String? params}) async {
     return await repository.deleteMaterialIssue(
-      materialId: params!,
+      materialIssueId: params!,
     );
   }
 }

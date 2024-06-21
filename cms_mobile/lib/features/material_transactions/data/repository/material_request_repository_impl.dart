@@ -35,4 +35,10 @@ class MaterialRequestRepositoryImpl extends MaterialRequestRepository {
       paginationInput,
     );
   }
+
+    @override
+  Future<DataState<String>> deleteMaterialRequest({required String materialRequestId}) {
+    return dataSource.deleteMaterialRequest(materialRequestId:materialRequestId);
+  }
+  
 }

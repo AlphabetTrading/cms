@@ -21,5 +21,5 @@ abstract class MaterialIssueRepository {
   Future<DataState<String>> editMaterialIssue(
       {required EditMaterialIssueParamsEntity params});
 
-  Future<DataState<String>> deleteMaterialIssue({required String materialId});
+  Future<DataState<String>> deleteMaterialIssue({required String materialIssueId});
 }

@@ -1,4 +1,4 @@
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialReceiveLocalState extends Equatable {

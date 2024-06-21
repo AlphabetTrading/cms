@@ -1,13 +1,18 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_return_form/material_return_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/form_info_item.dart';
+import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +34,25 @@ class CreateMaterialReturnForm extends StatefulWidget {
 }
 
 class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
+  final myController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    context.read<MaterialIssueBloc>().add(
+          GetMaterialIssues(
+            filterMaterialIssueInput: FilterMaterialIssueInput(),
+            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 20),
+          ),
+        );
+    myController.addListener(_printLatestValue);
+  }
+
+  void _printLatestValue() {
+    final text = myController.text;
+    print('Second text field: $text (${text.characters.length})');
+  }
+
   @override
   Widget build(BuildContext context) {
     final materialReturnFormCubit = context.watch<MaterialReturnFormCubit>();
@@ -47,33 +71,43 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
         builder: (warehouseContext, warehouseState) {
           return BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
             builder: (context, state) {
-              List<IssueVoucherMaterialEntity> materialIssueMaterials = state
-                      .materialIssues?.items
-                      .firstWhere((element) =>
+              List<MaterialIssueEntity>? materialIssues =
+                  state.materialIssues?.items;
+              MaterialIssueEntity? selectedMaterialIssue =
+                  materialIssueDropdown.value != ""
+                      ? materialIssues?.firstWhere((element) =>
                           element.id == materialIssueDropdown.value)
-                      .items ??
-                  [];
+                      : null;
+
+              List<IssueVoucherMaterialEntity>? materials =
+                  selectedMaterialIssue?.items;
+
               IssueVoucherMaterialEntity? selectedMaterial =
-                  materialIssueMaterials.firstWhere(
-                      (element) => element.id == materialDropdown.value);
+                  materialDropdown.value != ""
+                      ? materials?.firstWhere((element) =>
+                          element.productVariant?.id == materialDropdown.value)
+                      : null;
+
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomDropdown(
-                    initialSelection: materialIssueDropdown.value != ""
-                        ? state.materialIssues?.items.firstWhere((element) =>
-                            element.id == materialIssueDropdown.value)
-                        : null,
+                    initialSelection: selectedMaterialIssue,
                     onSelected: (dynamic value) {
                       materialReturnFormCubit.materialIssueChanged(value);
+                      myController.text = "";
+                      // context
+                      //     .read<MaterialIssueDetailsCubit>()
+                      //     .onGetMaterialIssueDetails(materialIssueId: value);
                     },
-                    dropdownMenuEntries: state.materialIssues?.items
+                    dropdownMenuEntries: materialIssues != null
+                        ? materialIssues
                             .map((e) => DropdownMenuEntry<MaterialIssueEntity>(
                                 label: e.serialNumber ?? e.id ?? "N/A",
                                 value: e))
-                            .toList() ??
-                        [],
+                            .toList()
+                        : [],
                     enableFilter: false,
                     errorMessage: materialIssueDropdown.errorMessage,
                     label: 'Material Issue',
@@ -87,22 +121,20 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
 
                   //material issue materials
                   CustomDropdown(
-                    initialSelection: materialDropdown.value != "" &&
-                            materialIssueDropdown.value != ""
-                        ? selectedMaterial
-                        : null,
+                    initialSelection: selectedMaterial,
                     onSelected: (dynamic value) {
                       materialReturnFormCubit.materialChanged(value);
                     },
-                    dropdownMenuEntries: state.materialIssues?.items
-                            .firstWhere((element) =>
-                                element.id == materialIssueDropdown.value)
-                            .items
-                            ?.map((e) =>
-                                DropdownMenuEntry<IssueVoucherMaterialEntity>(
-                                    label: e.id ?? "N/A", value: e))
+                    controller: myController,
+                    dropdownMenuEntries: materials
+                            ?.map((e) => DropdownMenuEntry<
+                                    IssueVoucherMaterialEntity>(
+                                label:
+                                    "${e.productVariant?.product?.name} - ${e.productVariant?.variant}",
+                                value: e))
                             .toList() ??
                         [],
+
                     enableFilter: false,
                     errorMessage: materialDropdown.errorMessage,
                     label: 'Material',
@@ -114,11 +146,16 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                   ),
 
                   Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       FormInfoItem(
-                          title: "Unit", value: selectedMaterial.id ?? "N/A"),
-                      FormInfoItem(title: "Quantity Issued", value: "N/A"),
+                          title: "Unit",
+                          value: unitOfMeasureDisplay(
+                              selectedMaterial?.productVariant?.unitOfMeasure)),
+                      FormInfoItem(
+                          title: "Quantity Issued",
+                          value:
+                              selectedMaterial?.quantity?.toString() ?? "N/A"),
                     ],
                   ),
                   const SizedBox(
@@ -126,8 +163,14 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                   ),
                   Row(
                     children: [
-                      FormInfoItem(title: "Issued From", value: "N/A"),
-                      FormInfoItem(title: "Unit Cost", value: "N/A"),
+                      FormInfoItem(
+                          title: "Issued From",
+                          value:
+                              selectedMaterialIssue?.warehouseStore?.name ?? "N/A"),
+                      FormInfoItem(
+                          title: "Unit Cost",
+                          value:
+                              selectedMaterial?.unitCost.toString() ?? "N/A"),
                     ],
                   ),
                   const SizedBox(
@@ -147,8 +190,8 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                           errorMessage: quantityField.errorMessage,
                         ),
                       ),
-                      FormInfoItem(
-                          title: "Total Cost(To be returned)", value: "N/A"),
+                      // FormInfoItem(
+                      //     title: "Total Cost(To be returned)", value:(quantityField.value*selectedMaterial?.unitCost).toString()?? "N/A"),
                     ],
                   ),
                   const SizedBox(
@@ -172,13 +215,8 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                       if (materialReturnFormCubit.state.isValid) {
                         if (widget.isEdit) {
                           final updated = MaterialReturnMaterialEntity(
-                            // material: state.warehouseItems?.firstWhere(
-                            //     (element) =>
-                            //         element.itemVariant.id ==
-                            //         materialDropdown.value),
-                            material: null,
-                            issueVoucherId: "",
-                            unitCost: 0,
+                            material: selectedMaterial,
+                            issueVoucherId: selectedMaterialIssue?.id ?? "",
                             quantity: double.parse(quantityField.value),
                             remark: remarkField.value,
                           );
@@ -190,13 +228,8 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
                           BlocProvider.of<MaterialReturnLocalBloc>(context).add(
                             AddMaterialReturnMaterialLocal(
                               MaterialReturnMaterialEntity(
-                                // material: state.warehouseItems?.firstWhere(
-                                //     (element) =>
-                                //         element.itemVariant.id ==
-                                //         materialDropdown.value),
-                                material: null,
-                                issueVoucherId: "",
-                                unitCost: 0,
+                                material: selectedMaterial,
+                                issueVoucherId: selectedMaterialIssue?.id ?? "",
                                 quantity: double.parse(quantityField.value),
                                 remark: remarkField.value,
                               ),
@@ -226,15 +259,15 @@ class _CreateMaterialReturnFormState extends State<CreateMaterialReturnForm> {
 enum QuanityValidationError { empty, notNumber, greaterThanMax }
 
 class QuantityField extends FormzInput<String, QuanityValidationError> {
-  final double inStock;
+  final double issuedQuantity;
   const QuantityField.pure({
     String value = "",
-    this.inStock = 0,
+    this.issuedQuantity = 0.0,
   }) : super.pure(value);
 
   const QuantityField.dirty(
     String value, {
-    required this.inStock,
+    required this.issuedQuantity,
   }) : super.dirty(value);
 
   String? get errorMessage {
@@ -247,7 +280,7 @@ class QuantityField extends FormzInput<String, QuanityValidationError> {
       return 'Quantity must be a number';
     }
     if (displayError == QuanityValidationError.greaterThanMax) {
-      return 'Quantity cannot be greater than the quantity in stock';
+      return 'Quantity cannot be greater than the issued quantity';
     }
     return null;
   }
@@ -258,7 +291,7 @@ class QuantityField extends FormzInput<String, QuanityValidationError> {
       return QuanityValidationError.empty;
     } else if (double.tryParse(value) == null) {
       return QuanityValidationError.notNumber;
-    } else if (double.parse(value) > inStock) {
+    } else if (double.parse(value) > issuedQuantity) {
       return QuanityValidationError.greaterThanMax;
     }
     return null;

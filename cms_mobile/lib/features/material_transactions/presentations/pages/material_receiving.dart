@@ -3,7 +3,7 @@ import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_event.dart';

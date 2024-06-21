@@ -23,7 +23,7 @@ class GetMaterialRequestsUseCase
       paginationInput: params?.paginationInput,
     );
 
-    debugPrint('GetMaterialRequestsUseCase result: $result');
+    debugPrint('GetMaterialRequestsUseCase result: ${result}');
 
     return result;
   }

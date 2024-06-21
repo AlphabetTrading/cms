@@ -24,11 +24,12 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/delete_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issues.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/create_material_receiving.dart';
-import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/delete_material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/create_material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/delete_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/create_material_request.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/delete_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_request_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_requests.dart';
@@ -42,9 +43,11 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/purcha
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/edit_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order_details.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/details/details_cubit.dart';
@@ -63,7 +66,6 @@ import 'package:cms_mobile/features/material_transactions/domain/repository/mate
 import 'package:cms_mobile/features/material_transactions/domain/repository/material_request_repository.dart';
 import 'package:cms_mobile/features/material_transactions/domain/repository/material_return_repository.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/create_material_return.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
@@ -78,6 +80,11 @@ import 'package:cms_mobile/features/products/data/repository/product_repository_
 import 'package:cms_mobile/features/products/domain/repository/product_repository.dart';
 import 'package:cms_mobile/features/products/domain/usecases/get_products.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
+import 'package:cms_mobile/features/progress/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/progress/data/repository/milestone_repository_impl.dart';
+import 'package:cms_mobile/features/progress/domain/repository/milestone_repository.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/get_milestones.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
 import 'package:cms_mobile/features/projects/domain/repository/project_repository.dart';
@@ -179,6 +186,11 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
+  sl.registerLazySingleton<MilestoneDataSource>(
+    () => MilestoneDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
 
   /**
    * repository
@@ -220,7 +232,6 @@ Future<void> initializeDependencies() async {
     () => MaterialReturnRepositoryImpl(
         dataSource: sl<MaterialReturnDataSource>()),
   );
-
   // purchase order
   sl.registerLazySingleton<PurchaseOrderRepository>(
     () =>
@@ -248,6 +259,11 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<ProjectRepository>(
     () => ProjectRepositoryImpl(
       dataSource: sl<ProjectDataSource>(),
+    ),
+  );
+  sl.registerLazySingleton<MilestoneRepository>(
+    () => MilestoneRepositoryImpl(
+      dataSource: sl<MilestoneDataSource>(),
     ),
   );
 
@@ -346,6 +362,11 @@ Future<void> initializeDependencies() async {
       sl<MaterialIssueRepository>(),
     ),
   );
+  sl.registerLazySingleton<DeleteMaterialRequestUseCase>(
+    () => DeleteMaterialRequestUseCase(
+      sl<MaterialRequestRepository>(),
+    ),
+  );
 
   // warehouses & products
   sl.registerLazySingleton<GetWarehousesUseCase>(
@@ -374,6 +395,7 @@ Future<void> initializeDependencies() async {
       sl<MaterialRequestRepository>(),
     ),
   );
+
 
   sl.registerLazySingleton<GetProjectsUseCase>(
     () => GetProjectsUseCase(
@@ -462,7 +484,11 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<DeleteMaterialTransferUseCase>(
     () => DeleteMaterialTransferUseCase(
-      sl<MaterialTransferRepository>(),
+      sl<MaterialTransferRepository>(),));
+      
+  sl.registerLazySingleton<GetMilestonesUseCase>(
+    () => GetMilestonesUseCase(
+      sl<MilestoneRepository>(),
     ),
   );
 
@@ -495,6 +521,12 @@ Future<void> initializeDependencies() async {
     () => MaterialRequestLocalBloc(),
   );
 
+  sl.registerFactory<DeleteMaterialIssueCubit>(
+    () => DeleteMaterialIssueCubit(sl<DeleteMaterialIssueUseCase>()),
+  );
+  sl.registerFactory<MaterialRequestDeleteCubit>(
+    () => MaterialRequestDeleteCubit(sl<DeleteMaterialRequestUseCase>()),
+  );
   sl.registerFactory<MaterialRequestDetailsCubit>(
     () => MaterialRequestDetailsCubit(sl<GetMaterialRequestDetailsUseCase>()),
   );
@@ -512,9 +544,6 @@ Future<void> initializeDependencies() async {
     () => MaterialIssueDetailsCubit(sl<GetMaterialIssueDetailsUseCase>()),
   );
 
-  sl.registerFactory<MaterialIssueDeleteCubit>(
-    () => MaterialIssueDeleteCubit(sl<DeleteMaterialIssueUseCase>()),
-  );
 
   sl.registerFactory<MaterialIssueLocalBloc>(
     () => MaterialIssueLocalBloc(),
@@ -528,7 +557,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialReceiveBloc>(
     () => MaterialReceiveBloc(
         sl<GetMaterialReceivesUseCase>(),
-        sl<CreateMaterialReceiveUseCase>(),
         sl<GetMaterialReceiveDetailsUseCase>()),
   );
 
@@ -557,6 +585,7 @@ Future<void> initializeDependencies() async {
   );
 
   // warehouse & products bloc
+
   sl.registerFactory<WarehouseBloc>(
     () => WarehouseBloc(sl<GetWarehousesUseCase>()),
   );
@@ -604,6 +633,8 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialTransferDeleteCubit>(
     () => MaterialTransferDeleteCubit(
       sl<DeleteMaterialTransferUseCase>(),
-    ),
+    ),);
+  sl.registerFactory<MilestonesCubit>(
+    () => MilestonesCubit(sl<GetMilestonesUseCase>()),
   );
 }

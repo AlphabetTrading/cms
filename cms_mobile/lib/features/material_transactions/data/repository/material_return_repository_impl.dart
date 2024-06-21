@@ -29,4 +29,12 @@ class MaterialReturnRepositoryImpl extends MaterialReturnRepository {
       paginationInput: paginationInput,
     );
   }
+    @override
+  Future<DataState<String>> deleteMaterialReturn({required String materialReturnId}) {
+    return dataSource.deleteMaterialReturn(materialReturnId:materialReturnId);
+  }
+    @override
+  Future<DataState<MaterialReturnModel>> getMaterialReturnDetails({required String params}) {
+    return dataSource.getMaterialReturnDetails(params:params);
+  }
 }

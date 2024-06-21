@@ -10,15 +10,16 @@ import 'package:formz/formz.dart';
 
 class MaterialReturnWarehouseFormCubit
     extends Cubit<MaterialReturnWarehouseFormState> {
+  
   MaterialReturnWarehouseFormCubit({
     String? warehouseId,
   }) : super(MaterialReturnWarehouseFormState(
           warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
         ));
+
   void warehouseChanged(WarehouseEntity warehouseEntity) {
     final WarehouseDropdown warehouseDropdown =
         WarehouseDropdown.dirty(warehouseEntity.id);
-
     emit(
       state.copyWith(
         warehouseDropdown: warehouseDropdown,
@@ -32,6 +33,7 @@ class MaterialReturnWarehouseFormCubit
   void onSubmit() {
     emit(
       state.copyWith(
+        formStatus: FormStatus.validating,
         warehouseDropdown:
             WarehouseDropdown.dirty(state.warehouseDropdown.value),
         isValid: Formz.validate([
@@ -41,24 +43,13 @@ class MaterialReturnWarehouseFormCubit
     );
   }
 
-  // @override
-  // void onChange(Change<MaterialReturnFormState> change) {
-  //   super.onChange(change);
-  //   print('Current State: ${change.currentState}');
-  //   print('Next State: ${change.nextState}');
-  // }
+    @override
+  void onChange(Change<MaterialReturnWarehouseFormState> change) {
+    super.onChange(change);
+    print('warehouse Current State: ${change.currentState}');
+    print('warehouse Next State: ${change.nextState}');
+  }
 
-  // MaterialReturnFormState copyWith({
-  //   bool? isValid,
-  //   FormStatus? formStatus,
-  //   QuantityField? quantityField,
-  // }) {
-  //   return MaterialReturnFormState(
-  //     isValid: isValid ?? this.isValid,
-  //     formStatus: formStatus ?? this.formStatus,
-  //     quantityField: quantityField ?? this.quantityField,
-  //   );
-  // }
 }
 
 class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
@@ -67,19 +58,19 @@ class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
     String? materialIssueId,
     // String? warehouseId,
     double? quantity,
-    double? inStock,
+    double? issuedQuantity,
     String? remark,
   }) : super(MaterialReturnFormState(
             materialDropdown: MaterialDropdown.pure(materialId ?? ""),
-            materialIssueDropdown: MaterialIssueDropdown.pure(materialIssueId ?? ""),
-            // warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
+            materialIssueDropdown:
+                MaterialIssueDropdown.pure(materialIssueId ?? ""),
             quantityField: QuantityField.pure(value: quantity.toString()),
-            inStock: inStock ?? 0.0,
+            issuedQuantity: issuedQuantity ?? 0.0,
             remarkField: RemarkField.pure(remark ?? "")));
 
   void quantityChanged(String value) {
     final QuantityField quantityField =
-        QuantityField.dirty(value, inStock: state.inStock);
+        QuantityField.dirty(value, issuedQuantity: state.issuedQuantity);
 
     emit(
       state.copyWith(
@@ -94,14 +85,14 @@ class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
     );
   }
 
-  void materialChanged(WarehouseProductEntity materialEntity) {
+  void materialChanged(IssueVoucherMaterialEntity materialEntity) {
     final MaterialDropdown materialDropdown =
-        MaterialDropdown.dirty(materialEntity.productVariant.id!);
+        MaterialDropdown.dirty(materialEntity.productVariant?.id ?? "");
 
     emit(
       state.copyWith(
         materialDropdown: materialDropdown,
-        inStock: materialEntity.quantity,
+        issuedQuantity: materialEntity.quantity,
         isValid: Formz.validate([
           state.materialIssueDropdown,
           state.quantityField,
@@ -119,6 +110,7 @@ class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
     emit(
       state.copyWith(
         materialIssueDropdown: materialIssueDropdown,
+        materialDropdown: MaterialDropdown.pure(),
         isValid: Formz.validate([
           state.materialIssueDropdown,
           state.quantityField,
@@ -129,8 +121,6 @@ class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
       ),
     );
   }
-
-
 
   // void unitChanged(String value) {
   //   final UnitDropdown unitDropdown = UnitDropdown.dirty(value);
@@ -172,9 +162,10 @@ class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
       state.copyWith(
         formStatus: FormStatus.validating,
         quantityField: QuantityField.dirty(state.quantityField.value,
-            inStock: state.inStock),
+            issuedQuantity: state.issuedQuantity),
         materialDropdown: MaterialDropdown.dirty(state.materialDropdown.value),
-          materialIssueDropdown: MaterialIssueDropdown.dirty(state.materialIssueDropdown.value),
+        materialIssueDropdown:
+            MaterialIssueDropdown.dirty(state.materialIssueDropdown.value),
         //     WarehouseDropdown.dirty(state.warehouseDropdown.value)
         // unitDropdown: UnitDropdown.dirty(state.unitDropdown.value),
         remarkField: RemarkField.dirty(state.remarkField.value),
@@ -189,22 +180,11 @@ class MaterialReturnFormCubit extends Cubit<MaterialReturnFormState> {
     );
   }
 
-  // @override
-  // void onChange(Change<MaterialReturnFormState> change) {
-  //   super.onChange(change);
-  //   print('Current State: ${change.currentState}');
-  //   print('Next State: ${change.nextState}');
-  // }
+  @override
+  void onChange(Change<MaterialReturnFormState> change) {
+    super.onChange(change);
+    print('Current State: ${change.currentState}');
+    print('Next State: ${change.nextState}');
+  }
 
-  // MaterialReturnFormState copyWith({
-  //   bool? isValid,
-  //   FormStatus? formStatus,
-  //   QuantityField? quantityField,
-  // }) {
-  //   return MaterialReturnFormState(
-  //     isValid: isValid ?? this.isValid,
-  //     formStatus: formStatus ?? this.formStatus,
-  //     quantityField: quantityField ?? this.quantityField,
-  //   );
-  // }
 }

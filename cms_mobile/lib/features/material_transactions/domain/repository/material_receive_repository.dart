@@ -1,7 +1,7 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 
 abstract class MaterialReceiveRepository {
   Future<DataState<MaterialReceiveListWithMeta>> getMaterialReceivings(
@@ -17,7 +17,7 @@ abstract class MaterialReceiveRepository {
       {required String params});
 
   Future<DataState<String>> editMaterialReceive(
-      {required EditMaterialReceiveParamsEntity params});
+      {required String params});
 
-  Future<DataState<String>> deleteMaterialReceive({required String materialId});
+  Future<DataState<String>> deleteMaterialReceive({required String materialReceiveId});
 }

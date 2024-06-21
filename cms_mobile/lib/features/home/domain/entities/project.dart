@@ -1,5 +1,5 @@
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/home/domain/entities/milestone.dart';
+import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:equatable/equatable.dart';
 
 class ProjectEntity extends Equatable {

@@ -1,10 +1,10 @@
 import 'package:cms_mobile/features/home/presentation/tabs/store_tab.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/material-transactions_tab.dart';
-import 'package:cms_mobile/features/home/presentation/tabs/settings.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
 import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
+import 'package:cms_mobile/features/progress/presentation/tabs/milestones_tab.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
@@ -91,7 +91,7 @@ Widget _buildScreen({
     case 2:
       return const MaterialTransactionsTabScreen();
     case 3:
-      return const SettingsTabScreen();
+      return const MilestonesTabScreen();
     default:
       return const Text("index default");
   }
