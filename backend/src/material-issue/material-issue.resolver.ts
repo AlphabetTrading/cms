@@ -172,4 +172,15 @@ export class MaterialIssueResolver {
       );
     }
   }
+
+  @Query(() => String)
+  async generateMaterialIssuePdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.materialIssueService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating material issue pdf!',
+      );
+    }
+  }
 }

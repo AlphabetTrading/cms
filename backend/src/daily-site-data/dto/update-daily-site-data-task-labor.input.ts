@@ -16,6 +16,11 @@ export class UpdateDailySiteDataTaskLaborInput extends PartialType(
 
   @IsOptional()
   @Field(() => Number, { nullable: true })
+  number?: number;
+
+
+  @IsOptional()
+  @Field(() => Number, { nullable: true })
   morning?: number;
 
   @IsOptional()

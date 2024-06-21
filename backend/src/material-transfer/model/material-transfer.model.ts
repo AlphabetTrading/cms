@@ -1,6 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { MaterialReceiveVoucher } from 'src/material-receive/model/material-receive.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
@@ -39,9 +40,6 @@ export class MaterialTransferVoucher extends BaseModel {
   vehiclePlateNo?: string;
 
   @Field(() => String, { nullable: true })
-  receivingStore?: string;
-
-  @Field(() => String, { nullable: true })
   sentThroughName?: string;
 
   @Field(() => [MaterialTransferItem], { nullable: true })
@@ -52,6 +50,9 @@ export class MaterialTransferVoucher extends BaseModel {
 
   @Field(() => String, { nullable: true })
   materialReceiveId?: string;
+
+  @Field(() => MaterialReceiveVoucher, { nullable: true })
+  materialReceive?: MaterialReceiveVoucher;
 
   @Field(() => String, { nullable: true })
   preparedById?: string;

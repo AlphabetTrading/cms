@@ -26,6 +26,7 @@ async function main() {
   await prisma.dailySiteDataTaskLabor.deleteMany();
   await prisma.dailySiteDataTask.deleteMany();
   await prisma.dailySiteData.deleteMany();
+  await prisma.dailyStockBalance.deleteMany();
   await prisma.priceHistory.deleteMany();
   await prisma.warehouseProduct.deleteMany();
   await prisma.productVariant.deleteMany();
@@ -304,7 +305,7 @@ async function seedMilestones() {
           description: 'This is milestone 1',
           dueDate: new Date(),
           projectId: projects[0].id,
-          createdById: projects[0].projectManagerId
+          createdById: projects[0].projectManagerId,
         },
         {
           name: 'Milestone 2',
@@ -312,7 +313,7 @@ async function seedMilestones() {
           description: 'This is milestone 2',
           dueDate: new Date(),
           projectId: projects[0].id,
-          createdById: projects[0].projectManagerId
+          createdById: projects[0].projectManagerId,
         },
         {
           name: 'Milestone 3',
@@ -320,7 +321,7 @@ async function seedMilestones() {
           description: 'This is milestone 3',
           dueDate: new Date(),
           projectId: projects[1].id,
-          createdById: projects[1].projectManagerId
+          createdById: projects[1].projectManagerId,
         },
         {
           name: 'Milestone 4',
@@ -328,7 +329,7 @@ async function seedMilestones() {
           description: 'This is milestone 4',
           dueDate: new Date(),
           projectId: projects[1].id,
-          createdById: projects[1].projectManagerId
+          createdById: projects[1].projectManagerId,
         },
         {
           name: 'Milestone 5',
@@ -336,7 +337,7 @@ async function seedMilestones() {
           description: 'This is milestone 5',
           dueDate: new Date(),
           projectId: projects[0].id,
-          createdById: projects[0].projectManagerId
+          createdById: projects[0].projectManagerId,
         },
         {
           name: 'Milestone 6',
@@ -344,7 +345,7 @@ async function seedMilestones() {
           description: 'This is milestone 6',
           dueDate: new Date(),
           projectId: projects[1].id,
-          createdById: projects[1].projectManagerId
+          createdById: projects[1].projectManagerId,
         },
       ],
     });
@@ -1696,12 +1697,14 @@ async function seedDailySiteData() {
                       create: [
                         {
                           trade: 'Carpenter',
+                          number: 3,
                           morning: 5,
                           afternoon: 4,
                           overtime: 2,
                         },
                         {
                           trade: 'Mason',
+                          number: 1,
                           morning: 3,
                           afternoon: 4,
                           overtime: 1,
@@ -1731,6 +1734,7 @@ async function seedDailySiteData() {
                       create: [
                         {
                           trade: 'Laborer',
+                          number: 5,
                           morning: 4,
                           afternoon: 2,
                           overtime: 1,
@@ -1759,7 +1763,7 @@ async function seedDailySiteData() {
               },
             },
           });
-        });
+        }, { timeout: 15000 });
       }
     }
     console.log('Daily Site Data models seeded successfully');
@@ -1769,12 +1773,6 @@ async function seedDailySiteData() {
     await prisma.$disconnect();
   }
 }
-
-seedDailySiteData().catch((e) => {
-  console.error(e);
-  prisma.$disconnect();
-  process.exit(1);
-});
 
 main()
   .catch((e) => console.error(e))

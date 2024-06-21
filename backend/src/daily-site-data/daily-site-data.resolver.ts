@@ -173,4 +173,15 @@ export class DailySiteDataResolver {
       );
     }
   }
+
+  @Query(() => String)
+  async generateDailySiteDataPdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.dailySiteDataService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating daily site data pdf!',
+      );
+    }
+  }
 }

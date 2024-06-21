@@ -7,6 +7,10 @@ export class CreateDailySiteDataTaskLaborInput {
   @Field(() => String)
   trade: string;
 
+  @IsNotEmpty()
+  @Field(() => Number)
+  number: number;
+
   @IsOptional()
   @Field(() => Number, { nullable: true })
   morning?: number;

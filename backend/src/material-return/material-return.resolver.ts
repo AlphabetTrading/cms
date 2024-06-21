@@ -192,4 +192,15 @@ export class MaterialReturnResolver {
       throw new BadRequestException(e.message || 'Error approving material return!');
     }
   }
+
+  @Query(() => String)
+  async generateMaterialReturnPdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.materialReturnService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating material return pdf!',
+      );
+    }
+  }
 }

@@ -46,6 +46,7 @@ input CreateDailySiteDataTaskInput {
 input CreateDailySiteDataTaskLaborInput {
   afternoon: Float
   morning: Float
+  number: Float!
   overtime: Float
   trade: String!
 }
@@ -300,6 +301,7 @@ type DailySiteDataTaskLabor {
   dailySiteDataTaskId: String
   id: ID!
   morning: Float
+  number: Float
   overtime: Float
   trade: String
 
@@ -323,24 +325,16 @@ type DailySiteDataTaskMaterial {
 }
 
 type DailyStockBalance {
+  Project: Project
   changes: JSONObject!
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  project: Project
   projectId: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
-}
-
-type DailyStockBalanceItem {
-  currentQuantity: Float
-  previousQuantity: Float
-  productVariant: ProductVariant
-  productVariantId: String
-  quantityIssuedToday: Float
 }
 
 """
@@ -671,8 +665,10 @@ type MaterialReceiveVoucher {
   id: ID!
   invoiceId: String
   items: [MaterialReceiveItem!]
+  materialRequest: MaterialRequestVoucher
   materialRequestId: String
   projectId: String
+  purchaseOrder: PurchaseOrderVoucher
   purchaseOrderId: String
   purchasedBy: User
   purchasedById: String
@@ -720,6 +716,7 @@ type MaterialReturnItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
+  issueVoucher: MaterialIssueVoucher
   issueVoucherId: String
   materialReturnVoucherId: String
   productVariant: ProductVariant
@@ -781,11 +778,11 @@ type MaterialTransferVoucher {
   id: ID!
   items: [MaterialTransferItem!]
   materialGroup: String
+  materialReceive: MaterialReceiveVoucher
   materialReceiveId: String
   preparedBy: User
   preparedById: String
   projectId: String
-  receivingStore: String
   receivingWarehouseStore: WarehouseStore
   receivingWarehouseStoreId: String
   requisitionNumber: String
@@ -1226,6 +1223,7 @@ type PurchaseOrderVoucher {
   grandTotal: Float
   id: ID!
   items: [PurchaseOrderItem!]
+  materialRequest: MaterialRequestVoucher
   materialRequestId: String
   preparedBy: User
   preparedById: String
@@ -1241,11 +1239,19 @@ type PurchaseOrderVoucher {
 }
 
 type Query {
+  generateDailySiteDataPdf(id: String!): String!
+  generateDailyStockBalancePdf(id: String!): String!
+  generateMaterialIssuePdf(id: String!): String!
+  generateMaterialReceivePdf(id: String!): String!
+  generateMaterialRequestPdf(id: String!): String!
+  generateMaterialReturnPdf(id: String!): String!
+  generateMaterialTransferPdf(id: String!): String!
+  generatePurchaseOrderPdf(id: String!): String!
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
   getAllWarehouseProductsStock(projectId: String!): [WarehouseProductStock!]!
   getDailySiteDataById(id: String!): DailySiteData!
   getDailySiteDatas(filterDailySiteDataInput: FilterDailySiteDataInput, mine: Boolean! = false, orderBy: OrderByDailySiteDataInput, paginationInput: PaginationInput): PaginationDailySiteData!
-  getDailyStockBalaceById(id: String!): [DailyStockBalanceItem!]!
+  getDailyStockBalaceById(id: String!): DailyStockBalance!
   getDailyStockBalances(filterDailyStockBalanceInput: FilterDailyStockBalanceInput, orderBy: OrderByDailyStockBalanceInput, paginationInput: PaginationInput): PaginationDailyStockBalances!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, mine: Boolean! = false, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
@@ -1375,6 +1381,7 @@ input UpdateDailySiteDataTaskLaborInput {
   afternoon: Float
   id: String!
   morning: Float
+  number: Float
   overtime: Float
   trade: String
 }

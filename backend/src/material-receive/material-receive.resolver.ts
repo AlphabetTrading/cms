@@ -211,4 +211,15 @@ export class MaterialReceiveResolver {
       throw new BadRequestException('Error deleting material receive!');
     }
   }
+
+  @Query(() => String)
+  async generateMaterialReceivePdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.materialReceiveService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating material receive pdf!',
+      );
+    }
+  }
 }

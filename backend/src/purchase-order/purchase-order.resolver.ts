@@ -199,4 +199,15 @@ export class PurchaseOrderResolver {
       throw new BadRequestException(e.message || 'Error approving purchase order!');
     }
   }
+
+  @Query(() => String)
+  async generatePurchaseOrderPdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.purchaseOrderService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating purchase order pdf!',
+      );
+    }
+  }
 }

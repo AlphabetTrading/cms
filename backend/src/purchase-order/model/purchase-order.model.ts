@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
@@ -21,6 +22,9 @@ export class PurchaseOrderVoucher extends BaseModel {
 
   @Field(() => String, { nullable: true })
   materialRequestId?: string;
+
+  @Field(() => MaterialRequestVoucher, { nullable: true })
+  materialRequest?: MaterialRequestVoucher;
 
   @Field(() => [PurchaseOrderItem], { nullable: true })
   items?: PurchaseOrderItem[];

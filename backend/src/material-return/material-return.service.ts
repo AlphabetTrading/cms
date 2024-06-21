@@ -6,6 +6,8 @@ import { UpdateMaterialReturnInput } from './dto/update-material-return.input';
 import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
+import puppeteer from 'puppeteer-core';
+import { format } from 'date-fns';
 
 @Injectable()
 export class MaterialReturnService {
@@ -60,6 +62,7 @@ export class MaterialReturnService {
           Project: true,
           receivedBy: true,
           returnedBy: true,
+          receivingWarehouseStore: true,
         },
       });
     return createdMaterialReturn;
@@ -95,6 +98,7 @@ export class MaterialReturnService {
         Project: true,
         receivedBy: true,
         returnedBy: true,
+        receivingWarehouseStore: true,
       },
     });
     return materialReturns;
@@ -148,6 +152,7 @@ export class MaterialReturnService {
         Project: true,
         receivedBy: true,
         returnedBy: true,
+        receivingWarehouseStore: true,
       },
     });
 
@@ -200,6 +205,7 @@ export class MaterialReturnService {
           Project: true,
           receivedBy: true,
           returnedBy: true,
+          receivingWarehouseStore: true,
         },
       });
 
@@ -323,5 +329,179 @@ export class MaterialReturnService {
 
   async count(where?: Prisma.MaterialReturnVoucherWhereInput): Promise<number> {
     return this.prisma.materialReturnVoucher.count({ where });
+  }
+
+  async generatePdf(materialReturnId: string): Promise<string> {
+    const materialReturn = await this.prisma.materialReturnVoucher.findUnique({
+      where: { id: materialReturnId },
+      include: {
+        items: {
+          include: {
+            issueVoucher: true,
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
+        Project: true,
+        receivedBy: true,
+        returnedBy: true,
+        receivingWarehouseStore: true,
+      },
+    });
+
+    const browser = await puppeteer.launch({
+      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
+      args: ['--headless'],
+    });
+    const page = await browser.newPage();
+    const htmlContent = this.getHtmlContent(materialReturn);
+    await page.setContent(htmlContent);
+    const pdfBuffer = await page.pdf({
+      path: 'hello.pdf',
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        left: '0px',
+        top: '0px',
+        right: '0px',
+        bottom: '0px',
+      },
+    });
+    await browser.close();
+    return pdfBuffer.toString('base64');
+  }
+
+  private getHtmlContent(materialReturn: MaterialReturnVoucher): string {
+    return `
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Material Return Voucher</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #fff;}
+          .voucher { padding: 20px; margin: auto; }
+          .header { text-align: center; margin-bottom: 20px; }
+          .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+          .header h2 { margin: 0; font-size: 20px; text-transform: uppercase; }
+          .header-details { display: flex; justify-content: space-between; margin-top: 10px; }
+          .header-details div { display: flex; flex-direction: column; align-items: flex-start; }
+          .header-details div label { font-weight: bold; }
+          .header-details div span { margin-top: 5px; }
+          .details-left { display: flex; flex-direction: column; gap: 10px; }
+          .details-right { display: flex; flex-direction: column; gap: 10px; }
+          .from-to { display: flex; justify-content: space-between; margin: 20px 0; }
+          .from-to div { display: flex; flex-direction: column; }
+          .from-to div label { font-weight: bold; }
+          .from-to div span { margin-top: 5px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          table th, table td { border: 1px solid #000; padding: 6px; font-size: 12px; text-align: center; }
+          .col-item-no { width: 6%; }
+          .col-description { width: 30%; }
+          .col-uom { width: 10%; }
+          .col-quantity { width: 10%; }
+          .col-cost { width: 10%; }
+          .col-remark { width: 12%; }
+          .approval { display: flex; justify-content: space-between; margin-bottom: 20px; }
+          .approval-section { display: flex; flex-direction: column; align-items: flex-start; }
+          .approval-section label { font-weight: bold; }
+          .approval-section span { margin-top: 5px; }
+          .footer { margin-top: 20px; display: flex; flex-direction: column; }
+          .footer label { font-weight: bold; }
+          .footer span { margin-top: 5px; }
+      </style>
+    </head>
+    <body>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          margin-top: 40px;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            width: 85%;
+            justify-content: center;
+            align-items: center;
+          "
+        >
+          <div style="width: 100%" class="voucher">
+            <div class="header">
+              <h1>Lucid Real Estate</h1>
+              <h2>Material Return Voucher</h2>
+              <div class="header-details">
+                <div class="details-left">
+                  <div>
+                    <label>Store Location:</label>
+                    <span id="store-location">${materialReturn.receivingWarehouseStore ? materialReturn.receivingWarehouseStore.name : ''}</span>
+                  </div>
+                </div>
+
+                <div class="details-right">
+                  <div>
+                    <label>Date:</label>
+                    <span id="date">${format(materialReturn.createdAt, 'MMM dd, yyyy')}</span>
+                  </div>
+                  <div>
+                    <label>Document No:</label>
+                    <span id="reference-no">${materialReturn.serialNumber}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-item-no">Item No.</th>
+                  <th class="col-description">Description</th>
+                  <th class="col-uom">Issue Voucher No.</th>
+                  <th class="col-uom">Unit of Measure</th>
+                  <th class="col-quantity">Quantity Returned</th>
+                  <th class="col-cost">Unit Cost</th>
+                  <th class="col-cost">Total Cost</th>
+                  <th class="col-remark">Remark</th>
+                </tr>
+              </thead>
+              <tbody id="items">
+                  ${materialReturn.items
+                    .map(
+                      (item, index) => `
+                <tr>
+                  <td class="col-item-no">${index + 1}</td>
+                  <td class="col-description">${item.productVariant.variant} ${item.productVariant.product.name}</td>
+                  <td class="col-uom">${item.issueVoucher.serialNumber}</td>
+                  <td style="text-transform: lowercase;" class="col-uom">${item.productVariant.unitOfMeasure}</td>
+                  <td class="col-quantity">${item.quantity}</td>
+                  <td class="col-cost">${item.unitCost.toLocaleString()}</td>
+                  <td class="col-cost">${item.totalCost.toLocaleString()}</td>
+                   <td class="col-remark">${item.remark || ''}</td>
+                </tr>
+                `,
+                    )
+                    .join('')}
+              </tbody>
+            </table>
+            <div class="approval">
+              <div class="approval-section">
+                <label>Prepared By:</label>
+                <span id="requested-by">${materialReturn.returnedBy.fullName}</span>
+              </div>
+              <div class="approval-section">
+                <label>Approved By:</label>
+                <span id="approved-by">${materialReturn.receivedBy && materialReturn.receivedBy.fullName}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>
+    `;
   }
 }

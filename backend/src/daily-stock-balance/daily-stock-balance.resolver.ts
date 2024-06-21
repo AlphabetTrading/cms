@@ -8,7 +8,6 @@ import { FilterDailyStockBalanceInput } from './dto/filter-daily-stock-balance.i
 import { OrderByDailyStockBalanceInput } from './dto/order-by-daily-stock-balance.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { BadRequestException } from '@nestjs/common';
-import { DailyStockBalanceItem } from './model/daily-stock-balance-item.model';
 
 @Resolver(() => DailyStockBalance)
 export class DailyStockBalanceResolver {
@@ -73,7 +72,7 @@ export class DailyStockBalanceResolver {
     }
   }
 
-  @Query(() => [DailyStockBalanceItem])
+  @Query(() => DailyStockBalance)
   async getDailyStockBalaceById(@Args('id') dailyStockBalanceId: string) {
     try {
       return this.dailyStockBalanceService.getDailyStockBalancesById(
@@ -81,6 +80,17 @@ export class DailyStockBalanceResolver {
       );
     } catch (e) {
       throw new BadRequestException('Error loading daily stock balance!');
+    }
+  }
+
+  @Query(() => String)
+  async generateDailyStockBalancePdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.dailyStockBalanceService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating daily stock balance pdf!',
+      );
     }
   }
 }

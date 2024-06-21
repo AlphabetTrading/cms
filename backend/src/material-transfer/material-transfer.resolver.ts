@@ -196,4 +196,15 @@ export class MaterialTransferResolver {
       throw new BadRequestException(e.message || 'Error approving material transfer!');
     }
   }
+
+  @Query(() => String)
+  async generateMaterialTransferPdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.materialTransferService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating material Transfer pdf!',
+      );
+    }
+  }
 }

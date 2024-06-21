@@ -448,6 +448,7 @@ model DailySiteDataTask {
 model DailySiteDataTaskLabor {
   id                  String            @id @default(uuid())
   trade               String?
+  number              Int
   morning             Float?
   afternoon           Float?
   overtime            Float?

@@ -9,7 +9,7 @@ export class DailyStockBalance extends BaseModel {
   projectId?: string;
 
   @Field(() => Project, { nullable: true })
-  project?: Project;
+  Project?: Project;
 
   @Field(() => GraphQLJSONObject)
   changes?: Record<string, any>;

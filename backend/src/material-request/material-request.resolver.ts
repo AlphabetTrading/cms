@@ -193,4 +193,15 @@ export class MaterialRequestResolver {
       throw new BadRequestException(e.message || 'Error approving material request!');
     }
   }
+
+  @Query(() => String)
+  async generateMaterialRequestPdf(@Args('id') id: string): Promise<string> {
+    try {
+      return await this.materialRequestService.generatePdf(id);
+    } catch (e) {
+      throw new BadRequestException(
+        e.message || 'Error generating material request pdf!',
+      );
+    }
+  }
 }

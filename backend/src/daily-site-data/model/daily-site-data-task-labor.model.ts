@@ -8,6 +8,9 @@ export class DailySiteDataTaskLabor extends BaseModel {
   trade?: string;
 
   @Field(() => Number, { nullable: true })
+  number?: number;
+
+  @Field(() => Number, { nullable: true })
   morning?: number;
 
   @Field(() => Number, { nullable: true })
