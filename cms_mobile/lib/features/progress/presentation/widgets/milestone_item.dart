@@ -75,7 +75,7 @@ class MilestoneItem extends StatelessWidget {
                   .labelMedium
                   ?.copyWith(fontWeight: FontWeight.w500),
             ),
-            MilestoneProgressBar(progress: milestone.progress ?? 0),
+            MilestoneProgressBar(progress: milestone.progress ?? 0.0),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

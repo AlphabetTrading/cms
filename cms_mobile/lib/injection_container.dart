@@ -521,10 +521,6 @@ Future<void> initializeDependencies() async {
     () => MaterialRequestLocalBloc(),
   );
 
-  sl.registerFactory<MaterialIssueDetailsCubit>(
-    () => MaterialIssueDetailsCubit(sl<GetMaterialIssueDetailsUseCase>()),
-  );
-
   sl.registerFactory<DeleteMaterialIssueCubit>(
     () => DeleteMaterialIssueCubit(sl<DeleteMaterialIssueUseCase>()),
   );

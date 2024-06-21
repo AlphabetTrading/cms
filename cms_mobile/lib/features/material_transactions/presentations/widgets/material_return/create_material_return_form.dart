@@ -262,7 +262,7 @@ class QuantityField extends FormzInput<String, QuanityValidationError> {
   final double issuedQuantity;
   const QuantityField.pure({
     String value = "",
-    this.issuedQuantity = 0,
+    this.issuedQuantity = 0.0,
   }) : super.pure(value);
 
   const QuantityField.dirty(

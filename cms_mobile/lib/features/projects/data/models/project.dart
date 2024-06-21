@@ -12,7 +12,7 @@ class ProjectModel extends ProjectEntity {
     UserModel? client,
     required double? budget,
     List<UserModel>? projectUsers,
-    List<MilestoneModel>? milestones,
+    // List<MilestoneModel>? milestones,
     required String? projectManagerId,
     UserModel? projectManager,
     required DateTime? startDate,
@@ -33,7 +33,8 @@ class ProjectModel extends ProjectEntity {
             createdAt: createdAt,
             updatedAt: updatedAt,
             projectUsers: projectUsers,
-            milestones: milestones);
+            // milestones: milestones
+            );
 
   @override
   List<Object?> get props {
@@ -55,9 +56,9 @@ class ProjectModel extends ProjectEntity {
         projectUsers: json['projectUsers'].map<UserModel>((item) {
           return UserModel.fromJson(item);
         }).toList() as List<UserModel>,
-        milestones: json['milestones'].map<MilestoneModel>((item) {
-          return MilestoneModel.fromJson(item);
-        }).toList() as List<MilestoneModel>,
+        // milestones: json['milestones'].map<MilestoneModel>((item) {
+        //   return MilestoneModel.fromJson(item);
+        // }).toList() as List<MilestoneModel>,
         projectManagerId: json['projectManagerId'],
         projectManager: json['projectManager'] != null
             ? UserModel.fromJson(json['projectManager'])
@@ -81,11 +82,11 @@ class ProjectModel extends ProjectEntity {
                 return UserModel.fromJson(item);
               }).toList() as List<UserModel>
             : [],
-        milestones: json['milestones'] != null
-            ? json['milestones'].map<MilestoneModel>((item) {
-                return MilestoneModel.fromJson(item);
-              }).toList() as List<MilestoneModel>
-            : [],
+        // milestones: json['milestones'] != null
+        //     ? json['milestones'].map<MilestoneModel>((item) {
+        //         return MilestoneModel.fromJson(item);
+        //       }).toList() as List<MilestoneModel>
+        //     : [],
         projectManagerId: json['projectManagerId'],
         projectManager: json['projectManager'] != null
             ? UserModel.fromJson(json['projectManager'])

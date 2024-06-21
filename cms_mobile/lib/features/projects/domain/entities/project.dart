@@ -15,7 +15,7 @@ class ProjectEntity extends Equatable {
   final UserEntity? projectManager;
   final DateTime? endDate;
   final DateTime? startDate;
-  final List<MilestoneEntity>? milestones;
+  // final List<MilestoneEntity>? milestones;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -31,7 +31,7 @@ class ProjectEntity extends Equatable {
     this.projectManager,
     this.startDate,
     this.endDate,
-    this.milestones,
+    // this.milestones,
     this.createdAt,
     this.updatedAt,
   });

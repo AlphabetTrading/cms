@@ -134,8 +134,8 @@ class MaterialReturnMaterialModel extends MaterialReturnMaterialEntity {
       "productVariantId": material?.productVariant?.id,
       "quantity": quantity,
       "remark": remark,
-      "totalCost": material?.unitCost ?? 0 * quantity,
-      "unitCost": material?.unitCost ?? 0
+      "totalCost": material?.unitCost ?? 0.0 * quantity,
+      "unitCost": material?.unitCost ?? 0.0
     };
   }
 
