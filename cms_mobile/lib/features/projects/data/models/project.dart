@@ -10,7 +10,7 @@ class ProjectModel extends ProjectEntity {
     required String? status,
     required String? clientId,
     UserModel? client,
-    required double? budget,
+    // required double? budget,
     List<UserModel>? projectUsers,
     // List<MilestoneModel>? milestones,
     required String? projectManagerId,
@@ -25,7 +25,7 @@ class ProjectModel extends ProjectEntity {
             name: name,
             clientId: clientId,
             client: client,
-            budget: budget,
+            // budget: budget,
             projectManagerId: projectManagerId,
             projectManager: projectManager,
             startDate: startDate,
@@ -52,7 +52,7 @@ class ProjectModel extends ProjectEntity {
         client: json['Client'] != null
             ? UserModel.fromJson(json['issuedTo'])
             : null,
-        budget: json['budget'],
+        // budget: json['budget'],
         projectUsers: json['projectUsers'].map<UserModel>((item) {
           return UserModel.fromJson(item);
         }).toList() as List<UserModel>,
@@ -76,7 +76,7 @@ class ProjectModel extends ProjectEntity {
         clientId: json['clientId'],
         client:
             json['client'] != null ? UserModel.fromJson(json['client']) : null,
-        budget: json['budget'],
+        // budget: json['budget'],
         projectUsers: json['projectUsers'] != null
             ? json['projectUsers'].map<UserModel>((item) {
                 return UserModel.fromJson(item);
