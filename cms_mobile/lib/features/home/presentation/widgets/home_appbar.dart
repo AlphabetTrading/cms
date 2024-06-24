@@ -140,8 +140,8 @@ class CustomAppBar extends PreferredSize {
     final selectedProject = context
         .read<ProjectBloc>()
         .state
-        .projects!
-        .items
+        .projects
+        ?.items
         .firstWhere((element) => element.id == selectedProjectId);
 
     debugPrint('selectedProject: $selectedProject');
@@ -186,7 +186,7 @@ class CustomAppBar extends PreferredSize {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      selectedProject.name!.toUpperCase(),
+                      selectedProject?.name?.toUpperCase()??"N/A",
                       style: Theme.of(context).textTheme.labelMedium,
                     )
                   ],

@@ -9,7 +9,7 @@ class ProjectEntity extends Equatable {
   final String? status;
   final String? clientId;
   final UserEntity? client;
-  final double? budget;
+  // final double? budget;
   final List<UserEntity>? projectUsers;
   final String? projectManagerId;
   final UserEntity? projectManager;
@@ -25,7 +25,7 @@ class ProjectEntity extends Equatable {
     this.status,
     this.clientId,
     this.client,
-    this.budget,
+    // this.budget,
     this.projectUsers,
     this.projectManagerId,
     this.projectManager,
