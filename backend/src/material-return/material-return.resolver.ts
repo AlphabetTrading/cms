@@ -37,9 +37,13 @@ export class MaterialReturnResolver {
   ) {
     let approverIds: string[] = [];
 
-    const approvers =
-      await this.materialReturnService.getMaterialReturnApprovers();
-    approverIds = approvers.map((approver) => approver.StoreManager.id);
+    if (filterMaterialReturnInput.projectId) {
+      const approvers =
+        await this.materialReturnService.getMaterialReturnApprovers(
+          filterMaterialReturnInput.projectId,
+        );
+      approverIds = approvers.map((approver) => approver.storeManagerId);
+    }
 
     try {
       const baseConditions: Prisma.MaterialReturnVoucherWhereInput[] = [
@@ -189,7 +193,9 @@ export class MaterialReturnResolver {
         decision,
       );
     } catch (e) {
-      throw new BadRequestException(e.message || 'Error approving material return!');
+      throw new BadRequestException(
+        e.message || 'Error approving material return!',
+      );
     }
   }
 

@@ -44,7 +44,9 @@ export class MaterialRequestResolver {
         await this.materialRequestService.getMaterialRequestApprovers(
           filterMaterialRequestInput.projectId,
         );
-      approverIds = approvers.map((approver) => approver.ProjectManager.id);
+      approverIds = approvers.flatMap((approver) =>
+        approver.ProjectUsers.map((projectUser) => projectUser.userId),
+      );
     }
 
     try {
@@ -190,7 +192,9 @@ export class MaterialRequestResolver {
         decision,
       );
     } catch (e) {
-      throw new BadRequestException(e.message || 'Error approving material request!');
+      throw new BadRequestException(
+        e.message || 'Error approving material request!',
+      );
     }
   }
 

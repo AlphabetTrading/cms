@@ -44,7 +44,9 @@ export class MaterialReceiveResolver {
         await this.materialReceiveService.getMaterialReceiveApprovers(
           filterMaterialReceiveInput.projectId,
         );
-      approverIds = approvers.map((approver) => approver.ProjectManager.id);
+      approverIds = approvers.flatMap((approver) =>
+        approver.ProjectUsers.map((projectUser) => projectUser.userId),
+      );
     }
 
     try {
@@ -179,7 +181,9 @@ export class MaterialReceiveResolver {
         updateMaterialReceiveInput,
       );
     } catch (e) {
-      throw new BadRequestException(e.message || 'Error updating material receive!');
+      throw new BadRequestException(
+        e.message || 'Error updating material receive!',
+      );
     }
   }
 

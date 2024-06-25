@@ -41,6 +41,12 @@ export class WarehouseStoreResolver {
             {
               location: filterWarehouseStoreInput?.location,
             },
+            {
+              companyId: filterWarehouseStoreInput?.companyId,
+            },
+            {
+              company: filterWarehouseStoreInput?.company,
+            },
           ],
         },
       ],

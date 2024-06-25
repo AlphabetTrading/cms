@@ -2,30 +2,27 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
-import { FilterCompanyInput } from 'src/company/dto/filter-company.input';
+import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 
 @InputType()
-export class FilterUserDocumentsInput {
+export class FilterCompanyInput {
   @Field({ nullable: true })
   id?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  fullName?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
-  email?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
-  phoneNumber?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
-  role: StringFilter;
-
   @Field({ nullable: true })
-  companyId?: string;
+  ownerId?: string;
 
-  @Field(() => FilterCompanyInput, { nullable: true })
-  company?: Prisma.CompanyWhereInput;
+  @Field(() => FilterUserDocumentsInput, { nullable: true })
+  owner?: Prisma.UserWhereInput;
+
+  @Field(() => StringFilter, { nullable: true })
+  name?: StringFilter;
+
+  @Field(() => StringFilter, { nullable: true })
+  address?: StringFilter;
+
+  @Field(() => StringFilter, { nullable: true })
+  contactInfo?: StringFilter;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

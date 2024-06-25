@@ -17,10 +17,7 @@ export class UpdateProjectInput {
   budget?: number;
 
   @Field({ nullable: true })
-  clientId?: string;
-
-  @Field({ nullable: true })
-  projectManagerId?: string;
+  companyId?: string;
 
   @ValidateNested({ each: true })
   @Field(() => [UpdateProjectUserInput], { nullable: true })

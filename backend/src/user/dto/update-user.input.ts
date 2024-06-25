@@ -11,4 +11,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
 
   @Field(() => UserRole, { nullable: true })
   role?: UserRole;
+
+  @Field(() => String, { nullable: true })
+  companyId?: string;
 }

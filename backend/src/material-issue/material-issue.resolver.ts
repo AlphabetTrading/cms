@@ -37,9 +37,13 @@ export class MaterialIssueResolver {
   ): Promise<PaginationMaterialIssues> {
     let approverIds: string[] = [];
 
-    const approvers =
-      await this.materialIssueService.getMaterialIssueApprovers();
-    approverIds = approvers.map((approver) => approver.StoreManager.id);
+    if (filterMaterialIssueInput?.projectId) {
+      const approvers =
+        await this.materialIssueService.getMaterialIssueApprovers(
+          filterMaterialIssueInput?.projectId,
+        );
+      approverIds = approvers.map((approver) => approver.storeManagerId);
+    }
 
     try {
       const baseConditions: Prisma.MaterialIssueVoucherWhereInput[] = [

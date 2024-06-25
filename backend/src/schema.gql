@@ -19,10 +19,35 @@ type Auth {
   userId: String!
 }
 
+type Company {
+  address: String
+  contactInfo: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  employees: [User!]
+  id: ID!
+  name: String
+  owner: User
+  ownerId: String
+  projects: [Project!]
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  warehouseStores: [WarehouseStore!]
+}
+
 enum CompletionStatus {
   COMPLETED
   ONGOING
   TODO
+}
+
+input CreateCompanyInput {
+  address: String!
+  contactInfo: String!
+  name: String!
+  ownerId: String!
 }
 
 input CreateDailySiteDataInput {
@@ -160,6 +185,12 @@ input CreateMilestoneInput {
   stage: UseType!
 }
 
+input CreateOwnerInput {
+  email: String!
+  fullName: String!
+  phoneNumber: String!
+}
+
 input CreatePriceHistoryInput {
   price: Float!
   productVariantId: String!
@@ -188,10 +219,9 @@ input CreateProformaInput {
 
 input CreateProjectInput {
   budget: Float!
-  clientId: String!
+  companyId: String!
   endDate: DateTime
   name: String!
-  projectManagerId: String!
   projectUsers: [CreateProjectUserInput!]!
   startDate: DateTime!
   status: String!
@@ -233,10 +263,8 @@ input CreateTaskInput {
 }
 
 input CreateUserInput {
-  confirmPassword: String!
   email: String!
   fullName: String!
-  password: String!
   phoneNumber: String!
   role: UserRole!
 }
@@ -250,6 +278,7 @@ input CreateWarehouseProductInput {
 }
 
 input CreateWarehouseStoreInput {
+  companyId: String!
   location: String!
   name: String!
 }
@@ -364,6 +393,16 @@ enum DocumentType {
   MATERIAL_RETURN
   MATERIAL_TRANSFER
   PURCHASE_ORDER
+}
+
+input FilterCompanyInput {
+  address: StringFilter
+  contactInfo: StringFilter
+  createdAt: DateTimeFilter
+  id: String
+  name: StringFilter
+  owner: FilterUserDocumentsInput
+  ownerId: String
 }
 
 input FilterDailySiteDataInput {
@@ -516,12 +555,12 @@ input FilterProformaInput {
 
 input FilterProjectInput {
   budget: NumberFilter
-  clientId: StringFilter
+  company: FilterCompanyInput
+  companyId: String
   createdAt: DateTimeFilter
   endDate: DateTimeFilter
   id: String
   name: StringFilter
-  projectManagerId: StringFilter
   startDate: DateTimeFilter
   status: StringFilter
 }
@@ -555,6 +594,8 @@ input FilterTaskInput {
 }
 
 input FilterUserDocumentsInput {
+  company: FilterCompanyInput
+  companyId: String
   createdAt: DateTimeFilter
   email: StringFilter
   fullName: StringFilter
@@ -575,6 +616,8 @@ input FilterWarehouseProductInput {
 }
 
 input FilterWarehouseStoreInput {
+  company: FilterCompanyInput
+  companyId: String
   createdAt: DateTimeFilter
   id: String
   location: StringFilter
@@ -826,6 +869,8 @@ type Mutation {
   approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
   approveMaterialTransfer(decision: ApprovalStatus!, materialTransferId: String!): MaterialTransferVoucher!
   approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
+  createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  createCompanyOwner(createOwner: CreateOwnerInput!): User!
   createDailySiteData(createDailySiteDataInput: CreateDailySiteDataInput!): DailySiteData!
   createMaterialIssue(createMaterialIssueInput: CreateMaterialIssueInput!): MaterialIssueVoucher!
   createMaterialReceive(createMaterialReceiveInput: CreateMaterialReceiveInput!): MaterialReceiveVoucher!
@@ -843,6 +888,7 @@ type Mutation {
   createUser(createUser: CreateUserInput!): User!
   createWarehouseProduct(createWarehouseProductInput: CreateWarehouseProductInput!): WarehouseProduct!
   createWarehouseStore(createWarehouseStoreInput: CreateWarehouseStoreInput!): WarehouseStore!
+  deleteCompany(id: String!): Company!
   deleteDailySiteData(id: String!): DailySiteData!
   deleteFile(url: String!): Boolean!
   deleteMaterialIssue(id: String!): MaterialIssueVoucher!
@@ -863,6 +909,8 @@ type Mutation {
   deleteWarehouseStore(id: String!): WarehouseStore!
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
+  register(registerUser: RegistrationInput!): User!
+  updateCompany(id: String!, updateCompanyInput: UpdateCompanyInput!): Company!
   updateDailySiteData(updateDailySiteDataInput: UpdateDailySiteDataInput!): DailySiteData!
   updateMaterialIssue(updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
   updateMaterialReceive(updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
@@ -889,6 +937,12 @@ input NumberFilter {
   gte: Float
   lt: Float
   lte: Float
+}
+
+input OrderByCompanyInput {
+  createdAt: OrderDirection
+  name: OrderDirection
+  updatedAt: OrderDirection
 }
 
 input OrderByDailySiteDataInput {
@@ -1005,6 +1059,11 @@ Possible directions in which to order a list of items when provided an `orderBy`
 enum OrderDirection {
   asc
   desc
+}
+
+type PaginationCompanies {
+  items: [Company!]!
+  meta: PaginationInfo
 }
 
 type PaginationDailySiteData {
@@ -1166,19 +1225,17 @@ type Proforma {
 }
 
 type Project {
-  Client: User
   Milestones: [Milestone!]
-  ProjectManager: User
   ProjectUsers: [ProjectUser!]
   budget: Float
-  clientId: String
+  company: Company
+  companyId: String
 
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   endDate: DateTime
   id: ID!
   name: String
-  projectManagerId: String
   startDate: DateTime
   status: String
 
@@ -1249,6 +1306,8 @@ type Query {
   generatePurchaseOrderPdf(id: String!): String!
   getAllDocumentsStatus(projectId: String!): [DocumentTransaction!]!
   getAllWarehouseProductsStock(projectId: String!): [WarehouseProductStock!]!
+  getCompanies(filterCompanyInput: FilterCompanyInput, orderBy: OrderByCompanyInput, paginationInput: PaginationInput): PaginationCompanies!
+  getCompany(id: String!): Company!
   getDailySiteDataById(id: String!): DailySiteData!
   getDailySiteDatas(filterDailySiteDataInput: FilterDailySiteDataInput, mine: Boolean! = false, orderBy: OrderByDailySiteDataInput, paginationInput: PaginationInput): PaginationDailySiteData!
   getDailyStockBalaceById(id: String!): DailyStockBalance!
@@ -1286,6 +1345,12 @@ type Query {
   getWarehouseProducts(filterWarehouseProductInput: FilterWarehouseProductInput, orderBy: OrderByWarehouseProductInput, paginationInput: PaginationInput): PaginationWarehouseProducts!
   getWarehouseStore(id: String!): WarehouseStore!
   getWarehouseStores(filterWarehouseStoreInput: FilterWarehouseStoreInput, orderBy: OrderByWarehouseStoreInput, paginationInput: PaginationInput): PaginationWarehouseStores!
+}
+
+input RegistrationInput {
+  confirmPassword: String!
+  password: String!
+  token: String!
 }
 
 input StringFilter {
@@ -1354,6 +1419,13 @@ enum UnitOfMeasure {
   PACKET
   PCS
   QUINTAL
+}
+
+input UpdateCompanyInput {
+  address: String
+  contactInfo: String
+  name: String
+  ownerId: String
 }
 
 input UpdateDailySiteDataInput {
@@ -1534,10 +1606,9 @@ input UpdateProformaInput {
 
 input UpdateProjectInput {
   budget: Float
-  clientId: String
+  companyId: String
   endDate: DateTime
   name: String
-  projectManagerId: String
   projectUsers: [UpdateProjectUserInput!]
   startDate: DateTime
   status: String
@@ -1584,10 +1655,9 @@ input UpdateTaskInput {
 }
 
 input UpdateUserInput {
-  confirmPassword: String
+  companyId: String
   email: String
   fullName: String
-  password: String
   phoneNumber: String
   role: UserRole
 }
@@ -1601,6 +1671,7 @@ input UpdateWarehouseProductInput {
 }
 
 input UpdateWarehouseStoreInput {
+  companyId: String
   location: String
   name: String
 }
@@ -1627,8 +1698,10 @@ type User {
 }
 
 enum UserRole {
+  ADMIN
   CLIENT
   CONSULTANT
+  OWNER
   PROJECT_MANAGER
   PURCHASER
   SITE_MANAGER
@@ -1659,6 +1732,10 @@ type WarehouseProductStock {
 }
 
 type WarehouseStore {
+  WarehouseStoreManager: [WarehouseStoreManager!]
+  company: Company
+  companyId: String
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
@@ -1667,4 +1744,18 @@ type WarehouseStore {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+}
+
+type WarehouseStoreManager {
+  StoreManager: User
+  WarehouseStore: WarehouseStore
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  storeManagerId: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  warehouseStoreId: String
 }

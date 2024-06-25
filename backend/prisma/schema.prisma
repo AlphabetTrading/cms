@@ -11,15 +11,33 @@ datasource db {
 //   provider = "prisma-dbml-generator"
 // }
 
+model Company {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  address         String           @unique
+  contactInfo     String
+  projects        Project[]
+  ownerId         String           @unique
+  owner           User             @relation("Company", fields: [ownerId], references: [id])
+  employees       User[]           @relation("CompanyEmployees")
+  warehouseStores WarehouseStore[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
   id                               String                    @id @default(uuid())
   fullName                         String
   email                            String                    @unique
   phoneNumber                      String                    @unique
-  password                         String
+  password                         String?
   role                             UserRole
-  createdAt                        DateTime                  @default(now())
-  updatedAt                        DateTime                  @updatedAt
+  invitationToken                  String?
+  invited                          Boolean                   @default(false)
+  companyId                        String?
+  company                          Company?                  @relation("Company")
+  companyEmployees                 Company[]                 @relation("CompanyEmployees")
   PurchaseOrder                    PurchaseOrder[]           @relation("PreparedBy")
   PurchaseOrdersApproved           PurchaseOrder[]           @relation("ApprovedBy")
   MaterialIssueVouchersPrepared    MaterialIssueVoucher[]    @relation("PreparedByIssue")
@@ -32,15 +50,16 @@ model User {
   MaterialReturnVouchersReceived   MaterialReturnVoucher[]   @relation("ReceivedByReturn")
   MaterialTransferVoucherPrepared  MaterialTransferVoucher[] @relation("PreparedByTransfer")
   MaterialTransferVoucherApproved  MaterialTransferVoucher[] @relation("ApprovedByTransfer")
-  ProjectClient                    Project[]                 @relation("Client")
-  ProjectProjectManager            Project[]                 @relation("ProjectManager")
+  Milestone                        Milestone[]
   Task                             Task[]
   ProjectUser                      ProjectUser[]
   WarehouseStoreManager            WarehouseStoreManager[]
   DailySiteDataPrepared            DailySiteData[]           @relation("PreparedByDailySiteData")
   DailySiteDataChecked             DailySiteData[]           @relation("CheckedByDailySiteData")
   DailySiteDataApproved            DailySiteData[]           @relation("ApprovedByDailySiteData")
-  Milestone                        Milestone[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProjectUser {
@@ -90,19 +109,21 @@ model ProductVariant {
 }
 
 model WarehouseStore {
-  id                     String                   @id @default(uuid())
-  name                   String
-  location               String
-  products               WarehouseProduct[]
-  MaterialReceiveVoucher MaterialReceiveVoucher[]
-  MaterialIssueVoucher   MaterialIssueVoucher[]
-  WarehouseStoreManager  WarehouseStoreManager[]
-
-  createdAt                        DateTime                  @default(now())
-  updatedAt                        DateTime                  @updatedAt
+  id                               String                    @id @default(uuid())
+  name                             String
+  location                         String
+  companyId                        String
+  company                          Company                   @relation(fields: [companyId], references: [id])
+  products                         WarehouseProduct[]
+  WarehouseStoreManager            WarehouseStoreManager[]
+  MaterialReceiveVoucher           MaterialReceiveVoucher[]
+  MaterialIssueVoucher             MaterialIssueVoucher[]
   MaterialReturnVoucher            MaterialReturnVoucher[]
   MaterialTransferVoucherSending   MaterialTransferVoucher[] @relation("SendingWarehouseStore")
   MaterialTransferVoucherReceiving MaterialTransferVoucher[] @relation("ReceivingWarehouseStore")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([name, location])
 }
@@ -478,14 +499,12 @@ model DailySiteDataTaskMaterial {
 
 model Project {
   id                      String                    @id @default(uuid())
-  name                    String                    @unique
+  name                    String
+  companyId               String
+  company                 Company                   @relation(fields: [companyId], references: [id])
   startDate               DateTime
   endDate                 DateTime?
   budget                  Float
-  Client                  User                      @relation(fields: [clientId], references: [id], name: "Client")
-  clientId                String
-  ProjectManager          User                      @relation(fields: [projectManagerId], references: [id], name: "ProjectManager")
-  projectManagerId        String
   ProjectUsers            ProjectUser[]
   status                  String
   Milestones              Milestone[]
@@ -503,6 +522,8 @@ model Project {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([companyId, name])
 }
 
 model Milestone {
@@ -542,6 +563,8 @@ model Task {
 }
 
 enum UserRole {
+  ADMIN
+  OWNER
   CLIENT
   PROJECT_MANAGER
   CONSULTANT

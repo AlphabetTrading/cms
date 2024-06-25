@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateMaterialReceiveInput } from './dto/create-material-receive.input';
 import { UpdateMaterialReceiveInput } from './dto/update-material-receive.input';
 import { MaterialReceiveVoucher } from './model/material-receive.model';
-import { ApprovalStatus, Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma, UserRole } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
 import puppeteer from 'puppeteer-core';
@@ -249,9 +249,18 @@ export class MaterialReceiveService {
         id: projectId,
       },
       select: {
-        ProjectManager: true,
+        ProjectUsers: {
+          where: {
+            user: {
+              role: UserRole.PROJECT_MANAGER,
+            },
+          },
+          select: {
+            userId: true,
+          },
+        },
       },
-    });
+  });
     return approvers;
   }
 

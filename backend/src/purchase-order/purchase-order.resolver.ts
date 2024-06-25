@@ -42,7 +42,9 @@ export class PurchaseOrderResolver {
         await this.purchaseOrderService.getPurchaseOrderApprovers(
           filterPurchaseOrderInput.projectId,
         );
-      approverIds = approvers.map((approver) => approver.ProjectManager.id);
+      approverIds = approvers.flatMap((approver) =>
+        approver.ProjectUsers.map((projectUser) => projectUser.userId),
+      );
     }
 
     try {
@@ -196,7 +198,9 @@ export class PurchaseOrderResolver {
         decision,
       );
     } catch (e) {
-      throw new BadRequestException(e.message || 'Error approving purchase order!');
+      throw new BadRequestException(
+        e.message || 'Error approving purchase order!',
+      );
     }
   }
 

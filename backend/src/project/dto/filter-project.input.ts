@@ -1,7 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { NumberFilter } from 'src/common/filter/number-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
+import { FilterCompanyInput } from 'src/company/dto/filter-company.input';
 
 @InputType()
 export class FilterProjectInput {
@@ -20,11 +22,11 @@ export class FilterProjectInput {
   @Field(() => NumberFilter, { nullable: true })
   budget?: NumberFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  clientId?: StringFilter;
+  @Field(() => String, { nullable: true })
+  companyId?: string;
 
-  @Field(() => StringFilter, { nullable: true })
-  projectManagerId?: StringFilter;
+  @Field(() => FilterCompanyInput, { nullable: true })
+  company?: Prisma.CompanyWhereInput;
 
   @Field(() => StringFilter, { nullable: true })
   status?: StringFilter;

@@ -7,7 +7,10 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { PasswordService } from 'src/auth/password.service';
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
+import { CreateOwnerInput } from './dto/create-owner.input';
+import { v4 as uuidv4 } from 'uuid';
+import { RegistrationInput } from 'src/auth/dto/registration.input';
 
 @Injectable()
 export class UserService {
@@ -15,6 +18,34 @@ export class UserService {
     private prisma: PrismaService,
     private readonly passwordService: PasswordService,
   ) {}
+
+  async createOwner(createOwner: CreateOwnerInput): Promise<any | null> {
+    try {
+      const existingUser = await this.prisma.user.findUnique({
+        where: {
+          email: createOwner.email,
+          phoneNumber: createOwner.phoneNumber,
+        },
+      });
+
+      if (existingUser) {
+        throw new BadRequestException('User already exists!');
+      }
+
+      const invitationToken = uuidv4();
+      const newOwner = await this.prisma.user.create({
+        data: {
+          ...createOwner,
+          role: UserRole.OWNER,
+          invitationToken,
+          invited: true,
+        },
+      });
+      return newOwner;
+    } catch (e) {
+      return e;
+    }
+  }
 
   async createUser(createUser: CreateUserInput): Promise<any | null> {
     try {
@@ -25,26 +56,50 @@ export class UserService {
         },
       });
 
-      if (createUser.password !== createUser.confirmPassword) {
-        throw new BadRequestException('Passwords must match!');
-      }
-
-      delete createUser.confirmPassword;
-
       if (existingUser) {
         throw new BadRequestException('User already exists!');
       }
 
+      const invitationToken = uuidv4();
+      const newUser = await this.prisma.user.create({
+        data: {
+          ...createUser,
+          role: createUser.role,
+          invitationToken,
+          invited: true,
+        },
+      });
+      return newUser;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  async registerUser(registerUser: RegistrationInput) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { invitationToken: registerUser.token },
+      });
+      if (!user) {
+        throw new Error('Invalid token.');
+      }
+
+      if (registerUser.password !== registerUser.confirmPassword) {
+        throw new BadRequestException('Passwords must match!');
+      }
+      
       const hashedPassword = await this.passwordService.hashPassword(
-        createUser.password,
+        registerUser.password,
       );
 
-      const newUser = await this.prisma.user.create({
-        data: { ...createUser, password: hashedPassword },
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedPassword,
+          invitationToken: null,
+          invited: false,
+        },
       });
-
-      delete newUser.password;
-      return newUser;
     } catch (e) {
       return e;
     }

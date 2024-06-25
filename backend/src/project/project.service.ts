@@ -15,7 +15,12 @@ export class ProjectService {
 
   async create(createProjectInput: CreateProjectInput): Promise<Project> {
     const existingProject = await this.prisma.project.findUnique({
-      where: { name: createProjectInput.name },
+      where: {
+        companyId_name: {
+          companyId: createProjectInput.companyId,
+          name: createProjectInput.name,
+        },
+      },
     });
 
     if (existingProject) {
@@ -27,8 +32,12 @@ export class ProjectService {
         ...createProjectInput,
       },
       include: {
-        Client: true,
-        ProjectManager: true,
+        company: {
+          include: {
+            employees: true,
+            owner: true,
+          },
+        },
         Milestones: true,
         ProjectUsers: true,
       },
@@ -54,8 +63,12 @@ export class ProjectService {
       where,
       orderBy,
       include: {
-        Client: true,
-        ProjectManager: true,
+        company: {
+          include: {
+            employees: true,
+            owner: true,
+          },
+        },
         Milestones: true,
         ProjectUsers: true,
       },
@@ -69,8 +82,12 @@ export class ProjectService {
         id,
       },
       include: {
-        Client: true,
-        ProjectManager: true,
+        company: {
+          include: {
+            employees: true,
+            owner: true,
+          },
+        },
         Milestones: true,
         ProjectUsers: true,
       },
@@ -93,8 +110,12 @@ export class ProjectService {
         ...updateData,
       },
       include: {
-        Client: true,
-        ProjectManager: true,
+        company: {
+          include: {
+            employees: true,
+            owner: true,
+          },
+        },
         Milestones: true,
         ProjectUsers: true,
       },

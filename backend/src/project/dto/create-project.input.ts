@@ -17,10 +17,7 @@ export class CreateProjectInput {
   budget: number;
 
   @Field()
-  clientId: string;
-
-  @Field()
-  projectManagerId: string;
+  companyId: string;
 
   @ValidateNested({ each: true })
   @Field(() => [CreateProjectUserInput])

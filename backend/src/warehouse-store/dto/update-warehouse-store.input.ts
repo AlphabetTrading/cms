@@ -10,4 +10,7 @@ export class UpdateWarehouseStoreInput extends PartialType(
 
   @Field({ nullable: true })
   location?: string;
+
+  @Field({ nullable: true })
+  companyId: string;
 }
