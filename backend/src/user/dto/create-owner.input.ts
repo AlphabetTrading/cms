@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { UserRole } from '@prisma/client';
 import {
   IsEmail,
   IsNotEmpty,
@@ -8,7 +7,7 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class CreateUserInput {
+export class CreateOwnerInput {
   @Field()
   @IsNotEmpty({ message: 'Full Name is required' })
   @MaxLength(50)
@@ -23,8 +22,4 @@ export class CreateUserInput {
   @IsNotEmpty({ message: 'Phone Number is required' })
   @IsPhoneNumber('ET', { message: 'Phone Number must be valid' })
   phoneNumber: string;
-
-  @Field(() => UserRole)
-  @IsNotEmpty()
-  role: UserRole;
 }

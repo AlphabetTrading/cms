@@ -37,9 +37,14 @@ export class DailySiteDataResolver {
   ): Promise<PaginationDailySiteData> {
     let approverIds: string[] = [];
 
-    const approvers =
-      await this.dailySiteDataService.getDailySiteDataApprovers();
-    approverIds = approvers.map((approver) => approver.ProjectManager.id);
+    if (filterDailySiteDataInput?.projectId) {
+      const approvers = await this.dailySiteDataService.getDailySiteDataApprovers(
+        filterDailySiteDataInput.projectId,
+      );
+      approverIds = approvers.flatMap((approver) =>
+        approver.ProjectUsers.map((projectUser) => projectUser.userId),
+      );
+    }
 
     try {
       const baseConditions: Prisma.DailySiteDataWhereInput[] = [

@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreatePurchaseOrderInput } from './dto/create-purchase-order.input';
 import { PurchaseOrderVoucher } from './model/purchase-order.model';
 import { UpdatePurchaseOrderInput } from './dto/update-purchase-order.input';
-import { ApprovalStatus, Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma, UserRole } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
 import puppeteer from 'puppeteer-core';
@@ -234,7 +234,16 @@ export class PurchaseOrderService {
         id: projectId,
       },
       select: {
-        ProjectManager: true,
+        ProjectUsers: {
+          where: {
+            user: {
+              role: UserRole.PROJECT_MANAGER,
+            },
+          },
+          select: {
+            userId: true,
+          },
+        },
       },
     });
     return approvers;

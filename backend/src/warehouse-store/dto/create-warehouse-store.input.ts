@@ -7,4 +7,7 @@ export class CreateWarehouseStoreInput {
 
   @Field()
   location: string;
+
+  @Field()
+  companyId: string;
 }

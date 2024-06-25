@@ -39,13 +39,27 @@ export class DocumentTransactionService {
           id: projectId,
         },
         select: {
-          projectManagerId: true,
+          ProjectUsers: {
+            where: {
+              user: {
+                role: UserRole.PROJECT_MANAGER,
+              },
+            },
+            select: {
+              userId: true,
+            },
+          },
         },
       });
 
     const materialIssueReturnApproversIds = materialIssueReturnApprovers.map(
       (approver) => approver.id,
     );
+
+    const materialReceiveRequestTransferPurchaseApproversIds =
+      materialReceiveRequestTransferPurchaseApprovers.ProjectUsers.map(
+        (approver) => approver.userId,
+      );
 
     const materialIssues =
       await this.materialIssueService.getMaterialIssuesCountByStatus({
@@ -76,8 +90,9 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
+                  approvedById: {
+                    in: materialReceiveRequestTransferPurchaseApproversIds,
+                  },
                 },
                 {
                   purchasedById: userId,
@@ -98,8 +113,9 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
+                  approvedById: {
+                    in: materialReceiveRequestTransferPurchaseApproversIds,
+                  },
                 },
                 {
                   requestedById: userId,
@@ -141,8 +157,9 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
+                  approvedById: {
+                    in: materialReceiveRequestTransferPurchaseApproversIds,
+                  },
                 },
                 {
                   preparedById: userId,
@@ -163,8 +180,9 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById:
-                    materialReceiveRequestTransferPurchaseApprovers?.projectManagerId,
+                  approvedById: {
+                    in: materialReceiveRequestTransferPurchaseApproversIds,
+                  },
                 },
                 {
                   preparedById: userId,

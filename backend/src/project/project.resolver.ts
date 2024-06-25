@@ -46,10 +46,10 @@ export class ProjectResolver {
               endDate: filterProjectInput?.endDate,
             },
             {
-              clientId: filterProjectInput?.clientId,
+              companyId: filterProjectInput?.companyId,
             },
             {
-              projectManagerId: filterProjectInput?.projectManagerId,
+              company: filterProjectInput?.company,
             },
             {
               budget: filterProjectInput?.budget,

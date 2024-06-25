@@ -27,6 +27,7 @@ import { ProductVariantModule } from './product-variant/product-variant.module';
 import { DailySiteDataModule } from './daily-site-data/daily-site-data.module';
 import { DailyStockBalanceModule } from './daily-stock-balance/daily-stock-balance.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ProductVariantModule,
     DailyStockBalanceModule,
     DailySiteDataModule,
+    CompanyModule,
   ],
 })
 export class AppModule {}

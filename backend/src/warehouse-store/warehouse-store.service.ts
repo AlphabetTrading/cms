@@ -32,6 +32,14 @@ export class WarehouseStoreService {
       data: {
         ...createWarehouseStore,
       },
+      include: {
+        company: true,
+        WarehouseStoreManager: {
+          include: {
+            StoreManager: true,
+          },
+        },
+      },
     });
 
     return createdWarehouseStore;
@@ -53,6 +61,14 @@ export class WarehouseStoreService {
       take,
       where,
       orderBy,
+      include: {
+        company: true,
+        WarehouseStoreManager: {
+          include: {
+            StoreManager: true,
+          },
+        },
+      },
     });
     return warehouseStores;
   }
@@ -62,6 +78,14 @@ export class WarehouseStoreService {
   ): Promise<WarehouseStore | null> {
     const warehouseStore = await this.prisma.warehouseStore.findUnique({
       where: { id: warehouseStoreId },
+      include: {
+        company: true,
+        WarehouseStoreManager: {
+          include: {
+            StoreManager: true,
+          },
+        },
+      },
     });
 
     return warehouseStore;
@@ -73,6 +97,14 @@ export class WarehouseStoreService {
   ): Promise<WarehouseStore> {
     const existingWarehouseStore = await this.prisma.warehouseStore.findUnique({
       where: { id: warehouseStoreId },
+      include: {
+        company: true,
+        WarehouseStoreManager: {
+          include: {
+            StoreManager: true,
+          },
+        },
+      },
     });
 
     if (!existingWarehouseStore) {

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { ApprovalStatus, Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma, UserRole } from '@prisma/client';
 import { DailySiteData } from './model/daily-site-data.model';
 import { CreateDailySiteDataInput } from './dto/create-daily-site-data.input';
 import { CreateDailySiteDataTaskLaborInput } from './dto/create-daily-site-data-task-labor.input';
@@ -213,7 +213,16 @@ export class DailySiteDataService {
         id: projectId,
       },
       select: {
-        ProjectManager: true,
+        ProjectUsers: {
+          where: {
+            user: {
+              role: UserRole.PROJECT_MANAGER,
+            },
+          },
+          select: {
+            userId: true,
+          },
+        },
       },
     });
     return approvers;

@@ -232,13 +232,26 @@ export class MaterialReturnService {
     return existingMaterialReturn;
   }
 
-  async getMaterialReturnApprovers() {
-    const approvers = await this.prisma.warehouseStoreManager.findMany({
-      select: {
-        StoreManager: true,
+  async getMaterialReturnApprovers(projectId: string) {
+    const approvers = await this.prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+      include: {
+        company: {
+          include: {
+            warehouseStores: {
+              include: {
+                WarehouseStoreManager: true,
+              },
+            },
+          },
+        },
       },
     });
-    return approvers;
+    return approvers.company.warehouseStores.flatMap(
+      (warehouseStore) => warehouseStore.WarehouseStoreManager,
+    );
   }
 
   async approveMaterialReturn(

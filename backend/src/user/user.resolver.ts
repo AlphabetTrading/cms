@@ -5,6 +5,8 @@ import { UserService } from './user.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.model';
+import { CreateOwnerInput } from './dto/create-owner.input';
+import { RegistrationInput } from 'src/auth/dto/registration.input';
 // import { UserEntity } from 'src/common/decorators';
 
 @Resolver('User')
@@ -15,6 +17,24 @@ export class UserResolver {
   async createUser(@Args('createUser') createUser: CreateUserInput) {
     try {
       return await this.userService.createUser(createUser);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Mutation(() => User)
+  async createCompanyOwner(@Args('createOwner') createOwner: CreateOwnerInput) {
+    try {
+      return await this.userService.createOwner(createOwner);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Mutation(() => User)
+  async register(@Args('registerUser') registerUser: RegistrationInput) {
+    try {
+      return await this.userService.registerUser(registerUser);
     } catch (error) {
       return error;
     }

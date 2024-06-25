@@ -6,6 +6,7 @@ import {
   UseType,
   UserRole,
 } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -37,10 +38,13 @@ async function main() {
   await prisma.milestone.deleteMany();
   await prisma.projectUser.deleteMany();
   await prisma.project.deleteMany();
+  await prisma.company.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('Seeding...');
 
+  await seedOwners();
+  await seedCompanies();
   await seedUsers();
   await seedProducts();
   await seedProductVariants();
@@ -62,132 +66,98 @@ async function main() {
   await seedDailySiteData();
 }
 
-async function seedUsers() {
+async function seedOwners() {
   try {
     await prisma.user.createMany({
       data: [
         {
-          email: 'site_manager@example.com',
-          fullName: 'Site Manager',
-          phoneNumber: '0912345670',
+          email: faker.internet.email(),
+          fullName: faker.person.fullName(),
+          phoneNumber: '0900010203',
           password:
             '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'SITE_MANAGER',
+          role: UserRole.OWNER,
         },
         {
-          email: 'project_manager@example.com',
-          fullName: 'Project Manager',
-          phoneNumber: '0912345671',
+          email: faker.internet.email(),
+          fullName: faker.person.fullName(),
+          phoneNumber: '0900010204',
           password:
             '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'PROJECT_MANAGER',
+          role: UserRole.OWNER,
         },
+
         {
-          email: 'store_manager@example.com',
-          fullName: 'Store Manager',
-          phoneNumber: '0912345672',
+          email: faker.internet.email(),
+          fullName: faker.person.fullName(),
+          phoneNumber: '0900010205',
           password:
             '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'STORE_MANAGER',
-        },
-        {
-          email: 'client@example.com',
-          fullName: 'Client Client',
-          phoneNumber: '0912345673',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'CLIENT',
-        },
-        {
-          email: 'purchaser@example.com',
-          fullName: 'Purchaser Purchaser',
-          phoneNumber: '0912345674',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'PURCHASER',
-        },
-        {
-          email: 'consultant@example.com',
-          fullName: 'Consultant Consultant',
-          phoneNumber: '0912345675',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'CONSULTANT',
-        },
-        {
-          email: 'site_manager2@example.com',
-          fullName: 'Site Manager 2',
-          phoneNumber: '0912345676',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'SITE_MANAGER',
-        },
-        {
-          email: 'project_manager2@example.com',
-          fullName: 'Project Manager 2',
-          phoneNumber: '0912345677',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'PROJECT_MANAGER',
-        },
-        {
-          email: 'store_manager2@example.com',
-          fullName: 'Store Manager 2',
-          phoneNumber: '0912345678',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'STORE_MANAGER',
-        },
-        {
-          email: 'client2@example.com',
-          fullName: 'Client Client 2',
-          phoneNumber: '0912345679',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'CLIENT',
-        },
-        {
-          email: 'purchaser2@example.com',
-          fullName: 'Purchaser Purchaser 2',
-          phoneNumber: '0912345680',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'PURCHASER',
-        },
-        {
-          email: 'consultant2@example.com',
-          fullName: 'Consultant Consultant 2',
-          phoneNumber: '0912345681',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'CONSULTANT',
-        },
-        {
-          email: 'store_manager3@example.com',
-          fullName: 'Store Manager 3',
-          phoneNumber: '0912345682',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'STORE_MANAGER',
-        },
-        {
-          email: 'store_manager4@example.com',
-          fullName: 'Store Manager 4',
-          phoneNumber: '0912345683',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'STORE_MANAGER',
-        },
-        {
-          email: 'store_manager5@example.com',
-          fullName: 'Store Manager 5',
-          phoneNumber: '0912345684',
-          password:
-            '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
-          role: 'STORE_MANAGER',
+          role: UserRole.OWNER,
         },
       ],
     });
+    console.log('Owners seeded successfully');
+  } catch (error) {
+    console.error('Error seeding owners:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+async function seedCompanies() {
+  try {
+    const owners = await prisma.user.findMany();
+
+    for (let i = 0; i < 3; i++) {
+      await prisma.company.create({
+        data: {
+          name: faker.company.name(),
+          address: faker.location.city() + ', ' + faker.location.country(),
+          contactInfo: faker.internet.email(),
+          ownerId: owners[i].id,
+        },
+      });
+    }
+    console.log('Company models seeded successfully');
+  } catch (error) {
+    console.error('Error seeding company models:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+async function seedUsers() {
+  try {
+    const companies = await prisma.company.findMany();
+    const phoneNumber = '0912345';
+    let remainingDigits = 670;
+    const roles = [
+      UserRole.SITE_MANAGER,
+      UserRole.PROJECT_MANAGER,
+      UserRole.STORE_MANAGER,
+      UserRole.CLIENT,
+      UserRole.PURCHASER,
+      UserRole.CONSULTANT,
+    ];
+    for (const company of companies) {
+      for (let i = 0; i < 2; i++) {
+        for (const role of roles) {
+          await prisma.user.create({
+            data: {
+              email: faker.internet.email(),
+              fullName: faker.person.fullName(),
+              phoneNumber: phoneNumber + remainingDigits.toString(),
+              password:
+                '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm',
+              role: role,
+              companyId: company.id,
+            },
+          });
+          remainingDigits++;
+        }
+      }
+    }
     console.log('User models seeded successfully');
   } catch (error) {
     console.error('Error seeding user models:', error);
@@ -198,47 +168,37 @@ async function seedUsers() {
 
 async function seedProjects() {
   try {
-    const project_managers = await prisma.user.findMany({
-      where: {
-        role: UserRole.PROJECT_MANAGER,
-      },
-    });
-    const clients = await prisma.user.findMany({
-      where: {
-        role: UserRole.CLIENT,
-      },
-    });
-    await prisma.project.createMany({
-      data: [
-        {
-          name: 'Project 1',
-          startDate: new Date(),
-          endDate: new Date(),
-          budget: 100000,
-          clientId: clients[0].id,
-          projectManagerId: project_managers[0].id,
-          status: 'IN_PROGRESS',
-        },
-        {
-          name: 'Project 2',
-          startDate: new Date(),
-          endDate: new Date(),
-          budget: 200000,
-          clientId: clients[1].id,
-          projectManagerId: project_managers[1].id,
-          status: 'COMPLETED',
-        },
-        {
-          name: 'Project 3',
-          startDate: new Date(),
-          endDate: new Date(),
-          budget: 300000,
-          clientId: clients[0].id,
-          projectManagerId: project_managers[1].id,
-          status: 'IN_PROGRESS',
-        },
-      ],
-    });
+    const companies = await prisma.company.findMany();
+    for (const company of companies) {
+      await prisma.project.createMany({
+        data: [
+          {
+            name: 'Project 1',
+            companyId: company.id,
+            startDate: new Date(),
+            endDate: new Date(),
+            budget: 100000,
+            status: 'IN_PROGRESS',
+          },
+          {
+            name: 'Project 2',
+            companyId: company.id,
+            startDate: new Date(),
+            endDate: new Date(),
+            budget: 200000,
+            status: 'COMPLETED',
+          },
+          {
+            name: 'Project 3',
+            companyId: company.id,
+            startDate: new Date(),
+            endDate: new Date(),
+            budget: 300000,
+            status: 'IN_PROGRESS',
+          },
+        ],
+      });
+    }
     console.log('Project models seeded successfully');
   } catch (error) {
     console.error('Error seeding project models:', error);
@@ -247,44 +207,75 @@ async function seedProjects() {
 
 async function seedProjectUsers() {
   try {
-    const projects = await prisma.project.findMany();
+    const companies = await prisma.company.findMany();
+    
+    for (const company of companies) {
+      const projects = await prisma.project.findMany({
+        where: {
+          companyId: company.id
+        }
+      });
+      const clients = await prisma.user.findMany({
+        where: { role: UserRole.CLIENT, companyId: company.id },
+      });
+      const projectManagers = await prisma.user.findMany({
+        where: { role: UserRole.PROJECT_MANAGER, companyId: company.id },
+      });
+      const consultants = await prisma.user.findMany({
+        where: { role: UserRole.CONSULTANT, companyId: company.id },
+      });
+      const siteManagers = await prisma.user.findMany({
+        where: { role: UserRole.SITE_MANAGER, companyId: company.id },
+      });
+      const purchasers = await prisma.user.findMany({
+        where: { role: UserRole.PURCHASER, companyId: company.id },
+      });
 
-    const consultants = await prisma.user.findMany({
-      where: { role: UserRole.CONSULTANT },
-    });
-    const siteManagers = await prisma.user.findMany({
-      where: { role: UserRole.SITE_MANAGER },
-    });
-    const purchasers = await prisma.user.findMany({
-      where: { role: UserRole.PURCHASER },
-    });
+      for (let i = 0; i < 2; i++) {
+        if (clients.length > 0) {
+          await prisma.projectUser.create({
+            data: {
+              projectId: projects[i].id,
+              userId: clients[i].id,
+            },
+          });
+        }
 
-    for (let i = 0; i < 2; i++) {
-      if (consultants.length > 0) {
-        await prisma.projectUser.create({
-          data: {
-            projectId: projects[i].id,
-            userId: consultants[i].id,
-          },
-        });
-      }
+        if (projectManagers.length > 0) {
+          await prisma.projectUser.create({
+            data: {
+              projectId: projects[i].id,
+              userId: projectManagers[i].id,
+            },
+          });
+        }
 
-      if (siteManagers.length > 0) {
-        await prisma.projectUser.create({
-          data: {
-            projectId: projects[i].id,
-            userId: siteManagers[i].id,
-          },
-        });
-      }
+        if (consultants.length > 0) {
+          await prisma.projectUser.create({
+            data: {
+              projectId: projects[i].id,
+              userId: consultants[i].id,
+            },
+          });
+        }
 
-      if (purchasers.length > 0) {
-        await prisma.projectUser.create({
-          data: {
-            projectId: projects[i].id,
-            userId: purchasers[i].id,
-          },
-        });
+        if (siteManagers.length > 0) {
+          await prisma.projectUser.create({
+            data: {
+              projectId: projects[i].id,
+              userId: siteManagers[i].id,
+            },
+          });
+        }
+
+        if (purchasers.length > 0) {
+          await prisma.projectUser.create({
+            data: {
+              projectId: projects[i].id,
+              userId: purchasers[i].id,
+            },
+          });
+        }
       }
     }
 
@@ -296,7 +287,20 @@ async function seedProjectUsers() {
 
 async function seedMilestones() {
   try {
-    const projects = await prisma.project.findMany();
+    const projects = await prisma.project.findMany({
+      include: {
+        ProjectUsers: {
+          where: {
+            user: {
+              role: UserRole.PROJECT_MANAGER
+            }
+          },
+          include: {
+            user: true
+          }
+        }
+      }
+    });
     await prisma.milestone.createMany({
       data: [
         {
@@ -305,7 +309,7 @@ async function seedMilestones() {
           description: 'This is milestone 1',
           dueDate: new Date(),
           projectId: projects[0].id,
-          createdById: projects[0].projectManagerId,
+          createdById: projects[0].ProjectUsers[0].userId,
         },
         {
           name: 'Milestone 2',
@@ -313,7 +317,7 @@ async function seedMilestones() {
           description: 'This is milestone 2',
           dueDate: new Date(),
           projectId: projects[0].id,
-          createdById: projects[0].projectManagerId,
+          createdById: projects[0].ProjectUsers[0].userId,
         },
         {
           name: 'Milestone 3',
@@ -321,7 +325,7 @@ async function seedMilestones() {
           description: 'This is milestone 3',
           dueDate: new Date(),
           projectId: projects[1].id,
-          createdById: projects[1].projectManagerId,
+          createdById: projects[1].ProjectUsers[0].userId,
         },
         {
           name: 'Milestone 4',
@@ -329,7 +333,7 @@ async function seedMilestones() {
           description: 'This is milestone 4',
           dueDate: new Date(),
           projectId: projects[1].id,
-          createdById: projects[1].projectManagerId,
+          createdById: projects[1].ProjectUsers[0].userId,
         },
         {
           name: 'Milestone 5',
@@ -337,7 +341,7 @@ async function seedMilestones() {
           description: 'This is milestone 5',
           dueDate: new Date(),
           projectId: projects[0].id,
-          createdById: projects[0].projectManagerId,
+          createdById: projects[0].ProjectUsers[0].userId,
         },
         {
           name: 'Milestone 6',
@@ -345,7 +349,7 @@ async function seedMilestones() {
           description: 'This is milestone 6',
           dueDate: new Date(),
           projectId: projects[1].id,
-          createdById: projects[1].projectManagerId,
+          createdById: projects[1].ProjectUsers[0].userId,
         },
       ],
     });
@@ -357,7 +361,11 @@ async function seedMilestones() {
 async function seedTasks() {
   try {
     const users = await prisma.user.findMany();
-    const milestones = await prisma.milestone.findMany();
+    const milestones = await prisma.milestone.findMany({
+      include: {
+        Project: true,
+      },
+    })
     await prisma.task.createMany({
       data: [
         {
@@ -409,6 +417,7 @@ async function seedTasks() {
         },
       ],
     });
+
     console.log('Task models seeded successfully');
   } catch (error) {
     console.error('Error seeding task models:', error);
@@ -783,27 +792,38 @@ async function seedProductVariants() {
 
 async function seedWarehouseStores() {
   try {
+    const companies = await prisma.company.findMany();
     await prisma.warehouseStore.createMany({
       data: [
         {
           name: 'Warehouse 1',
           location: 'Location 1',
+          companyId: companies[0].id,
         },
         {
           name: 'Warehouse 2',
           location: 'Location 2',
+          companyId: companies[0].id,
         },
         {
           name: 'Warehouse 3',
           location: 'Location 3',
+          companyId: companies[1].id,
         },
         {
           name: 'Warehouse 4',
           location: 'Location 4',
+          companyId: companies[1].id,
         },
         {
           name: 'Warehouse 5',
           location: 'Location 5',
+          companyId: companies[2].id,
+        },
+        {
+          name: 'Warehouse 6',
+          location: 'Location 6',
+          companyId: companies[2].id,
         },
       ],
     });
@@ -1144,14 +1164,27 @@ async function seedMaterialReceiveVouchers() {
 
     return paddedSerialNumber;
   }
-  const projects = await prisma.project.findMany();
+  const projects = await prisma.project.findMany({
+    include: {
+      ProjectUsers: true,
+    },
+  });
   const material_requests = await prisma.materialRequestVoucher.findMany();
   const purchase_orders = await prisma.purchaseOrder.findMany();
   const warehouse_stores = await prisma.warehouseStore.findMany();
 
   try {
     for (const project of projects) {
-      const project_manager = project.projectManagerId;
+      const project_managers = await prisma.user.findMany({
+        where: {
+          role: 'PROJECT_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
+          },
+        },
+      });
       const purchasers = await prisma.user.findMany({
         where: {
           role: 'PURCHASER',
@@ -1163,14 +1196,14 @@ async function seedMaterialReceiveVouchers() {
         },
       });
 
-      if (purchasers.length > 0) {
+      if (purchasers.length > 0 && project_managers.length > 0) {
         const receiveVouchers = [
           {
             serialNumber: generateSerialNumber(),
             invoiceId: '1',
             projectId: project.id,
             supplierName: purchase_orders[0].supplierName,
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             materialRequestId: material_requests[0].id,
             purchasedById: purchasers[0].id,
             warehouseStoreId: warehouse_stores[0].id,
@@ -1191,18 +1224,6 @@ async function seedMaterialReceiveVouchers() {
           {
             serialNumber: generateSerialNumber(),
             invoiceId: '3',
-            projectId: project.id,
-            supplierName: purchase_orders[0].supplierName,
-            approvedById: project_manager,
-            materialRequestId: material_requests[0].id,
-            warehouseStoreId: warehouse_stores[1].id,
-            purchasedById: purchasers[0].id,
-            purchaseOrderId: purchase_orders[0].id,
-            status: ApprovalStatus.DECLINED,
-          },
-          {
-            serialNumber: generateSerialNumber(),
-            invoiceId: '4',
             projectId: project.id,
             supplierName: purchase_orders[3].supplierName,
             materialRequestId: material_requests[3].id,
@@ -1275,7 +1296,16 @@ async function seedMaterialRequestVouchers() {
 
   try {
     for (const project of projects) {
-      const project_manager = project.projectManagerId;
+      const project_managers = await prisma.user.findMany({
+        where: {
+          role: 'PROJECT_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
+          },
+        },
+      });
       const site_managers = await prisma.user.findMany({
         where: {
           role: 'SITE_MANAGER',
@@ -1293,27 +1323,27 @@ async function seedMaterialRequestVouchers() {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
             requestedById: site_managers[0].id,
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             status: ApprovalStatus.COMPLETED,
           },
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
             requestedById: site_managers[0].id,
-            approvedById: project_manager,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            projectId: project.id,
+            requestedById: site_managers[0].id,
+            status: ApprovalStatus.PENDING,
+          },
+          {
+            serialNumber: generateSerialNumber(),
+            projectId: project.id,
+            requestedById: site_managers[0].id,
+            approvedById: project_managers[0].id,
             status: ApprovalStatus.DECLINED,
-          },
-          {
-            serialNumber: generateSerialNumber(),
-            projectId: project.id,
-            requestedById: site_managers[0].id,
-            status: ApprovalStatus.PENDING,
-          },
-          {
-            serialNumber: generateSerialNumber(),
-            projectId: project.id,
-            requestedById: site_managers[0].id,
-            status: ApprovalStatus.PENDING,
           },
         ];
 
@@ -1369,7 +1399,16 @@ async function seedPurchaseOrders() {
 
   try {
     for (const project of projects) {
-      const project_manager = project.projectManagerId;
+      const project_managers = await prisma.user.findMany({
+        where: {
+          role: 'PROJECT_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
+          },
+        },
+      });
       const purchasers = await prisma.user.findMany({
         where: {
           role: 'SITE_MANAGER',
@@ -1386,7 +1425,7 @@ async function seedPurchaseOrders() {
           {
             projectId: project.id,
             serialNumber: generateSerialNumber(),
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             vat: 130.43,
             subTotal: 869.57,
             supplierName: 'Supplier 1',
@@ -1409,21 +1448,9 @@ async function seedPurchaseOrders() {
           {
             projectId: project.id,
             serialNumber: generateSerialNumber(),
-            approvedById: project_manager,
-            vat: 104.35,
-            subTotal: 695.65,
-            supplierName: 'Supplier 3',
-            grandTotal: 800,
-            materialRequestId: material_requests[0].id,
-            preparedById: purchasers[0].id,
-            status: ApprovalStatus.DECLINED,
-          },
-          {
-            projectId: project.id,
-            serialNumber: generateSerialNumber(),
             vat: 260.87,
             subTotal: 1739.13,
-            supplierName: 'Supplier 4',
+            supplierName: 'Supplier 3',
             grandTotal: 2000,
             materialRequestId: material_requests[1].id,
             preparedById: purchasers[0].id,
@@ -1532,11 +1559,30 @@ async function seedMaterialTransferVouchers() {
   }
   const projects = await prisma.project.findMany();
 
-  const warehouse_stores = await prisma.warehouseStore.findMany();
-  const material_receives = await prisma.materialReceiveVoucher.findMany();
   try {
     for (const project of projects) {
-      const project_manager = project.projectManagerId;
+      const warehouse_stores = await prisma.warehouseStore.findMany({
+        where: {
+          companyId: project.companyId
+        }
+      });
+      const material_receives = await prisma.materialReceiveVoucher.findMany({
+        where: {
+          projectId: project.id
+        }
+      });
+    
+      const project_managers = await prisma.user.findMany({
+        where: {
+          role: 'PROJECT_MANAGER',
+          ProjectUser: {
+            some: {
+              projectId: project.id,
+            },
+          },
+        },
+      });
+
       const site_managers = await prisma.user.findMany({
         where: {
           role: 'SITE_MANAGER',
@@ -1556,27 +1602,26 @@ async function seedMaterialTransferVouchers() {
             sendingWarehouseStoreId: warehouse_stores[1].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             status: ApprovalStatus.COMPLETED,
             materialReceiveId: material_receives[0].id,
           },
           {
             serialNumber: generateSerialNumber(),
             receivingWarehouseStoreId: warehouse_stores[0].id,
-            sendingWarehouseStoreId: warehouse_stores[3].id,
+            sendingWarehouseStoreId: warehouse_stores[1].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
-            approvedById: project_manager,
             status: ApprovalStatus.PENDING,
             materialReceiveId: material_receives[2].id,
           },
           {
             serialNumber: generateSerialNumber(),
-            receivingWarehouseStoreId: warehouse_stores[0].id,
-            sendingWarehouseStoreId: warehouse_stores[4].id,
+            receivingWarehouseStoreId: warehouse_stores[1].id,
+            sendingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             status: ApprovalStatus.COMPLETED,
             materialReceiveId: material_receives[1].id,
           },
@@ -1587,29 +1632,28 @@ async function seedMaterialTransferVouchers() {
             sendingWarehouseStoreId: warehouse_stores[0].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             status: ApprovalStatus.DECLINED,
             materialReceiveId: material_receives[1].id,
           },
 
           {
             serialNumber: generateSerialNumber(),
-            receivingWarehouseStoreId: warehouse_stores[1].id,
-            sendingWarehouseStoreId: warehouse_stores[2].id,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
+            sendingWarehouseStoreId: warehouse_stores[1].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
-            approvedById: project_manager,
             status: ApprovalStatus.PENDING,
             materialReceiveId: material_receives[0].id,
           },
 
           {
             serialNumber: generateSerialNumber(),
-            receivingWarehouseStoreId: warehouse_stores[2].id,
-            sendingWarehouseStoreId: warehouse_stores[3].id,
+            receivingWarehouseStoreId: warehouse_stores[0].id,
+            sendingWarehouseStoreId: warehouse_stores[1].id,
             projectId: project.id,
             preparedById: site_managers[0].id,
-            approvedById: project_manager,
+            approvedById: project_managers[0].id,
             status: ApprovalStatus.COMPLETED,
             materialReceiveId: material_receives[0].id,
           },
