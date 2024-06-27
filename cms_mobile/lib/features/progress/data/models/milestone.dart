@@ -28,7 +28,7 @@ class MilestoneModel extends MilestoneEntity {
   factory MilestoneModel.fromJson(Map<String, dynamic> json) {
     return MilestoneModel(
         id: json['id'],
-        progress: json['progress'],
+        progress: json['progress'].toDouble(),
         stage: json['stage'],
         dueDate:
             json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
@@ -40,8 +40,8 @@ class MilestoneModel extends MilestoneEntity {
             ? UserModel.fromJson(json['createdBy'])
             : null,
         description: json['description'],
-        tasks: json['tasks'] != null
-            ? json['tasks']
+        tasks: json['Tasks'] != null
+            ? json['Tasks']
                 .map<TaskModel>((item) => TaskModel.fromJson(item))
                 .toList() as List<TaskModel>
             : null);
@@ -62,7 +62,38 @@ class MilestoneModelListWithMeta extends MilestoneEntityListWithMeta {
   }
 }
 
-class CreateMilestoneParamsModel extends CreateMilestoneParamsEntity {}
+class CreateMilestoneParamsModel extends CreateMilestoneParamsEntity {
+  const CreateMilestoneParamsModel(
+      {required super.createdById,
+      required super.description,
+      required super.dueDate,
+      required super.name,
+      required super.projectId,
+      required super.stage});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'createdById': createdById,
+      'description': description,
+      'dueDate': dueDate.toIso8601String(),
+      'name': name,
+      'projectId': projectId,
+      'stage': stage.name,
+    };
+  }
+
+  factory CreateMilestoneParamsModel.fromEntity(
+      CreateMilestoneParamsEntity entity) {
+    return CreateMilestoneParamsModel(
+      createdById: entity.createdById,
+      description: entity.description,
+      dueDate: entity.dueDate,
+      name: entity.name,
+      projectId: entity.projectId,
+      stage: entity.stage,
+    );
+  }
+}
 
 class EditMilestoneParamsModel extends EditMilestoneParamsEntity {}
 

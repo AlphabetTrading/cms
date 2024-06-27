@@ -24,7 +24,11 @@ class MilestoneDataSourceImpl extends MilestoneDataSource {
   }
 
   static const String _createMilestoneMutation = r'''
-
+mutation CreateMilestone($createMilestoneInput: CreateMilestoneInput!) {
+  createMilestone(createMilestoneInput: $createMilestoneInput) {
+    id
+  }
+}
 
   ''';
 
@@ -38,7 +42,7 @@ class MilestoneDataSourceImpl extends MilestoneDataSource {
     final MutationOptions options = MutationOptions(
       document: gql(_createMilestoneMutation),
       variables: {
-        // "createMilestoneInput": createMilestoneParamsModel.toJson()
+        "createMilestoneInput": createMilestoneParamsModel.toJson()
       },
     );
 
@@ -116,12 +120,50 @@ query Items($filterMilestoneInput: FilterMilestoneInput, $paginationInput: Pagin
   Future<DataState<MilestoneModel>> getMilestoneDetails(
       {required String params}) {
     String fetchMilestoneDetailsQuery = r'''
+query GetMilestone($getMilestoneId: String!) {
+  getMilestone(id: $getMilestoneId) {
+    id
+    name
+    progress
+    stage
+    createdAt
+    dueDate
+    createdBy {
+      createdAt
+      email
+      fullName
+      id
+      phoneNumber
+      role
+      updatedAt
+    }
+    description
+    Tasks {
+      assignedTo {
+        id
+        phoneNumber
+        role
+        fullName
+        email
+        createdAt
+        updatedAt
+      }
+      description
+      dueDate
+      id
+      name
+      priority
+      status
+      createdAt
+    }
+  }
+}
     ''';
 
     return _client
         .query(QueryOptions(
       document: gql(fetchMilestoneDetailsQuery),
-      variables: {"getMilestoneByIdId": params},
+      variables: {"getMilestoneId": params},
     ))
         .then((response) {
       if (response.hasException) {
@@ -132,10 +174,10 @@ query Items($filterMilestoneInput: FilterMilestoneInput, $paginationInput: Pagin
         );
       }
 
-      final materialIssue =
-          MilestoneModel.fromJson(response.data!['getMilestoneById']);
+      final milestone =
+          MilestoneModel.fromJson(response.data!['getMilestone']);
 
-      return DataSuccess(materialIssue);
+      return DataSuccess(milestone);
     });
   }
 

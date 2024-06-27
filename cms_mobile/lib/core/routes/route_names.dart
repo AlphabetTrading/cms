@@ -44,6 +44,8 @@ class RoutePaths {
 
   //milestone
   static const String milestoneDetails = 'milestones/:milestoneId';
+  static const String taskDetails = 'task';
+
 }
 
 class RouteNames {
@@ -94,4 +96,6 @@ class RouteNames {
 
   //progress
   static const String milestoneDetails = 'milestone_details';
+  static const String taskDetails = 'task_details';
+
 }

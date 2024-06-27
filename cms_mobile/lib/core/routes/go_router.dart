@@ -14,7 +14,9 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
 import 'package:cms_mobile/features/products/presentation/pages/products_page.dart';
+import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 import 'package:cms_mobile/features/progress/presentation/pages/milestone_details.dart';
+import 'package:cms_mobile/features/progress/presentation/pages/task_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -69,6 +71,13 @@ class AppRouter {
                 );
               },
             ),
+            GoRoute(
+                name: RouteNames.taskDetails,
+                path: RoutePaths.taskDetails,
+                builder: (BuildContext context, GoRouterState state) {
+                  TaskEntity task = state.extra as TaskEntity; //
+                  return TaskDetails(task: task);
+                }),
             GoRoute(
               name: RouteNames.items,
               path: RoutePaths.items,

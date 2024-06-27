@@ -16,34 +16,33 @@ class MilestoneRepositoryImpl extends MilestoneRepository {
 
   @override
   Future<DataState<MilestoneModelListWithMeta>> getMilestones(
-     {required GetMilestonesParamsEntity params}) {
-   
+      {required GetMilestonesParamsEntity params}) {
     return dataSource.getMilestones(params: params);
   }
-  
+
   @override
-  Future<DataState<String>> createMilestone({required CreateMilestoneParamsEntity params}) {
-    // TODO: implement createMilestone
-    throw UnimplementedError();
+  Future<DataState<String>> createMilestone(
+      {required CreateMilestoneParamsEntity params}) {
+    return dataSource.createMilestone(
+        createMilestoneParamsModel: CreateMilestoneParamsModel.fromEntity(params));
   }
-  
+
   @override
   Future<DataState<String>> deleteMilestone({required String materialIssueId}) {
     // TODO: implement deleteMilestone
     throw UnimplementedError();
   }
-  
+
   @override
-  Future<DataState<String>> editMilestone({required EditMilestoneParamsEntity params}) {
+  Future<DataState<String>> editMilestone(
+      {required EditMilestoneParamsEntity params}) {
     // TODO: implement editMilestone
     throw UnimplementedError();
   }
-  
+
   @override
-  Future<DataState<MilestoneModel>> getMilestoneDetails({required String params}) {
-    // TODO: implement getMilestoneDetails
-    throw UnimplementedError();
+  Future<DataState<MilestoneModel>> getMilestoneDetails(
+      {required String params}) {
+    return dataSource.getMilestoneDetails(params: params);
   }
-
-
 }
