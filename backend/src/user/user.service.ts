@@ -11,6 +11,7 @@ import { User, UserRole } from '@prisma/client';
 import { CreateOwnerInput } from './dto/create-owner.input';
 import { v4 as uuidv4 } from 'uuid';
 import { RegistrationInput } from 'src/auth/dto/registration.input';
+import { sendInvitationEmail } from 'src/utils/email.service';
 
 @Injectable()
 export class UserService {
@@ -41,6 +42,7 @@ export class UserService {
           invited: true,
         },
       });
+      await sendInvitationEmail(createOwner.email, invitationToken);
       return newOwner;
     } catch (e) {
       return e;
@@ -69,6 +71,8 @@ export class UserService {
           invited: true,
         },
       });
+
+      await sendInvitationEmail(createUser.email, invitationToken);
       return newUser;
     } catch (e) {
       return e;
