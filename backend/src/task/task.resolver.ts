@@ -109,11 +109,10 @@ export class TaskResolver {
 
   @Mutation(() => Task)
   async updateTask(
-    @Args('id') taskId: string,
     @Args('updateTaskInput') updateTaskInput: UpdateTaskInput,
   ) {
     try {
-      return this.taskService.update(taskId, updateTaskInput);
+      return this.taskService.update(updateTaskInput);
     } catch (e) {
       throw new BadRequestException('Error updating task!');
     }

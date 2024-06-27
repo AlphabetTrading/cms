@@ -117,11 +117,12 @@ export class MilestoneService {
   }
 
   async update(
-    id: string,
-    updateData: UpdateMilestoneInput,
+    input: UpdateMilestoneInput,
   ): Promise<Milestone> {
+    const { id: milestoneId, ...updateData } = input;
+
     const existingMilestone = await this.prisma.milestone.findUnique({
-      where: { id: id },
+      where: { id: milestoneId },
     });
 
     if (!existingMilestone) {
@@ -129,7 +130,7 @@ export class MilestoneService {
     }
 
     const updatedMilestone = await this.prisma.milestone.update({
-      where: { id },
+      where: { id: milestoneId },
       data: {
         ...updateData,
       },
@@ -150,7 +151,6 @@ export class MilestoneService {
       ...updatedMilestone,
       progress,
     };
-    return updatedMilestone;
   }
 
   async remove(id: string): Promise<void> {

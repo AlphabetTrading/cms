@@ -110,11 +110,10 @@ export class MilestoneResolver {
 
   @Mutation(() => Milestone)
   async updateMilestone(
-    @Args('id') milestoneId: string,
     @Args('updateMilestoneInput') updateMilestoneInput: UpdateMilestoneInput,
   ) {
     try {
-      return this.milestoneService.update(milestoneId, updateMilestoneInput);
+      return this.milestoneService.update(updateMilestoneInput);
     } catch (e) {
       throw new BadRequestException('Error updating milestone!');
     }

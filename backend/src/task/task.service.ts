@@ -73,9 +73,11 @@ export class TaskService {
     return task;
   }
 
-  async update(id: string, updateData: UpdateTaskInput): Promise<Task> {
+  async update(input: UpdateTaskInput): Promise<Task> {
+    const { id: taskId, ...updateData } = input;
+
     const existingTask = await this.prisma.task.findUnique({
-      where: { id: id },
+      where: { id: taskId },
     });
 
     if (!existingTask) {
@@ -83,7 +85,7 @@ export class TaskService {
     }
 
     const updatedTask = await this.prisma.task.update({
-      where: { id },
+      where: { id: taskId },
       data: {
         ...updateData,
       },
