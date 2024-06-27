@@ -115,7 +115,7 @@ model WarehouseStore {
   companyId                        String
   company                          Company                   @relation(fields: [companyId], references: [id])
   products                         WarehouseProduct[]
-  WarehouseStoreManager            WarehouseStoreManager[]
+  warehouseStoreManagers           WarehouseStoreManager[]
   MaterialReceiveVoucher           MaterialReceiveVoucher[]
   MaterialIssueVoucher             MaterialIssueVoucher[]
   MaterialReturnVoucher            MaterialReturnVoucher[]
@@ -125,7 +125,7 @@ model WarehouseStore {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([name, location])
+  @@unique([companyId, name, location])
 }
 
 model WarehouseStoreManager {

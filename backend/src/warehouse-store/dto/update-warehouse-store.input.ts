@@ -1,10 +1,9 @@
-import { CreateWarehouseStoreInput } from './create-warehouse-store.input';
-import { InputType, Field, PartialType } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
+import { UpdateWarehouseStoreManagerInput } from './update-warehouse-store-manager.input';
+import { ValidateNested } from 'class-validator';
 
 @InputType()
-export class UpdateWarehouseStoreInput extends PartialType(
-  CreateWarehouseStoreInput,
-) {
+export class UpdateWarehouseStoreInput {
   @Field({ nullable: true })
   name?: string;
 
@@ -12,5 +11,10 @@ export class UpdateWarehouseStoreInput extends PartialType(
   location?: string;
 
   @Field({ nullable: true })
-  companyId: string;
+  companyId?: string;
+
+  @ValidateNested({ each: true })
+  @Field(() => [UpdateWarehouseStoreManagerInput], { nullable: true })
+  warehouseStoreManagerIds?: UpdateWarehouseStoreManagerInput[];
+
 }

@@ -281,6 +281,11 @@ input CreateWarehouseStoreInput {
   companyId: String!
   location: String!
   name: String!
+  warehouseStoreManagerIds: [CreateWarehouseStoreManagerInput!]
+}
+
+input CreateWarehouseStoreManagerInput {
+  storeManagerId: String!
 }
 
 type DailySiteData {
@@ -917,14 +922,14 @@ type Mutation {
   updateMaterialRequest(updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
   updateMaterialTransfer(updateMaterialTransferInput: UpdateMaterialTransferInput!): MaterialTransferVoucher!
-  updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
+  updateMilestone(updateMilestoneInput: UpdateMilestoneInput!): Milestone!
   updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
   updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
-  updateTask(id: String!, updateTaskInput: UpdateTaskInput!): Task!
+  updateTask(updateTaskInput: UpdateTaskInput!): Task!
   updateUser(email: String!, updateUser: UpdateUserInput!): User!
   updateWarehouseProduct(id: String!, updateWarehouseProductInput: UpdateWarehouseProductInput!): WarehouseProduct!
   updateWarehouseStore(id: String!, updateWarehouseStoreInput: UpdateWarehouseStoreInput!): WarehouseStore!
@@ -1674,6 +1679,11 @@ input UpdateWarehouseStoreInput {
   companyId: String
   location: String
   name: String
+  warehouseStoreManagerIds: [UpdateWarehouseStoreManagerInput!]
+}
+
+input UpdateWarehouseStoreManagerInput {
+  storeManagerId: String
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -1732,7 +1742,6 @@ type WarehouseProductStock {
 }
 
 type WarehouseStore {
-  WarehouseStoreManager: [WarehouseStoreManager!]
   company: Company
   companyId: String
 
@@ -1744,6 +1753,7 @@ type WarehouseStore {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+  warehouseStoreManagers: [WarehouseStoreManager!]
 }
 
 type WarehouseStoreManager {

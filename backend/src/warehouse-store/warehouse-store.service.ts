@@ -17,7 +17,8 @@ export class WarehouseStoreService {
   ): Promise<WarehouseStore> {
     const existingWarehouseStore = await this.prisma.warehouseStore.findUnique({
       where: {
-        name_location: {
+        companyId_name_location: {
+          companyId: createWarehouseStore.companyId,
           name: createWarehouseStore.name,
           location: createWarehouseStore.location,
         },
@@ -28,19 +29,39 @@ export class WarehouseStoreService {
       throw new BadRequestException('Warehouse Store already exists!');
     }
 
+    const { warehouseStoreManagerIds, ...warehouseStoreData } =
+      createWarehouseStore;
+
     const createdWarehouseStore = await this.prisma.warehouseStore.create({
       data: {
-        ...createWarehouseStore,
-      },
-      include: {
-        company: true,
-        WarehouseStoreManager: {
-          include: {
-            StoreManager: true,
-          },
-        },
+        ...warehouseStoreData,
       },
     });
+
+    if (warehouseStoreManagerIds && warehouseStoreManagerIds.length > 0) {
+      await this.prisma.warehouseStoreManager.createMany({
+        data: warehouseStoreManagerIds.map((manager) => ({
+          warehouseStoreId: createdWarehouseStore.id,
+          storeManagerId: manager.storeManagerId,
+        })),
+      });
+
+      const updatedWarehouseStore = await this.prisma.warehouseStore.findUnique(
+        {
+          where: { id: createdWarehouseStore.id },
+          include: {
+            company: true,
+            warehouseStoreManagers: {
+              include: {
+                StoreManager: true,
+              },
+            },
+          },
+        },
+      );
+
+      return updatedWarehouseStore;
+    }
 
     return createdWarehouseStore;
   }
@@ -63,7 +84,7 @@ export class WarehouseStoreService {
       orderBy,
       include: {
         company: true,
-        WarehouseStoreManager: {
+        warehouseStoreManagers: {
           include: {
             StoreManager: true,
           },
@@ -80,7 +101,7 @@ export class WarehouseStoreService {
       where: { id: warehouseStoreId },
       include: {
         company: true,
-        WarehouseStoreManager: {
+        warehouseStoreManagers: {
           include: {
             StoreManager: true,
           },
@@ -98,12 +119,7 @@ export class WarehouseStoreService {
     const existingWarehouseStore = await this.prisma.warehouseStore.findUnique({
       where: { id: warehouseStoreId },
       include: {
-        company: true,
-        WarehouseStoreManager: {
-          include: {
-            StoreManager: true,
-          },
-        },
+        warehouseStoreManagers: true,
       },
     });
 
@@ -111,14 +127,73 @@ export class WarehouseStoreService {
       throw new NotFoundException('Warehouse store not found');
     }
 
+    const { warehouseStoreManagerIds, ...warehouseStoreData } = updateData;
+
     const updatedWarehouseStore = await this.prisma.warehouseStore.update({
       where: { id: warehouseStoreId },
       data: {
-        ...updateData,
+        ...warehouseStoreData,
       },
     });
 
-    return updatedWarehouseStore;
+    if (warehouseStoreManagerIds) {
+      const existingManagerIds =
+        existingWarehouseStore.warehouseStoreManagers.map(
+          (manager) => manager.storeManagerId,
+        );
+      const newManagerIds = warehouseStoreManagerIds.map(
+        (manager) => manager.storeManagerId,
+      );
+
+      const managersToAdd = newManagerIds.filter(
+        (id) => !existingManagerIds.includes(id),
+      );
+
+      const managersToRemove = existingManagerIds.filter(
+        (id) => !newManagerIds.includes(id),
+      );
+
+      try {
+        if (managersToAdd.length > 0) {
+          await this.prisma.warehouseStoreManager.createMany({
+            data: managersToAdd.map((storeManagerId) => ({
+              warehouseStoreId: updatedWarehouseStore.id,
+              storeManagerId,
+            })),
+          });
+        }
+
+        if (managersToRemove.length > 0) {
+          await this.prisma.warehouseStoreManager.deleteMany({
+            where: {
+              warehouseStoreId: updatedWarehouseStore.id,
+              storeManagerId: { in: managersToRemove },
+            },
+          });
+        }
+      } catch (error) {
+        console.error('Error updating warehouse store managers:', error);
+        throw new BadRequestException(
+          'An error occurred while updating warehouse store managers. Please try again.',
+        );
+      }
+    }
+
+    const refreshedWarehouseStore = await this.prisma.warehouseStore.findUnique(
+      {
+        where: { id: updatedWarehouseStore.id },
+        include: {
+          company: true,
+          warehouseStoreManagers: {
+            include: {
+              StoreManager: true,
+            },
+          },
+        },
+      },
+    );
+
+    return refreshedWarehouseStore;
   }
 
   async deleteWarehouseStore(warehouseStoreId: string): Promise<void> {

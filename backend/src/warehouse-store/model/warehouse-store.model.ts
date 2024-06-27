@@ -18,5 +18,5 @@ export class WarehouseStore extends BaseModel {
   company?: Company;
 
   @Field(() => [WarehouseStoreManager], { nullable: true })
-  WarehouseStoreManager?: WarehouseStoreManager[];
+  warehouseStoreManagers?: WarehouseStoreManager[];
 }

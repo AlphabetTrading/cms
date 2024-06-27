@@ -243,7 +243,7 @@ export class MaterialIssueService {
           include: {
             warehouseStores: {
               include: {
-                WarehouseStoreManager: true,
+                warehouseStoreManagers: true,
               },
             },
           },
@@ -252,7 +252,7 @@ export class MaterialIssueService {
     });
 
     return approvers.company.warehouseStores.flatMap(
-      (warehouseStore) => warehouseStore.WarehouseStoreManager,
+      (warehouseStore) => warehouseStore.warehouseStoreManagers,
     );
   }
 
