@@ -83,7 +83,11 @@ import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart
 import 'package:cms_mobile/features/progress/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/progress/data/repository/milestone_repository_impl.dart';
 import 'package:cms_mobile/features/progress/domain/repository/milestone_repository.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/create_milestone.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/get_milestone_details.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/get_milestones.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/create/create_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
@@ -186,6 +190,8 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
+
+  // progress
   sl.registerLazySingleton<MilestoneDataSource>(
     () => MilestoneDataSourceImpl(
       client: sl<GraphQLClient>(),
@@ -261,6 +267,7 @@ Future<void> initializeDependencies() async {
       dataSource: sl<ProjectDataSource>(),
     ),
   );
+  //progress
   sl.registerLazySingleton<MilestoneRepository>(
     () => MilestoneRepositoryImpl(
       dataSource: sl<MilestoneDataSource>(),
@@ -485,9 +492,21 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<DeleteMaterialTransferUseCase>(
     () => DeleteMaterialTransferUseCase(
       sl<MaterialTransferRepository>(),));
-      
+
+
+  // progress 
   sl.registerLazySingleton<GetMilestonesUseCase>(
     () => GetMilestonesUseCase(
+      sl<MilestoneRepository>(),
+    ),
+  );
+    sl.registerLazySingleton<GetMilestoneDetailsUseCase>(
+    () => GetMilestoneDetailsUseCase(
+      sl<MilestoneRepository>(),
+    ),
+  );
+      sl.registerLazySingleton<CreateMilestoneUseCase>(
+    () => CreateMilestoneUseCase(
       sl<MilestoneRepository>(),
     ),
   );
@@ -634,7 +653,15 @@ Future<void> initializeDependencies() async {
     () => MaterialTransferDeleteCubit(
       sl<DeleteMaterialTransferUseCase>(),
     ),);
+
+  // progress
   sl.registerFactory<MilestonesCubit>(
     () => MilestonesCubit(sl<GetMilestonesUseCase>()),
+  );
+    sl.registerFactory<MilestoneDetailsCubit>(
+    () => MilestoneDetailsCubit(sl<GetMilestoneDetailsUseCase>()),
+  );
+      sl.registerFactory<CreateMilestoneCubit>(
+    () => CreateMilestoneCubit(sl<CreateMilestoneUseCase>()),
   );
 }

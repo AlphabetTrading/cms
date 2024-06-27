@@ -10,15 +10,19 @@ class CustomTextFormField extends StatelessWidget {
   final bool? readOnly;
   final String? initialValue;
   final TextEditingController? controller;
+  final Widget? prefixIcon;
+  final void Function()? onTap;
 
   const CustomTextFormField(
       {super.key,
       required this.label,
+      this.prefixIcon,
       this.errorMessage,
       this.onChanged,
       this.validator,
       this.keyboardType,
       this.maxLines,
+      this.onTap,
       this.readOnly,
       this.initialValue,
       this.controller});
@@ -43,6 +47,7 @@ class CustomTextFormField extends StatelessWidget {
           onChanged: onChanged,
           validator: validator,
           maxLines: maxLines ?? 1,
+          onTap:onTap,
           decoration: InputDecoration(
             // enabledBorder: border,
             // focusedBorder: border.copyWith(
@@ -63,7 +68,8 @@ class CustomTextFormField extends StatelessWidget {
             // hintText: hint,
             errorText: errorMessage,
             // focusColor: colors.primary,
-            // prefixIcon: Icon(Icons.superscript_outlined),
+            prefixIcon: prefixIcon,
+          
           ),
         )
       ],

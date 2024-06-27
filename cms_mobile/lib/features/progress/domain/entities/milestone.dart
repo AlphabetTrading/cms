@@ -1,7 +1,8 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/progress/domain/entities/Task.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 import 'package:equatable/equatable.dart';
 
 class MilestoneEntity extends Equatable {
@@ -52,9 +53,24 @@ class MilestoneEntityListWithMeta {
 }
 
 class CreateMilestoneParamsEntity extends Equatable {
+  final String createdById;
+  final String? description;
+  final DateTime dueDate;
+  final String name;
+  final String projectId;
+  final UseType stage;
+
+  const CreateMilestoneParamsEntity(
+      {required this.createdById,
+      required this.description,
+      required this.dueDate,
+      required this.name,
+      required this.projectId,
+      required this.stage});
+
   @override
-  // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props =>
+      [createdById, description, dueDate, name, projectId, stage];
 }
 
 class EditMilestoneParamsEntity extends Equatable {

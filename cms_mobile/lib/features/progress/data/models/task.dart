@@ -1,5 +1,5 @@
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/progress/domain/entities/Task.dart';
+import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 
 class TaskModel extends TaskEntity {
   const TaskModel({
