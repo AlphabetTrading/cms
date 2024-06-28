@@ -14,28 +14,28 @@ registerEnumType(CompletionStatus, {
 
 @ObjectType()
 export class Task extends BaseModel {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   name?: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   description?: string;
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   dueDate?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => CompletionStatus, { nullable: true })
   status?: CompletionStatus;
 
-  @Field({ nullable: true })
+  @Field(() => Priority, { nullable: true })
   priority?: Priority;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   assignedToId?: string;
 
   @Field(() => User, { nullable: true })
   assignedTo?: User;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   milestoneId?: string;
 
   @Field(() => Milestone, { nullable: true })

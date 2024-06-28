@@ -19,10 +19,10 @@ export class UpdateTaskInput extends PartialType(CreateTaskInput) {
   @Field({ nullable: true })
   dueDate?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => CompletionStatus, { nullable: true })
   status?: CompletionStatus;
 
-  @Field({ nullable: true })
+  @Field(() => Priority, { nullable: true })
   priority?: Priority;
 
   @Field({ nullable: true })

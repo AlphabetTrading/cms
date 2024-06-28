@@ -12,10 +12,10 @@ export class CreateTaskInput {
   @Field()
   dueDate: Date;
 
-  @Field()
+  @Field(() => CompletionStatus)
   status: CompletionStatus;
 
-  @Field()
+  @Field(() => Priority)
   priority: Priority;
 
   @Field()

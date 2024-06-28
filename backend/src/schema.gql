@@ -258,8 +258,8 @@ input CreateTaskInput {
   dueDate: DateTime!
   milestoneId: String!
   name: String!
-  priority: String!
-  status: String!
+  priority: Priority!
+  status: CompletionStatus!
 }
 
 input CreateUserInput {
@@ -1399,8 +1399,8 @@ type Task {
   id: ID!
   milestoneId: String
   name: String
-  priority: String
-  status: String
+  priority: Priority
+  status: CompletionStatus
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -1654,9 +1654,9 @@ input UpdateTaskInput {
   id: String!
   milestoneId: String
   name: String
-  priority: String
+  priority: Priority
   startDate: DateTime
-  status: String
+  status: CompletionStatus
 }
 
 input UpdateUserInput {
