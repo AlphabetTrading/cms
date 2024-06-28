@@ -98,7 +98,7 @@ export class TaskService {
     return updatedTask;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<Task> {
     const existingTask = await this.prisma.task.findUnique({
       where: { id: id },
     });
@@ -107,9 +107,11 @@ export class TaskService {
       throw new NotFoundException('Task not found');
     }
 
-    await this.prisma.materialReturnVoucher.delete({
+    await this.prisma.task.delete({
       where: { id },
     });
+
+    return existingTask
   }
 
   async count(where?: Prisma.TaskWhereInput): Promise<number> {

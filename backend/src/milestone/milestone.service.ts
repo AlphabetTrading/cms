@@ -153,7 +153,7 @@ export class MilestoneService {
     };
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<Milestone> {
     const existingMilestone = await this.prisma.milestone.findUnique({
       where: { id: id },
     });
@@ -162,9 +162,11 @@ export class MilestoneService {
       throw new NotFoundException('Milestone not found');
     }
 
-    await this.prisma.materialReturnVoucher.delete({
+    await this.prisma.milestone.delete({
       where: { id },
     });
+
+    return existingMilestone
   }
 
   async count(where?: Prisma.MilestoneWhereInput): Promise<number> {
