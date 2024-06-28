@@ -8,7 +8,7 @@ import 'package:equatable/equatable.dart';
 class MilestoneEntity extends Equatable {
   final String? id;
   final double? progress;
-  final String? stage;
+  final UseType? stage;
   final DateTime? dueDate;
   final DateTime? createdAt;
   final String? name;
@@ -74,9 +74,23 @@ class CreateMilestoneParamsEntity extends Equatable {
 }
 
 class EditMilestoneParamsEntity extends Equatable {
+  final String id;
+  final String createdById;
+  final String? description;
+  final DateTime dueDate;
+  final String name;
+  final UseType stage;
+
+  EditMilestoneParamsEntity(
+      {required this.id,
+      required this.createdById,
+      required this.description,
+      required this.dueDate,
+      required this.name,
+      required this.stage});
+
   @override
-  // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props => [id, createdById, description, dueDate, name, stage];
 }
 
 class GetMilestonesParamsEntity extends Equatable {

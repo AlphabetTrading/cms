@@ -6,6 +6,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/use_ty
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/create/create_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/form/milestone_form_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/form/milestone_form_state.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
@@ -18,21 +19,34 @@ import 'package:formz/formz.dart';
 
 class MilestoneForm extends StatefulWidget {
   final bool isEdit;
-  const MilestoneForm({super.key, this.isEdit = false});
+  final MilestoneEntity? milestone;
+  const MilestoneForm({super.key, this.isEdit = false, this.milestone});
 
   @override
   State<MilestoneForm> createState() => _MilestoneFormState();
 }
 
 class _MilestoneFormState extends State<MilestoneForm> {
-  final TextEditingController _dateController = TextEditingController();
+  late final TextEditingController _dateController;
+
+  @override
+  void initState() {
+    super.initState();
+    _dateController = TextEditingController(
+      text: widget.milestone?.dueDate != null
+          ? DateFormat('MMMM dd, yyyy').format(widget.milestone!.dueDate!)
+          : "",
+      
+    );
+  }
 
   Future<void> _selectDate(MilestoneFormCubit milestoneFormCubit) async {
     DateTime? picked = await showDatePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      initialDate: milestoneFormCubit.state.datePickerField.value,
+      initialDate: milestoneFormCubit.state.datePickerField.value ??
+          widget.milestone?.dueDate,
     );
     if (picked != null) {
       milestoneFormCubit.dueDateChanged(picked);
@@ -47,167 +61,200 @@ class _MilestoneFormState extends State<MilestoneForm> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MilestoneFormCubit>(
-          create: (context) => MilestoneFormCubit(),
+          create: (context) => MilestoneFormCubit(
+            description: widget.milestone?.description,
+            dueDate: widget.milestone?.dueDate,
+            stage: widget.milestone?.stage,
+            title: widget.milestone?.name,
+          ),
         ),
         BlocProvider(
           create: (context) => sl<CreateMilestoneCubit>(),
         ),
+        BlocProvider(
+          create: (context) => sl<EditMilestoneCubit>(),
+        ),
       ],
-      child: BlocConsumer<CreateMilestoneCubit, CreateMilestoneState>(
+      child: BlocConsumer<EditMilestoneCubit, EditMilestoneState>(
         listener: (context, state) {
-          if (state is CreateMilestoneSuccess) {
+          if (state is EditMilestoneSuccess) {
             Navigator.pop(context);
-            showStatusMessage(true, "Milestone created successfully");
+            showStatusMessage(Status.SUCCESS, "Milestone edited successfully");
             context.read<MilestonesCubit>().onGetMilestones(
                 getMilestonesParamsEntity: GetMilestonesParamsEntity(
                     filterMilestoneInput: null,
                     orderBy: null,
                     paginationInput: null));
-          } else if (state is CreateMilestoneFailed) {
+          } else if (state is EditMilestoneFailed) {
             Navigator.pop(context);
-            showStatusMessage(false, state.error);
+            showStatusMessage(Status.FAILED, state.error);
           }
-        
         },
-        builder: (createContext, createState) {
-          return BlocBuilder<MilestoneFormCubit, MilestoneFormState>(
-            builder: (context, state) {
-              final milestoneFormCubit = context.watch<MilestoneFormCubit>();
-              final titleField = state.titleField;
-              final descriptionField = state.descriptionField;
-              final stageDropdown = state.stageDropdown;
-              final datePickerField = state.datePickerField;
+        builder: (editContext, editState) {
+          return BlocConsumer<CreateMilestoneCubit, CreateMilestoneState>(
+              listener: (context, state) {
+                if (state is CreateMilestoneSuccess) {
+                  Navigator.pop(context);
+                  showStatusMessage(Status.SUCCESS, "Milestone created successfully");
+                  context.read<MilestonesCubit>().onGetMilestones(
+                      getMilestonesParamsEntity: GetMilestonesParamsEntity(
+                          filterMilestoneInput: null,
+                          orderBy: null,
+                          paginationInput: null));
+                } else if (state is CreateMilestoneFailed) {
+                  Navigator.pop(context);
+                  showStatusMessage(Status.FAILED, state.error);
+                }
+              },
+              builder: (createContext, createState) =>
+                  BlocBuilder<MilestoneFormCubit, MilestoneFormState>(
+                    builder: (context, state) {
+                      final milestoneFormCubit =
+                          context.watch<MilestoneFormCubit>();
+                      final titleField = state.titleField;
+                      final descriptionField = state.descriptionField;
+                      final stageDropdown = state.stageDropdown;
+                      final datePickerField = state.datePickerField;
+                      print("*****************---------*****************");
+                      print(state);
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  CustomDropdown(
-                    initialSelection: stageDropdown.value,
-                    onSelected: (dynamic value) =>
-                        milestoneFormCubit.stageChanged(value),
-                    dropdownMenuEntries: UseType.values
-                        .map((e) => DropdownMenuEntry<UseType>(
-                            label: useTypeDisplay[e] ?? "", value: e))
-                        .toList()
-                        .sublist(0, UseType.values.length - 1),
-                    enableFilter: false,
-                    errorMessage: stageDropdown.errorMessage,
-                    label: 'Project Stage',
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  CustomTextFormField(
-                    initialValue: titleField.value,
-                    label: "Milestone Title",
-                    onChanged: milestoneFormCubit.titleChanged,
-                    errorMessage: titleField.errorMessage,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  CustomTextFormField(
-                    controller: _dateController,
-                    // initialValue: datePickerField.value != null
-                    //     ? datePickerField.value.toString()
-                    //     : "",
-                    label: "Due Date",
-                    // onChanged: milestoneFormCubit.dueDateChanged,
-                    errorMessage: datePickerField.errorMessage,
-                    readOnly: true,
-                    prefixIcon: Icon(Icons.calendar_today_outlined),
-                    onTap: () {
-                      _selectDate(milestoneFormCubit);
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          CustomDropdown(
+                            initialSelection: stageDropdown.value,
+                            onSelected: (dynamic value) =>
+                                milestoneFormCubit.stageChanged(value),
+                            dropdownMenuEntries: UseType.values
+                                .map((e) => DropdownMenuEntry<UseType>(
+                                    label: useTypeDisplay[e] ?? "", value: e))
+                                .toList()
+                                .sublist(0, UseType.values.length - 1),
+                            enableFilter: false,
+                            errorMessage: stageDropdown.errorMessage,
+                            label: 'Project Stage',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextFormField(
+                            initialValue: titleField.value,
+                            label: "Milestone Title",
+                            onChanged: milestoneFormCubit.titleChanged,
+                            errorMessage: titleField.errorMessage,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextFormField(
+                            controller: _dateController,
+                            // initialValue: datePickerField.value != null
+                            //     ? datePickerField.value.toString()
+                            //     : "",
+                            label: "Due Date",
+                            // onChanged: milestoneFormCubit.dueDateChanged,
+                            errorMessage: datePickerField.errorMessage,
+                            readOnly: true,
+                            prefixIcon: Icon(Icons.calendar_today_outlined),
+                            onTap: () {
+                              _selectDate(milestoneFormCubit);
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          CustomTextFormField(
+                            initialValue: descriptionField.value,
+                            label: "Description",
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 3,
+                            onChanged: milestoneFormCubit.descriptionChanged,
+                            errorMessage: descriptionField.errorMessage,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            onPressed: (createState is CreateMilestoneLoading ||
+                                    editState is EditMilestoneLoading)
+                                ? null
+                                : () {
+                                    milestoneFormCubit.onSubmit();
+                                    if (milestoneFormCubit.state.isValid) {
+                                      if (widget.isEdit) {
+                                        context
+                                            .read<EditMilestoneCubit>()
+                                            .onEditMilestone(
+                                                params: EditMilestoneParamsEntity(
+                                                    id: widget.milestone?.id ??
+                                                        "",
+                                                    createdById:
+                                                        widget
+                                                                .milestone
+                                                                ?.createdBy
+                                                                ?.id ??
+                                                            "",
+                                                    description:
+                                                        descriptionField.value,
+                                                    dueDate:
+                                                        datePickerField.value!,
+                                                    name: titleField.value,
+                                                    stage:
+                                                        stageDropdown.value));
+                                      } else {
+                                        context
+                                            .read<CreateMilestoneCubit>()
+                                            .onCreateMilestone(
+                                                params: CreateMilestoneParamsEntity(
+                                                    createdById: USER_ID,
+                                                    description:
+                                                        descriptionField.value,
+                                                    dueDate:
+                                                        datePickerField.value!,
+                                                    name: titleField.value,
+                                                    projectId: context
+                                                            .read<ProjectBloc>()
+                                                            .state
+                                                            .selectedProjectId ??
+                                                        "",
+                                                    stage:
+                                                        stageDropdown.value));
+                                      }
+                                      // Navigator.pop(context);
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                (createState is CreateMilestoneLoading ||
+                                        editState is EditMilestoneLoading)
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(right: 8),
+                                        child: SizedBox(
+                                            height: 25,
+                                            width: 25,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 3,
+                                            )),
+                                      )
+                                    : const SizedBox(),
+                                widget.isEdit
+                                    ? const Text('Save Changes')
+                                    : const Text('Create Milestone'),
+                              ],
+                            ),
+                          )
+                        ],
+                      );
                     },
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  CustomTextFormField(
-                    initialValue: descriptionField.value,
-                    label: "Description",
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 3,
-                    onChanged: milestoneFormCubit.descriptionChanged,
-                    errorMessage: descriptionField.errorMessage,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: (createState is CreateMilestoneLoading)
-                        ? null
-                        : () {
-                            milestoneFormCubit.onSubmit();
-                            if (milestoneFormCubit.state.isValid) {
-                              if (widget.isEdit) {
-                                // final updated = MaterialIssueMaterialEntity(
-                                //   material: state.warehouseProducts?.firstWhere(
-                                //       (element) =>
-                                //           element.productVariant.id ==
-                                //           materialDropdown.value),
-                                //   useType: useTypeDropdown.value,
-                                //   subStructureDescription:
-                                //       subStructureUseDropdown.value,
-                                //   superStructureDescription:
-                                //       superStructureUseDropdown.value,
-                                //   quantity: double.parse(quantityField.value),
-                                //   remark: remarkField.value,
-                                // );
-
-                                // BlocProvider.of<MaterialIssueLocalBloc>(context).add(
-                                //     EditMaterialIssueMaterialLocal(
-                                //         updated, widget.index));
-                              } else {
-                                context
-                                    .read<CreateMilestoneCubit>()
-                                    .onCreateMilestone(
-                                        params: CreateMilestoneParamsEntity(
-                                            createdById: USER_ID,
-                                            description: descriptionField.value,
-                                            dueDate: datePickerField.value!,
-                                            name: titleField.value,
-                                            projectId: context
-                                                    .read<ProjectBloc>()
-                                                    .state
-                                                    .selectedProjectId ??
-                                                "",
-                                            stage: stageDropdown.value));
-                              }
-                              // Navigator.pop(context);
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        createState is CreateMilestoneLoading
-                            ? const Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: SizedBox(
-                                    height: 25,
-                                    width: 25,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                    )),
-                              )
-                            : const SizedBox(),
-                        widget.isEdit
-                            ? const Text('Save Changes')
-                            : const Text('Create Milestone'),
-                      ],
-                    ),
-                  )
-                ],
-              );
-            },
-          );
+                  ));
         },
       ),
     );
@@ -268,7 +315,7 @@ class TitleField extends FormzInput<String, TitleValidationError> {
 enum DatePickerError { empty }
 
 class DatePickerField extends FormzInput<DateTime?, DatePickerError> {
-  const DatePickerField.pure([DateTime? value]) : super.pure(null);
+  const DatePickerField.pure([DateTime? value = null]) : super.pure(value);
   const DatePickerField.dirty([DateTime? value]) : super.dirty(value);
 
   String? get errorMessage {

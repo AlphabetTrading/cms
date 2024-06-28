@@ -28,16 +28,15 @@ class MilestoneRepositoryImpl extends MilestoneRepository {
   }
 
   @override
-  Future<DataState<String>> deleteMilestone({required String materialIssueId}) {
-    // TODO: implement deleteMilestone
-    throw UnimplementedError();
+  Future<DataState<String>> deleteMilestone({required String milestoneId}) {
+    return dataSource.deleteMilestone(milestoneId: milestoneId);
   }
 
   @override
   Future<DataState<String>> editMilestone(
       {required EditMilestoneParamsEntity params}) {
-    // TODO: implement editMilestone
-    throw UnimplementedError();
+    return dataSource.editMilestone(
+        editMilestoneParamsModel: EditMilestoneParamsModel.fromEntity(params));
   }
 
   @override

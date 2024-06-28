@@ -12,10 +12,10 @@ class MilestoneFormCubit extends Cubit<MilestoneFormState> {
     DateTime? dueDate,
   }) : super(MilestoneFormState(
           stageDropdown: StageDropdown.pure(stage ?? UseType.DEFAULT_VALUE),
-          titleField: TitleField.pure(description ?? ""),
+          titleField: TitleField.pure(title ?? ""),
           descriptionField: DescriptionField.pure(description ?? ""),
-          datePickerField: DatePickerField.pure(dueDate ?? DateTime.now()),
-        ));
+          datePickerField: DatePickerField.pure(dueDate)),
+        );
 
   void stageChanged(UseType value) {
     final StageDropdown stageDropdown = StageDropdown.dirty(value);

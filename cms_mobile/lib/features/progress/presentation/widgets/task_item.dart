@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
+import 'package:cms_mobile/features/progress/presentation/utils/progress_enums.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -39,7 +40,7 @@ class TaskItem extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(task.priority??"N/A",
+                    Text(priorityDisplay[task.priority]??"N/A",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.w600)),
@@ -53,8 +54,8 @@ class TaskItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context)
                             .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w800)),
+                            .labelMedium
+                            ?.copyWith(fontWeight: FontWeight.w400)),
                   ],
                 ),
                 PopupMenuButton<String>(

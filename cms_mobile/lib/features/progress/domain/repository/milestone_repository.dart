@@ -15,5 +15,5 @@ abstract class MilestoneRepository {
   Future<DataState<String>> editMilestone(
       {required EditMilestoneParamsEntity params});
 
-  Future<DataState<String>> deleteMilestone({required String materialIssueId});
+  Future<DataState<String>> deleteMilestone({required String milestoneId});
 }

@@ -1,4 +1,6 @@
+import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
+import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/widgets/milestone_detail_item.dart';
 import 'package:cms_mobile/features/progress/presentation/widgets/tasks_section.dart';
@@ -29,12 +31,6 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
 
   @override
   void initState() {
-    data = [
-      _ChartData('David', 25),
-      _ChartData('Steve', 38),
-      _ChartData('Jack', 34),
-      _ChartData('Others', 52)
-    ];
     _tooltip = TooltipBehavior(enable: true);
     super.initState();
   }
@@ -72,7 +68,7 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              milestone.stage ?? "N/A",
+              useTypeDisplay[milestone.stage] ?? "N/A",
               style: Theme.of(context)
                   .textTheme
                   .labelMedium
@@ -135,6 +131,30 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
             }
             MilestoneEntity milestone =
                 (state as MilestoneDetailsSuccess).milestone!;
+            int totalTasks = milestone.tasks?.length ?? 0;
+            int todo = milestone.tasks
+                    ?.where((element) => element.status == CompletionStatus.TODO)
+                    .length ??
+                0;
+            int ongoing = milestone.tasks
+                    ?.where((element) => element.status == CompletionStatus.ONGOING)
+                    .length ??
+                0;
+            int completed = milestone.tasks
+                    ?.where((element) => element.status == CompletionStatus.COMPLETED)
+                    .length ??
+                0;
+            data = [
+              _ChartData(
+                'Todo',
+                totalTasks == 0 ? 0.0 : todo * 100 / totalTasks,
+              ),
+              _ChartData(
+                  'Ongoing', totalTasks == 0 ? 0.0 : ongoing * 100 / totalTasks),
+              _ChartData(
+                  'Completed', totalTasks == 0 ? 0.0 : completed * 100 / totalTasks),
+            ];
+
             return Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -159,7 +179,7 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
                     Text(milestone.description ?? 'No description provided',
                         style: Theme.of(context).textTheme.labelMedium),
                     const SizedBox(height: 20),
-                    Text('Overview',
+                    Text('Milestone Progress',
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge
@@ -172,10 +192,12 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
                               dataSource: data,
                               xValueMapper: (_ChartData data, _) => data.x,
                               yValueMapper: (_ChartData data, _) => data.y,
-                              dataLabelMapper: (_ChartData data, _) => data.y.toString(),
+                              dataLabelMapper: (_ChartData data, _) =>
+                                  "${data.y}%".toString(),
                               dataLabelSettings: DataLabelSettings(
                                   isVisible: true,
                                   labelPosition: ChartDataLabelPosition.outside,
+                                  showZeroValue: false,
                                   // Renders background rectangle and fills it with series color
                                   useSeriesColor: true),
                               name: 'Gold')
