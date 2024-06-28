@@ -1,4 +1,5 @@
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
+import 'package:cms_mobile/features/progress/presentation/utils/progress_enums.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -51,14 +52,14 @@ class _TaskDetailsState extends State<TaskDetails> {
                   ?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
             ),
             Text(
-              task.priority ?? "N/A",
+              priorityDisplay[task.priority] ?? "N/A",
               style: Theme.of(context)
                   .textTheme
                   .labelMedium
                   ?.copyWith(color: Theme.of(context).colorScheme.onSecondary),
             ),
             Text(
-              task.status ?? "N/A",
+              completionStatusDisplay[task.status] ?? "N/A",
               style: Theme.of(context)
                   .textTheme
                   .labelMedium

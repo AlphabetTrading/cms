@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class TaskSection extends StatefulWidget {
   final List<TaskEntity>? tasks;
-  const TaskSection({super.key,required this.tasks});
+  const TaskSection({super.key, required this.tasks});
 
   @override
   State<TaskSection> createState() => _TaskSectionState();
@@ -51,6 +51,19 @@ class _TaskSectionState extends State<TaskSection>
 
   @override
   Widget build(BuildContext context) {
+    List<TaskEntity> todo = widget.tasks
+            ?.where((element) => element.status == CompletionStatus.TODO)
+            .toList() ??
+        [];
+    List<TaskEntity> ongoing = widget.tasks
+            ?.where((element) => element.status == CompletionStatus.ONGOING)
+            .toList() ??
+        [];
+    List<TaskEntity> completed = widget.tasks
+            ?.where((element) => element.status == CompletionStatus.COMPLETED)
+            .toList() ??
+        [];
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -79,20 +92,20 @@ class _TaskSectionState extends State<TaskSection>
             labelPadding: EdgeInsets.symmetric(horizontal: 12.0),
             isScrollable: true,
             tabs: [
-              Tab(child: _buildTabItem(idx: 0, count: 10)),
-              Tab(child: _buildTabItem(idx: 1, count: 3)),
-              Tab(child: _buildTabItem(idx: 2, count: 0)),
-              Tab(child: _buildTabItem(idx: 3, count: 4)),
+              Tab(
+                  child:
+                      _buildTabItem(idx: 0, count: widget.tasks?.length ?? 0)),
+              Tab(child: _buildTabItem(idx: 1, count: todo.length)),
+              Tab(child: _buildTabItem(idx: 2, count: ongoing.length)),
+              Tab(child: _buildTabItem(idx: 3, count: completed.length)),
             ]),
         SizedBox(
           height: 300,
           child: TabBarView(controller: tabController, children: [
-              TasksList(tasks: widget.tasks),
-              TasksList(tasks: widget.tasks),
-              TasksList(tasks: widget.tasks),
-              TasksList(tasks: widget.tasks),
-
-        
+            TasksList(tasks: widget.tasks),
+            TasksList(tasks: todo),
+            TasksList(tasks: ongoing),
+            TasksList(tasks: completed),
           ]),
         ),
       ],

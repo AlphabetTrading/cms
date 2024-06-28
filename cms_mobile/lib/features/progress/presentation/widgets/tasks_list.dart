@@ -9,16 +9,17 @@ class TasksList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("taskssssssssss");
-    print(tasks);
-    return Expanded(
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: tasks?.length??0,
-        itemBuilder: (BuildContext context, int index) {
-          return TaskItem(task:tasks![index]);
-          
-        },
+    return Padding(
+      padding: const EdgeInsets.only(top:8.0),
+      child: Expanded(
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: tasks?.length??0,
+          itemBuilder: (BuildContext context, int index) {
+            return TaskItem(task:tasks![index]);
+            
+          },
+        ),
       ),
     );
   }

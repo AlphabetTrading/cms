@@ -33,30 +33,30 @@ class MaterialIssueInputList extends StatelessWidget {
             isScrollControlled: true,
             context: context,
             builder: (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<MaterialIssueFormCubit>(
-                    create: (_) => MaterialIssueFormCubit(
-                      materialId: materialIssue.material!.productVariant.id,
-                      quantity: materialIssue.quantity,
-                      remark: materialIssue.remark,
-                      subUseDescription: materialIssue.subStructureDescription,
-                      superUseDescription:
-                          materialIssue.superStructureDescription,
-                      useType: materialIssue.useType,
-                      inStock: materialIssue.material!.quantity,
-                    ),
+              providers: [
+                BlocProvider<MaterialIssueFormCubit>(
+                  create: (_) => MaterialIssueFormCubit(
+                    materialId: materialIssue.material!.productVariant.id,
+                    quantity: materialIssue.quantity,
+                    remark: materialIssue.remark,
+                    subUseDescription: materialIssue.subStructureDescription,
+                    superUseDescription:
+                        materialIssue.superStructureDescription,
+                    useType: materialIssue.useType,
+                    inStock: materialIssue.material!.quantity,
+                  ),
+                )
+              ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: CreateMaterialIssueForm(isEdit: true, index: index),
                   )
                 ],
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child:
-                          CreateMaterialIssueForm(isEdit: true, index: index),
-                    )
-                  ],
-                )),
+              ),
+            ),
           ),
         );
       },

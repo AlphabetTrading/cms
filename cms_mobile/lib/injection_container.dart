@@ -84,10 +84,14 @@ import 'package:cms_mobile/features/progress/data/data_source/remote_data_source
 import 'package:cms_mobile/features/progress/data/repository/milestone_repository_impl.dart';
 import 'package:cms_mobile/features/progress/domain/repository/milestone_repository.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/create_milestone.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/delete_milestone.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/edit_milestone.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/get_milestone_details.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/get_milestones.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/create/create_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
@@ -403,7 +407,6 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-
   sl.registerLazySingleton<GetProjectsUseCase>(
     () => GetProjectsUseCase(
       sl<ProjectRepository>(),
@@ -490,23 +493,33 @@ Future<void> initializeDependencies() async {
   );
 
   sl.registerLazySingleton<DeleteMaterialTransferUseCase>(
-    () => DeleteMaterialTransferUseCase(
-      sl<MaterialTransferRepository>(),));
+      () => DeleteMaterialTransferUseCase(
+            sl<MaterialTransferRepository>(),
+          ));
 
-
-  // progress 
+  // progress
   sl.registerLazySingleton<GetMilestonesUseCase>(
     () => GetMilestonesUseCase(
       sl<MilestoneRepository>(),
     ),
   );
-    sl.registerLazySingleton<GetMilestoneDetailsUseCase>(
+  sl.registerLazySingleton<GetMilestoneDetailsUseCase>(
     () => GetMilestoneDetailsUseCase(
       sl<MilestoneRepository>(),
     ),
   );
-      sl.registerLazySingleton<CreateMilestoneUseCase>(
+  sl.registerLazySingleton<CreateMilestoneUseCase>(
     () => CreateMilestoneUseCase(
+      sl<MilestoneRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<EditMilestoneUseCase>(
+    () => EditMilestoneUseCase(
+      sl<MilestoneRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<DeleteMilestoneUseCase>(
+    () => DeleteMilestoneUseCase(
       sl<MilestoneRepository>(),
     ),
   );
@@ -563,7 +576,6 @@ Future<void> initializeDependencies() async {
     () => MaterialIssueDetailsCubit(sl<GetMaterialIssueDetailsUseCase>()),
   );
 
-
   sl.registerFactory<MaterialIssueLocalBloc>(
     () => MaterialIssueLocalBloc(),
   );
@@ -574,8 +586,7 @@ Future<void> initializeDependencies() async {
 
   // material receive
   sl.registerFactory<MaterialReceiveBloc>(
-    () => MaterialReceiveBloc(
-        sl<GetMaterialReceivesUseCase>(),
+    () => MaterialReceiveBloc(sl<GetMaterialReceivesUseCase>(),
         sl<GetMaterialReceiveDetailsUseCase>()),
   );
 
@@ -652,16 +663,23 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialTransferDeleteCubit>(
     () => MaterialTransferDeleteCubit(
       sl<DeleteMaterialTransferUseCase>(),
-    ),);
+    ),
+  );
 
   // progress
   sl.registerFactory<MilestonesCubit>(
     () => MilestonesCubit(sl<GetMilestonesUseCase>()),
   );
-    sl.registerFactory<MilestoneDetailsCubit>(
+  sl.registerFactory<MilestoneDetailsCubit>(
     () => MilestoneDetailsCubit(sl<GetMilestoneDetailsUseCase>()),
   );
-      sl.registerFactory<CreateMilestoneCubit>(
+  sl.registerFactory<CreateMilestoneCubit>(
     () => CreateMilestoneCubit(sl<CreateMilestoneUseCase>()),
+  );
+  sl.registerFactory<EditMilestoneCubit>(
+    () => EditMilestoneCubit(sl<EditMilestoneUseCase>()),
+  );
+  sl.registerFactory<DeleteMilestoneCubit>(
+    () => DeleteMilestoneCubit(sl<DeleteMilestoneUseCase>()),
   );
 }

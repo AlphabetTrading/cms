@@ -13,7 +13,7 @@ abstract class MilestoneDataSource {
       {required String params});
   Future<DataState<String>> editMilestone(
       {required EditMilestoneParamsModel editMilestoneParamsModel});
-  Future<DataState<String>> deleteMilestone({required String materialIssueId});
+  Future<DataState<String>> deleteMilestone({required String milestoneId});
 }
 
 class MilestoneDataSourceImpl extends MilestoneDataSource {
@@ -33,6 +33,19 @@ mutation CreateMilestone($createMilestoneInput: CreateMilestoneInput!) {
   ''';
 
   static const String _deleteMilestoneMutation = r'''
+mutation DeleteMilestone($deleteMilestoneId: String!) {
+  deleteMilestone(id: $deleteMilestoneId) {
+    id
+  }
+}
+''';
+
+  static const String _editMilestoneMutation = r'''
+mutation UpdateMilestone($updateMilestoneInput: UpdateMilestoneInput!) {
+  updateMilestone(updateMilestoneInput: $updateMilestoneInput) {
+    id
+  }
+}
 ''';
 
   // Override the function in the implementation class
@@ -41,9 +54,7 @@ mutation CreateMilestone($createMilestoneInput: CreateMilestoneInput!) {
       {required CreateMilestoneParamsModel createMilestoneParamsModel}) async {
     final MutationOptions options = MutationOptions(
       document: gql(_createMilestoneMutation),
-      variables: {
-        "createMilestoneInput": createMilestoneParamsModel.toJson()
-      },
+      variables: {"createMilestoneInput": createMilestoneParamsModel.toJson()},
     );
 
     try {
@@ -77,6 +88,10 @@ query Items($filterMilestoneInput: FilterMilestoneInput, $paginationInput: Pagin
       dueDate
       createdAt
       name
+      description
+      Tasks {
+       id
+      }
       createdBy {
             fullName
         id
@@ -99,6 +114,8 @@ query Items($filterMilestoneInput: FilterMilestoneInput, $paginationInput: Pagin
     return _client
         .query(QueryOptions(
       document: gql(fetchMilestonesQuery),
+      fetchPolicy: FetchPolicy.networkOnly
+    
       // variables: {"": params},
     ))
         .then((response) {
@@ -174,8 +191,7 @@ query GetMilestone($getMilestoneId: String!) {
         );
       }
 
-      final milestone =
-          MilestoneModel.fromJson(response.data!['getMilestone']);
+      final milestone = MilestoneModel.fromJson(response.data!['getMilestone']);
 
       return DataSuccess(milestone);
     });
@@ -185,10 +201,8 @@ query GetMilestone($getMilestoneId: String!) {
   Future<DataState<String>> editMilestone(
       {required EditMilestoneParamsModel editMilestoneParamsModel}) async {
     final MutationOptions options = MutationOptions(
-      document: gql(_createMilestoneMutation),
-      variables: {
-        // "createMilestoneInput": editMilestoneParamsModel.toJson()
-      },
+      document: gql(_editMilestoneMutation),
+      variables: {"updateMilestoneInput": editMilestoneParamsModel.toJson()},
     );
 
     try {
@@ -211,10 +225,10 @@ query GetMilestone($getMilestoneId: String!) {
 
   @override
   Future<DataState<String>> deleteMilestone(
-      {required String materialIssueId}) async {
+      {required String milestoneId}) async {
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMilestoneMutation),
-      variables: {"deleteMilestoneId": materialIssueId},
+      variables: {"deleteMilestoneId": milestoneId},
     );
 
     try {
