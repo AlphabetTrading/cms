@@ -212,7 +212,6 @@ input CreateProductVariantInput {
 input CreateProformaInput {
   approvedById: String
   materialRequestItemId: String!
-  photo: String!
   preparedById: String!
   projectId: String!
   remark: String
@@ -893,7 +892,7 @@ type Mutation {
   createPriceHistory(createPriceHistoryInput: CreatePriceHistoryInput!): PriceHistory!
   createProduct(createProductInput: CreateProductInput!): Product!
   createProductVariant(createProductVariantInput: CreateProductVariantInput!): ProductVariant!
-  createProforma(createProformaInput: CreateProformaInput!): Proforma!
+  createProforma(createProformaInput: CreateProformaInput!, photo: Upload): Proforma!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
   createTask(createTaskInput: CreateTaskInput!): Task!
@@ -933,7 +932,7 @@ type Mutation {
   updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
-  updateProforma(updateProformaInput: UpdateProformaInput!): Proforma!
+  updateProforma(newPhoto: Upload, updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
@@ -1622,7 +1621,6 @@ input UpdateProformaInput {
   approvedById: String
   id: String!
   materialRequestItemId: String
-  photo: String
   preparedById: String
   projectId: String
   remark: String

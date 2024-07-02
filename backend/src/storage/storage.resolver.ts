@@ -2,11 +2,12 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import {
   BadRequestException,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import * as FileUpload from 'graphql-upload/Upload.js';
-
+import { v4 as uuidv4 } from 'uuid';
 @Resolver()
 export class StorageResolver {
   constructor(private readonly storageService: StorageService) {}
@@ -17,13 +18,13 @@ export class StorageResolver {
     file: FileUpload,
   ) {
     try {
-      if (
-        ['JPG', 'JPEG', 'PNG', 'WEBP'].indexOf(
-          file.filename.split('.').pop().toUpperCase(),
-        ) == -1
-      )
-        throw new BadRequestException('File type must an image');
-
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      const fileExtension = file.filename.split('.').pop().toLowerCase();
+  
+      if (!allowedExtensions.includes(fileExtension)) {
+        throw new BadRequestException('File type must be an image');
+      }
+  
       const { createReadStream } = file;
 
       const stream = createReadStream();
@@ -43,9 +44,12 @@ export class StorageResolver {
 
         stream.on('error', reject);
       });
+
+      const newFilename = `${uuidv4()}.${fileExtension}`;
+
       const fileData = await this.storageService.uploadPublicFile(
         buffer,
-        file.filename,
+        newFilename,
       );
       return fileData.url;
     } catch (error) {

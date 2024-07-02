@@ -26,10 +26,6 @@ export class UpdateProformaInput {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  photo?: string;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
   preparedById?: string;
 
   @IsOptional()

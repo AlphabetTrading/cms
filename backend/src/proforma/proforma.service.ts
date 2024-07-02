@@ -6,13 +6,19 @@ import { Proforma } from './model/proforma.model';
 import { UpdateProformaInput } from './dto/update-proforma.input';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
+import * as FileUpload from 'graphql-upload/Upload.js';
+import { StorageResolver } from 'src/storage/storage.resolver';
 
 @Injectable()
 export class ProformaService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly storageResolver: StorageResolver,
+  ) {}
 
   async createProforma(
     createProformaInput: CreateProformaInput,
+    photo?: FileUpload,
   ): Promise<Proforma> {
     const lastProforma = await this.prisma.proforma.findFirst({
       select: {
@@ -31,9 +37,16 @@ export class ProformaService {
     const serialNumber =
       'PRO/' + currentSerialNumber.toString().padStart(5, '0');
 
+    console.log(photo);
+    let photoUrl: string | undefined;
+    if (photo) {
+      photoUrl = await this.storageResolver.uploadFile(photo);
+    }
+
     const createdProforma = await this.prisma.proforma.create({
       data: {
         ...createProformaInput,
+        photo: photoUrl,
         serialNumber: serialNumber,
       },
       include: {
@@ -142,42 +155,53 @@ export class ProformaService {
     return proforma;
   }
 
-  async updateProforma(input: UpdateProformaInput): Promise<Proforma> {
+  async updateProforma(
+    input: UpdateProformaInput,
+    newPhoto: FileUpload,
+  ): Promise<Proforma> {
+    let newPhotoUrl: string | undefined;
     const { id: proformaId, ...updateData } = input;
 
-    return await this.prisma.$transaction(async (prisma) => {
-      const existingProforma = await prisma.proforma.findUnique({
-        where: { id: proformaId },
-      });
+    const existingProforma = await this.prisma.proforma.findUnique({
+      where: { id: proformaId },
+    });
 
-      if (!existingProforma) {
-        throw new NotFoundException('Proforma not found');
+    if (!existingProforma) {
+      throw new NotFoundException('Proforma not found');
+    }
+
+    if (newPhoto) {
+      newPhotoUrl = await this.storageResolver.uploadFile(newPhoto);
+
+      if (existingProforma.photo) {
+        await this.storageResolver.deleteFile(existingProforma.photo);
       }
+    }
 
-      const updatedProforma = await this.prisma.proforma.update({
-        where: { id: proformaId },
-        data: {
-          ...updateData,
-        },
-        include: {
-          materialRequestItem: {
-            include: {
-              MaterialRequestVoucher: true,
-              productVariant: {
-                include: {
-                  product: true,
-                },
+    const updatedProforma = await this.prisma.proforma.update({
+      where: { id: proformaId },
+      data: {
+        ...updateData,
+        photo: newPhotoUrl || existingProforma.photo,
+      },
+      include: {
+        materialRequestItem: {
+          include: {
+            MaterialRequestVoucher: true,
+            productVariant: {
+              include: {
+                product: true,
               },
             },
           },
-          approvedBy: true,
-          preparedBy: true,
-          Project: true,
         },
-      });
-
-      return updatedProforma;
+        approvedBy: true,
+        preparedBy: true,
+        Project: true,
+      },
     });
+
+    return updatedProforma;
   }
 
   async deleteProforma(proformaId: string): Promise<Proforma> {
@@ -193,7 +217,7 @@ export class ProformaService {
       where: { id: proformaId },
     });
 
-    return existingProforma
+    return existingProforma;
   }
 
   async getProformaApprovers(projectId?: string) {

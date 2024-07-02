@@ -21,10 +21,6 @@ export class CreateProformaInput {
 
   @IsNotEmpty()
   @Field(() => String)
-  photo: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
   preparedById: string;
 
   @IsOptional()

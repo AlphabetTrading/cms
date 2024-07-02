@@ -11,6 +11,8 @@ import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Proforma } from './model/proforma.model';
 import { UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import * as FileUpload from 'graphql-upload/Upload.js';
 
 @UseGuards(GqlAuthGuard)
 @Resolver(() => Proforma)
@@ -98,9 +100,10 @@ export class ProformaResolver {
   async createProforma(
     @Args('createProformaInput')
     createProforma: CreateProformaInput,
+    @Args('photo', { type: () => GraphQLUpload, nullable: true }) photo?: FileUpload,
   ) {
     try {
-      return await this.proformaService.createProforma(createProforma);
+      return await this.proformaService.createProforma(createProforma, photo);
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Error creating proforma!');
@@ -111,9 +114,10 @@ export class ProformaResolver {
   async updateProforma(
     @Args('updateProformaInput')
     updateProformaInput: UpdateProformaInput,
+    @Args('newPhoto', { type: () => GraphQLUpload, nullable: true }) newPhoto?: FileUpload,
   ) {
     try {
-      return this.proformaService.updateProforma(updateProformaInput);
+      return this.proformaService.updateProforma(updateProformaInput, newPhoto);
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Error updating proforma!');
