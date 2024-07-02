@@ -26,7 +26,7 @@ export class MaterialIssueService {
           serialNumber: true,
         },
         orderBy: {
-          createdAt: 'desc',
+          serialNumber: 'desc',
         },
       });
     let currentSerialNumber = 1;

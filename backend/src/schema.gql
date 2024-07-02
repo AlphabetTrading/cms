@@ -210,10 +210,12 @@ input CreateProductVariantInput {
 }
 
 input CreateProformaInput {
-  description: String!
-  materialRequestId: String!
-  photos: [String!]!
+  approvedById: String
+  materialRequestItemId: String!
+  photo: String!
+  preparedById: String!
   projectId: String!
+  remark: String
   vendor: String!
 }
 
@@ -393,11 +395,13 @@ type DocumentTransaction {
 }
 
 enum DocumentType {
+  DAILY_SITE_DATA
   MATERIAL_ISSUE
   MATERIAL_RECEIVING
   MATERIAL_REQUEST
   MATERIAL_RETURN
   MATERIAL_TRANSFER
+  PROFORMA
   PURCHASE_ORDER
 }
 
@@ -524,7 +528,6 @@ input FilterMilestoneInput {
   project: FilterProjectInput
   projectId: String
   stage: UseType
-  task: FilterTaskInput
 }
 
 input FilterPriceHistoryInput {
@@ -551,11 +554,11 @@ input FilterProductVariantInput {
 
 input FilterProformaInput {
   createdAt: DateTimeFilter
-  description: StringFilter
   id: String
-  materialRequestId: String
+  materialRequestItemId: String
   project: FilterProjectInput
   projectId: String
+  remark: StringFilter
   updatedAt: DateTimeFilter
   vendor: String
 }
@@ -736,6 +739,7 @@ type MaterialRequestItem {
   id: ID!
   productVariant: ProductVariant
   productVariantId: String
+  proformas: [Proforma!]
   quantity: Float
   remark: String
 
@@ -875,6 +879,7 @@ type Mutation {
   approveMaterialRequest(decision: ApprovalStatus!, materialRequestId: String!): MaterialRequestVoucher!
   approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
   approveMaterialTransfer(decision: ApprovalStatus!, materialTransferId: String!): MaterialTransferVoucher!
+  approveProforma(decision: ApprovalStatus!, proformaId: String!): Proforma!
   approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
   createCompanyOwner(createOwner: CreateOwnerInput!): User!
@@ -928,7 +933,7 @@ type Mutation {
   updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
-  updateProforma(id: String!, updateProformaInput: UpdateProformaInput!): Proforma!
+  updateProforma(updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
@@ -1218,13 +1223,22 @@ type ProductVariant {
 }
 
 type Proforma {
+  Project: Project
+  approvedBy: User
+  approvedById: String
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  materialRequestId: String
-  photos: [String!]
+  materialRequestItem: MaterialRequestItem
+  materialRequestItemId: String
+  photo: String
+  preparedBy: User
+  preparedById: String
   projectId: String
+  remark: String
   serialNumber: String
+  status: ApprovalStatus
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -1605,10 +1619,14 @@ input UpdateProductVariantInput {
 }
 
 input UpdateProformaInput {
-  description: String
-  materialRequestId: String
-  photos: [String!]!
+  approvedById: String
+  id: String!
+  materialRequestItemId: String
+  photo: String
+  preparedById: String
   projectId: String
+  remark: String
+  status: ApprovalStatus
   vendor: String
 }
 

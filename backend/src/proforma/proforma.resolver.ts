@@ -6,10 +6,13 @@ import { PaginationProformas } from 'src/common/pagination/pagination-info';
 import { FilterProformaInput } from './dto/filter-proforma.input';
 import { OrderByProformaInput } from './dto/order-by-proforma.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
-import { Prisma } from '@prisma/client';
-import { BadRequestException } from '@nestjs/common';
+import { ApprovalStatus, Prisma, User } from '@prisma/client';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Proforma } from './model/proforma.model';
+import { UserEntity } from 'src/common/decorators';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 
+@UseGuards(GqlAuthGuard)
 @Resolver(() => Proforma)
 export class ProformaResolver {
   constructor(private readonly proformaService: ProformaService) {}
@@ -35,18 +38,18 @@ export class ProformaResolver {
           id: filterProformaInput?.id,
         },
         {
-          projectId: filterProformaInput.projectId,
+          projectId: filterProformaInput?.projectId,
         },
         {
           OR: [
             {
-              materialRequestId: filterProformaInput?.materialRequestId,
+              materialRequestItemId: filterProformaInput?.materialRequestItemId,
             },
             {
               vendor: filterProformaInput?.vendor,
             },
             {
-              description: filterProformaInput?.description,
+              remark: filterProformaInput?.remark,
             },
           ],
         },
@@ -99,22 +102,20 @@ export class ProformaResolver {
     try {
       return await this.proformaService.createProforma(createProforma);
     } catch (e) {
+      console.log(e);
       throw new BadRequestException('Error creating proforma!');
     }
   }
 
   @Mutation(() => Proforma)
   async updateProforma(
-    @Args('id') proformaId: string,
     @Args('updateProformaInput')
     updateProformaInput: UpdateProformaInput,
   ) {
     try {
-      return this.proformaService.updateProforma(
-        proformaId,
-        updateProformaInput,
-      );
+      return this.proformaService.updateProforma(updateProformaInput);
     } catch (e) {
+      console.log(e);
       throw new BadRequestException('Error updating proforma!');
     }
   }
@@ -127,4 +128,26 @@ export class ProformaResolver {
       throw new BadRequestException('Error deleting proforma!');
     }
   }
+
+  @Mutation(() => Proforma)
+  async approveProforma(
+    @UserEntity() user: User,
+    @Args('proformaId') proformaId: string,
+    @Args('decision', { type: () => ApprovalStatus })
+    decision: ApprovalStatus,
+  ) {
+    try {
+      return this.proformaService.approveProforma(
+        proformaId,
+        user.id,
+        decision,
+      );
+    } catch (e) {
+      console.log(e)
+      throw new BadRequestException(
+        e.message || 'Error approving proforma!',
+      );
+    }
+  }
+
 }

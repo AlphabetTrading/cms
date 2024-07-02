@@ -22,7 +22,7 @@ export class MaterialReturnService {
           serialNumber: true,
         },
         orderBy: {
-          createdAt: 'desc',
+          serialNumber: 'desc',
         },
       });
     let currentSerialNumber = 1;

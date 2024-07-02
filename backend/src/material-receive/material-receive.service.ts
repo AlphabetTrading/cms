@@ -22,7 +22,7 @@ export class MaterialReceiveService {
           serialNumber: true,
         },
         orderBy: {
-          createdAt: 'desc',
+          serialNumber: 'desc',
         },
       });
     let currentSerialNumber = 1;
@@ -260,7 +260,7 @@ export class MaterialReceiveService {
           },
         },
       },
-  });
+    });
     return approvers;
   }
 

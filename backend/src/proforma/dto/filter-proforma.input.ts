@@ -19,10 +19,10 @@ export class FilterProformaInput {
   vendor?: string;
 
   @Field(() => String, { nullable: true })
-  materialRequestId?: string;
+  materialRequestItemId?: string;
 
   @Field(() => StringFilter, { nullable: true })
-  description?: StringFilter;
+  remark?: StringFilter;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

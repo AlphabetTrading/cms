@@ -208,12 +208,12 @@ async function seedProjects() {
 async function seedProjectUsers() {
   try {
     const companies = await prisma.company.findMany();
-    
+
     for (const company of companies) {
       const projects = await prisma.project.findMany({
         where: {
-          companyId: company.id
-        }
+          companyId: company.id,
+        },
       });
       const clients = await prisma.user.findMany({
         where: { role: UserRole.CLIENT, companyId: company.id },
@@ -292,14 +292,14 @@ async function seedMilestones() {
         ProjectUsers: {
           where: {
             user: {
-              role: UserRole.PROJECT_MANAGER
-            }
+              role: UserRole.PROJECT_MANAGER,
+            },
           },
           include: {
-            user: true
-          }
-        }
-      }
+            user: true,
+          },
+        },
+      },
     });
     await prisma.milestone.createMany({
       data: [
@@ -365,7 +365,7 @@ async function seedTasks() {
       include: {
         Project: true,
       },
-    })
+    });
     await prisma.task.createMany({
       data: [
         {
@@ -1502,44 +1502,76 @@ async function seedProformas() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'PRO/' + currentSerialNumber.toString().padStart(4, '0');
+      'PRO/' + currentSerialNumber.toString().padStart(5, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
   }
-  const material_requests = await prisma.materialRequestVoucher.findMany();
-  const projects = await prisma.project.findMany();
+  const materialRequests = await prisma.materialRequestVoucher.findMany({
+    include: {
+      items: {
+        include: {
+          productVariant: true,
+        },
+      },
+    },
+  });
+  const projects = await prisma.project.findMany({
+    include: {
+      ProjectUsers: {
+        where: {
+          user: {
+            role: UserRole.PURCHASER,
+          },
+        },
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
 
   try {
     for (const project of projects) {
-      await prisma.proforma.createMany({
-        data: [
-          {
-            projectId: project.id,
-            serialNumber: generateSerialNumber(),
-            vendor: 'Vendor 1',
-            description: 'Proforma for Cement 1',
-            materialRequestId: material_requests[0].id,
-            photos: [''],
-          },
-          {
-            projectId: project.id,
-            serialNumber: generateSerialNumber(),
-            vendor: 'Vendor 2',
-            description: 'Proforma for Cement 2',
-            materialRequestId: material_requests[2].id,
-            photos: [''],
-          },
-          {
-            projectId: project.id,
-            serialNumber: generateSerialNumber(),
-            vendor: 'Vendor 3',
-            description: 'Proforma for Cement 3',
-            materialRequestId: material_requests[1].id,
-            photos: [''],
-          },
-        ],
-      });
+      if (project.ProjectUsers.length > 0) {
+        await prisma.proforma.createMany({
+          data: [
+            {
+              projectId: project.id,
+              serialNumber: generateSerialNumber(),
+              vendor: 'Vendor 1',
+              remark:
+                'Proforma for ' +
+                materialRequests[0].items[0].productVariant.variant,
+              materialRequestItemId: materialRequests[0].items[0].id,
+              photo: '',
+              preparedById: project.ProjectUsers[0].userId,
+            },
+            {
+              projectId: project.id,
+              serialNumber: generateSerialNumber(),
+              vendor: 'Vendor 2',
+              remark:
+                'Proforma for ' +
+                materialRequests[2].items[0].productVariant.variant,
+              materialRequestItemId: materialRequests[2].items[0].id,
+              photo: '',
+              preparedById: project.ProjectUsers[0].userId,
+            },
+            {
+              projectId: project.id,
+              serialNumber: generateSerialNumber(),
+              vendor: 'Vendor 3',
+              remark:
+                'Proforma for ' +
+                materialRequests[1].items[0].productVariant.variant,
+              materialRequestItemId: materialRequests[1].items[0].id,
+              photo: '',
+              preparedById: project.ProjectUsers[0].userId,
+            },
+          ],
+        });
+      }
     }
     console.log('Proforma models seeded successfully');
   } catch (error) {
@@ -1563,15 +1595,15 @@ async function seedMaterialTransferVouchers() {
     for (const project of projects) {
       const warehouse_stores = await prisma.warehouseStore.findMany({
         where: {
-          companyId: project.companyId
-        }
+          companyId: project.companyId,
+        },
       });
       const material_receives = await prisma.materialReceiveVoucher.findMany({
         where: {
-          projectId: project.id
-        }
+          projectId: project.id,
+        },
       });
-    
+
       const project_managers = await prisma.user.findMany({
         where: {
           role: 'PROJECT_MANAGER',
@@ -1724,90 +1756,93 @@ async function seedDailySiteData() {
       if (consultants.length > 0) {
         const preparedBy = consultants[0];
 
-        await prisma.$transaction(async () => {
-          await prisma.dailySiteData.create({
-            data: {
-              projectId: project.id,
-              contractor: 'Contractor Contractor',
-              preparedById: preparedBy.id,
-              date: new Date(),
-              tasks: {
-                create: [
-                  {
-                    description: 'Task 1',
-                    executedQuantity: 100,
-                    unit: UnitOfMeasure.M2,
-                    laborDetails: {
-                      create: [
-                        {
-                          trade: 'Carpenter',
-                          number: 3,
-                          morning: 5,
-                          afternoon: 4,
-                          overtime: 2,
-                        },
-                        {
-                          trade: 'Mason',
-                          number: 1,
-                          morning: 3,
-                          afternoon: 4,
-                          overtime: 1,
-                        },
-                      ],
+        await prisma.$transaction(
+          async () => {
+            await prisma.dailySiteData.create({
+              data: {
+                projectId: project.id,
+                contractor: 'Contractor Contractor',
+                preparedById: preparedBy.id,
+                date: new Date(),
+                tasks: {
+                  create: [
+                    {
+                      description: 'Task 1',
+                      executedQuantity: 100,
+                      unit: UnitOfMeasure.M2,
+                      laborDetails: {
+                        create: [
+                          {
+                            trade: 'Carpenter',
+                            number: 3,
+                            morning: 5,
+                            afternoon: 4,
+                            overtime: 2,
+                          },
+                          {
+                            trade: 'Mason',
+                            number: 1,
+                            morning: 3,
+                            afternoon: 4,
+                            overtime: 1,
+                          },
+                        ],
+                      },
+                      materialDetails: {
+                        create: [
+                          {
+                            productVariantId: productVariants[1].id,
+                            quantityUsed: 20,
+                            quantityWasted: 2,
+                          },
+                          {
+                            productVariantId: productVariants[2].id,
+                            quantityUsed: 50,
+                            quantityWasted: 5,
+                          },
+                        ],
+                      },
                     },
-                    materialDetails: {
-                      create: [
-                        {
-                          productVariantId: productVariants[1].id,
-                          quantityUsed: 20,
-                          quantityWasted: 2,
-                        },
-                        {
-                          productVariantId: productVariants[2].id,
-                          quantityUsed: 50,
-                          quantityWasted: 5,
-                        },
-                      ],
+                    {
+                      description: 'Task 2',
+                      executedQuantity: 200,
+                      unit: UnitOfMeasure.M3,
+                      laborDetails: {
+                        create: [
+                          {
+                            trade: 'Laborer',
+                            number: 5,
+                            morning: 4,
+                            afternoon: 2,
+                            overtime: 1,
+                          },
+                        ],
+                      },
+                      materialDetails: {
+                        create: [
+                          {
+                            productVariantId: productVariants[0].id,
+                            quantityUsed: 30,
+                            quantityWasted: 3,
+                          },
+                        ],
+                      },
                     },
-                  },
-                  {
-                    description: 'Task 2',
-                    executedQuantity: 200,
-                    unit: UnitOfMeasure.M3,
-                    laborDetails: {
-                      create: [
-                        {
-                          trade: 'Laborer',
-                          number: 5,
-                          morning: 4,
-                          afternoon: 2,
-                          overtime: 1,
-                        },
-                      ],
-                    },
-                    materialDetails: {
-                      create: [
-                        {
-                          productVariantId: productVariants[0].id,
-                          quantityUsed: 30,
-                          quantityWasted: 3,
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-            include: {
-              tasks: {
-                include: {
-                  laborDetails: true,
-                  materialDetails: true,
+                  ],
                 },
               },
-            },
-          });
-        }, { timeout: 15000 });
+              include: {
+                tasks: {
+                  include: {
+                    laborDetails: true,
+                    materialDetails: true,
+                  },
+                },
+              },
+            });
+          },
+          { timeout: 15000 },
+        );
       }
     }
     console.log('Daily Site Data models seeded successfully');

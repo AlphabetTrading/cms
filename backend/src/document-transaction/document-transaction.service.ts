@@ -8,6 +8,8 @@ import { MaterialTransferService } from 'src/material-transfer/material-transfer
 import { PurchaseOrderService } from 'src/purchase-order/purchase-order.service';
 import { DocumentTransaction } from './model/document-transaction-model';
 import { UserRole } from '@prisma/client';
+import { DailySiteDataService } from 'src/daily-site-data/daily-site-data.service';
+import { ProformaService } from 'src/proforma/proforma.service';
 
 @Injectable()
 export class DocumentTransactionService {
@@ -19,6 +21,8 @@ export class DocumentTransactionService {
     private readonly materialReturnService: MaterialReturnService,
     private readonly materialTransferService: MaterialTransferService,
     private readonly purchaseOrderService: PurchaseOrderService,
+    private readonly proformaService: ProformaService,
+    private readonly dailySiteDataService: DailySiteDataService,
   ) {}
   async getAllDocumentsStatus(
     userId: string,
@@ -70,10 +74,17 @@ export class DocumentTransactionService {
             },
             {
               OR: [
-                { approvedById: { in: materialIssueReturnApproversIds } },
+                { approvedById: userId },
                 {
                   preparedById: userId,
                 },
+                ...(materialIssueReturnApproversIds.includes(userId)
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
@@ -90,13 +101,20 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: {
-                    in: materialReceiveRequestTransferPurchaseApproversIds,
-                  },
+                  approvedById: userId,
                 },
                 {
                   purchasedById: userId,
                 },
+                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                  userId,
+                )
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
@@ -113,13 +131,20 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: {
-                    in: materialReceiveRequestTransferPurchaseApproversIds,
-                  },
+                  approvedById: userId,
                 },
                 {
                   requestedById: userId,
                 },
+                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                  userId,
+                )
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
@@ -136,11 +161,28 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  receivedById: { in: materialIssueReturnApproversIds },
+                  receivedById: userId,
                 },
                 {
                   returnedById: userId,
                 },
+                ...(materialIssueReturnApproversIds.includes(userId)
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
+
+                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                  userId,
+                )
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
@@ -157,13 +199,20 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: {
-                    in: materialReceiveRequestTransferPurchaseApproversIds,
-                  },
+                  approvedById: userId,
                 },
                 {
                   preparedById: userId,
                 },
+                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                  userId,
+                )
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
@@ -180,18 +229,86 @@ export class DocumentTransactionService {
             {
               OR: [
                 {
-                  approvedById: {
-                    in: materialReceiveRequestTransferPurchaseApproversIds,
-                  },
+                  approvedById: userId,
                 },
                 {
                   preparedById: userId,
                 },
+                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                  userId,
+                )
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
               ],
             },
           ],
         },
       });
+
+    const dailySiteDatas =
+      await this.dailySiteDataService.getDailySiteDataCountByStatus({
+        where: {
+          AND: [
+            {
+              projectId: projectId,
+            },
+            {
+              OR: [
+                {
+                  approvedById: userId,
+                },
+                {
+                  preparedById: userId,
+                },
+                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                  userId,
+                )
+                  ? [
+                      {
+                        projectId: projectId,
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          ],
+        },
+      });
+
+    const proformas = await this.proformaService.getProformaCountByStatus({
+      where: {
+        AND: [
+          {
+            projectId: projectId,
+          },
+          {
+            OR: [
+              {
+                approvedById: {
+                  in: materialReceiveRequestTransferPurchaseApproversIds,
+                },
+              },
+              {
+                preparedById: userId,
+              },
+              ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+                userId,
+              )
+                ? [
+                    {
+                      projectId: projectId,
+                    },
+                  ]
+                : []),
+            ],
+          },
+        ],
+      },
+    });
 
     return [
       materialIssues,
@@ -200,6 +317,8 @@ export class DocumentTransactionService {
       materialReturns,
       materialTransfers,
       purchaseOrders,
+      proformas,
+      dailySiteDatas,
     ];
   }
 }

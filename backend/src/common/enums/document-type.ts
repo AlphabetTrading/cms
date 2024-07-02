@@ -5,4 +5,6 @@ export enum DocumentType {
   MATERIAL_RETURN = 'material_return',
   MATERIAL_TRANSFER = 'material_transfer',
   PURCHASE_ORDER = 'purchase_order',
+  PROFORMA = 'proforma',
+  DAILY_SITE_DATA = 'daily_site_data'
 }

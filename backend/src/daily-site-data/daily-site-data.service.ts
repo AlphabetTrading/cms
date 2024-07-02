@@ -6,8 +6,10 @@ import { CreateDailySiteDataInput } from './dto/create-daily-site-data.input';
 import { CreateDailySiteDataTaskLaborInput } from './dto/create-daily-site-data-task-labor.input';
 import { CreateDailySiteDataTaskMaterialInput } from './dto/create-daily-site-data-task-material.input';
 import { UpdateDailySiteDataInput } from './dto/update-daily-site-data.input';
+import { DocumentType } from 'src/common/enums/document-type';
 import puppeteer from 'puppeteer-core';
 import { format } from 'date-fns';
+import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 
 @Injectable()
 export class DailySiteDataService {
@@ -91,6 +93,35 @@ export class DailySiteDataService {
       },
     });
     return dailySiteDatas;
+  }
+
+  async getDailySiteDataCountByStatus({
+    where,
+  }: {
+    where?: Prisma.DailySiteDataWhereInput;
+  }): Promise<any> {
+    const statusCounts = await this.prisma.dailySiteData.groupBy({
+      by: ['status'],
+      where,
+      _count: {
+        status: true,
+      },
+    });
+
+    let counts = { COMPLETED: 0, DECLINED: 0, PENDING: 0 };
+
+    counts = statusCounts.reduce((acc, { status, _count }) => {
+      acc[status] = _count.status;
+      return acc;
+    }, counts);
+
+    const documentTransaction = new DocumentTransaction();
+    documentTransaction.approvedCount = counts.COMPLETED;
+    documentTransaction.declinedCount = counts.DECLINED;
+    documentTransaction.pendingCount = counts.PENDING;
+    documentTransaction.type = DocumentType.DAILY_SITE_DATA;
+
+    return documentTransaction;
   }
 
   async getDailySiteDataById(

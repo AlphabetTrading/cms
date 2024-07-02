@@ -1,25 +1,41 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsString } from 'class-validator';
+import { ApprovalStatus } from '@prisma/client';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class UpdateProformaInput {
-  @Field(() => String, { nullable: true })
   @IsString()
+  @Field(() => String)
+  id: string;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   projectId?: string;
 
-  @IsString()
+  @IsOptional()
   @Field(() => String, { nullable: true })
-  materialRequestId?: string;
+  materialRequestItemId?: string;
 
-  @IsString()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   vendor?: string;
 
-  @IsString()
+  @IsOptional()
   @Field(() => String, { nullable: true })
-  description?: string;
+  remark?: string;
 
-  @IsArray()
-  @Field(() => [String])
-  photos?: string[];
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  photo?: string;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  preparedById?: string;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  approvedById?: string;
+
+  @Field(() => ApprovalStatus, { nullable: true })
+  status?: ApprovalStatus;
 }

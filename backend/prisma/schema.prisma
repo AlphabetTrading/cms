@@ -50,6 +50,8 @@ model User {
   MaterialReturnVouchersReceived   MaterialReturnVoucher[]   @relation("ReceivedByReturn")
   MaterialTransferVoucherPrepared  MaterialTransferVoucher[] @relation("PreparedByTransfer")
   MaterialTransferVoucherApproved  MaterialTransferVoucher[] @relation("ApprovedByTransfer")
+  ProformaPrepared                 Proforma[]                @relation("PreparedByProforma")
+  ProformaApproved                 Proforma[]                @relation("ApprovedByProforma")
   Milestone                        Milestone[]
   Task                             Task[]
   ProjectUser                      ProjectUser[]
@@ -171,17 +173,23 @@ model PriceHistory {
 }
 
 model Proforma {
-  id                String                 @id @default(uuid())
-  serialNumber      String                 @unique
-  projectId         String
-  Project           Project                @relation(fields: [projectId], references: [id])
-  vendor            String
-  description       String?
-  photos            String[]
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
-  materialRequestId String
-  materialRequest   MaterialRequestVoucher @relation(fields: [materialRequestId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  id                    String              @id @default(uuid())
+  serialNumber          String              @unique
+  projectId             String
+  Project               Project             @relation(fields: [projectId], references: [id])
+  vendor                String
+  remark                String?
+  photo                 String
+  status                ApprovalStatus      @default(PENDING)
+  preparedById          String
+  preparedBy            User                @relation(fields: [preparedById], references: [id], name: "PreparedByProforma")
+  approvedById          String?
+  approvedBy            User?               @relation(fields: [approvedById], references: [id], name: "ApprovedByProforma")
+  materialRequestItem   MaterialRequestItem @relation(fields: [materialRequestItemId], references: [id])
+  materialRequestItemId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PurchaseOrder {
@@ -402,7 +410,6 @@ model MaterialRequestVoucher {
   approvedBy              User?                    @relation(fields: [approvedById], references: [id], name: "ApprovedByRequest")
   PurchaseOrders          PurchaseOrder[]
   MaterialReceiveVouchers MaterialReceiveVoucher[]
-  Proforma                Proforma[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -414,6 +421,7 @@ model MaterialRequestItem {
   productVariant           ProductVariant         @relation(fields: [productVariantId], references: [id])
   quantity                 Float
   remark                   String?
+  proformas                Proforma[]
   materialRequestVoucherId String
   MaterialRequestVoucher   MaterialRequestVoucher @relation(name: "items", fields: [materialRequestVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 

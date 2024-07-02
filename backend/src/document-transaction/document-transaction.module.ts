@@ -7,6 +7,8 @@ import { MaterialRequestModule } from 'src/material-request/material-request.mod
 import { MaterialReturnModule } from 'src/material-return/material-return.module';
 import { PurchaseOrderModule } from 'src/purchase-order/purchase-order.module';
 import { MaterialTransferModule } from 'src/material-transfer/material-transfer.module';
+import { ProformaModule } from 'src/proforma/proforma.module';
+import { DailySiteDataModule } from 'src/daily-site-data/daily-site-data.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { MaterialTransferModule } from 'src/material-transfer/material-transfer.
     MaterialRequestModule,
     MaterialTransferModule,
     PurchaseOrderModule,
+    ProformaModule,
+    DailySiteDataModule,
   ],
   providers: [DocumentTransactionResolver, DocumentTransactionService],
   exports: [DocumentTransactionService],

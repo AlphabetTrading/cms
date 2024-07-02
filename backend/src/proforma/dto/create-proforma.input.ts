@@ -9,17 +9,26 @@ export class CreateProformaInput {
 
   @IsNotEmpty()
   @Field(() => String)
-  materialRequestId: string;
+  materialRequestItemId: string;
 
   @IsNotEmpty()
   @Field(() => String)
   vendor: string;
 
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  remark?: string;
+
+  @IsNotEmpty()
   @Field(() => String)
-  description?: string;
+  photo: string;
+
+  @IsNotEmpty()
+  @Field(() => String)
+  preparedById: string;
 
   @IsOptional()
-  @Field(() => [String])
-  photos?: string[];
+  @Field(() => String, { nullable: true })
+  approvedById?: string;
+
 }

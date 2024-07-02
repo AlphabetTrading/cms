@@ -26,7 +26,7 @@ export class MaterialTransferService {
           serialNumber: true,
         },
         orderBy: {
-          createdAt: 'desc',
+          serialNumber: 'desc',
         },
       });
     let currentSerialNumber = 1;
@@ -562,7 +562,7 @@ export class MaterialTransferService {
               </div>
               <div class="approval-section">
                 <label>Sent Through:</label>
-                <span id="approved-by">${materialTransfer.sentThroughName || ""}</span>
+                <span id="approved-by">${materialTransfer.sentThroughName || ''}</span>
               </div>
             </div>
           </div>

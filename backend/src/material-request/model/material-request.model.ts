@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
+import { Proforma } from 'src/proforma/model/proforma.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
 
@@ -51,4 +52,7 @@ export class MaterialRequestItem extends BaseModel {
 
   @Field(() => String, { nullable: true })
   remark?: string;
+
+  @Field(() => [Proforma], { nullable: true })
+  proformas?: Proforma[] 
 }

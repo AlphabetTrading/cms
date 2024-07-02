@@ -22,7 +22,7 @@ export class MaterialRequestService {
           serialNumber: true,
         },
         orderBy: {
-          createdAt: 'desc',
+          serialNumber: 'desc',
         },
       });
     let currentSerialNumber = 1;
@@ -51,7 +51,6 @@ export class MaterialRequestService {
           approvedBy: true,
           requestedBy: true,
           MaterialReceiveVouchers: true,
-          Proforma: true,
           Project: true,
           PurchaseOrders: true,
         },
@@ -83,12 +82,22 @@ export class MaterialRequestService {
                 product: true,
               },
             },
+            proformas: {
+              include: {
+                materialRequestItem: {
+                  include: {
+                    productVariant: true,
+                  },
+                },
+                approvedBy: true,
+                preparedBy: true,
+              },
+            },
           },
         },
         approvedBy: true,
         requestedBy: true,
         MaterialReceiveVouchers: true,
-        Proforma: true,
         Project: true,
         PurchaseOrders: true,
       },
@@ -139,12 +148,22 @@ export class MaterialRequestService {
                   product: true,
                 },
               },
+              proformas: {
+                include: {
+                  materialRequestItem: {
+                    include: {
+                      productVariant: true,
+                    },
+                  },
+                  approvedBy: true,
+                  preparedBy: true,
+                },
+              },
             },
           },
           approvedBy: true,
           requestedBy: true,
           MaterialReceiveVouchers: true,
-          Proforma: true,
           Project: true,
           PurchaseOrders: true,
         },
@@ -195,12 +214,22 @@ export class MaterialRequestService {
                     product: true,
                   },
                 },
+                proformas: {
+                  include: {
+                    materialRequestItem: {
+                      include: {
+                        productVariant: true,
+                      },
+                    },
+                    approvedBy: true,
+                    preparedBy: true,
+                  },
+                },
               },
             },
             approvedBy: true,
             requestedBy: true,
             MaterialReceiveVouchers: true,
-            Proforma: true,
             Project: true,
             PurchaseOrders: true,
           },
@@ -289,26 +318,38 @@ export class MaterialRequestService {
   }
 
   async generatePdf(materialRequestId: string): Promise<string> {
-    const materialRequest = await this.prisma.materialRequestVoucher.findUnique({
-      where: { id: materialRequestId },
-      include: {
-        items: {
-          include: {
-            productVariant: {
-              include: {
-                product: true,
+    const materialRequest = await this.prisma.materialRequestVoucher.findUnique(
+      {
+        where: { id: materialRequestId },
+        include: {
+          items: {
+            include: {
+              productVariant: {
+                include: {
+                  product: true,
+                },
+              },
+              proformas: {
+                include: {
+                  materialRequestItem: {
+                    include: {
+                      productVariant: true,
+                    },
+                  },
+                  approvedBy: true,
+                  preparedBy: true,
+                },
               },
             },
           },
+          approvedBy: true,
+          requestedBy: true,
+          MaterialReceiveVouchers: true,
+          Project: true,
+          PurchaseOrders: true,
         },
-        approvedBy: true,
-        requestedBy: true,
-        MaterialReceiveVouchers: true,
-        Proforma: true,
-        Project: true,
-        PurchaseOrders: true,
       },
-});
+    );
 
     const browser = await puppeteer.launch({
       executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -447,5 +488,4 @@ export class MaterialRequestService {
   </html>
     `;
   }
-
 }
