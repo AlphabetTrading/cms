@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { UserRole } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
+import { Company } from 'src/company/model/company.model';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -19,4 +20,7 @@ export class User extends BaseModel {
 
   @Field()
   role: UserRole;
+
+  @Field(() => Company, { nullable: true })
+  company?: Company;
 }

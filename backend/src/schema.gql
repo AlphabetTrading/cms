@@ -263,6 +263,7 @@ input CreateTaskInput {
 }
 
 input CreateUserInput {
+  companyId: String!
   email: String!
   fullName: String!
   phoneNumber: String!
@@ -523,6 +524,7 @@ input FilterMilestoneInput {
   project: FilterProjectInput
   projectId: String
   stage: UseType
+  task: FilterTaskInput
 }
 
 input FilterPriceHistoryInput {
@@ -1327,6 +1329,7 @@ type Query {
   getMaterialReturns(filterMaterialReturnInput: FilterMaterialReturnInput, mine: Boolean! = false, orderBy: OrderByMaterialReturnInput, paginationInput: PaginationInput): PaginationMaterialReturns!
   getMaterialTransferById(id: String!): MaterialTransferVoucher!
   getMaterialTransfers(filterMaterialTransferInput: FilterMaterialTransferInput, mine: Boolean! = false, orderBy: OrderByMaterialTransferInput, paginationInput: PaginationInput): PaginationMaterialTransfers!
+  getMe: User!
   getMilestone(id: String!): Milestone!
   getMilestones(filterMilestoneInput: FilterMilestoneInput, orderBy: OrderByMilestoneInput, paginationInput: PaginationInput): PaginationMilestones!
   getPriceHistory(id: String!): PriceHistory!
@@ -1695,6 +1698,8 @@ enum UseType {
 }
 
 type User {
+  company: Company
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String!

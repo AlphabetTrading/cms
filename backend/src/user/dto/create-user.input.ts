@@ -27,4 +27,8 @@ export class CreateUserInput {
   @Field(() => UserRole)
   @IsNotEmpty()
   role: UserRole;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  companyId: string;
 }

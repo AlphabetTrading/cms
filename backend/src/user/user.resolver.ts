@@ -7,8 +7,12 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.model';
 import { CreateOwnerInput } from './dto/create-owner.input';
 import { RegistrationInput } from 'src/auth/dto/registration.input';
+import { UserEntity } from 'src/common/decorators';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { UseGuards } from '@nestjs/common';
 // import { UserEntity } from 'src/common/decorators';
 
+@UseGuards(GqlAuthGuard)
 @Resolver('User')
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
@@ -76,5 +80,10 @@ export class UserResolver {
     } catch (error) {
       return error;
     }
+  }
+
+  @Query(() => User)
+  async getMe(@UserEntity() user: User) {
+    return this.userService.getMe(user.id);
   }
 }

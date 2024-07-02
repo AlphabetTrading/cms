@@ -91,7 +91,7 @@ export class UserService {
       if (registerUser.password !== registerUser.confirmPassword) {
         throw new BadRequestException('Passwords must match!');
       }
-      
+
       const hashedPassword = await this.passwordService.hashPassword(
         registerUser.password,
       );
@@ -110,12 +110,19 @@ export class UserService {
   }
 
   async findUsers(): Promise<User[]> {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      include: {
+        company: true,
+      },
+    });
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        company: true,
+      },
     });
     return user;
   }
@@ -123,6 +130,9 @@ export class UserService {
   async findUserByPhoneNumber(phoneNumber: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { phoneNumber },
+      include: {
+        company: true,
+      },
     });
     return user;
   }
@@ -157,6 +167,9 @@ export class UserService {
   async updateUser(email: string, updateUser: UpdateUserInput): Promise<any> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        company: true,
+      },
     });
 
     if (!existingUser) {
@@ -185,5 +198,17 @@ export class UserService {
     });
 
     return deletedUser;
+  }
+
+  async getMe(userId: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }
