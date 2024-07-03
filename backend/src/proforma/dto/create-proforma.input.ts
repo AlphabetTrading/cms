@@ -15,6 +15,18 @@ export class CreateProformaInput {
   @Field(() => String)
   vendor: string;
 
+  @IsNotEmpty()
+  @Field(() => Number)
+  quantity: number;
+
+  @IsNotEmpty()
+  @Field(() => Number)
+  unitPrice: number;
+
+  @IsNotEmpty()
+  @Field(() => Number)
+  totalPrice: number;
+
   @IsOptional()
   @Field(() => String, { nullable: true })
   remark?: string;

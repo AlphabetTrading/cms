@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
 import { Project } from 'src/project/model/project.model';
 import { PurchaseOrderVoucher } from 'src/purchase-order/model/purchase-order.model';
 import { User } from 'src/user/user.model';
+import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model';
 
 @ObjectType()
 export class MaterialReceiveVoucher extends BaseModel {
@@ -18,20 +18,8 @@ export class MaterialReceiveVoucher extends BaseModel {
   @Field(() => Project, { nullable: true })
   Project?: Project;
 
-  @Field(() => String, { nullable: true })
-  supplierName?: string;
-
-  @Field(() => String, { nullable: true })
-  invoiceId?: string;
-
   @Field(() => [MaterialReceiveItem], { nullable: true })
   items?: MaterialReceiveItem[];
-
-  @Field(() => MaterialRequestVoucher, { nullable: true })
-  materialRequest?: MaterialRequestVoucher;
-
-  @Field(() => String, { nullable: true })
-  materialRequestId?: string;
 
   @Field(() => String, { nullable: true })
   purchaseOrderId?: string;
@@ -50,6 +38,12 @@ export class MaterialReceiveVoucher extends BaseModel {
 
   @Field(() => User, { nullable: true })
   approvedBy?: User;
+
+  @Field(() => String, { nullable: true })
+  warehouseStoreId?: string;
+
+  @Field(() => WarehouseStore, { nullable: true })
+  WarehouseStore?: WarehouseStore;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,

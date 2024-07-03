@@ -8,18 +8,6 @@ export class CreateMaterialReceiveInput {
   @Field(() => String)
   projectId: string;
 
-  @IsNotEmpty()
-  @Field(() => String)
-  supplierName: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  invoiceId: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  materialRequestId: string;
-
   @ValidateNested({ each: true })
   @Field(() => [CreateMaterialReceiveItemInput])
   items: CreateMaterialReceiveItemInput[];
@@ -31,6 +19,10 @@ export class CreateMaterialReceiveInput {
   @IsNotEmpty()
   @Field(() => String)
   purchasedById: string;
+
+  @IsNotEmpty()
+  @Field(() => String)
+  warehouseStoreId: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

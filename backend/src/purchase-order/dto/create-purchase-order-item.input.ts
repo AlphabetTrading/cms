@@ -1,12 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreatePurchaseOrderItemInput {
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  productVariantId: string;
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  materialRequestItemId?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  proformaId?: string;
 
   @IsNotEmpty()
   @Field(() => Number)

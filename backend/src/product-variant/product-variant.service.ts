@@ -38,7 +38,6 @@ export class ProductVariantService {
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
-        PurchaseOrderItem: true,
         ReturnVoucherItem: true,
       },
     });
@@ -68,7 +67,6 @@ export class ProductVariantService {
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
-        PurchaseOrderItem: true,
         ReturnVoucherItem: true,
       },
     });
@@ -86,7 +84,6 @@ export class ProductVariantService {
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
-        PurchaseOrderItem: true,
         ReturnVoucherItem: true,
       },
     });
@@ -117,7 +114,6 @@ export class ProductVariantService {
         PriceHistory: true,
         MaterialReceiveItem: true,
         MaterialRequestItem: true,
-        PurchaseOrderItem: true,
         ReturnVoucherItem: true,
       },
     });

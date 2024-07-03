@@ -8,14 +8,6 @@ export class CreatePurchaseOrderInput {
   @Field(() => String)
   projectId: string;
 
-  @IsNotEmpty()
-  @Field(() => String)
-  supplierName: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  materialRequestId: string;
-
   @ValidateNested({ each: true })
   @Field(() => [CreatePurchaseOrderItemInput])
   items: CreatePurchaseOrderItemInput[];

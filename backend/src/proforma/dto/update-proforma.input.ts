@@ -21,6 +21,18 @@ export class UpdateProformaInput {
   vendor?: string;
 
   @IsOptional()
+  @Field(() => Number, { nullable: true })
+  quantity?: number;
+
+  @IsOptional()
+  @Field(() => Number, { nullable: true })
+  unitPrice?: number;
+
+  @IsOptional()
+  @Field(() => Number, { nullable: true })
+  totalPrice?: number;
+
+  @IsOptional()
   @Field(() => String, { nullable: true })
   remark?: string;
 

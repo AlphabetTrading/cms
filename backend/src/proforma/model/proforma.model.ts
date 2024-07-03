@@ -25,6 +25,15 @@ export class Proforma extends BaseModel {
   @Field(() => String, { nullable: true })
   vendor?: string;
 
+  @Field(() => Number, { nullable: true })
+  quantity?: number;
+
+  @Field(() => Number, { nullable: true })
+  unitPrice?: number;
+
+  @Field(() => Number, { nullable: true })
+  totalPrice?: number;
+
   @Field(() => String, { nullable: true })
   remark?: string;
 

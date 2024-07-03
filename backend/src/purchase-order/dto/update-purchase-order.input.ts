@@ -13,14 +13,6 @@ export class UpdatePurchaseOrderInput {
   @Field(() => String, { nullable: true })
   projectId?: string;
 
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  supplierName?: string;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  materialRequestId?: string;
-
   @ValidateNested({ each: true })
   @Field(() => [UpdatePurchaseOrderItemInput])
   items?: UpdatePurchaseOrderItemInput[];

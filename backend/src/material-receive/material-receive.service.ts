@@ -61,7 +61,6 @@ export class MaterialReceiveService {
             },
           },
           Project: true,
-          materialRequest: true,
           approvedBy: true,
           purchasedBy: true,
           purchaseOrder: true,
@@ -99,7 +98,6 @@ export class MaterialReceiveService {
           },
         },
         Project: true,
-        materialRequest: true,
         approvedBy: true,
         purchasedBy: true,
         purchaseOrder: true,
@@ -155,7 +153,7 @@ export class MaterialReceiveService {
             },
           },
           Project: true,
-          materialRequest: true,
+
           approvedBy: true,
           purchasedBy: true,
           purchaseOrder: true,
@@ -211,7 +209,7 @@ export class MaterialReceiveService {
               },
             },
             Project: true,
-            materialRequest: true,
+
             approvedBy: true,
             purchasedBy: true,
             purchaseOrder: true,
@@ -373,7 +371,7 @@ export class MaterialReceiveService {
             },
           },
           Project: true,
-          materialRequest: true,
+
           approvedBy: true,
           purchasedBy: true,
           purchaseOrder: true,
@@ -477,23 +475,11 @@ export class MaterialReceiveService {
                     <label>Project:</label>
                     <span>${materialReceive.Project.name}</span>
                   </div>
-                  <div>
-                    <label>Supplier Name:</label>
-                    <span>${materialReceive.supplierName || ''}</span>
-                  </div>
-                  <div>
-                    <label>Material Req. No:</label>
-                    <span>${materialReceive.materialRequest.serialNumber || ''}</span>
-                  </div>
                 </div>
                 <div class="details-right">
                   <div>
                     <label>Document No:</label>
                     <span id="reference-no">${materialReceive.serialNumber}</span>
-                  </div>
-                  <div>
-                    <label>Invoice No:</label>
-                    <span id="reference-no">${materialReceive.invoiceId || ''}</span>
                   </div>
 
                   <div>

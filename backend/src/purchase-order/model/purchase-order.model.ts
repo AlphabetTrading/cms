@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { MaterialRequestVoucher } from 'src/material-request/model/material-request.model';
-import { ProductVariant } from 'src/product-variant/model/product-variant.model';
+import { MaterialRequestItem } from 'src/material-request/model/material-request.model';
+import { Proforma } from 'src/proforma/model/proforma.model';
 import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
 
@@ -16,15 +16,6 @@ export class PurchaseOrderVoucher extends BaseModel {
 
   @Field(() => Project, { nullable: true })
   Project?: Project;
-
-  @Field(() => String, { nullable: true })
-  supplierName?: string;
-
-  @Field(() => String, { nullable: true })
-  materialRequestId?: string;
-
-  @Field(() => MaterialRequestVoucher, { nullable: true })
-  materialRequest?: MaterialRequestVoucher;
 
   @Field(() => [PurchaseOrderItem], { nullable: true })
   items?: PurchaseOrderItem[];
@@ -60,10 +51,16 @@ export class PurchaseOrderVoucher extends BaseModel {
 @ObjectType()
 export class PurchaseOrderItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  productVariantId?: string;
+  materialRequestItemId?: string;
 
-  @Field(() => ProductVariant, { nullable: true })
-  productVariant?: ProductVariant;
+  @Field(() => MaterialRequestItem, { nullable: true })
+  materialRequestItem?: MaterialRequestItem;
+
+  @Field(() => String, { nullable: true })
+  proformaId?: string;
+
+  @Field(() => Proforma, { nullable: true })
+  proforma?: Proforma
 
   @Field(() => Number, { nullable: true })
   quantity?: number;

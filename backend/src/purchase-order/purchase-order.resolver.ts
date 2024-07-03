@@ -61,15 +61,6 @@ export class PurchaseOrderResolver {
               serialNumber: filterPurchaseOrderInput?.serialNumber,
             },
             {
-              materialRequestId: filterPurchaseOrderInput?.materialRequestId,
-            },
-            {
-              materialRequest: filterPurchaseOrderInput?.materialRequest,
-            },
-            {
-              supplierName: filterPurchaseOrderInput?.supplierName,
-            },
-            {
               subTotal: filterPurchaseOrderInput?.subTotal,
             },
             {

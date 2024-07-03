@@ -60,19 +60,7 @@ export class MaterialReceiveResolver {
         {
           OR: [
             {
-              supplierName: filterMaterialReceiveInput?.supplierName,
-            },
-            {
               serialNumber: filterMaterialReceiveInput?.serialNumber,
-            },
-            {
-              invoiceId: filterMaterialReceiveInput?.invoiceId,
-            },
-            {
-              materialRequestId: filterMaterialReceiveInput?.materialRequestId,
-            },
-            {
-              materialRequest: filterMaterialReceiveInput?.materialRequest,
             },
             {
               purchasedById: filterMaterialReceiveInput?.purchasedById,

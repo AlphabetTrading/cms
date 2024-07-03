@@ -50,9 +50,7 @@ export class MaterialRequestService {
           items: true,
           approvedBy: true,
           requestedBy: true,
-          MaterialReceiveVouchers: true,
           Project: true,
-          PurchaseOrders: true,
         },
       });
     return createdMaterialRequest;
@@ -97,9 +95,7 @@ export class MaterialRequestService {
         },
         approvedBy: true,
         requestedBy: true,
-        MaterialReceiveVouchers: true,
         Project: true,
-        PurchaseOrders: true,
       },
     });
     return materialRequests;
@@ -163,9 +159,7 @@ export class MaterialRequestService {
           },
           approvedBy: true,
           requestedBy: true,
-          MaterialReceiveVouchers: true,
           Project: true,
-          PurchaseOrders: true,
         },
       },
     );
@@ -229,9 +223,7 @@ export class MaterialRequestService {
             },
             approvedBy: true,
             requestedBy: true,
-            MaterialReceiveVouchers: true,
             Project: true,
-            PurchaseOrders: true,
           },
         },
       );
@@ -344,9 +336,7 @@ export class MaterialRequestService {
           },
           approvedBy: true,
           requestedBy: true,
-          MaterialReceiveVouchers: true,
           Project: true,
-          PurchaseOrders: true,
         },
       },
     );

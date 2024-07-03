@@ -38,7 +38,8 @@ export class PurchaseOrderService {
         serialNumber: serialNumber,
         items: {
           create: createPurchaseOrder.items.map((item) => ({
-            productVariantId: item.productVariantId,
+            materialRequestItemId: item.materialRequestItemId,
+            proformaId: item.proformaId,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice,
@@ -49,16 +50,32 @@ export class PurchaseOrderService {
       include: {
         items: {
           include: {
-            productVariant: {
+            materialRequestItem: {
               include: {
-                product: true,
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            proforma: {
+              include: {
+                materialRequestItem: {
+                  include: {
+                    productVariant: {
+                      include: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
         approvedBy: true,
         MaterialReceiveVouchers: true,
-        materialRequest: true,
         preparedBy: true,
         Project: true,
       },
@@ -85,16 +102,32 @@ export class PurchaseOrderService {
       include: {
         items: {
           include: {
-            productVariant: {
+            materialRequestItem: {
               include: {
-                product: true,
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            proforma: {
+              include: {
+                materialRequestItem: {
+                  include: {
+                    productVariant: {
+                      include: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
         approvedBy: true,
         MaterialReceiveVouchers: true,
-        materialRequest: true,
         preparedBy: true,
         Project: true,
       },
@@ -139,16 +172,32 @@ export class PurchaseOrderService {
       include: {
         items: {
           include: {
-            productVariant: {
+            materialRequestItem: {
               include: {
-                product: true,
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            proforma: {
+              include: {
+                materialRequestItem: {
+                  include: {
+                    productVariant: {
+                      include: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
         approvedBy: true,
         MaterialReceiveVouchers: true,
-        materialRequest: true,
         preparedBy: true,
         Project: true,
       },
@@ -172,7 +221,8 @@ export class PurchaseOrderService {
       }
 
       const itemUpdateConditions = updateData.items.map((item) => ({
-        productVariantId: item.productVariantId,
+        proformaId: item.proformaId,
+        materialRequestItemId: item.materialRequestItemId,
       }));
 
       const updatedPurchaseOrder = await prisma.purchaseOrder.update({
@@ -191,16 +241,32 @@ export class PurchaseOrderService {
         include: {
           items: {
             include: {
-              productVariant: {
+              materialRequestItem: {
                 include: {
-                  product: true,
+                  productVariant: {
+                    include: {
+                      product: true,
+                    },
+                  },
+                },
+              },
+              proforma: {
+                include: {
+                  materialRequestItem: {
+                    include: {
+                      productVariant: {
+                        include: {
+                          product: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
           },
           approvedBy: true,
           MaterialReceiveVouchers: true,
-          materialRequest: true,
           preparedBy: true,
           Project: true,
         },
@@ -287,16 +353,32 @@ export class PurchaseOrderService {
       include: {
         items: {
           include: {
-            productVariant: {
+            materialRequestItem: {
               include: {
-                product: true,
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
+              },
+            },
+            proforma: {
+              include: {
+                materialRequestItem: {
+                  include: {
+                    productVariant: {
+                      include: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
         approvedBy: true,
         MaterialReceiveVouchers: true,
-        materialRequest: true,
         preparedBy: true,
         Project: true,
       },
@@ -397,24 +479,11 @@ export class PurchaseOrderService {
                     <label>Project:</label>
                     <span>${purchaseOrder.Project.name}</span>
                   </div>
-                  <div>
-                    <label>Supplier Name:</label>
-                    <span>${purchaseOrder.supplierName || ''}</span>
-                  </div>
                 </div>
                 <div class="details-right">
                   <div>
                     <label>Document No:</label>
                     <span id="reference-no">${purchaseOrder.serialNumber}</span>
-                  </div>
-                  <div>
-                    <label>Material Req. No:</label>
-                    <span id="reference-no">${purchaseOrder.materialRequest.serialNumber || ''}</span>
-                  </div>
-
-                  <div>
-                    <label>Date Material Requested:</label>
-                    <span id="store-name">${format(purchaseOrder.materialRequest.createdAt, 'MMM dd, yyyy')}</span>
                   </div>
                 </div>
               </div>
@@ -437,8 +506,15 @@ export class PurchaseOrderService {
                       (item, index) => `
                 <tr>
                   <td class="col-item-no">${index + 1}</td>
-                  <td class="col-description">${item.productVariant.variant} ${item.productVariant.product.name}</td>
-                  <td style="text-transform: lowercase;" class="col-uom">${item.productVariant.unitOfMeasure}</td>
+                  <td class="col-description">${
+                    item.materialRequestItem
+                      ? `${item.materialRequestItem.productVariant.variant} ${item.materialRequestItem.productVariant.product.name}`
+                      : `${item.proforma.materialRequestItem.productVariant.variant} ${item.proforma.materialRequestItem.productVariant.product.name}`
+                  }</td>
+                  <td style="text-transform: lowercase;" class="col-uom">${item.materialRequestItem
+                      ? `${item.materialRequestItem.productVariant.unitOfMeasure}`
+                      : `${item.proforma.materialRequestItem.productVariant.unitOfMeasure}`
+                  }</td>
                   <td class="col-quantity">${item.quantity}</td>
                   <td class="col-cost-money">${item.unitPrice.toLocaleString().split('.')[0]}</td>
                   <td class="col-cost-cent">${(item.unitPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
