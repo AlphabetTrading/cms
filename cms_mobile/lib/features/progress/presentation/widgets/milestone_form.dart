@@ -36,7 +36,6 @@ class _MilestoneFormState extends State<MilestoneForm> {
       text: widget.milestone?.dueDate != null
           ? DateFormat('MMMM dd, yyyy').format(widget.milestone!.dueDate!)
           : "",
-      
     );
   }
 
@@ -95,7 +94,8 @@ class _MilestoneFormState extends State<MilestoneForm> {
               listener: (context, state) {
                 if (state is CreateMilestoneSuccess) {
                   Navigator.pop(context);
-                  showStatusMessage(Status.SUCCESS, "Milestone created successfully");
+                  showStatusMessage(
+                      Status.SUCCESS, "Milestone created successfully");
                   context.read<MilestonesCubit>().onGetMilestones(
                       getMilestonesParamsEntity: GetMilestonesParamsEntity(
                           filterMilestoneInput: null,
@@ -115,9 +115,7 @@ class _MilestoneFormState extends State<MilestoneForm> {
                       final descriptionField = state.descriptionField;
                       final stageDropdown = state.stageDropdown;
                       final datePickerField = state.datePickerField;
-                      print("*****************---------*****************");
-                      print(state);
-
+               
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,12 +190,11 @@ class _MilestoneFormState extends State<MilestoneForm> {
                                                 params: EditMilestoneParamsEntity(
                                                     id: widget.milestone?.id ??
                                                         "",
-                                                    createdById:
-                                                        widget
-                                                                .milestone
-                                                                ?.createdBy
-                                                                ?.id ??
-                                                            "",
+                                                    createdById: widget
+                                                            .milestone
+                                                            ?.createdBy
+                                                            ?.id ??
+                                                        "",
                                                     description:
                                                         descriptionField.value,
                                                     dueDate:

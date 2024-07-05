@@ -10,8 +10,8 @@ Priority priorityFromString(String? value) {
 Map<Priority, String> priorityDisplay = {
   Priority.CRITICAL: "Critical",
   Priority.HIGH: "High",
-  Priority.LOW: "Low",
   Priority.MEDIUM: "Medium",
+  Priority.LOW: "Low",
   Priority.DEFAULT_VALUE: "",
 };
 

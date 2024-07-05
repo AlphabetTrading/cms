@@ -91,6 +91,7 @@ query Items($filterMilestoneInput: FilterMilestoneInput, $paginationInput: Pagin
       description
       Tasks {
        id
+       milestoneId
       }
       createdBy {
             fullName
@@ -113,11 +114,11 @@ query Items($filterMilestoneInput: FilterMilestoneInput, $paginationInput: Pagin
 
     return _client
         .query(QueryOptions(
-      document: gql(fetchMilestonesQuery),
-      fetchPolicy: FetchPolicy.networkOnly
-    
-      // variables: {"": params},
-    ))
+            document: gql(fetchMilestonesQuery),
+            fetchPolicy: FetchPolicy.networkOnly
+
+            // variables: {"": params},
+            ))
         .then((response) {
       if (response.hasException) {
         return DataFailed(
@@ -165,6 +166,7 @@ query GetMilestone($getMilestoneId: String!) {
         createdAt
         updatedAt
       }
+      milestoneId
       description
       dueDate
       id
@@ -179,9 +181,9 @@ query GetMilestone($getMilestoneId: String!) {
 
     return _client
         .query(QueryOptions(
-      document: gql(fetchMilestoneDetailsQuery),
-      variables: {"getMilestoneId": params},
-    ))
+            document: gql(fetchMilestoneDetailsQuery),
+            variables: {"getMilestoneId": params},
+            fetchPolicy: FetchPolicy.networkOnly))
         .then((response) {
       if (response.hasException) {
         return DataFailed(

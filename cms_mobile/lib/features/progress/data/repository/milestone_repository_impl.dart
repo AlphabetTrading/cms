@@ -1,6 +1,6 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/progress/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/progress/data/data_source/milestone_remote_data_source.dart';
 import 'package:cms_mobile/features/progress/data/models/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/repository/milestone_repository.dart';

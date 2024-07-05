@@ -80,12 +80,18 @@ import 'package:cms_mobile/features/products/data/repository/product_repository_
 import 'package:cms_mobile/features/products/domain/repository/product_repository.dart';
 import 'package:cms_mobile/features/products/domain/usecases/get_products.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
-import 'package:cms_mobile/features/progress/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/progress/data/data_source/milestone_remote_data_source.dart';
+import 'package:cms_mobile/features/progress/data/data_source/task_remote_data_source.dart';
 import 'package:cms_mobile/features/progress/data/repository/milestone_repository_impl.dart';
+import 'package:cms_mobile/features/progress/data/repository/task_repository_impl.dart';
 import 'package:cms_mobile/features/progress/domain/repository/milestone_repository.dart';
+import 'package:cms_mobile/features/progress/domain/repository/task_repository.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/create_milestone.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/create_task.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/delete_milestone.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/delete_task.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/edit_milestone.dart';
+import 'package:cms_mobile/features/progress/domain/usecases/edit_task.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/get_milestone_details.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/get_milestones.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/create/create_cubit.dart';
@@ -93,6 +99,9 @@ import 'package:cms_mobile/features/progress/presentation/cubit/milestone/delete
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/task/create/create_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/task/delete/delete_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/task/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
 import 'package:cms_mobile/features/projects/domain/repository/project_repository.dart';
@@ -201,6 +210,11 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
+    sl.registerLazySingleton<TaskDataSource>(
+    () => TaskDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
 
   /**
    * repository
@@ -271,10 +285,16 @@ Future<void> initializeDependencies() async {
       dataSource: sl<ProjectDataSource>(),
     ),
   );
-  //progress
+  // progress
   sl.registerLazySingleton<MilestoneRepository>(
     () => MilestoneRepositoryImpl(
       dataSource: sl<MilestoneDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton<TaskRepository>(
+    () => TaskRepositoryImpl(
+      dataSource: sl<TaskDataSource>(),
     ),
   );
 
@@ -524,6 +544,22 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<CreateTaskUseCase>(
+    () => CreateTaskUseCase(
+      sl<TaskRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<EditTaskUseCase>(
+    () => EditTaskUseCase(
+      sl<TaskRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<DeleteTaskUseCase>(
+    () => DeleteTaskUseCase(
+      sl<TaskRepository>(),
+    ),
+  );
+
   // bloc
 
   // sl.registerFactory(() => ThemeBloc(prefUtils: sl<PrefUtils>()));
@@ -681,5 +717,15 @@ Future<void> initializeDependencies() async {
   );
   sl.registerFactory<DeleteMilestoneCubit>(
     () => DeleteMilestoneCubit(sl<DeleteMilestoneUseCase>()),
+  );
+
+  sl.registerFactory<CreateTaskCubit>(
+    () => CreateTaskCubit(sl<CreateTaskUseCase>()),
+  );
+  sl.registerFactory<EditTaskCubit>(
+    () => EditTaskCubit(sl<EditTaskUseCase>()),
+  );
+  sl.registerFactory<DeleteTaskCubit>(
+    () => DeleteTaskCubit(sl<DeleteTaskUseCase>()),
   );
 }

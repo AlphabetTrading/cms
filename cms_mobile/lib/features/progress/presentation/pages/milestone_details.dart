@@ -32,6 +32,9 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
   @override
   void initState() {
     _tooltip = TooltipBehavior(enable: true);
+    context
+        .read<MilestoneDetailsCubit>()
+        .onGetMilestoneDetails(milestoneId: widget.milestoneId);
     super.initState();
   }
 
@@ -115,106 +118,113 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    double calculatePercentage(int tasks, int totalTasks) {
+      double result = totalTasks == 0 ? 0.0 : (tasks * 100 / totalTasks);
+      return (result * 100).round() / 100;
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text("Milestone Details")),
-      body: BlocProvider<MilestoneDetailsCubit>(
-        create: (context) => sl<MilestoneDetailsCubit>()
-          ..onGetMilestoneDetails(milestoneId: widget.milestoneId),
-        child: BlocBuilder<MilestoneDetailsCubit, MilestoneDetailsState>(
-          builder: (context, state) {
-            if (state is MilestoneDetailsLoading ||
-                state is MilestoneDetailsInitial) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is MilestoneDetailsFailed) {
-              return Center(child: Text(state.error));
-            }
-            MilestoneEntity milestone =
-                (state as MilestoneDetailsSuccess).milestone!;
-            int totalTasks = milestone.tasks?.length ?? 0;
-            int todo = milestone.tasks
-                    ?.where((element) => element.status == CompletionStatus.TODO)
-                    .length ??
-                0;
-            int ongoing = milestone.tasks
-                    ?.where((element) => element.status == CompletionStatus.ONGOING)
-                    .length ??
-                0;
-            int completed = milestone.tasks
-                    ?.where((element) => element.status == CompletionStatus.COMPLETED)
-                    .length ??
-                0;
-            data = [
-              _ChartData(
-                'Todo',
-                totalTasks == 0 ? 0.0 : todo * 100 / totalTasks,
-              ),
-              _ChartData(
-                  'Ongoing', totalTasks == 0 ? 0.0 : ongoing * 100 / totalTasks),
-              _ChartData(
-                  'Completed', totalTasks == 0 ? 0.0 : completed * 100 / totalTasks),
-            ];
+      body: BlocBuilder<MilestoneDetailsCubit, MilestoneDetailsState>(
+        builder: (context, state) {
+          if (state is MilestoneDetailsLoading ||
+              state is MilestoneDetailsInitial) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is MilestoneDetailsFailed) {
+            return Center(child: Text(state.error));
+          }
+          MilestoneEntity milestone =
+              (state as MilestoneDetailsSuccess).milestone!;
+          int totalTasks = milestone.tasks?.length ?? 0;
+          int todo = milestone.tasks
+                  ?.where((element) => element.status == CompletionStatus.TODO)
+                  .length ??
+              0;
+          int ongoing = milestone.tasks
+                  ?.where(
+                      (element) => element.status == CompletionStatus.ONGOING)
+                  .length ??
+              0;
+          int completed = milestone.tasks
+                  ?.where(
+                      (element) => element.status == CompletionStatus.COMPLETED)
+                  .length ??
+              0;
+          data = [
+            _ChartData(
+              'Todo',
+              calculatePercentage(todo, totalTasks),
+            ),
+            _ChartData(
+              'Ongoing',
+              calculatePercentage(ongoing, totalTasks),
+            ),
+            _ChartData(
+              'Completed',
+              calculatePercentage(completed, totalTasks),
+            ),
+          ];
 
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Milestone',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w800)),
-                    const SizedBox(height: 10),
-                    _buildMilestoneDetails(context, milestone),
-                    const SizedBox(height: 20),
-                    Text('Description',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w800)),
-                    const SizedBox(height: 10),
-                    Text(milestone.description ?? 'No description provided',
-                        style: Theme.of(context).textTheme.labelMedium),
-                    const SizedBox(height: 20),
-                    Text('Milestone Progress',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w800)),
-                    SfCircularChart(
-                        legend: Legend(isVisible: true),
-                        tooltipBehavior: _tooltip,
-                        series: <CircularSeries<_ChartData, String>>[
-                          DoughnutSeries<_ChartData, String>(
-                              dataSource: data,
-                              xValueMapper: (_ChartData data, _) => data.x,
-                              yValueMapper: (_ChartData data, _) => data.y,
-                              dataLabelMapper: (_ChartData data, _) =>
-                                  "${data.y}%".toString(),
-                              dataLabelSettings: DataLabelSettings(
-                                  isVisible: true,
-                                  labelPosition: ChartDataLabelPosition.outside,
-                                  showZeroValue: false,
-                                  // Renders background rectangle and fills it with series color
-                                  useSeriesColor: true),
-                              name: 'Gold')
-                        ]),
-                    const SizedBox(height: 10),
-                    Text('Tasks',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w800)),
-                    TaskSection(tasks: milestone.tasks)
-                  ],
-                ),
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Milestone',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 10),
+                  _buildMilestoneDetails(context, milestone),
+                  const SizedBox(height: 20),
+                  Text('Description',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 10),
+                  Text(milestone.description ?? 'No description provided',
+                      style: Theme.of(context).textTheme.labelMedium),
+                  const SizedBox(height: 20),
+                  Text('Milestone Progress',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w800)),
+                  SfCircularChart(
+                      legend: Legend(isVisible: true),
+                      tooltipBehavior: _tooltip,
+                      series: <CircularSeries<_ChartData, String>>[
+                        DoughnutSeries<_ChartData, String>(
+                            dataSource: data,
+                            xValueMapper: (_ChartData data, _) => data.x,
+                            yValueMapper: (_ChartData data, _) => data.y,
+                            dataLabelMapper: (_ChartData data, _) =>
+                                "${data.y}%".toString(),
+                            dataLabelSettings: DataLabelSettings(
+                                isVisible: true,
+                                labelPosition: ChartDataLabelPosition.outside,
+                                showZeroValue: false,
+                                // Renders background rectangle and fills it with series color
+                                useSeriesColor: true),
+                            name: 'Gold')
+                      ]),
+                  const SizedBox(height: 10),
+                  Text('Tasks',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w800)),
+                  TaskSection(milestone: milestone)
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
