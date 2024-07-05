@@ -1,11 +1,16 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
+import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
+import 'package:cms_mobile/features/progress/presentation/widgets/task_form.dart';
 import 'package:cms_mobile/features/progress/presentation/widgets/tasks_list.dart';
+import 'package:cms_mobile/injection_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskSection extends StatefulWidget {
-  final List<TaskEntity>? tasks;
-  const TaskSection({super.key, required this.tasks});
+  final MilestoneEntity? milestone;
+  const TaskSection({super.key, required this.milestone});
 
   @override
   State<TaskSection> createState() => _TaskSectionState();
@@ -51,15 +56,15 @@ class _TaskSectionState extends State<TaskSection>
 
   @override
   Widget build(BuildContext context) {
-    List<TaskEntity> todo = widget.tasks
+    List<TaskEntity> todo = widget.milestone?.tasks
             ?.where((element) => element.status == CompletionStatus.TODO)
             .toList() ??
         [];
-    List<TaskEntity> ongoing = widget.tasks
+    List<TaskEntity> ongoing = widget.milestone?.tasks
             ?.where((element) => element.status == CompletionStatus.ONGOING)
             .toList() ??
         [];
-    List<TaskEntity> completed = widget.tasks
+    List<TaskEntity> completed = widget.milestone?.tasks
             ?.where((element) => element.status == CompletionStatus.COMPLETED)
             .toList() ??
         [];
@@ -82,8 +87,22 @@ class _TaskSectionState extends State<TaskSection>
                   }),
             ),
             Flexible(
-                child:
-                    ElevatedButton(onPressed: () {}, child: Text("New Task")))
+                child: ElevatedButton(
+                    onPressed: () => showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(32.0),
+                                child: TaskForm(
+                                    milestoneId: widget.milestone?.id ?? ""),
+                              )
+                            ],
+                          ),
+                        ),
+                    child: Text("Add Task")))
           ],
         ),
         TabBar(
@@ -93,8 +112,8 @@ class _TaskSectionState extends State<TaskSection>
             isScrollable: true,
             tabs: [
               Tab(
-                  child:
-                      _buildTabItem(idx: 0, count: widget.tasks?.length ?? 0)),
+                  child: _buildTabItem(
+                      idx: 0, count: widget.milestone?.tasks?.length ?? 0)),
               Tab(child: _buildTabItem(idx: 1, count: todo.length)),
               Tab(child: _buildTabItem(idx: 2, count: ongoing.length)),
               Tab(child: _buildTabItem(idx: 3, count: completed.length)),
@@ -102,7 +121,7 @@ class _TaskSectionState extends State<TaskSection>
         SizedBox(
           height: 300,
           child: TabBarView(controller: tabController, children: [
-            TasksList(tasks: widget.tasks),
+            TasksList(tasks: widget.milestone?.tasks ?? []),
             TasksList(tasks: todo),
             TasksList(tasks: ongoing),
             TasksList(tasks: completed),
