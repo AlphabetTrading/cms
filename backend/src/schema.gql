@@ -108,6 +108,7 @@ input CreateMaterialReceiveInput {
   projectId: String!
   purchaseOrderId: String!
   purchasedById: String!
+  warehouseStoreId: String!
 }
 
 input CreateMaterialReceiveItemInput {
@@ -372,6 +373,17 @@ type DailyStockBalance {
   updatedAt: DateTime!
 }
 
+type DashboardStat {
+  duration: Duration
+  expenditure: Expenditure
+  progress: Float
+}
+
+input DateRange {
+  end: DateTime!
+  start: DateTime!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -383,6 +395,11 @@ input DateTimeFilter {
   gte: DateTime
   lt: DateTime
   lte: DateTime
+}
+
+type DetailedStockStat {
+  totalItemUsed: Float
+  totalItemWasted: Float
 }
 
 type DocumentTransaction {
@@ -401,6 +418,20 @@ enum DocumentType {
   MATERIAL_TRANSFER
   PROFORMA
   PURCHASE_ORDER
+}
+
+type Duration {
+  days: Float
+  hours: Float
+  minutes: Float
+  seconds: Float
+}
+
+type Expenditure {
+  totalExpenditure: Float
+  totalItemCost: Float
+  totalLaborCost: Float
+  totalTransportationCost: Float
 }
 
 input FilterCompanyInput {
@@ -437,6 +468,15 @@ input FilterDailyStockBalanceInput {
   updatedAt: DateTimeFilter
 }
 
+input FilterExpenseInput {
+  dateRange: DateRange
+  filterPeriod: String
+  productId: String
+  productType: ProductType
+  productVariantId: String
+  projectId: String!
+}
+
 input FilterMaterialIssueInput {
   approvedBy: FilterUserDocumentsInput
   approvedById: String
@@ -457,7 +497,6 @@ input FilterMaterialReceiveInput {
   approvedById: String
   createdAt: DateTimeFilter
   id: String
-  invoiceId: StringFilter
   project: FilterProjectInput
   projectId: String
   purchaseOrder: FilterPurchaseOrderInput
@@ -582,6 +621,13 @@ input FilterPurchaseOrderInput {
   serialNumber: StringFilter
   status: [ApprovalStatus!]
   subTotal: NumberFilter
+}
+
+input FilterStockInput {
+  dateRange: DateRange
+  filterPeriod: String
+  productVariantId: String
+  projectId: String!
 }
 
 input FilterTaskInput {
@@ -1198,6 +1244,12 @@ type Product {
   updatedAt: DateTime!
 }
 
+enum ProductType {
+  CONSTRUCTION
+  ELECTRICAL
+  SANITARY
+}
+
 type ProductVariant {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
@@ -1325,6 +1377,9 @@ type Query {
   getDailySiteDatas(filterDailySiteDataInput: FilterDailySiteDataInput, mine: Boolean! = false, orderBy: OrderByDailySiteDataInput, paginationInput: PaginationInput): PaginationDailySiteData!
   getDailyStockBalaceById(id: String!): DailyStockBalance!
   getDailyStockBalances(filterDailyStockBalanceInput: FilterDailyStockBalanceInput, orderBy: OrderByDailyStockBalanceInput, paginationInput: PaginationInput): PaginationDailyStockBalances!
+  getDashboardStats(id: String!): DashboardStat!
+  getDetailedExpenseStats(filterExpenseInput: FilterExpenseInput!): Float!
+  getDetailedStockStats(filterStockInput: FilterStockInput!): DetailedStockStat!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, mine: Boolean! = false, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
   getMaterialReceiveById(id: String!): MaterialReceiveVoucher!
@@ -1509,6 +1564,7 @@ input UpdateMaterialReceiveInput {
   purchaseOrderId: String
   purchasedById: String
   status: ApprovalStatus
+  warehouseStoreId: String
 }
 
 input UpdateMaterialReceiveItemInput {
