@@ -10,15 +10,16 @@ import { PaginationMaterialReceives } from 'src/common/pagination/pagination-inf
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('MaterialReceive')
 export class MaterialReceiveResolver {
   constructor(
     private readonly materialReceiveService: MaterialReceiveService,
   ) {}
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => PaginationMaterialReceives)
   async getMaterialReceives(
     @UserEntity() user: User,
@@ -146,6 +147,7 @@ export class MaterialReceiveResolver {
   }
 
   @Mutation(() => MaterialReceiveVoucher)
+  @HasRoles('PURCHASER')
   async createMaterialReceive(
     @Args('createMaterialReceiveInput')
     createMaterialReceive: CreateMaterialReceiveInput,
@@ -160,6 +162,7 @@ export class MaterialReceiveResolver {
   }
 
   @Mutation(() => MaterialReceiveVoucher)
+  @HasRoles('PURCHASER')
   async updateMaterialReceive(
     @Args('updateMaterialReceiveInput')
     updateMaterialReceiveInput: UpdateMaterialReceiveInput,
@@ -176,6 +179,7 @@ export class MaterialReceiveResolver {
   }
 
   @Mutation(() => MaterialReceiveVoucher)
+  @HasRoles('PROJECT_MANAGER')
   async approveMaterialReceive(
     @UserEntity() user: User,
     @Args('materialReceiveId') materialReceiveId: string,
@@ -194,6 +198,7 @@ export class MaterialReceiveResolver {
   }
 
   @Mutation(() => MaterialReceiveVoucher)
+  @HasRoles('PURCHASER')
   async deleteMaterialReceive(@Args('id') materialReceiveId: string) {
     try {
       return await this.materialReceiveService.deleteMaterialReceive(

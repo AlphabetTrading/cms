@@ -10,8 +10,10 @@ import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { PaginationMaterialRequests } from 'src/common/pagination/pagination-info';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('MaterialRequest')
 export class MaterialRequestResolver {
   constructor(
@@ -140,6 +142,7 @@ export class MaterialRequestResolver {
   }
 
   @Mutation(() => MaterialRequestVoucher)
+  @HasRoles('SITE_MANAGER')
   async createMaterialRequest(
     @Args('createMaterialRequestInput')
     createMaterialRequest: CreateMaterialRequestInput,
@@ -154,6 +157,7 @@ export class MaterialRequestResolver {
   }
 
   @Mutation(() => MaterialRequestVoucher)
+  @HasRoles('SITE_MANAGER')
   async updateMaterialRequest(
     @Args('updateMaterialRequestInput')
     updateMaterialRequestInput: UpdateMaterialRequestInput,
@@ -168,6 +172,7 @@ export class MaterialRequestResolver {
   }
 
   @Mutation(() => MaterialRequestVoucher)
+  @HasRoles('SITE_MANAGER')
   async deleteMaterialRequest(@Args('id') materialRequestId: string) {
     try {
       return this.materialRequestService.deleteMaterialRequest(
@@ -179,6 +184,7 @@ export class MaterialRequestResolver {
   }
 
   @Mutation(() => MaterialRequestVoucher)
+  @HasRoles('PROJECT_MANAGER')
   async approveMaterialRequest(
     @UserEntity() user: User,
     @Args('materialRequestId') materialRequestId: string,

@@ -9,10 +9,11 @@ import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { PaginationMaterialIssues } from 'src/common/pagination/pagination-info';
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard)
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('MaterialIssue')
 export class MaterialIssueResolver {
   constructor(private readonly materialIssueService: MaterialIssueService) {}
@@ -121,6 +122,7 @@ export class MaterialIssueResolver {
   }
 
   @Mutation(() => MaterialIssueVoucher)
+  @HasRoles('SITE_MANAGER')
   async createMaterialIssue(
     @Args('createMaterialIssueInput')
     createMaterialIssue: CreateMaterialIssueInput,
@@ -135,6 +137,7 @@ export class MaterialIssueResolver {
   }
 
   @Mutation(() => MaterialIssueVoucher)
+  @HasRoles('SITE_MANAGER')
   async updateMaterialIssue(
     @Args('updateMaterialIssueInput')
     updateMaterialIssueInput: UpdateMaterialIssueInput,
@@ -149,6 +152,7 @@ export class MaterialIssueResolver {
   }
 
   @Mutation(() => MaterialIssueVoucher)
+  @HasRoles('SITE_MANAGER')
   async deleteMaterialIssue(@Args('id') materialIssueId: string) {
     try {
       return this.materialIssueService.deleteMaterialIssue(materialIssueId);
@@ -158,6 +162,7 @@ export class MaterialIssueResolver {
   }
 
   @Mutation(() => MaterialIssueVoucher)
+  @HasRoles('STORE_MANAGER')
   async approveMaterialIssue(
     @UserEntity() user: User,
     @Args('materialIssueId') materialIssueId: string,

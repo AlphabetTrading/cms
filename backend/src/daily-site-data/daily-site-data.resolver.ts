@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { DailySiteDataService } from './daily-site-data.service';
 import { PaginationDailySiteData } from 'src/common/pagination/pagination-info';
@@ -11,8 +11,9 @@ import { OrderByDailySiteDataInput } from './dto/order-by-daily-site-data.input'
 import { DailySiteData } from './model/daily-site-data.model';
 import { CreateDailySiteDataInput } from './dto/create-daily-site-data.input';
 import { UpdateDailySiteDataInput } from './dto/update-daily-site-data.input';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard)
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('DailySiteData')
 export class DailySiteDataResolver {
   constructor(private readonly dailySiteDataService: DailySiteDataService) {}
@@ -38,9 +39,10 @@ export class DailySiteDataResolver {
     let approverIds: string[] = [];
 
     if (filterDailySiteDataInput?.projectId) {
-      const approvers = await this.dailySiteDataService.getDailySiteDataApprovers(
-        filterDailySiteDataInput.projectId,
-      );
+      const approvers =
+        await this.dailySiteDataService.getDailySiteDataApprovers(
+          filterDailySiteDataInput.projectId,
+        );
       approverIds = approvers.flatMap((approver) =>
         approver.ProjectUsers.map((projectUser) => projectUser.userId),
       );
@@ -123,6 +125,7 @@ export class DailySiteDataResolver {
   }
 
   @Mutation(() => DailySiteData)
+  @HasRoles('SITE_MANAGER', 'CONSULTANT')
   async createDailySiteData(
     @Args('createDailySiteDataInput')
     createDailySiteData: CreateDailySiteDataInput,
@@ -137,6 +140,7 @@ export class DailySiteDataResolver {
   }
 
   @Mutation(() => DailySiteData)
+  @HasRoles('SITE_MANAGER', 'CONSULTANT')
   async updateDailySiteData(
     @Args('updateDailySiteDataInput')
     updateDailySiteDataInput: UpdateDailySiteDataInput,
@@ -151,6 +155,7 @@ export class DailySiteDataResolver {
   }
 
   @Mutation(() => DailySiteData)
+  @HasRoles('SITE_MANAGER', 'CONSULTANT')
   async deleteDailySiteData(@Args('id') dailySiteDataId: string) {
     try {
       return this.dailySiteDataService.deleteDailySiteData(dailySiteDataId);
@@ -160,6 +165,7 @@ export class DailySiteDataResolver {
   }
 
   @Mutation(() => DailySiteData)
+  @HasRoles('PROJECT_MANAGER')
   async approveDailySiteData(
     @UserEntity() user: User,
     @Args('dailySiteDataId') dailySiteDataId: string,

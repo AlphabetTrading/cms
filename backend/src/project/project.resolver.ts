@@ -6,10 +6,14 @@ import { UpdateProjectInput } from './dto/update-project.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { FilterProjectInput } from './dto/filter-project.input';
 import { OrderByProjectInput } from './dto/order-by-project.input';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { PaginationProjects } from 'src/common/pagination/pagination-info';
 import { Prisma } from '@prisma/client';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { HasRoles } from 'src/common/decorators';
 
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('Project')
 export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
@@ -99,6 +103,7 @@ export class ProjectResolver {
   }
 
   @Mutation(() => Project)
+  @HasRoles('OWNER', 'ADMIN')
   async createProject(
     @Args('createProjectInput') createProjectInput: CreateProjectInput,
   ) {
@@ -110,6 +115,7 @@ export class ProjectResolver {
   }
 
   @Mutation(() => Project)
+  @HasRoles('OWNER', 'ADMIN')
   async updateProject(
     @Args('id') projectId: string,
     @Args('updateProjectInput') updateProjectInput: UpdateProjectInput,
@@ -122,6 +128,7 @@ export class ProjectResolver {
   }
 
   @Mutation(() => Project)
+  @HasRoles('OWNER', 'ADMIN')
   async deleteProject(@Args('id', { type: () => String }) id: string) {
     try {
       return this.projectService.remove(id);

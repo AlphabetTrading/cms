@@ -9,10 +9,11 @@ import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { PaginationMaterialTransfers } from 'src/common/pagination/pagination-info';
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard)
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('MaterialTransfer')
 export class MaterialTransferResolver {
   constructor(
@@ -141,6 +142,7 @@ export class MaterialTransferResolver {
   }
 
   @Mutation(() => MaterialTransferVoucher)
+  @HasRoles('STORE_MANAGER')
   async createMaterialTransfer(
     @Args('createMaterialTransferInput')
     createMaterialTransfer: CreateMaterialTransferInput,
@@ -155,6 +157,7 @@ export class MaterialTransferResolver {
   }
 
   @Mutation(() => MaterialTransferVoucher)
+  @HasRoles('STORE_MANAGER')
   async updateMaterialTransfer(
     @Args('updateMaterialTransferInput')
     updateMaterialTransferInput: UpdateMaterialTransferInput,
@@ -169,6 +172,7 @@ export class MaterialTransferResolver {
   }
 
   @Mutation(() => MaterialTransferVoucher)
+  @HasRoles('STORE_MANAGER')
   async deleteMaterialTransfer(@Args('id') materialTransferId: string) {
     try {
       return this.materialTransferService.deleteMaterialTransfer(
@@ -180,6 +184,7 @@ export class MaterialTransferResolver {
   }
 
   @Mutation(() => MaterialTransferVoucher)
+  @HasRoles('PROJECT_MANAGER')
   async approveMaterialTransfer(
     @UserEntity() user: User,
     @Args('materialTransferId') materialTransferId: string,

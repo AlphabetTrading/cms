@@ -10,8 +10,11 @@ import { BadRequestException, UseGuards } from '@nestjs/common';
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { PaginationMaterialReturns } from 'src/common/pagination/pagination-info';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
+
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('MaterialReturn')
 export class MaterialReturnResolver {
   constructor(private readonly materialReturnService: MaterialReturnService) {}
@@ -143,6 +146,7 @@ export class MaterialReturnResolver {
   }
 
   @Mutation(() => MaterialReturnVoucher)
+  @HasRoles('SITE_MANAGER')
   async createMaterialReturn(
     @Args('createMaterialReturnInput')
     createMaterialReturn: CreateMaterialReturnInput,
@@ -157,6 +161,7 @@ export class MaterialReturnResolver {
   }
 
   @Mutation(() => MaterialReturnVoucher)
+  @HasRoles('SITE_MANAGER')
   async updateMaterialReturn(
     @Args('updateMaterialReturnInput')
     updateMaterialReturnInput: UpdateMaterialReturnInput,
@@ -171,6 +176,7 @@ export class MaterialReturnResolver {
   }
 
   @Mutation(() => MaterialReturnVoucher)
+  @HasRoles('SITE_MANAGER')
   async deleteMaterialReturn(@Args('id') materialReturnId: string) {
     try {
       return this.materialReturnService.deleteMaterialReturn(materialReturnId);
@@ -180,6 +186,7 @@ export class MaterialReturnResolver {
   }
 
   @Mutation(() => MaterialReturnVoucher)
+  @HasRoles('STORE_MANAGER')
   async approveMaterialReturn(
     @UserEntity() user: User,
     @Args('materialReturnId') materialReturnId: string,

@@ -9,12 +9,13 @@ import { PaginationInput } from 'src/common/pagination/pagination.input';
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Proforma } from './model/proforma.model';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import * as FileUpload from 'graphql-upload/Upload.js';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard)
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver(() => Proforma)
 export class ProformaResolver {
   constructor(private readonly proformaService: ProformaService) {}
@@ -97,6 +98,7 @@ export class ProformaResolver {
   }
 
   @Mutation(() => Proforma)
+  @HasRoles('PURCHASER')
   async createProforma(
     @Args('createProformaInput')
     createProforma: CreateProformaInput,
@@ -111,6 +113,7 @@ export class ProformaResolver {
   }
 
   @Mutation(() => Proforma)
+  @HasRoles('PURCHASER')
   async updateProforma(
     @Args('updateProformaInput')
     updateProformaInput: UpdateProformaInput,
@@ -125,6 +128,7 @@ export class ProformaResolver {
   }
 
   @Mutation(() => Proforma)
+  @HasRoles('PURCHASER')
   async deleteProforma(@Args('id') proformaId: string) {
     try {
       return this.proformaService.deleteProforma(proformaId);
@@ -134,6 +138,7 @@ export class ProformaResolver {
   }
 
   @Mutation(() => Proforma)
+  @HasRoles('PROJECT_MANAGER')
   async approveProforma(
     @UserEntity() user: User,
     @Args('proformaId') proformaId: string,

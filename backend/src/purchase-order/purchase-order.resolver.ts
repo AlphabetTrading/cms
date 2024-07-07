@@ -10,9 +10,10 @@ import { PaginationPurchaseOrders } from 'src/common/pagination/pagination-info'
 import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { UserEntity } from 'src/common/decorators';
+import { HasRoles, UserEntity } from 'src/common/decorators';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard)
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('PurchaseOrder')
 export class PurchaseOrderResolver {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
@@ -139,6 +140,7 @@ export class PurchaseOrderResolver {
   }
 
   @Mutation(() => PurchaseOrderVoucher)
+  @HasRoles('PURCHASER')
   async createPurchaseOrder(
     @Args('createPurchaseOrderInput')
     createPurchaseOrder: CreatePurchaseOrderInput,
@@ -153,6 +155,7 @@ export class PurchaseOrderResolver {
   }
 
   @Mutation(() => PurchaseOrderVoucher)
+  @HasRoles('PURCHASER')
   async updatePurchaseOrder(
     @Args('updatePurchaseOrderInput')
     updatePurchaseOrderInput: UpdatePurchaseOrderInput,
@@ -167,6 +170,7 @@ export class PurchaseOrderResolver {
   }
 
   @Mutation(() => PurchaseOrderVoucher)
+  @HasRoles('PURCHASER')
   async deletePurchaseOrder(@Args('id') purchaseOrderId: string) {
     try {
       return this.purchaseOrderService.deletePurchaseOrder(purchaseOrderId);
@@ -176,6 +180,7 @@ export class PurchaseOrderResolver {
   }
 
   @Mutation(() => PurchaseOrderVoucher)
+  @HasRoles('PROJECT_MANAGER')
   async approvePurchaseOrder(
     @UserEntity() user: User,
     @Args('purchaseOrderId') purchaseOrderId: string,
