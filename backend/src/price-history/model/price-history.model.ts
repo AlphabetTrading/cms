@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { BaseModel } from 'src/common/models/base.model';
+import { Company } from 'src/company/model/company.model';
 import { ProductVariant } from 'src/product-variant/model/product-variant.model';
-import { Project } from 'src/project/model/project.model';
 
 @ObjectType()
 export class PriceHistory extends BaseModel {
@@ -12,10 +12,10 @@ export class PriceHistory extends BaseModel {
   productVariant?: ProductVariant;
 
   @Field({ nullable: true })
-  projectId?: string;
+  companyId?: string;
 
-  @Field(() => Project, { nullable: true })
-  project?: Project;
+  @Field(() => Company, { nullable: true })
+  company?: Company;
 
   @Field({ nullable: true })
   price?: number;

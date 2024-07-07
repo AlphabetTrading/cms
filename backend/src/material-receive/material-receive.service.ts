@@ -271,6 +271,7 @@ export class MaterialReceiveService {
       {
         where: { id: materialReceiveId },
         include: {
+          Project: true,
           items: {
             include: {
               productVariant: true,
@@ -328,7 +329,18 @@ export class MaterialReceiveService {
               },
             });
           }
+
+          const companyId = materialReceive.Project.companyId;
+  
+          await prisma.priceHistory.create({
+            data: {
+              productVariantId: item.productVariantId,
+              companyId: companyId,
+              price: item.unitCost,
+            },
+          });
         }
+
         const updatedMaterialReceive =
           await prisma.materialReceiveVoucher.update({
             where: { id: materialReceiveId },

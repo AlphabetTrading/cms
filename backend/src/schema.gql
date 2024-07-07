@@ -190,9 +190,9 @@ input CreateOwnerInput {
 }
 
 input CreatePriceHistoryInput {
+  companyId: String!
   price: Float!
   productVariantId: String!
-  projectId: String!
 }
 
 input CreateProductInput {
@@ -565,12 +565,12 @@ input FilterMilestoneInput {
 }
 
 input FilterPriceHistoryInput {
+  company: FilterCompanyInput
+  companyId: String!
   createdAt: DateTimeFilter
   id: String
   productVariant: FilterProductVariantInput
   productVariantId: String
-  project: FilterProjectInput
-  projectId: String
 }
 
 input FilterProductInput {
@@ -945,7 +945,6 @@ type Mutation {
   deleteMaterialReturn(id: String!): MaterialReturnVoucher!
   deleteMaterialTransfer(id: String!): MaterialTransferVoucher!
   deleteMilestone(id: String!): Milestone!
-  deletePriceHistory(id: String!): PriceHistory!
   deleteProduct(id: String!): Product!
   deleteProductVariant(id: String!): ProductVariant!
   deleteProforma(id: String!): Proforma!
@@ -966,7 +965,6 @@ type Mutation {
   updateMaterialReturn(updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
   updateMaterialTransfer(updateMaterialTransferInput: UpdateMaterialTransferInput!): MaterialTransferVoucher!
   updateMilestone(updateMilestoneInput: UpdateMilestoneInput!): Milestone!
-  updatePriceHistory(id: String!, updatePriceHistoryInput: UpdatePriceHistoryInput!): PriceHistory!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
   updateProforma(newPhoto: Upload, updateProformaInput: UpdateProformaInput!): Proforma!
@@ -1037,14 +1035,6 @@ input OrderByMaterialTransferInput {
 input OrderByMilestoneInput {
   createdAt: OrderDirection
   name: OrderDirection
-  updatedAt: OrderDirection
-}
-
-input OrderByPriceHistoryInput {
-  createdAt: OrderDirection
-  price: OrderDirection
-  productVariant: OrderByProductVariantInput
-  project: OrderByProjectInput
   updatedAt: OrderDirection
 }
 
@@ -1211,14 +1201,15 @@ type PaginationWarehouseStores {
 }
 
 type PriceHistory {
+  company: Company
+  companyId: String
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
   price: Float
   productVariant: ProductVariant
   productVariantId: String
-  project: Project
-  projectId: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
@@ -1393,9 +1384,8 @@ type Query {
   getMe: User!
   getMilestone(id: String!): Milestone!
   getMilestones(filterMilestoneInput: FilterMilestoneInput, orderBy: OrderByMilestoneInput, paginationInput: PaginationInput): PaginationMilestones!
-  getPriceHistory(id: String!): PriceHistory!
   getProduct(id: String!): Product!
-  getProductPriceHistories(filterPriceHistoryInput: FilterPriceHistoryInput, orderBy: OrderByPriceHistoryInput, paginationInput: PaginationInput): PaginationPriceHistories!
+  getProductPriceHistories(filterPriceHistoryInput: FilterPriceHistoryInput!): PaginationPriceHistories!
   getProductVariant(id: String!): ProductVariant!
   getProductVariants(filterProductVariantInput: FilterProductVariantInput, orderBy: OrderByProductVariantInput, paginationInput: PaginationInput): PaginationProductVariants!
   getProducts(filterProductInput: FilterProductInput, orderBy: OrderByProductInput, paginationInput: PaginationInput): PaginationProducts!
@@ -1643,12 +1633,6 @@ input UpdateMilestoneInput {
   name: String
   projectId: String
   stage: UseType
-}
-
-input UpdatePriceHistoryInput {
-  price: Float
-  productVariantId: String
-  projectId: String
 }
 
 input UpdateProductInput {

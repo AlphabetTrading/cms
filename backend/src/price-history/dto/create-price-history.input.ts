@@ -6,7 +6,7 @@ export class CreatePriceHistoryInput {
   productVariantId: string;
 
   @Field()
-  projectId: string;
+  companyId: string;
 
   @Field()
   price: number;

@@ -6,7 +6,7 @@ export class UpdatePriceHistoryInput extends PartialType(
   CreatePriceHistoryInput,
 ) {
   @Field({ nullable: true })
-  projectId?: string;
+  companyId?: string;
 
   @Field({ nullable: true })
   productVariantId?: string;

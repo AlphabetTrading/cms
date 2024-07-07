@@ -48,7 +48,6 @@ async function main() {
   await seedUsers();
   await seedProducts();
   await seedProductVariants();
-  await seedPriceHistory();
   await seedProjects();
   await seedProjectUsers();
   await seedMilestones();
@@ -881,29 +880,6 @@ async function seedWarehouseProducts() {
     console.error('Error seeding WarehouseProduct models:', error);
   }
 }
-async function seedPriceHistory() {
-  try {
-    const projects = await prisma.project.findMany();
-    const productVariants = await prisma.productVariant.findMany();
-    await prisma.priceHistory.createMany({
-      data: productVariants
-        .map((variant) => {
-          return projects.map((project) => {
-            return {
-              projectId: project.id,
-              productVariantId: variant.id,
-              price: Math.floor(Math.random() * 100),
-            };
-          });
-        })
-        .flat(),
-    });
-
-    console.log('Price history seeded successfully');
-  } catch (error) {
-    console.error('Error seeding price history:', error);
-  }
-}
 async function seedMaterialIssueVouchers() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
@@ -1227,42 +1203,57 @@ async function seedMaterialReceiveVouchers() {
         const productVariants = await prisma.productVariant.findMany();
 
         for (const data of receiveVouchers) {
-          await prisma.materialReceiveVoucher.create({
-            data: {
-              ...data,
-              items: {
-                create: [
-                  {
-                    quantity: 10,
-                    productVariantId: productVariants[0].id,
-                    totalCost: 100,
-                    unitCost: 10,
-                    loadingCost: 800,
-                    unloadingCost: 1100,
-                    transportationCost: 1500,
-                  },
-                  {
-                    quantity: 10,
-                    productVariantId: productVariants[1].id,
-                    totalCost: 50,
-                    unitCost: 5,
-                    loadingCost: 1200,
-                    unloadingCost: 600,
-                    transportationCost: 1000,
-                  },
-                  {
-                    quantity: 100,
-                    productVariantId: productVariants[2].id,
-                    totalCost: 150,
-                    unitCost: 1.5,
-                    loadingCost: 1000,
-                    unloadingCost: 1000,
-                    transportationCost: 2000,
-                  },
-                ],
+          const materialReceiveVoucher =
+            await prisma.materialReceiveVoucher.create({
+              include: {
+                items: true,
               },
-            },
-          });
+              data: {
+                ...data,
+                items: {
+                  create: [
+                    {
+                      quantity: 10,
+                      productVariantId: productVariants[0].id,
+                      totalCost: 100,
+                      unitCost: 10,
+                      loadingCost: 800,
+                      unloadingCost: 1100,
+                      transportationCost: 1500,
+                    },
+                    {
+                      quantity: 10,
+                      productVariantId: productVariants[1].id,
+                      totalCost: 50,
+                      unitCost: 5,
+                      loadingCost: 1200,
+                      unloadingCost: 600,
+                      transportationCost: 1000,
+                    },
+                    {
+                      quantity: 100,
+                      productVariantId: productVariants[2].id,
+                      totalCost: 150,
+                      unitCost: 1.5,
+                      loadingCost: 1000,
+                      unloadingCost: 1000,
+                      transportationCost: 2000,
+                    },
+                  ],
+                },
+              },
+            });
+          for (const item of materialReceiveVoucher.items) {
+            if (data.status === 'COMPLETED') {
+              await prisma.priceHistory.create({
+                data: {
+                  productVariantId: item.productVariantId,
+                  companyId: project.companyId,
+                  price: item.unitCost,
+                },
+              });
+            }
+          }
         }
       }
     }
@@ -1543,7 +1534,7 @@ async function seedProformas() {
           },
         },
       });
-    
+
       if (purchasers.length > 0) {
         await prisma.proforma.createMany({
           data: [
@@ -1561,7 +1552,7 @@ async function seedProformas() {
               photo: '',
               preparedById: purchasers[0].id,
               approvedById: project_managers[0].id,
-              status: ApprovalStatus.COMPLETED
+              status: ApprovalStatus.COMPLETED,
             },
             {
               projectId: project.id,
@@ -1577,7 +1568,7 @@ async function seedProformas() {
               photo: '',
               preparedById: purchasers[0].id,
               approvedById: project_managers[0].id,
-              status: ApprovalStatus.DECLINED
+              status: ApprovalStatus.DECLINED,
             },
             {
               projectId: project.id,
@@ -1593,8 +1584,7 @@ async function seedProformas() {
               photo: '',
               preparedById: purchasers[0].id,
               approvedById: project_managers[0].id,
-              status: ApprovalStatus.COMPLETED
-
+              status: ApprovalStatus.COMPLETED,
             },
           ],
         });

@@ -21,6 +21,7 @@ model Company {
   owner           User             @relation("Company", fields: [ownerId], references: [id])
   employees       User[]           @relation("CompanyEmployees")
   warehouseStores WarehouseStore[]
+  PriceHistory    PriceHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,14 +162,14 @@ model PriceHistory {
   id               String         @id @default(uuid())
   productVariantId String
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
-  projectId        String
-  project          Project        @relation(fields: [projectId], references: [id])
+  companyId        String
+  company          Company        @relation(fields: [companyId], references: [id])
   price            Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([productVariantId, projectId])
+  @@index([productVariantId, companyId])
 }
 
 model Proforma {
@@ -244,8 +245,8 @@ model PurchaseOrderItem {
   remark                String?
   purchaseOrderId       String
   PurchaseOrder         PurchaseOrder        @relation(fields: [purchaseOrderId], references: [id], name: "items")
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
   @@unique([id, proformaId, materialRequestItemId])
 }
@@ -536,7 +537,6 @@ model Project {
   MaterialRequestVoucher  MaterialRequestVoucher[]
   MaterialTransferVoucher MaterialTransferVoucher[]
   Proforma                Proforma[]
-  PriceHistory            PriceHistory[]
   WarehouseProduct        WarehouseProduct[]
   DailyStockBalance       DailyStockBalance[]
   DailySiteData           DailySiteData[]
