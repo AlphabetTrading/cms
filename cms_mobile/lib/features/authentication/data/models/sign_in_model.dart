@@ -1,4 +1,3 @@
-import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/login_entity.dart';
 
 class LoginModel extends LoginEntity {

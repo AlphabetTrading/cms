@@ -30,7 +30,7 @@ class MilestoneModel extends MilestoneEntity {
   factory MilestoneModel.fromJson(Map<String, dynamic> json) {
     return MilestoneModel(
         id: json['id'],
-        progress: json['progress'].toDouble(),
+        progress: (json['progress'].toDouble() * 100).round() / 100,
         stage: useTypeFromString(json['stage']),
         dueDate:
             json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,

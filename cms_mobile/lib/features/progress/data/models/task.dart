@@ -23,6 +23,7 @@ class TaskModel extends TaskEntity {
           assignedTo: assignedTo,
         );
   factory TaskModel.fromJson(Map<String, dynamic> json) {
+  
     return TaskModel(
       id: json['id'],
       name: json['name'],
@@ -35,5 +36,76 @@ class TaskModel extends TaskEntity {
           ? UserModel.fromJson(json['assignedTo'])
           : null,
     );
+  }
+}
+
+class CreateTaskParamsModel extends CreateTaskParamsEntity {
+  CreateTaskParamsModel(
+      {required super.name,
+      required super.priority,
+      required super.status,
+      required super.dueDate,
+      required super.description,
+      required super.milestoneId,
+      required super.assignedToId});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'priority': priority.name,
+      'status': status.name,
+      'dueDate': dueDate.toIso8601String(),
+      'description': description,
+      'milestoneId': milestoneId,
+      'assignedToId': assignedToId
+    };
+  }
+
+  factory CreateTaskParamsModel.fromEntity(CreateTaskParamsEntity entity) {
+    return CreateTaskParamsModel(
+        name: entity.name,
+        priority: entity.priority,
+        status: entity.status,
+        dueDate: entity.dueDate,
+        description: entity.description,
+        milestoneId: entity.milestoneId,
+        assignedToId: entity.assignedToId);
+  }
+}
+
+class EditTaskParamsModel extends EditTaskParamsEntity {
+  EditTaskParamsModel(
+      {required super.id,
+      required super.name,
+      required super.priority,
+      required super.status,
+      required super.dueDate,
+      required super.description,
+      required super.milestoneId,
+      required super.assignedToId});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'priority': priority.name,
+      'status': status.name,
+      'dueDate': dueDate.toIso8601String(),
+      'description': description,
+      'milestoneId': milestoneId,
+      'assignedToId': assignedToId
+    };
+  }
+
+  factory EditTaskParamsModel.fromEntity(EditTaskParamsEntity entity) {
+    return EditTaskParamsModel(
+        id: entity.id,
+        name: entity.name,
+        priority: entity.priority,
+        status: entity.status,
+        dueDate: entity.dueDate,
+        description: entity.description,
+        milestoneId: entity.milestoneId,
+        assignedToId: entity.assignedToId);
   }
 }
