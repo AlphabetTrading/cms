@@ -18,9 +18,9 @@ import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/list/list_cubit.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
-import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';

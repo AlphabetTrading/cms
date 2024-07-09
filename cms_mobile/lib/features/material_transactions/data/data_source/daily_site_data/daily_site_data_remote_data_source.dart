@@ -4,7 +4,6 @@ import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/daily_site_data.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/daily_site_data.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class DailySiteDataDataSource {
