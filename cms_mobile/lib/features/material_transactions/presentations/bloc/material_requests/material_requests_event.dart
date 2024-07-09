@@ -11,12 +11,16 @@ class GetMaterialRequestsEvent extends MaterialRequestEvent {
 }
 
 class GetMaterialRequestEvent extends MaterialRequestEvent {
-  final FilterMaterialRequestInput filterMaterialRequestInput;
-  final OrderByMaterialRequestInput orderBy;
-  final PaginationInput paginationInput;
-  
+  final FilterMaterialRequestInput? filterMaterialRequestInput;
+  final OrderByMaterialRequestInput? orderBy;
+  final PaginationInput? paginationInput;
+  final bool? mine;
+
   const GetMaterialRequestEvent(
-      this.filterMaterialRequestInput, this.orderBy, this.paginationInput);
+      {this.filterMaterialRequestInput,
+      this.orderBy,
+      this.paginationInput,
+      this.mine});
 }
 
 class CreateMaterialRequestEvent extends MaterialRequestEvent {

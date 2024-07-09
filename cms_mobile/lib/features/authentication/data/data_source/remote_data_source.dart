@@ -2,6 +2,7 @@ import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/authentication/data/models/sign_in_model.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
+import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/authentication/domain/usecases/authentication_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -33,19 +34,19 @@ class AuthenticationRemoteDataSourceImpl
 
     loginQuery = r'''
      mutation Login($data: LoginInput!) {
-        login(data: $data) {
-          accessToken
-          refreshToken
-          userId
-        }
+      login(data: $data) {
+        accessToken
+        refreshToken
+        userId
       }
+    }
     ''';
 
     final response = await _client.mutate(MutationOptions(
       document: gql(loginQuery),
       variables: {
         "data": {
-          "phone_number": "0912345670",
+          "phone_number": "0912345676",
           "password": "secret42"
           // "phone_number": loginParams.phoneNumber,
           // "password": loginParams.password,
@@ -128,11 +129,24 @@ class AuthenticationRemoteDataSourceImpl
     String getUserQuery;
 
     getUserQuery = r'''
-      query GetUser {
-        user {
+      query GetMe {
+        getMe {
+          company {
+            address
+            contactInfo
+            createdAt
+            id
+            name
+            ownerId
+            updatedAt
+          }
+          createdAt
+          email
+          fullName
           id
-          phone
-          token
+          phoneNumber
+          role
+          updatedAt
         }
       }
     ''';
@@ -157,34 +171,37 @@ class AuthenticationRemoteDataSourceImpl
       );
     }
 
-    final user = response.data!['user'];
+    final user = response.data!['getMe'];
 
     return DataSuccess(UserModel.fromJson(user));
   }
 
   @override
   Future<DataState<LoginModel>> logout() async {
-    String logoutQuery;
+    // String logoutQuery;
 
-    logoutQuery = r'''
-      mutation Logout {
-        logout
-      }
-    ''';
+    // logoutQuery = r'''
+    //   mutation Logout {
+    //     logout
+    //   }
+    // ''';
 
-    final response = await _client.mutate(MutationOptions(
-      document: gql(logoutQuery),
-    ));
+    // final response = await _client.mutate(MutationOptions(
+    //   document: gql(logoutQuery),
+    // ));
 
-    if (response.hasException) {
-      return DataFailed(
-        ServerFailure(
-          errorMessage: response.exception.toString(),
-        ),
-      );
-    }
+    // if (response.hasException) {
+    //   return DataFailed(
+    //     ServerFailure(
+    //       errorMessage: response.exception.toString(),
+    //     ),
+    //   );
+    // }
 
-    return DataSuccess(LoginModel(
+    // delete from local storage, clear all data
+    await GQLClient.clearStorage();
+
+    return const DataSuccess(LoginModel(
       id: '',
       accessToken: '',
       refreshToken: '',
@@ -210,6 +227,23 @@ class AuthenticationRemoteDataSourceImpl
         savedUserId.isNotEmpty;
 
     debugPrint('IsSignedIn: $isSignIn');
+
+    if (isSignIn) {
+      debugPrint("before signing ");
+      final userDataState = await getUser();
+
+      if (userDataState is DataFailed) {
+        return AuthData(isSignedIn: false, userId: '');
+      }
+
+      debugPrint("userdata ${userDataState}");
+      return AuthData(
+        isSignedIn: isSignIn,
+        userId: savedUserId,
+        user: userDataState.data,
+      );
+    }
+
     return AuthData(isSignedIn: isSignIn, userId: savedUserId);
   }
 
@@ -235,9 +269,11 @@ class AuthenticationRemoteDataSourceImpl
 class AuthData {
   final bool isSignedIn;
   final String userId;
+  final UserEntity? user;
 
   AuthData({
     required this.isSignedIn,
     required this.userId,
+    this.user,
   });
 }

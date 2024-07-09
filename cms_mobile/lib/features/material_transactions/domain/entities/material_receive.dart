@@ -1,3 +1,4 @@
+import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
@@ -95,7 +96,7 @@ class ReceiveVoucherMaterialEntity extends Equatable {
 
 class MaterialReceiveEntityListWithMeta {
   final List<MaterialReceiveEntity> items;
-  final Meta meta;
+  final MetaEntity meta;
 
   MaterialReceiveEntityListWithMeta({
     required this.meta,

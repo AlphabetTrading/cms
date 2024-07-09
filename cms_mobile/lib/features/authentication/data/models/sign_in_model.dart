@@ -1,15 +1,12 @@
+import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/login_entity.dart';
 
 class LoginModel extends LoginEntity {
   const LoginModel({
-    required String id,
-    required String accessToken,
-    required String refreshToken,
-  }) : super(
-          id: id,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        );
+    required super.id,
+    required super.accessToken,
+    required super.refreshToken,
+  });
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(

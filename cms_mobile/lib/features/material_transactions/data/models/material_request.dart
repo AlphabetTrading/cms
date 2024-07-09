@@ -101,21 +101,15 @@ class MaterialRequestModel extends MaterialRequestEntity {
 
 class MaterialRequestItemModel extends MaterialRequestItem {
   const MaterialRequestItemModel({
-    required String? id,
-    required double? quantity,
-    required String? productVariantId,
+    required super.id,
+    required super.quantity,
+    required super.productVariantId,
     required ProductVariantModel? productVariant,
-    required String? remark,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
+    required super.remark,
+    required super.createdAt,
+    required super.updatedAt,
   }) : super(
-          id: id,
-          productVariantId: productVariantId,
-          quantity: quantity,
-          remark: remark,
           productVariant: productVariant as ProductVariantEntity?,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
         );
 
   @override

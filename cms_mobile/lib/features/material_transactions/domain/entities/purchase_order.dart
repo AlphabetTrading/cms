@@ -1,4 +1,5 @@
-import 'package:cms_mobile/core/models/meta.dart';
+import 'package:cms_mobile/core/entities/meta.dart';
+import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
@@ -8,10 +9,12 @@ import 'package:equatable/equatable.dart';
 class PurchaseOrderEntity extends Equatable {
   final String id;
   final String? approvedById;
+  final UserEntity? approvedBy;
   final double? grandTotal;
   final List<PurchaseOrderItemEntity> items;
   final String? materialRequestId;
   final String? preparedById;
+  final UserEntity? preparedBy;
   final String? projectId;
   final String? serialNumber;
   final PurchaseOrderStatus? status;
@@ -23,12 +26,14 @@ class PurchaseOrderEntity extends Equatable {
 
   const PurchaseOrderEntity({
     required this.approvedById,
+    required this.approvedBy,
     required this.createdAt,
     required this.grandTotal,
     required this.id,
     required this.items,
     required this.materialRequestId,
     required this.preparedById,
+    required this.preparedBy,
     required this.projectId,
     required this.serialNumber,
     required this.status,
@@ -41,12 +46,14 @@ class PurchaseOrderEntity extends Equatable {
   @override
   List<Object?> get props => [
         approvedById,
+        approvedBy,
         createdAt,
         grandTotal,
         id,
         items,
         materialRequestId,
         preparedById,
+        preparedBy,
         projectId,
         serialNumber,
         status,
@@ -169,7 +176,7 @@ class EditPurchaseOrderParamsEntity<T extends PurchaseOrderEntity>
 
 class PurchaseOrderEntityListWithMeta {
   final List<PurchaseOrderEntity> items;
-  final Meta meta;
+  final MetaEntity meta;
 
   PurchaseOrderEntityListWithMeta({
     required this.meta,

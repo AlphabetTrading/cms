@@ -16,7 +16,8 @@ class DeleteMaterialIssueInitial extends DeleteMaterialIssueState {}
 class DeleteMaterialIssueLoading extends DeleteMaterialIssueState {}
 
 class DeleteMaterialIssueSuccess extends DeleteMaterialIssueState {
-  const DeleteMaterialIssueSuccess();
+  final String materialIssueId;
+  const DeleteMaterialIssueSuccess({required this.materialIssueId});
 }
 
 class DeleteMaterialIssueFailed extends DeleteMaterialIssueState {
@@ -28,14 +29,12 @@ class DeleteMaterialIssueFailed extends DeleteMaterialIssueState {
   List<Object> get props => [error];
 }
 
-
 //event
 class DeleteMaterialIssueEvent {
   final String materialIssueId;
 
   DeleteMaterialIssueEvent({required this.materialIssueId});
 }
-
 
 //cubit
 class DeleteMaterialIssueCubit extends Cubit<DeleteMaterialIssueState> {
@@ -49,7 +48,7 @@ class DeleteMaterialIssueCubit extends Cubit<DeleteMaterialIssueState> {
     final dataState =
         await _materialIssueDeleteUseCase(params: materialIssueId);
     if (dataState is DataSuccess) {
-      emit(DeleteMaterialIssueSuccess());
+      emit(DeleteMaterialIssueSuccess(materialIssueId: materialIssueId));
     } else if (dataState is DataFailed) {
       emit(DeleteMaterialIssueFailed(
           error: dataState.error?.errorMessage ??

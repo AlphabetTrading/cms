@@ -4,23 +4,15 @@ import 'package:flutter/material.dart';
 
 class ProductVariantModel extends ProductVariantEntity {
   const ProductVariantModel({
-    required String id,
-    String? description,
+    required super.id,
+    super.description,
     UnitOfMeasure? unitOfMeasure,
-    String? variant,
-    String? productId,
-    ProductModel? product,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(
-            id: id,
-            description: description,
-            unitOfMeasure: UnitOfMeasure.kg,
-            variant: variant,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            productId: productId,
-            product: product);
+    super.variant,
+    super.productId,
+    ProductModel? super.product,
+    required super.createdAt,
+    required super.updatedAt,
+  }) : super(unitOfMeasure: UnitOfMeasure.kg);
 
   factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
     debugPrint("ProductVariantModel.fromJson: ${json}");

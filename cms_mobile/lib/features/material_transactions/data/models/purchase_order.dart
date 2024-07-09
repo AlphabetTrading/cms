@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
+import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +9,12 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
   const PurchaseOrderModel({
     required String id,
     required String? approvedById,
+    required UserModel? approvedBy,
     required double? grandTotal,
     required List<PurchaseOrderItemModel> items,
     required String? materialRequestId,
     required String? preparedById,
+    required UserModel? preparedBy,
     required String? projectId,
     required String? serialNumber,
     required PurchaseOrderStatus? status,
@@ -22,12 +25,14 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
     required double vat,
   }) : super(
           approvedById: approvedById,
+          approvedBy: approvedBy,
           createdAt: createdAt,
           grandTotal: grandTotal,
           id: id,
           items: items,
           materialRequestId: materialRequestId,
           preparedById: preparedById,
+          preparedBy: preparedBy,
           projectId: projectId,
           serialNumber: serialNumber,
           status: status,
@@ -48,14 +53,20 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
     return PurchaseOrderModel(
       id: json['id'],
       approvedById: json['approvedById'],
+      approvedBy: json['approvedBy'] != null
+          ? UserModel.fromJson(json['approvedBy'])
+          : null,
       createdAt: DateTime.parse(json['createdAt']),
       grandTotal: json['grandTotal'],
       items: items,
       materialRequestId: json['materialRequestId'],
       preparedById: json['preparedById'],
+      preparedBy: json['preparedBy'] != null
+          ? UserModel.fromJson(json['preparedBy'])
+          : null,
       projectId: json['projectId'],
       serialNumber: json['serialNumber'],
-      status: json['status'],
+      status: toPurchaseOrderStatus(json['status']),
       subTotal: json['subTotal'],
       supplierName: json['supplierName'],
       updatedAt: DateTime.parse(json['updatedAt']),
@@ -69,18 +80,20 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
     return {
       "id": id,
       "approvedById": approvedById,
-      "createdAt": createdAt.toIso8601String(),
+      "approvedBy": approvedBy?.toJson(),
       "grandTotal": grandTotal,
       "items": items,
       "materialRequestId": materialRequestId,
       "preparedById": preparedById,
+      "preparedBy": preparedBy?.toJson(),
       "projectId": projectId,
       "serialNumber": serialNumber,
-      "status": status,
+      "status": fromPurchaseOrderStatus(status),
       "subTotal": subTotal,
       "supplierName": supplierName,
-      "updatedAt": updatedAt.toIso8601String(),
       "vat": vat,
+      "createdAt": createdAt.toIso8601String(),
+      "updatedAt": updatedAt.toIso8601String(),
     };
   }
 }
@@ -270,13 +283,13 @@ class OrderByPurchaseOrderInput {
 
 class PurchaseOrdersListWithMeta extends PurchaseOrderEntityListWithMeta {
   PurchaseOrdersListWithMeta({
-    required Meta meta,
-    required List<PurchaseOrderModel> items,
-  }) : super(meta: meta, items: items);
+    required MetaModel super.meta,
+    required List<PurchaseOrderModel> super.items,
+  });
 
   factory PurchaseOrdersListWithMeta.fromJson(Map<String, dynamic> json) {
     return PurchaseOrdersListWithMeta(
-      meta: Meta.fromJson(json['meta']),
+      meta: MetaModel.fromJson(json['meta']),
       items: json['items']
           .map<PurchaseOrderModel>((item) => PurchaseOrderModel.fromJson(item))
           .toList(),
@@ -284,8 +297,7 @@ class PurchaseOrdersListWithMeta extends PurchaseOrderEntityListWithMeta {
   }
 }
 
-
-// from enum 
+// from enum
 
 enum PurchaseOrderStatus { completed, pending, declined }
 

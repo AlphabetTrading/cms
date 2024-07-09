@@ -10,10 +10,12 @@ class GetMaterialReceives extends MaterialReceiveEvent {
   final FilterMaterialReceiveInput? filterMaterialReceiveInput;
   final OrderByMaterialReceiveInput? orderBy;
   final PaginationInput? paginationInput;
+  final bool? mine;
   const GetMaterialReceives({
     this.filterMaterialReceiveInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }
 
@@ -21,7 +23,7 @@ class GetMaterialReceive extends MaterialReceiveEvent {
   final FilterMaterialReceiveInput filterMaterialReceiveInput;
   final OrderByMaterialReceiveInput orderBy;
   final PaginationInput paginationInput;
-  
+
   const GetMaterialReceive(
     this.filterMaterialReceiveInput,
     this.orderBy,

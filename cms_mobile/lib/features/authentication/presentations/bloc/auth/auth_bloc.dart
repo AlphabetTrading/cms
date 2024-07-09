@@ -40,6 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthState(
         status: AuthStatus.signedIn,
         userId: authData.userId,
+        user: authData.user,  // this is the user entity
       ));
     } else {
       emit(
@@ -77,8 +78,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final dataState = await getUserUseCase();
 
     if (dataState is DataSuccess) {
-      print("getinggg userrrrr");
-      print(dataState.data);
 
       emit(
         AuthState(

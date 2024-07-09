@@ -10,6 +10,7 @@ abstract class MaterialIssueRepository {
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   );
 
   Future<DataState<String>> createMaterialIssue(

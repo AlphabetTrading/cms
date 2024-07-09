@@ -1,6 +1,5 @@
 import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
-import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ abstract class MaterialReceiveDataSource {
 
   Future<DataState<MaterialReceiveModel>> getMaterialReceiveDetails(
       {required String params});
-       Future<DataState<String>> deleteMaterialReceive(
+  Future<DataState<String>> deleteMaterialReceive(
       {required String materialReceiveId});
 }
 
@@ -43,12 +42,14 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
   Future<DataState<String>> createMaterialReceive(
       {required CreateMaterialReceiveParamsModel
           createMaterialReceiveParamsModel}) async {
-    print("createMaterialReceivingParamsModel: $createMaterialReceiveParamsModel");
+    print(
+        "createMaterialReceivingParamsModel: $createMaterialReceiveParamsModel");
 
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReceiveMutation),
       variables: {
-        "createMaterialReceivingInput": createMaterialReceiveParamsModel.toJson()
+        "createMaterialReceivingInput":
+            createMaterialReceiveParamsModel.toJson()
       },
     );
 
@@ -84,12 +85,19 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
       remark
       productVariant {
         id
-        unitOfMeasure
-        variant
+        createdAt
+        description
         product {
+          createdAt
           id
           name
+          productType
+          updatedAt
         }
+        productId
+        unitOfMeasure
+        updatedAt
+        variant
       }
     }
     serialNumber
@@ -140,7 +148,9 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
   Future<DataState<MaterialReceiveListWithMeta>> fetchMaterialReceivings(
       {FilterMaterialReceiveInput? filterMaterialReceiveInput,
       OrderByMaterialReceiveInput? orderBy,
-      PaginationInput? paginationInput}) async {
+      PaginationInput? paginationInput,
+      bool? mine,
+      }) async {
     String fetchMaterialReceiveQuery;
 
     fetchMaterialReceiveQuery = r'''
@@ -217,11 +227,17 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
     ''';
 
     final filterInput = filterMaterialReceiveInput?.toJson();
-    final selectedProjectId =
-        await GQLClient.getFromLocalStorage('selected_project_id');
 
-    debugPrint('selectedProjectId: $selectedProjectId');
-    filterInput!["projectId"] = selectedProjectId;
+    if (filterMaterialReceiveInput != null &&
+        filterMaterialReceiveInput.projectId != null) {
+      filterInput?['projectId'] = filterMaterialReceiveInput.projectId;
+    } else {
+      final selectedProjectId =
+          await GQLClient.getFromLocalStorage('selected_project_id');
+
+      debugPrint('selectedProjectId: $selectedProjectId');
+      filterInput!["projectId"] = selectedProjectId;
+    }
     debugPrint('filterInput: $filterInput');
     return _client
         .query(
@@ -231,7 +247,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
           'filterMaterialRecieveInput': filterInput,
           'orderBy': orderBy ?? {},
           'paginationInput': paginationInput ?? {},
-          "mine": false,
+          "mine": mine ?? false,
         },
       ),
     )
@@ -251,7 +267,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
     });
   }
 
-    static const String _deleteMaterialReceivingMutation = r'''
+  static const String _deleteMaterialReceivingMutation = r'''
   mutation DeleteMaterialReceiving($deleteMaterialReceivingId: String!) {
   deleteMaterialReceiving(id: $deleteMaterialReceivingId) {
     id
@@ -283,6 +299,4 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
   }
-  
-
 }

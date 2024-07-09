@@ -62,38 +62,36 @@ class _MyLoginFormState extends State<LoginForm> {
   }
 
   Future<void> _onSubmit() async {
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
-try{
-
-
-    setState(() {
-      _loginFormState =
-          _loginFormState.copyWith(status: FormzSubmissionStatus.inProgress);
-    });
-
     try {
-      await _submitForm();
-      _loginFormState =
-          _loginFormState.copyWith(status: FormzSubmissionStatus.success);
-    } catch (_) {
-      _loginFormState =
-          _loginFormState.copyWith(status: FormzSubmissionStatus.failure);
+      setState(() {
+        _loginFormState =
+            _loginFormState.copyWith(status: FormzSubmissionStatus.inProgress);
+      });
+
+      try {
+        await _submitForm();
+        _loginFormState =
+            _loginFormState.copyWith(status: FormzSubmissionStatus.success);
+      } catch (_) {
+        _loginFormState =
+            _loginFormState.copyWith(status: FormzSubmissionStatus.failure);
+      }
+
+      if (!mounted) return;
+
+      setState(() {});
+
+      FocusScope.of(context)
+        ..nextFocus()
+        ..unfocus();
+    } catch (e) {
+      debugPrint("********* ***** ** * Print Login ${e}");
     }
-
-    if (!mounted) return;
-
-    setState(() {});
-
-    FocusScope.of(context)
-      ..nextFocus()
-      ..unfocus();
-  }catch(e){
-    debugPrint("********* ***** ** * Print Login ${e}");
   }
-  }
+
   Future<void> _submitForm() async {
     context.read<LoginBloc>().add(
           LoginEvent(
@@ -133,7 +131,10 @@ try{
         } else if (state is LoginSuccess) {
           // update the auth state
           context.read<AuthBloc>().add(AuthIsSignedIn());
-          context.goNamed(RouteNames.home);
+          // sleep for 1 sec and navigate to the home page
+          Future.delayed(const Duration(seconds: 1), () {
+            context.goNamed(RouteNames.home);
+          });
 
           // reset the form
           _resetForm();

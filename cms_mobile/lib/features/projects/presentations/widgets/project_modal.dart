@@ -1,4 +1,6 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
@@ -8,6 +10,7 @@ import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomPopupMenuDialog extends StatefulWidget {
   const CustomPopupMenuDialog({super.key});
@@ -200,9 +203,14 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                         leading: Icon(Icons.settings),
                         title: Text('Settings'),
                       ),
-                      const ListTile(
-                        leading: Icon(Icons.logout),
-                        title: Text('Logout'),
+                      ListTile(
+                        leading: const Icon(Icons.logout),
+                        title: const Text('Logout'),
+                        onTap: () {
+                          context.read<AuthBloc>().add(AuthLoggedOut());
+                          context.goNamed(RouteNames.login);
+                        },
+                        
                       ),
                     ],
                   ),

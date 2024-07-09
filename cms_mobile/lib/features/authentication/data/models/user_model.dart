@@ -1,62 +1,31 @@
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
-import 'package:cms_mobile/features/home/domain/entities/project.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
-import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
-    required String id,
-    required String email,
-    required String phoneNumber,
-    required String fullName,
-    required UserRole role,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
-    List<PurchaseOrderEntity>? purchaseOrders,
-    List<PurchaseOrderEntity>? purchaseOrdersApproved,
-    List<MaterialIssueEntity>? materialIssueVouchers,
-    List<MaterialIssueEntity>? materialIssueVouchersApproved,
-    List<MaterialReceiveEntity>? materialReceiveVouchers,
-    List<MaterialReceiveEntity>? materialReceiveVouchersApproved,
-    List<MaterialRequestEntity>? materialRequestVouchers,
-    List<MaterialRequestEntity>? materialRequestVouchersApproved,
-    List<MaterialReturnEntity>? materialReturnVouchers,
-    List<MaterialReturnEntity>? materialReturnVouchersReceived,
-    List<MaterialReturnEntity>? materialReturnVouchersApproved,
-    List<MaterialReturnEntity>? materialReturnVouchersReturned,
-    List<ProjectEntity>? projects,
-    List<TaskEntity>? tasks,
-  }) : super(
-          id: id,
-          fullName: fullName,
-          email: email,
-          phoneNumber: phoneNumber,
-          role: role,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-          purchaseOrders: purchaseOrders,
-          purchaseOrdersApproved: purchaseOrdersApproved,
-          materialIssueVouchers: materialIssueVouchers,
-          materialIssueVouchersApproved: materialIssueVouchersApproved,
-          materialReceiveVouchers: materialReceiveVouchers,
-          materialReceiveVouchersApproved: materialReceiveVouchersApproved,
-          materialRequestVouchers: materialRequestVouchers,
-          materialRequestVouchersApproved: materialRequestVouchersApproved,
-          materialReturnVouchers: materialReturnVouchers,
-          materialReturnVouchersReceived: materialReturnVouchersReceived,
-          materialReturnVouchersApproved: materialReturnVouchersApproved,
-          materialReturnVouchersReturned: materialReturnVouchersReturned,
-          projects: projects,
-          tasks: tasks,
-        );
+    required super.id,
+    required super.email,
+    required super.phoneNumber,
+    required super.fullName,
+    required super.role,
+    required super.createdAt,
+    required super.updatedAt,
+    super.purchaseOrders,
+    super.purchaseOrdersApproved,
+    super.materialIssueVouchers,
+    super.materialIssueVouchersApproved,
+    super.materialReceiveVouchers,
+    super.materialReceiveVouchersApproved,
+    super.materialRequestVouchers,
+    super.materialRequestVouchersApproved,
+    super.materialReturnVouchers,
+    super.materialReturnVouchersReceived,
+    super.materialReturnVouchersApproved,
+    super.materialReturnVouchersReturned,
+    super.projects,
+    super.tasks,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    // try{
-
     return UserModel(
       id: json['id'],
       fullName: json['fullName'],

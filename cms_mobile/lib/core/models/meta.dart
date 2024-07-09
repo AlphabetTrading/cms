@@ -1,19 +1,36 @@
-class Meta {
-  final int count;
-  final int limit;
-  final int page;
+import 'package:cms_mobile/core/entities/meta.dart';
 
-  Meta({
-    required this.count,
-    required this.limit,
-    required this.page,
+class MetaModel extends MetaEntity {
+  const MetaModel({
+    required super.count,
+    required super.limit,
+    required super.page,
   });
 
-  factory Meta.fromJson(Map<String, dynamic> json) {
-    return Meta(
+  // fromJson
+  factory MetaModel.fromJson(Map<String, dynamic> json) {
+    return MetaModel(
       count: json['count'],
       limit: json['limit'],
       page: json['page'],
+    );
+  }
+
+  // toJson
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+      'limit': limit,
+      'page': page,
+    };
+  }
+
+  // empty
+  factory MetaModel.empty() {
+    return const MetaModel(
+      count: 0,
+      limit: 0,
+      page: 0,
     );
   }
 }

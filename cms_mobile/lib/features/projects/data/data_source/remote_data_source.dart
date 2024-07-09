@@ -35,41 +35,35 @@ class ProjectDataSourceImpl extends ProjectDataSource {
     String fetchProjectsQuery;
 
     fetchProjectsQuery = r'''
-      query ProjectQuery($filterProjectInput: FilterProjectInput, $paginationInput: PaginationInput, $orderBy: OrderByProjectInput) {
-        getProjects(filterProjectInput: $filterProjectInput, paginationInput: $paginationInput, orderBy: $orderBy) {
-          items {
-            Client {
-              id
-            }
-            budget
-            clientId
-            createdAt
-            endDate
+     query GetProjects($filterProjectInput: FilterProjectInput, $orderBy: OrderByProjectInput, $paginationInput: PaginationInput) {
+      getProjects(filterProjectInput: $filterProjectInput, orderBy: $orderBy, paginationInput: $paginationInput) {
+        items {
+          budget
+          company {
             id
-            Milestones {
-              id
-              name
-            }
             name
-            ProjectManager {
-              id
-            }
-            projectManagerId
-            ProjectUsers {
-              id
-            }
-            startDate
-            status
+            createdAt
+            contactInfo
+            address
+            ownerId
             updatedAt
           }
-          meta {
-            count
-            limit
-            page
-          }
+          companyId
+          createdAt
+          endDate
+          id
+          name
+          startDate
+          status
+          updatedAt
+        }
+        meta {
+          count
+          limit
+          page
         }
       }
-
+    }
     ''';
     debugPrint('fetchProjectsQuery: ');
 
@@ -78,7 +72,7 @@ class ProjectDataSourceImpl extends ProjectDataSource {
       QueryOptions(
         document: gql(fetchProjectsQuery),
         variables: {
-          'filterProjectInput': {},
+          'filterProjectInput': const {},
           'orderBy': orderBy ?? {},
           'paginationInput': paginationInput ?? {},
         },
@@ -102,7 +96,7 @@ class ProjectDataSourceImpl extends ProjectDataSource {
       return DataSuccess(
         ProjectListWithMeta(
           items: items,
-          meta: Meta.fromJson(meta),
+          meta: MetaModel.fromJson(meta),
         ),
       );
     });

@@ -40,6 +40,18 @@ class MaterialTransactionsHelperFunctions {
           'routeName': RouteNames.materialTransfer,
           'title': 'Material Transfers',
         };
+      case 'PROFORMA':
+        return {
+          'path': RoutePaths.materialProforma,
+          'routeName': RouteNames.materialProforma,
+          'title': 'Material Proforma',
+        };
+      case 'DAILY_SITE_DATA':
+        return {
+          'path': RoutePaths.dailySiteData,
+          'routeName': RouteNames.dailySiteData,
+          'title': 'Daily Site Data',
+        };
       default:
         return {
           'path': RoutePaths.materialRequests,
