@@ -140,7 +140,7 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
     return DataSuccess(
       MaterialRequestEntityListWithMeta(
         items: items,
-        meta: Meta.fromJson(meta),
+        meta: MetaModel.fromJson(meta),
       ),
     );
   }

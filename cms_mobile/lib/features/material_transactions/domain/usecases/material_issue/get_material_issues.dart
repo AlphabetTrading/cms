@@ -15,10 +15,10 @@ class GetMaterialIssuesUseCase
   Future<DataState<MaterialIssueEntityListWithMeta>> call(
       {MaterialIssueParams? params}) {
     return _materialTransactionRepository.getMaterialIssues(
-      params!.filterMaterialIssueInput,
-      params.orderBy,
-      params.paginationInput,
-    );
+        params!.filterMaterialIssueInput,
+        params.orderBy,
+        params.paginationInput,
+        params.mine);
   }
 }
 
@@ -26,10 +26,12 @@ class MaterialIssueParams {
   FilterMaterialIssueInput? filterMaterialIssueInput;
   OrderByMaterialIssueInput? orderBy;
   PaginationInput? paginationInput;
+  bool? mine;
 
   MaterialIssueParams({
     this.filterMaterialIssueInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }

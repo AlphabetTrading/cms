@@ -41,7 +41,7 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
     String fetchMaterialTransfersQuery;
 
     fetchMaterialTransfersQuery = r'''
-     query GetMaterialTransfers($filterMaterialTransferInput: FilterMaterialTransferInput, $mine: Boolean!, $orderBy: OrderByMaterialTransferInput, $paginationInput: PaginationInput) {
+      query GetMaterialTransfers($filterMaterialTransferInput: FilterMaterialTransferInput, $mine: Boolean!, $orderBy: OrderByMaterialTransferInput, $paginationInput: PaginationInput) {
         getMaterialTransfers(filterMaterialTransferInput: $filterMaterialTransferInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
           items {
             approvedBy {
@@ -85,6 +85,56 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
               updatedAt
             }
             materialGroup
+            materialReceive {
+              approvedBy {
+                createdAt
+                email
+                fullName
+                id
+                phoneNumber
+                role
+                updatedAt
+              }
+              approvedById
+              createdAt
+              id
+              invoiceId
+              
+              materialRequest {
+              
+                approvedById
+                createdAt
+                id
+                projectId
+                requestedById
+                serialNumber
+                status
+                updatedAt
+              }
+              materialRequestId
+              projectId
+              purchaseOrder {
+                approvedById
+                createdAt
+                grandTotal
+                id
+                materialRequestId
+                preparedById
+                projectId
+                serialNumber
+                status
+                subTotal
+                supplierName
+                updatedAt
+                vat
+              }
+              purchaseOrderId
+              purchasedById
+              serialNumber
+              status
+              supplierName
+              updatedAt
+            }
             materialReceiveId
             preparedBy {
               createdAt
@@ -97,7 +147,6 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
             }
             preparedById
             projectId
-            receivingStore
             receivingWarehouseStore {
               createdAt
               id

@@ -1,9 +1,8 @@
-import 'package:cms_mobile/core/models/meta.dart';
+import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
 
@@ -275,7 +274,7 @@ class EditMaterialReturnParamsEntity<T extends MaterialReturnMaterialEntity>
 
 class MaterialReturnEntityListWithMeta {
   final List<MaterialReturnEntity> items;
-  final Meta meta;
+  final MetaEntity meta;
 
   MaterialReturnEntityListWithMeta({
     required this.meta,

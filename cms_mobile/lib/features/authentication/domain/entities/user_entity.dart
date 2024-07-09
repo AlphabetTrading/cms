@@ -68,12 +68,32 @@ class UserEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [
+        id,
+        email,
+        phoneNumber,
+        fullName,
+        role,
+        createdAt,
+        updatedAt,
+        purchaseOrders,
+        purchaseOrdersApproved,
+        materialIssueVouchers,
+        materialIssueVouchersApproved,
+        materialReceiveVouchers,
+        materialReceiveVouchersApproved,
+        materialRequestVouchers,
+        materialRequestVouchersApproved,
+        materialReturnVouchers,
+        materialReturnVouchersReceived,
+        materialReturnVouchersApproved,
+        materialReturnVouchersReturned,
+        projects,
+        tasks,
+      ];
 
   @override
   bool get stringify => true;
-
-  // fromJSON, and toJSON methods
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
     return UserEntity(

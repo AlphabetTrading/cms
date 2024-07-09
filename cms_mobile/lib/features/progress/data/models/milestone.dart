@@ -52,12 +52,12 @@ class MilestoneModel extends MilestoneEntity {
 
 class MilestoneModelListWithMeta extends MilestoneEntityListWithMeta {
   MilestoneModelListWithMeta({
-    required Meta meta,
-    required List<MilestoneModel> items,
-  }) : super(meta: meta, items: items);
+    required MetaModel super.meta,
+    required List<MilestoneModel> super.items,
+  });
   factory MilestoneModelListWithMeta.fromJson(Map<String, dynamic> json) {
     return MilestoneModelListWithMeta(
-        meta: Meta.fromJson(json['meta']),
+        meta: MetaModel.fromJson(json['meta']),
         items: json['items']
             .map<MilestoneModel>((item) => MilestoneModel.fromJson(item))
             .toList() as List<MilestoneModel>);

@@ -183,13 +183,13 @@ class ReceiveVoucherMaterialModel extends ReceiveVoucherMaterialEntity {
 
 class MaterialReceiveListWithMeta extends MaterialReceiveEntityListWithMeta {
   MaterialReceiveListWithMeta({
-    required Meta meta,
-    required List<MaterialReceiveModel> items,
-  }) : super(meta: meta, items: items);
+    required MetaModel super.meta,
+    required List<MaterialReceiveModel> super.items,
+  });
 
   factory MaterialReceiveListWithMeta.fromJson(Map<String, dynamic> json) {
     return MaterialReceiveListWithMeta(
-      meta: Meta.fromJson(json['meta']),
+      meta: MetaModel.fromJson(json['meta']),
       items: json['items']
           .map<MaterialReceiveModel>(
               (item) => MaterialReceiveModel.fromJson(item))
@@ -266,21 +266,21 @@ class CreateMaterialReceiveParamsModel
   }
 }
 
-
-
 class FilterMaterialReceiveInput {
   final StringFilter? createdAt;
   final StringFilter? approvedBy;
   final StringFilter? preparedBy;
   final StringFilter? serialNumber;
   final List<String>? status;
+  final String? projectId;
 
   FilterMaterialReceiveInput(
       {this.createdAt,
       this.approvedBy,
       this.preparedBy,
       this.serialNumber,
-      this.status});
+      this.status,
+      this.projectId});
 
   Map<String, dynamic> toJson() {
     // include the property if it is only not null
@@ -295,6 +295,7 @@ class FilterMaterialReceiveInput {
         },
       if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
       if (status != null) 'status': status,
+      'projectId': projectId,
     };
   }
 }

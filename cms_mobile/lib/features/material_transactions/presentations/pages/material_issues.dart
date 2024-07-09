@@ -17,13 +17,16 @@ import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MaterialIssuesPage extends StatefulWidget {
-  const MaterialIssuesPage({Key? key}) : super(key: key);
+  const MaterialIssuesPage({super.key});
 
   @override
   State<MaterialIssuesPage> createState() => _MaterialIssuesPageState();
 }
 
 class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
+  bool selectedMineFilter = false;
+  final _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +35,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             filterMaterialIssueInput: FilterMaterialIssueInput(),
             orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 20),
+            mine: false,
           ),
         );
 
@@ -42,6 +46,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
   @override
   Widget build(BuildContext context) {
     final searchQuery = BehaviorSubject<String>();
+
     searchQuery.stream
         .debounceTime(
       const Duration(milliseconds: 500),
@@ -101,7 +106,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                     _showCustomPopupMenu(context);
                   },
                   icon: SvgPicture.asset(
-                    "../../../../../assets/icons/common/filter.svg",
+                    "icons/common/filter.svg",
                     height: 25,
                     width: 25,
                   ),
@@ -111,7 +116,52 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
             const SizedBox(
               height: 10,
             ),
-            _buildBody(context),
+            // toggle button for filter all, and my issues
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ToggleButtons(
+                    onPressed: (index) {
+                      setState(() {
+                        debugPrint("Selected index: $index");
+                        if (index == 0) {
+                          selectedMineFilter = false;
+                        } else if (index == 1) {
+                          selectedMineFilter = true;
+                        }
+
+                        context.read<MaterialIssueBloc>().add(
+                              GetMaterialIssues(
+                                filterMaterialIssueInput:
+                                    FilterMaterialIssueInput(),
+                                orderBy: OrderByMaterialIssueInput(
+                                    createdAt: "desc"),
+                                paginationInput:
+                                    PaginationInput(skip: 0, take: 20),
+                                mine: selectedMineFilter,
+                              ),
+                            );
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: [
+                      !selectedMineFilter,
+                      selectedMineFilter
+                    ],
+                    children: const [
+                      Text('All'),
+                      Text('My Issues'),
+                    ]),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            _buildBody(context, selectedMineFilter),
             const SizedBox(
               height: 10,
             ),
@@ -121,96 +171,213 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
     );
   }
 
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<MaterialIssueBloc>().add(GetMaterialIssues(
+            filterMaterialIssueInput: FilterMaterialIssueInput(),
+            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 20),
+            mine: selectedMineFilter,
+          ));
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+
   _buildAppbar(BuildContext context) {
     return AppBar(
       title: const Text('Material Issues'),
-      
     );
   }
-  
-  _buildBody(BuildContext context) {
-    return BlocProvider<DeleteMaterialIssueCubit>(
-      create: (context) => sl<DeleteMaterialIssueCubit>(),
-      child: BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
-        builder: (_, state) {
-          debugPrint('MaterialRequestBlocBuilder state: $state');
-          if (state is MaterialIssueInitial) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
 
-          if (state is MaterialIssuesLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+  _buildBody(BuildContext context, bool selectedMineFilter) {
+    return selectedMineFilter
+        ? BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
+            builder: (context, state) {
+              debugPrint('MaterialRequestBlocBuilder state: $state');
+              if (state is MaterialIssueInitial) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-          if (state is MaterialIssuesSuccess) {
-            debugPrint(
-                'MaterialRequestSuccess ${state.materialIssues?.items.length} ');
+              if (state is MaterialIssuesLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            return state.materialIssues!.items.isNotEmpty
-                ? Expanded(
-                    child: BlocListener<DeleteMaterialIssueCubit,
-                        DeleteMaterialIssueState>(
-                      listener: (context, state) {
-                        if (state is DeleteMaterialIssueSuccess) {
-                          context.read<MaterialIssueBloc>().add(
-                                GetMaterialIssues(
-                                  filterMaterialIssueInput:
-                                      FilterMaterialIssueInput(),
-                                  orderBy: OrderByMaterialIssueInput(
-                                      createdAt: "desc"),
-                                  paginationInput:
-                                      PaginationInput(skip: 0, take: 20),
+              if (state is MaterialIssuesSuccess) {
+                return state.myMaterialIssues!.items.isNotEmpty
+                    ? BlocProvider<DeleteMaterialIssueCubit>(
+                        create: (context) => sl<DeleteMaterialIssueCubit>(),
+                        child: Expanded(
+                          child: BlocListener<DeleteMaterialIssueCubit,
+                              DeleteMaterialIssueState>(
+                            listener: (context, state) {
+                              if (state is DeleteMaterialIssueSuccess) {
+                                context
+                                    .read<MaterialIssueBloc>()
+                                    .add(DeleteMaterialIssueEventLocal(
+                                      isMine: selectedMineFilter,
+                                      materialIssueId: state.materialIssueId,
+                                    )
+                                        // GetMaterialIssues(
+                                        //   filterMaterialIssueInput:
+                                        //       FilterMaterialIssueInput(),
+                                        //   orderBy: OrderByMaterialIssueInput(
+                                        //       createdAt: "desc"),
+                                        //   paginationInput:
+                                        //       PaginationInput(skip: 0, take: 20),
+                                        //   mine: selectedMineFilter,
+                                        // ),
+                                        );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListView.separated(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      scrollDirection: Axis.vertical,
+                                      itemCount:
+                                          state.myMaterialIssues!.items.length,
+                                      separatorBuilder: (_, index) =>
+                                          const SizedBox(
+                                        height: 10,
+                                      ),
+                                      itemBuilder: (_, index) {
+                                        final materialIssue = state
+                                            .myMaterialIssues!.items[index];
+                                        return _buildIssueListItem(
+                                            context, materialIssue);
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              );
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 10),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                scrollDirection: Axis.vertical,
-                                itemCount: state.materialIssues!.items.length,
-                                separatorBuilder: (_, index) => const SizedBox(
-                                  height: 10,
-                                ),
-                                itemBuilder: (_, index) {
-                                  final materialIssue =
-                                      state.materialIssues!.items[index];
-                                  return _buildIssueListItem(
-                                      context, materialIssue);
-                                },
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  )
-                : const Center(
-                    child: Text('No Material Issues'),
+                        ))
+                    : const Center(
+                        child: Text('No Material Issues'),
+                      );
+              }
+
+              if (state is MaterialIssuesFailed) {
+                return Center(
+                  child: Text(state.error!.errorMessage),
+                );
+              }
+
+              return const SizedBox();
+            },
+          )
+        : (BlocProvider<DeleteMaterialIssueCubit>(
+            create: (context) => sl<DeleteMaterialIssueCubit>(),
+            child: BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
+              builder: (_, state) {
+                debugPrint('MaterialRequestBlocBuilder state: $state');
+                if (state is MaterialIssueInitial) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-          }
+                }
 
-          if (state is MaterialIssuesFailed) {
-            return Center(
-              child: Text(state.error!.errorMessage),
-            );
-          }
+                if (state is MaterialIssuesLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-          return const SizedBox();
-        },
-      ),
-    );
+                if (state is MaterialIssuesSuccess) {
+                  debugPrint(
+                      'MaterialRequestSuccess ${state.materialIssues?.items.length} ');
+
+                  return state.materialIssues!.items.isNotEmpty
+                      ? Expanded(
+                          child: BlocListener<DeleteMaterialIssueCubit,
+                              DeleteMaterialIssueState>(
+                            listener: (context, state) {
+                              if (state is DeleteMaterialIssueSuccess) {
+                                context.read<MaterialIssueBloc>().add(
+                                      GetMaterialIssues(
+                                        filterMaterialIssueInput:
+                                            FilterMaterialIssueInput(),
+                                        orderBy: OrderByMaterialIssueInput(
+                                            createdAt: "desc"),
+                                        paginationInput:
+                                            PaginationInput(skip: 0, take: 20),
+                                        mine: selectedMineFilter,
+                                      ),
+                                    );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListView.separated(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      scrollDirection: Axis.vertical,
+                                      itemCount:
+                                          state.materialIssues!.items.length,
+                                      separatorBuilder: (_, index) =>
+                                          const SizedBox(
+                                        height: 10,
+                                      ),
+                                      itemBuilder: (_, index) {
+                                        final materialIssue =
+                                            state.materialIssues!.items[index];
+                                        return _buildIssueListItem(
+                                            context, materialIssue);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : const Center(
+                          child: Text('No Material Issues'),
+                        );
+                }
+
+                if (state is MaterialIssuesFailed) {
+                  return Center(
+                    child: Text(state.error!.errorMessage),
+                  );
+                }
+
+                return const SizedBox();
+              },
+            ),
+          ));
   }
 
   _buildIssueListItem(BuildContext context, MaterialIssueEntity materialIssue) {
@@ -375,16 +542,16 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
       ),
     );
   }
+}
 
-  void _showCustomPopupMenu(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return const FilterPopupMenuDialog();
-      },
-    );
-  }
+void _showCustomPopupMenu(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return const FilterPopupMenuDialog();
+    },
+  );
 }
 
 class FilterPopupMenuDialog extends StatefulWidget {

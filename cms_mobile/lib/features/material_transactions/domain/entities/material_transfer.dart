@@ -20,7 +20,6 @@ class MaterialTransferEntity extends Equatable {
   WarehouseEntity? receivingWarehouseStore;
   String? receivingWarehouseStoreId;
   String? requisitionNumber;
-  String? sendingStore;
   String? sentThroughName;
   String? serialNumber;
   String? status;
@@ -44,7 +43,6 @@ class MaterialTransferEntity extends Equatable {
       this.sendingWarehouseStoreId,
       this.sendingWarehouseStore,
       this.requisitionNumber,
-      this.sendingStore,
       this.sentThroughName,
       this.serialNumber,
       this.status,
@@ -68,7 +66,6 @@ class MaterialTransferEntity extends Equatable {
         sendingWarehouseStoreId,
         sendingWarehouseStore,
         requisitionNumber,
-        sendingStore,
         sentThroughName,
         serialNumber,
         status,
@@ -230,7 +227,7 @@ class EditMaterialTransferParamsEntity<T extends MaterialTransferEntity>
 
 class MaterialTransferEntityListWithMeta {
   final List<MaterialTransferEntity> items;
-  final Meta meta;
+  final MetaEntity meta;
 
   MaterialTransferEntityListWithMeta({
     required this.meta,
@@ -240,7 +237,7 @@ class MaterialTransferEntityListWithMeta {
   factory MaterialTransferEntityListWithMeta.fromJson(
       Map<String, dynamic> json) {
     return MaterialTransferEntityListWithMeta(
-      meta: Meta.fromJson(json['meta']),
+      meta: MetaEntity.fromJson(json['meta']),
       items: List<MaterialTransferEntity>.from(
           json['items'].map((x) => MaterialTransferModel.fromJson(x))),
     );

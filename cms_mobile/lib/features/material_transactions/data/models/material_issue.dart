@@ -12,34 +12,20 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/use_ty
 
 class MaterialIssueModel extends MaterialIssueEntity {
   const MaterialIssueModel({
-    required String id,
-    String? approvedById,
-    UserModel? approvedBy,
-    String? serialNumber,
-    String? status,
-    String? requisitionNumber,
-    List<IssueVoucherMaterialModel>? items,
-    String? preparedById,
-    UserModel? preparedBy,
-    String? warehouseStoreId,
-    WarehouseModel? warehouseStore,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(
-          id: id,
-          serialNumber: serialNumber,
-          status: status,
-          approvedById: approvedById,
-          approvedBy: approvedBy,
-          requisitionNumber: requisitionNumber,
-          items: items,
-          preparedById: preparedById,
-          preparedBy: preparedBy,
-          warehouseStoreId: warehouseStoreId,
-          warehouseStore: warehouseStore,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-        );
+    required String super.id,
+    super.approvedById,
+    UserModel? super.approvedBy,
+    super.serialNumber,
+    super.status,
+    super.requisitionNumber,
+    List<IssueVoucherMaterialModel>? super.items,
+    super.preparedById,
+    UserModel? super.preparedBy,
+    super.warehouseStoreId,
+    WarehouseModel? super.warehouseStore,
+    required super.createdAt,
+    required super.updatedAt,
+  });
 
   @override
   List<Object?> get props {
@@ -159,13 +145,13 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
 
 class MaterialIssueListWithMeta extends MaterialIssueEntityListWithMeta {
   MaterialIssueListWithMeta({
-    required Meta meta,
+    required MetaModel meta,
     required List<MaterialIssueModel> items,
   }) : super(meta: meta, items: items);
 
   factory MaterialIssueListWithMeta.fromJson(Map<String, dynamic> json) {
     return MaterialIssueListWithMeta(
-      meta: Meta.fromJson(json['meta']),
+      meta: MetaModel.fromJson(json['meta']),
       items: json['items']
           .map<MaterialIssueModel>((item) => MaterialIssueModel.fromJson(item))
           .toList(),

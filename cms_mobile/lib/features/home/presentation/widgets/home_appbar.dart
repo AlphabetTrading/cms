@@ -115,6 +115,7 @@
 //   Size get preferredSize => const Size.fromHeight(64);
 // }
 
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/widgets/project_modal.dart';
 import 'package:flutter/material.dart';
@@ -144,6 +145,8 @@ class CustomAppBar extends PreferredSize {
         ?.items
         .firstWhere((element) => element.id == selectedProjectId);
 
+    final authUser = context.read<AuthBloc>().state.user;
+
     debugPrint('selectedProject: $selectedProject');
     return AppBar(
       systemOverlayStyle: const SystemUiOverlayStyle(
@@ -153,6 +156,33 @@ class CustomAppBar extends PreferredSize {
       ),
       toolbarHeight: 64,
       leadingWidth: 200,
+      leading: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(left: 10),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.blue,
+              child: Text(
+                authUser?.fullName.toUpperCase().substring(0, 1) ?? 'N/A',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            const SizedBox(width: 5),
+            SizedBox(
+              width: 100,
+              child: Text(
+                authUser?.fullName.toUpperCase() ?? "N/A",
+                style: Theme.of(context).textTheme.labelSmall,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                
+              ),
+            )
+          ],
+        ),
+      ),
       actions: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -186,7 +216,7 @@ class CustomAppBar extends PreferredSize {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      selectedProject?.name?.toUpperCase()??"N/A",
+                      selectedProject?.name?.toUpperCase() ?? "N/A",
                       style: Theme.of(context).textTheme.labelMedium,
                     )
                   ],

@@ -12,6 +12,7 @@ abstract class MaterialIssueDataSource {
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   });
 
   Future<DataState<String>> createMaterialIssue(
@@ -20,7 +21,8 @@ abstract class MaterialIssueDataSource {
       {required String params});
   Future<DataState<String>> editMaterialIssue(
       {required EditMaterialIssueParamsModel editMaterialIssueParamsModel});
-  Future<DataState<String>> deleteMaterialIssue({required String materialIssueId});
+  Future<DataState<String>> deleteMaterialIssue(
+      {required String materialIssueId});
 }
 
 class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
@@ -152,6 +154,7 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
         .query(QueryOptions(
       document: gql(fetchMaterialIssueDetailsQuery),
       variables: {"getMaterialIssueByIdId": params},
+      fetchPolicy: FetchPolicy.noCache,
     ))
         .then((response) {
       if (response.hasException) {
@@ -230,6 +233,7 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine = false,
   }) async {
     String fetchMaterialIssuesQuery;
 
@@ -312,12 +316,14 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
       }
     ''';
 
-    final filterInput = filterMaterialIssueInput?.toJson();
+    dynamic filterInput = filterMaterialIssueInput!.toJson();
     final selectedProjectId =
         await GQLClient.getFromLocalStorage('selected_project_id');
 
-    debugPrint('selectedProjectId: $selectedProjectId');
-    filterInput!["projectId"] = selectedProjectId;
+    if (selectedProjectId != null) {
+      filterInput['projectId'] = selectedProjectId;
+    }
+
     debugPrint('filterInput: $filterInput');
     return _client
         .query(
@@ -327,8 +333,9 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
           'filterMaterialIssueInput': filterInput,
           'orderBy': orderBy ?? {},
           'paginationInput': paginationInput ?? {},
-          "mine": false,
+          "mine": mine ?? false,
         },
+        fetchPolicy: FetchPolicy.noCache,
       ),
     )
         .then((response) {
@@ -352,7 +359,7 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
       return DataSuccess(
         MaterialIssueListWithMeta(
           items: items,
-          meta: Meta.fromJson(meta),
+          meta: MetaModel.fromJson(meta),
         ),
       );
     });
@@ -365,13 +372,15 @@ class FilterMaterialIssueInput {
   final StringFilter? preparedBy;
   final StringFilter? serialNumber;
   final List<String>? status;
+  final StringFilter? projectId;
 
   FilterMaterialIssueInput(
       {this.createdAt,
       this.approvedBy,
       this.preparedBy,
       this.serialNumber,
-      this.status});
+      this.status,
+      this.projectId});
 
   Map<String, dynamic> toJson() {
     // include the property if it is only not null
@@ -386,6 +395,7 @@ class FilterMaterialIssueInput {
         },
       if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
       if (status != null) 'status': status,
+      if (projectId != null) 'projectId': projectId,
     };
   }
 }

@@ -15,7 +15,8 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
   Future<DataState<MaterialIssueListWithMeta>> getMaterialIssues(
       FilterMaterialIssueInput? filterMaterialIssueInput,
       OrderByMaterialIssueInput? orderBy,
-      PaginationInput? paginationInput) {
+      PaginationInput? paginationInput,
+      bool? mine) {
     debugPrint(
         'getMaterialIssues, filterMaterialIssueInput: $filterMaterialIssueInput, orderBy: $orderBy, paginationInput: $paginationInput');
 
@@ -23,6 +24,7 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
       filterMaterialIssueInput: filterMaterialIssueInput,
       orderBy: orderBy,
       paginationInput: paginationInput,
+      mine: mine,
     );
   }
 
@@ -49,7 +51,8 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
   }
 
   @override
-  Future<DataState<String>> deleteMaterialIssue({required String materialIssueId}) {
-    return dataSource.deleteMaterialIssue(materialIssueId:materialIssueId);
+  Future<DataState<String>> deleteMaterialIssue(
+      {required String materialIssueId}) {
+    return dataSource.deleteMaterialIssue(materialIssueId: materialIssueId);
   }
 }

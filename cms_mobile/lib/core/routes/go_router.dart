@@ -2,9 +2,15 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/create_daily_site_data.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/daily_site_data_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_edit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/create_material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/material_proforma_details.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proformas.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receiving.dart';
@@ -258,6 +264,70 @@ class AppRouter {
                     return MaterialRequestDetailsPage(
                         materialRequestId:
                             state.pathParameters['purchaseOrderId']!);
+                  },
+                ),
+              ],
+            ),
+            GoRoute(
+              name: RouteNames.materialProforma,
+              path: RoutePaths.materialProforma,
+              builder: (BuildContext context, GoRouterState state) {
+                return const MaterialProformasPage();
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.materialProformaCreate,
+                  path: RoutePaths.materialProformaCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialProformaCreatePage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialProformaEdit,
+                  path: RoutePaths.materialProformaEdit,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MaterialProformaCreatePage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.materialProformaDetails,
+                  path: RoutePaths.materialProformaDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return MaterialProformaDetailsPage(
+                        materialProformaId:
+                            state.pathParameters['materialProformaId']!);
+                  },
+                ),
+              ],
+            ),
+            GoRoute(
+              name: RouteNames.dailySiteData,
+              path: RoutePaths.dailySiteData,
+              builder: (BuildContext context, GoRouterState state) {
+                return const DailySiteDatasPage();
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.dailySiteDataCreate,
+                  path: RoutePaths.dailySiteDataCreate,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const DailySiteDataCreatePage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.dailySiteDataEdit,
+                  path: RoutePaths.dailySiteDataEdit,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const DailySiteDataCreatePage();
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.dailySiteDataDetails,
+                  path: RoutePaths.dailySiteDataDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return DailySiteDataDetailsPage(
+                        dailySiteDataId:
+                            state.pathParameters['dailySiteDataId']!);
                   },
                 ),
               ],

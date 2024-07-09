@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
             label: 'Dashboard',
@@ -69,8 +70,21 @@ class _HomePageState extends State<HomePage> {
             label: 'Transactions',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
+            icon: SvgPicture.asset(
+              'icons/navigations/milestone.svg',
+              height: 24,
+              width: 24,
+              colorFilter: ColorFilter.mode(
+                  themeBloc.state.themeData.dividerColor, BlendMode.srcIn),
+            ),
+            activeIcon: SvgPicture.asset(
+              'icons/navigations/milestone.svg',
+              height: 24,
+              width: 24,
+              colorFilter: ColorFilter.mode(
+                  themeBloc.state.themeData.primaryColor, BlendMode.srcIn),
+            ),
+            label: 'Milestones',
           ),
         ],
         currentIndex: _selectedIndex,

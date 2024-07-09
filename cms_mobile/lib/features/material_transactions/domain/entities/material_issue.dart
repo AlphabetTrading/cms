@@ -1,4 +1,4 @@
-import 'package:cms_mobile/core/models/meta.dart';
+import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
@@ -52,6 +52,9 @@ class MaterialIssueEntity extends Equatable {
       items,
       preparedById,
       preparedBy,
+      warehouseStoreId,
+      project,
+      warehouseStore,
     ];
   }
 }
@@ -100,18 +103,45 @@ class IssueVoucherMaterialEntity extends Equatable {
       superStructureDescription,
       useType,
       materialIssueVoucherId,
+      createdAt,
+      updatedAt,
     ];
   }
 }
 
-class MaterialIssueEntityListWithMeta {
+class MaterialIssueEntityListWithMeta extends Equatable {
   final List<MaterialIssueEntity> items;
-  final Meta meta;
+  final MetaEntity meta;
 
-  MaterialIssueEntityListWithMeta({
+  const MaterialIssueEntityListWithMeta({
     required this.meta,
     required this.items,
   });
+
+  // empty
+  factory MaterialIssueEntityListWithMeta.empty() {
+    return const MaterialIssueEntityListWithMeta(
+      meta: MetaEntity(count: 0, limit: 0, page: 0),
+      items: [],
+    );
+  }
+
+  // copyWith
+  MaterialIssueEntityListWithMeta copyWith({
+    List<MaterialIssueEntity>? items,
+    MetaEntity? meta,
+  }) {
+    return MaterialIssueEntityListWithMeta(
+      items: items ?? this.items,
+      meta: meta ?? this.meta,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        items,
+        meta,
+      ];
 }
 
 class MaterialIssueMaterialEntity extends Equatable {

@@ -2,36 +2,23 @@ import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 import 'package:flutter/material.dart';
 
 class MaterialReturnModel extends MaterialReturnEntity {
   const MaterialReturnModel({
-    required String id,
-    required String serialNumber,
-    WarehouseModel? receivingStore,
-    List<MaterialReturnItemModel>? items,
-    String? returnedById,
-    UserModel? returnedBy,
-    String? receivedById,
-    UserModel? receivedBy,
-    MaterialReturnStatus? status,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(
-          id: id,
-          serialNumber: serialNumber,
-          receivingStore: receivingStore,
-          items: items,
-          returnedById: returnedById,
-          returnedBy: returnedBy,
-          receivedById: receivedById,
-          receivedBy: receivedBy,
-          status: status,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-        );
+    required String super.id,
+    required String super.serialNumber,
+    WarehouseModel? super.receivingStore,
+    List<MaterialReturnItemModel>? super.items,
+    super.returnedById,
+    UserModel? super.returnedBy,
+    super.receivedById,
+    UserModel? super.receivedBy,
+    super.status,
+    required super.createdAt,
+    required super.updatedAt,
+  });
 
   factory MaterialReturnModel.fromJson(Map<String, dynamic> json) {
     debugPrint(
@@ -63,26 +50,16 @@ class MaterialReturnModel extends MaterialReturnEntity {
 
 class MaterialReturnItemModel extends MaterialReturnItem {
   const MaterialReturnItemModel({
-    required String id,
-    String? issueVoucherId,
-    UnitOfMeasure? unitOfMeasure,
-    double? quantityReturned,
-    double? unitCost,
-    double? totalCost,
-    String? remark,
-    String? materialReturnVoucherId,
-    String? productVariantId,
-  }) : super(
-          id: id,
-          issueVoucherId: issueVoucherId,
-          unitOfMeasure: unitOfMeasure,
-          quantityReturned: quantityReturned,
-          unitCost: unitCost,
-          totalCost: totalCost,
-          remark: remark,
-          materialReturnVoucherId: materialReturnVoucherId,
-          productVariantId: productVariantId,
-        );
+    required super.id,
+    super.issueVoucherId,
+    super.unitOfMeasure,
+    super.quantityReturned,
+    super.unitCost,
+    super.totalCost,
+    super.remark,
+    super.materialReturnVoucherId,
+    super.productVariantId,
+  });
 
   factory MaterialReturnItemModel.fromJson(Map<String, dynamic> json) {
     return MaterialReturnItemModel(
@@ -98,6 +75,7 @@ class MaterialReturnItemModel extends MaterialReturnItem {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -117,16 +95,11 @@ class MaterialReturnItemModel extends MaterialReturnItem {
 
 class MaterialReturnMaterialModel extends MaterialReturnMaterialEntity {
   const MaterialReturnMaterialModel({
-    required double quantity,
-    String? remark,
-    required IssueVoucherMaterialModel material,
-    required String issueVoucherId,
-  }) : super(
-          quantity: quantity,
-          remark: remark,
-          material: material,
-          issueVoucherId: issueVoucherId,
-        );
+    required super.quantity,
+    super.remark,
+    required IssueVoucherMaterialModel super.material,
+    required super.issueVoucherId,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -146,15 +119,10 @@ class MaterialReturnMaterialModel extends MaterialReturnMaterialEntity {
 class CreateMaterialReturnParamsModel
     extends CreateMaterialReturnParamsEntity<MaterialReturnMaterialModel> {
   const CreateMaterialReturnParamsModel(
-      {required String projectId,
-      required List<MaterialReturnMaterialModel> materialReturnMaterials,
-      required String returnedById,
-      required String receivingStoreId})
-      : super(
-            returnedById: returnedById,
-            projectId: projectId,
-            materialReturnMaterials: materialReturnMaterials,
-            receivingStoreId: receivingStoreId);
+      {required super.projectId,
+      required super.materialReturnMaterials,
+      required super.returnedById,
+      required super.receivingStoreId});
 
   @override
   List<Object?> get props =>
@@ -188,15 +156,15 @@ class CreateMaterialReturnParamsModel
 
 class MaterialReturnListWithMeta extends MaterialReturnEntityListWithMeta {
   MaterialReturnListWithMeta({
-    required Meta meta,
-    required List<MaterialReturnModel> items,
-  }) : super(meta: meta, items: items);
+    required MetaModel super.meta,
+    required List<MaterialReturnModel> super.items,
+  });
 
   factory MaterialReturnListWithMeta.fromJson(Map<String, dynamic> json) {
     debugPrint("MaterialReturnListWithMeta.fromJson: $json");
 
     return MaterialReturnListWithMeta(
-      meta: Meta.fromJson(json['meta']),
+      meta: MetaModel.fromJson(json['meta']),
       items: json['items']
           .map<MaterialReturnModel>(
               (item) => MaterialReturnModel.fromJson(item))
@@ -217,7 +185,6 @@ MaterialReturnStatus toMaterialReturnStatus(String value) {
       throw Exception('Invalid MaterialReturnStatus');
   }
 }
-
 
 String fromMaterialReturnStatus(MaterialReturnStatus? value) {
   if (value == null) {

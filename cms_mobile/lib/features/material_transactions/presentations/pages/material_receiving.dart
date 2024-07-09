@@ -24,6 +24,8 @@ class MaterialReceivingPage extends StatefulWidget {
 }
 
 class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
+  bool selectedMineFilter = false;
+
   @override
   void initState() {
     super.initState();
@@ -101,11 +103,55 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
                     _showCustomPopupMenu(context);
                   },
                   icon: SvgPicture.asset(
-                    "../../../../../assets/icons/common/filter.svg",
+                    "icons/common/filter.svg",
                     height: 25,
                     width: 25,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ToggleButtons(
+                    onPressed: (index) {
+                      setState(() {
+                        debugPrint("Selected index: $index");
+                        if (index == 0) {
+                          selectedMineFilter = false;
+                        } else if (index == 1) {
+                          selectedMineFilter = true;
+                        }
+
+                        context.read<MaterialReceiveBloc>().add(
+                              GetMaterialReceives(
+                                filterMaterialReceiveInput:
+                                    FilterMaterialReceiveInput(),
+                                orderBy: OrderByMaterialReceiveInput(
+                                    createdAt: "desc"),
+                                paginationInput:
+                                    PaginationInput(skip: 0, take: 20),
+                                mine: selectedMineFilter,
+                              ),
+                            );
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: [
+                      !selectedMineFilter,
+                      selectedMineFilter
+                    ],
+                    children: const [
+                      Text('All'),
+                      Text('My Issues'),
+                    ]),
               ],
             ),
             const SizedBox(

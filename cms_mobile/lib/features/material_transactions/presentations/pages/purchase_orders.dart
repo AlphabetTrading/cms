@@ -259,7 +259,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'By ${purchaseOrder.approvedById ?? 'N/A'}',
+                'By ${purchaseOrder.preparedBy?.fullName ?? 'N/A'}',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 15,
@@ -268,7 +268,10 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                 ),
               ),
               Text(
-                purchaseOrder.preparedById ?? 'N/A',
+                //  'Approved by ${purchaseOrder.approvedBy?.fullName ?? 'N/A'}'
+                purchaseOrder.status == PurchaseOrderStatus.completed
+                    ? 'Approved by ${purchaseOrder.approvedBy?.fullName ?? 'N/A'}'
+                    : 'Not yet approved',
                 style: const TextStyle(
                   color: Color(0xFF637587),
                   fontSize: 12,

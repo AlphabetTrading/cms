@@ -246,7 +246,7 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
       return DataSuccess(
         PurchaseOrdersListWithMeta(
           items: items,
-          meta: Meta.fromJson(meta),
+          meta: MetaModel.fromJson(meta),
         ),
       );
     });

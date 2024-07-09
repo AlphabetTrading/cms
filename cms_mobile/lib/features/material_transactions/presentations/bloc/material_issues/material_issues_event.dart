@@ -10,10 +10,12 @@ class GetMaterialIssues extends MaterialIssueEvent {
   final FilterMaterialIssueInput? filterMaterialIssueInput;
   final OrderByMaterialIssueInput? orderBy;
   final PaginationInput? paginationInput;
+  final bool? mine;
   const GetMaterialIssues({
     this.filterMaterialIssueInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }
 
@@ -50,13 +52,16 @@ class CreateMaterialIssueEvent extends MaterialIssueEvent {
       {required this.createMaterialIssueParamsEntity});
 }
 
-// class UpdateMaterialIssueEvent extends MaterialIssueEvent {
-//   final String id;
-//   const UpdateMaterialIssueEvent(this.id);
-// }
+class UpdateMaterialIssueEvent extends MaterialIssueEvent {
+  final String id;
+  const UpdateMaterialIssueEvent(this.id);
+}
 
-// class DeleteMaterialIssueEvent extends MaterialIssueEvent {
-//   final String id;
-//   const DeleteMaterialIssueEvent(this.id);
-// }
-
+class DeleteMaterialIssueEventLocal extends MaterialIssueEvent {
+  final String materialIssueId;
+  final bool isMine;
+  const DeleteMaterialIssueEventLocal({
+    required this.materialIssueId,
+    required this.isMine,
+  });
+}

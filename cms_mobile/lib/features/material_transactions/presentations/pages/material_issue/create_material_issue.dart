@@ -2,6 +2,7 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
@@ -234,7 +235,9 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
                                     .state
                                     .selectedProjectId ??
                                 "",
-                            preparedById: USER_ID,
+                            preparedById:
+                                context.read<AuthBloc>().state.user?.id ??
+                                    USER_ID,
                             warehouseStoreId:
                                 warehouseFormState.warehouseDropdown.value,
                             materialIssueMaterials:
@@ -253,9 +256,6 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
                           ),
                         ),
                       );
-
-                  BlocProvider.of<MaterialIssueBloc>(context)
-                      .add(const GetMaterialIssues());
 
                   context.read<MaterialIssueBloc>().add(
                         GetMaterialIssues(

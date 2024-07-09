@@ -24,14 +24,17 @@ class MaterialRequestsPage extends StatefulWidget {
 }
 
 class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
+  bool selectedMineFilter = false;
+
   @override
   void initState() {
     super.initState();
     context.read<MaterialRequestBloc>().add(
           GetMaterialRequestEvent(
-            FilterMaterialRequestInput(),
-            OrderByMaterialRequestInput(createdAt: "desc"),
-            PaginationInput(skip: 0, take: 20),
+            filterMaterialRequestInput: FilterMaterialRequestInput(),
+            orderBy: OrderByMaterialRequestInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 20),
+            mine: selectedMineFilter,
           ),
         );
   }
@@ -48,13 +51,14 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
     ) {
       context.read<MaterialRequestBloc>().add(
             GetMaterialRequestEvent(
-              FilterMaterialRequestInput(
+              filterMaterialRequestInput: FilterMaterialRequestInput(
                 serialNumber: StringFilter(contains: query),
                 requestedBy: StringFilter(contains: query),
                 approvedBy: StringFilter(contains: query),
               ),
-              OrderByMaterialRequestInput(createdAt: "desc"),
-              PaginationInput(skip: 0, take: 20),
+              orderBy: OrderByMaterialRequestInput(createdAt: "desc"),
+              paginationInput: PaginationInput(skip: 0, take: 20),
+              mine: selectedMineFilter,
             ),
           );
     });
@@ -109,6 +113,50 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
             const SizedBox(
               height: 10,
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ToggleButtons(
+                    onPressed: (index) {
+                      setState(() {
+                        debugPrint("Selected index: $index");
+                        if (index == 0) {
+                          selectedMineFilter = false;
+                        } else if (index == 1) {
+                          selectedMineFilter = true;
+                        }
+
+                        context.read<MaterialRequestBloc>().add(
+                              GetMaterialRequestEvent(
+                                filterMaterialRequestInput:
+                                    FilterMaterialRequestInput(),
+                                orderBy: OrderByMaterialRequestInput(
+                                    createdAt: "desc"),
+                                paginationInput:
+                                    PaginationInput(skip: 0, take: 20),
+                                mine: selectedMineFilter,
+                              ),
+                            );
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: [
+                      !selectedMineFilter,
+                      selectedMineFilter
+                    ],
+                    children: const [
+                      Text('All'),
+                      Text('My Issues'),
+                    ]),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             _buildBody(context),
             const SizedBox(
               height: 10,
@@ -125,8 +173,6 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
     );
   }
 
-
-
   _buildBody(BuildContext context) {
     return BlocProvider<MaterialRequestDeleteCubit>(
       create: (context) => sl<MaterialRequestDeleteCubit>(),
@@ -140,7 +186,7 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
           }
 
           if (state is MaterialRequestLoading) {
-              debugPrint('MaterialRequestBlocBuilder state: loading');
+            debugPrint('MaterialRequestBlocBuilder state: loading');
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -154,10 +200,13 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
                       if (state is MaterialRequestDeleteSuccess) {
                         context.read<MaterialRequestBloc>().add(
                               GetMaterialRequestEvent(
-                                FilterMaterialRequestInput(),
-                                OrderByMaterialRequestInput(createdAt: "desc"),
-                                PaginationInput(skip: 0, take: 20),
-                              ),
+                                  filterMaterialRequestInput:
+                                      FilterMaterialRequestInput(),
+                                  orderBy: OrderByMaterialRequestInput(
+                                      createdAt: "desc"),
+                                  paginationInput:
+                                      PaginationInput(skip: 0, take: 20),
+                                  mine: selectedMineFilter),
                             );
                       }
                     },
@@ -410,15 +459,15 @@ class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
   void _onStatusSelected() {
     context.read<MaterialRequestBloc>().add(
           GetMaterialRequestEvent(
-            FilterMaterialRequestInput(
+            filterMaterialRequestInput: FilterMaterialRequestInput(
               status: selectedStatuses.contains('All')
                   ? null
                   : selectedStatuses
                       .map((status) => status.toUpperCase())
                       .toList(),
             ),
-            OrderByMaterialRequestInput(createdAt: "desc"),
-            PaginationInput(skip: 0, take: 10),
+            orderBy: OrderByMaterialRequestInput(createdAt: "desc"),
+            paginationInput: PaginationInput(skip: 0, take: 10),
           ),
         );
     Navigator.pop(context);

@@ -29,12 +29,19 @@ class ProductDataSourceImpl extends ProductDataSource {
       currentPrice
       productVariant {
         id
-        variant
-        unitOfMeasure
+        createdAt
+        description
         product {
+          createdAt
           id
           name
+          productType
+          updatedAt
         }
+        productId
+        unitOfMeasure
+        updatedAt
+        variant
       }
     }
   }

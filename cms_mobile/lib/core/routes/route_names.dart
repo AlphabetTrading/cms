@@ -37,10 +37,23 @@ class RoutePaths {
   static const String purchaseOrderEdit = 'edit/:purchaseOrderId';
 
   // material return
+  static const String materialReturn = 'material_return';
   static const String materialReturnCreate = 'create';
   static const String materialReturnDetails = ':materialReturnId';
   static const String materialReturnEdit = 'edit/:materialReturnId';
-  static const String materialReturn = 'material_return';
+
+  // material proforma
+  static const String materialProforma = 'material_proforma';
+  static const String materialProformaCreate = 'create';
+  static const String materialProformaDetails = ':materialProformaId';
+  static const String materialProformaEdit = 'edit/:materialProformaId';
+
+
+  // daily site data
+  static const String dailySiteData = 'daily_site_data';
+  static const String dailySiteDataCreate = 'create';
+  static const String dailySiteDataDetails = ':dailySiteDataId';
+  static const String dailySiteDataEdit = 'edit/:dailySiteDataId';
 
   //milestone
   static const String milestoneDetails = 'milestones/:milestoneId';
@@ -93,6 +106,19 @@ class RouteNames {
   static const String materialReturnDetails = 'material_return_details';
   static const String materialReturnEdit = 'material_return_edit';
   static const String materialReturn = 'material_return';
+
+  // material proforma
+  static const String materialProforma = 'material_proforma';
+  static const String materialProformaCreate = 'material_proforma_create';
+  static const String materialProformaDetails = 'material_proforma_details';
+  static const String materialProformaEdit = 'material_proforma_edit';
+
+  // daily site data
+  static const String dailySiteData = 'daily_site_data';
+  static const String dailySiteDataCreate = 'daily_site_data_create';
+  static const String dailySiteDataDetails = 'daily_site_data_details';
+  static const String dailySiteDataEdit = 'daily_site_data_edit';
+  
 
   //progress
   static const String milestoneDetails = 'milestone_details';

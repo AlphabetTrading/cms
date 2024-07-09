@@ -82,7 +82,6 @@ class MaterialTransferModel extends MaterialTransferEntity {
     WarehouseModel? receivingWarehouseStore,
     String? receivingWarehouseStoreId,
     String? requisitionNumber,
-    String? sendingStore,
     String? sentThroughName,
     String? serialNumber,
     String? status,
@@ -105,7 +104,6 @@ class MaterialTransferModel extends MaterialTransferEntity {
             sendingWarehouseStore: sendingWarehouseStore,
             sendingWarehouseStoreId: sendingWarehouseStoreId,
             requisitionNumber: requisitionNumber,
-            sendingStore: sendingStore,
             sentThroughName: sentThroughName,
             serialNumber: serialNumber,
             status: status,
@@ -114,11 +112,11 @@ class MaterialTransferModel extends MaterialTransferEntity {
 
   factory MaterialTransferModel.fromJson(Map<String, dynamic> json) {
     return MaterialTransferModel(
+      id: json['id'],
       approvedBy: json['approvedBy'] != null
           ? UserModel.fromJson(json['approvedBy'])
           : null,
       approvedById: json['approvedById'],
-      id: json['id'],
       items: json['items']
           ?.map<MaterialTransferItemModel>(
               (item) => MaterialTransferItemModel.fromJson(item))
@@ -136,10 +134,9 @@ class MaterialTransferModel extends MaterialTransferEntity {
           : null,
       receivingWarehouseStoreId: json['receivingWarehouseStoreId'],
       receivingWarehouseStore: json['receivingWarehouseStore'] != null
-          ? WarehouseModel.fromJson(json['receivingStore'])
+          ? WarehouseModel.fromJson(json['receivingWarehouseStore'])
           : null,
       requisitionNumber: json['requisitionNumber'],
-      sendingStore: json['sendingStore'],
       sentThroughName: json['sentThroughName'],
       serialNumber: json['serialNumber'],
       status: json['status'],
@@ -166,7 +163,6 @@ class MaterialTransferModel extends MaterialTransferEntity {
       'receivingWarehouseStore': receivingWarehouseStore!.toJson(),
       'receivingWarehouseStoreId': receivingWarehouseStoreId,
       'requisitionNumber': requisitionNumber,
-      'sendingStore': sendingStore,
       'sentThroughName': sentThroughName,
       'serialNumber': serialNumber,
       'status': status,

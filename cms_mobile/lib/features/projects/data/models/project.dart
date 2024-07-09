@@ -1,40 +1,24 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/progress/data/models/milestone.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 
 class ProjectModel extends ProjectEntity {
   const ProjectModel({
-    required String? id,
-    required String? name,
-    required String? status,
-    required String? clientId,
-    UserModel? client,
+    required super.id,
+    required super.name,
+    required super.status,
+    required super.clientId,
+    UserModel? super.client,
     // required double? budget,
-    List<UserModel>? projectUsers,
+    List<UserModel>? super.projectUsers,
     // List<MilestoneModel>? milestones,
-    required String? projectManagerId,
-    UserModel? projectManager,
-    required DateTime? startDate,
-    required DateTime? endDate,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
-  }) : super(
-            id: id,
-            status: status,
-            name: name,
-            clientId: clientId,
-            client: client,
-            // budget: budget,
-            projectManagerId: projectManagerId,
-            projectManager: projectManager,
-            startDate: startDate,
-            endDate: endDate,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            projectUsers: projectUsers,
-            // milestones: milestones
-            );
+    required super.projectManagerId,
+    UserModel? super.projectManager,
+    required super.startDate,
+    required super.endDate,
+    required super.createdAt,
+    required super.updatedAt,
+  });
 
   @override
   List<Object?> get props {
@@ -112,13 +96,13 @@ class ProjectModel extends ProjectEntity {
 
 class ProjectListWithMeta extends ProjectEntityListWithMeta {
   ProjectListWithMeta({
-    required Meta meta,
+    required MetaModel meta,
     required List<ProjectModel> items,
   }) : super(meta: meta, items: items);
 
   factory ProjectListWithMeta.fromJson(Map<String, dynamic> json) {
     return ProjectListWithMeta(
-      meta: Meta.fromJson(json['meta']),
+      meta: MetaModel.fromJson(json['meta']),
       items: json['items']
           .map<ProjectModel>((item) => ProjectModel.fromJson(item))
           .toList(),

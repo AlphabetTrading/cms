@@ -1,3 +1,4 @@
+import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
@@ -63,6 +64,33 @@ class MaterialRequestItem extends Equatable {
     this.updatedAt,
   });
 
+
+  // from json
+  factory MaterialRequestItem.fromJson(Map<String, dynamic> json) {
+    return MaterialRequestItem(
+      id: json['id'],
+      quantity: json['quantity'],
+      remark: json['remark'],
+      productVariantId: json['productVariantId'],
+      productVariant: json['productVariant'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
+  }
+
+  // to json
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'quantity': quantity,
+      'remark': remark,
+      'productVariantId': productVariantId,
+      'productVariant': productVariant,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
+
   @override
   List<Object?> get props {
     return [
@@ -112,7 +140,7 @@ class CreateMaterialRequestParamsEntity<T extends MaterialRequestMaterialEntity>
 
 class MaterialRequestEntityListWithMeta {
   final List<MaterialRequestEntity> items;
-  final Meta meta;
+  final MetaEntity meta;
 
   MaterialRequestEntityListWithMeta({
     required this.meta,
