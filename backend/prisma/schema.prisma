@@ -173,27 +173,42 @@ model PriceHistory {
 }
 
 model Proforma {
-  id                    String              @id @default(uuid())
-  serialNumber          String              @unique
-  projectId             String
-  Project               Project             @relation(fields: [projectId], references: [id])
-  vendor                String
-  remark                String?
-  photo                 String
-  quantity              Float
-  unitPrice             Float
-  totalPrice            Float
-  status                ApprovalStatus      @default(PENDING)
-  preparedById          String
-  preparedBy            User                @relation(fields: [preparedById], references: [id], name: "PreparedByProforma")
-  approvedById          String?
-  approvedBy            User?               @relation(fields: [approvedById], references: [id], name: "ApprovedByProforma")
-  materialRequestItem   MaterialRequestItem @relation(fields: [materialRequestItemId], references: [id])
-  materialRequestItemId String
-  purchaseOrderItem     PurchaseOrderItem[]
+  id                     String              @id @default(uuid())
+  serialNumber           String              @unique
+  projectId              String
+  Project                Project             @relation(fields: [projectId], references: [id])
+  materialRequestItem    MaterialRequestItem @relation(fields: [materialRequestItemId], references: [id])
+  materialRequestItemId  String
+  items                  ProformaItem[]      @relation(name: "items")
+  selectedProformaItemId String?             @unique
+  selectedProformaItem   ProformaItem?       @relation(fields: [selectedProformaItemId], references: [id], name: "selectedProformaItem")
+  preparedById           String
+  preparedBy             User                @relation(fields: [preparedById], references: [id], name: "PreparedByProforma")
+  approvedById           String?
+  approvedBy             User?               @relation(fields: [approvedById], references: [id], name: "ApprovedByProforma")
+  status                 ApprovalStatus      @default(PENDING)
+  purchaseOrderItem      PurchaseOrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProformaItem {
+  id               String    @id @default(uuid())
+  vendor           String
+  quantity         Float
+  unitPrice        Float
+  totalPrice       Float
+  remark           String?
+  photo            String
+  Proforma         Proforma? @relation(fields: [proformaId], references: [id], name: "items")
+  proformaId       String?
+  SelectedProforma Proforma? @relation(name: "selectedProformaItem")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([id, vendor])
 }
 
 model PurchaseOrder {

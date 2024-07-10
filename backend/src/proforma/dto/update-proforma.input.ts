@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { UpdateProformaItemInput } from './update-proforma-item.input';
 
 @InputType()
 export class UpdateProformaInput {
@@ -16,25 +17,9 @@ export class UpdateProformaInput {
   @Field(() => String, { nullable: true })
   materialRequestItemId?: string;
 
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  vendor?: string;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  quantity?: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  unitPrice?: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  totalPrice?: number;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  remark?: string;
+  @ValidateNested({ each: true })
+  @Field(() => [UpdateProformaItemInput])
+  items: UpdateProformaItemInput[];
 
   @IsOptional()
   @Field(() => String, { nullable: true })

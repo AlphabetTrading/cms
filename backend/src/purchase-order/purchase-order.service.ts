@@ -61,6 +61,7 @@ export class PurchaseOrderService {
             },
             proforma: {
               include: {
+                selectedProformaItem: true,
                 materialRequestItem: {
                   include: {
                     productVariant: {
@@ -113,6 +114,7 @@ export class PurchaseOrderService {
             },
             proforma: {
               include: {
+                selectedProformaItem: true,
                 materialRequestItem: {
                   include: {
                     productVariant: {
@@ -183,6 +185,7 @@ export class PurchaseOrderService {
             },
             proforma: {
               include: {
+                selectedProformaItem: true,
                 materialRequestItem: {
                   include: {
                     productVariant: {
@@ -252,6 +255,7 @@ export class PurchaseOrderService {
               },
               proforma: {
                 include: {
+                selectedProformaItem: true,
                   materialRequestItem: {
                     include: {
                       productVariant: {

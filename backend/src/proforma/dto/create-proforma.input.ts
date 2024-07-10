@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { CreateProformaItemInput } from './create-proforma-item.input';
 
 @InputType()
 export class CreateProformaInput {
@@ -11,25 +12,9 @@ export class CreateProformaInput {
   @Field(() => String)
   materialRequestItemId: string;
 
-  @IsNotEmpty()
-  @Field(() => String)
-  vendor: string;
-
-  @IsNotEmpty()
-  @Field(() => Number)
-  quantity: number;
-
-  @IsNotEmpty()
-  @Field(() => Number)
-  unitPrice: number;
-
-  @IsNotEmpty()
-  @Field(() => Number)
-  totalPrice: number;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  remark?: string;
+  @ValidateNested({ each: true })
+  @Field(() => [CreateProformaItemInput])
+  items: CreateProformaItemInput[];
 
   @IsNotEmpty()
   @Field(() => String)
@@ -38,5 +23,4 @@ export class CreateProformaInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   approvedById?: string;
-
 }

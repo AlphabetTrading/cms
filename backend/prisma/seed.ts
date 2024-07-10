@@ -1122,7 +1122,7 @@ async function seedMaterialReturnVouchers() {
             },
           });
         }
-      }
+}
     }
     console.log('Material Return models seeded successfully');
   } catch (error) {
@@ -1446,20 +1446,6 @@ async function seedPurchaseOrders() {
           },
         });
 
-        const proformas = await prisma.proforma.findMany({
-          where: {
-            projectId: project.id,
-            status: ApprovalStatus.COMPLETED,
-          },
-          include: {
-            materialRequestItem: {
-              include: {
-                productVariant: true,
-              },
-            },
-          },
-        });
-
         for (const data of purchaseOrders) {
           await prisma.purchaseOrder.create({
             data: {
@@ -1471,12 +1457,6 @@ async function seedPurchaseOrders() {
                     quantity: materialRequests[0].items[0].quantity,
                     totalPrice: 1000,
                     unitPrice: 100,
-                  },
-                  {
-                    proformaId: proformas[0].id,
-                    quantity: proformas[0].quantity,
-                    totalPrice: proformas[0].unitPrice * proformas[0].quantity,
-                    unitPrice: proformas[0].unitPrice,
                   },
                 ],
               },
@@ -1496,7 +1476,7 @@ async function seedProformas() {
   let currentSerialNumber = 1;
   function generateSerialNumber(): string {
     const paddedSerialNumber =
-      'PRO/' + currentSerialNumber.toString().padStart(5, '0');
+      'PRO/' + currentSerialNumber.toString().padStart(4, '0');
     currentSerialNumber++;
 
     return paddedSerialNumber;
@@ -1514,16 +1494,6 @@ async function seedProformas() {
 
   try {
     for (const project of projects) {
-      const project_managers = await prisma.user.findMany({
-        where: {
-          role: 'PROJECT_MANAGER',
-          ProjectUser: {
-            some: {
-              projectId: project.id,
-            },
-          },
-        },
-      });
       const purchasers = await prisma.user.findMany({
         where: {
           role: 'PURCHASER',
@@ -1536,58 +1506,68 @@ async function seedProformas() {
       });
 
       if (purchasers.length > 0) {
-        await prisma.proforma.createMany({
-          data: [
-            {
-              projectId: project.id,
-              serialNumber: generateSerialNumber(),
-              vendor: 'Vendor 1',
-              quantity: materialRequests[0].items[0].quantity,
-              unitPrice: 20,
-              totalPrice: materialRequests[0].items[0].quantity * 20,
-              remark:
-                'Proforma for ' +
-                materialRequests[0].items[0].productVariant.variant,
-              materialRequestItemId: materialRequests[0].items[0].id,
-              photo: '',
-              preparedById: purchasers[0].id,
-              approvedById: project_managers[0].id,
-              status: ApprovalStatus.COMPLETED,
+        const proformas = [
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            materialRequestItemId: materialRequests[0].items[0].id,
+            preparedById: purchasers[0].id,
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            materialRequestItemId: materialRequests[2].items[0].id,
+            preparedById: purchasers[0].id,
+          },
+          {
+            projectId: project.id,
+            serialNumber: generateSerialNumber(),
+            materialRequestItemId: materialRequests[1].items[0].id,
+            preparedById: purchasers[0].id,
+          }
+        ];
+
+        for (const data of proformas) {
+          await prisma.proforma.create({
+            data: {
+              ...data,
+              items: {
+                create: [
+                  {
+                    vendor: 'Vendor 1',
+                    quantity: materialRequests[0].items[0].quantity,
+                    unitPrice: 20,
+                    totalPrice: materialRequests[0].items[0].quantity * 20,
+                    remark:
+                      'Proforma for ' +
+                      materialRequests[0].items[0].productVariant.variant,
+                    photo: '',
+                  },
+                  {
+                    vendor: 'Vendor 2',
+                    quantity: materialRequests[2].items[0].quantity,
+                    unitPrice: 10,
+                    totalPrice: materialRequests[2].items[0].quantity * 10,
+                    remark:
+                      'Proforma for ' +
+                      materialRequests[2].items[0].productVariant.variant,
+                    photo: '',
+                  },
+                  {
+                    vendor: 'Vendor 3',
+                    quantity: materialRequests[1].items[0].quantity,
+                    unitPrice: 5,
+                    totalPrice: materialRequests[1].items[0].quantity * 5,
+                    remark:
+                      'Proforma for ' +
+                      materialRequests[1].items[0].productVariant.variant,
+                    photo: '',
+                  },
+                ],
+              },
             },
-            {
-              projectId: project.id,
-              serialNumber: generateSerialNumber(),
-              vendor: 'Vendor 2',
-              quantity: materialRequests[2].items[0].quantity,
-              unitPrice: 10,
-              totalPrice: materialRequests[2].items[0].quantity * 10,
-              remark:
-                'Proforma for ' +
-                materialRequests[2].items[0].productVariant.variant,
-              materialRequestItemId: materialRequests[2].items[0].id,
-              photo: '',
-              preparedById: purchasers[0].id,
-              approvedById: project_managers[0].id,
-              status: ApprovalStatus.DECLINED,
-            },
-            {
-              projectId: project.id,
-              serialNumber: generateSerialNumber(),
-              vendor: 'Vendor 3',
-              quantity: materialRequests[1].items[0].quantity,
-              unitPrice: 5,
-              totalPrice: materialRequests[1].items[0].quantity * 5,
-              remark:
-                'Proforma for ' +
-                materialRequests[1].items[0].productVariant.variant,
-              materialRequestItemId: materialRequests[1].items[0].id,
-              photo: '',
-              preparedById: purchasers[0].id,
-              approvedById: project_managers[0].id,
-              status: ApprovalStatus.COMPLETED,
-            },
-          ],
-        });
+          });
+        }
       }
     }
     console.log('Proforma models seeded successfully');

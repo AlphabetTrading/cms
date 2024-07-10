@@ -6,22 +6,7 @@ import { Project } from 'src/project/model/project.model';
 import { User } from 'src/user/user.model';
 
 @ObjectType()
-export class Proforma extends BaseModel {
-  @Field(() => String, { nullable: true })
-  projectId?: string;
-
-  @Field(() => Project, { nullable: true })
-  Project?: Project;
-
-  @Field(() => String, { nullable: true })
-  serialNumber?: string;
-
-  @Field(() => String, { nullable: true })
-  materialRequestItemId?: string;
-
-  @Field(() => MaterialRequestItem, { nullable: true })
-  materialRequestItem?: MaterialRequestItem;
-
+export class ProformaItem extends BaseModel {
   @Field(() => String, { nullable: true })
   vendor?: string;
 
@@ -39,6 +24,27 @@ export class Proforma extends BaseModel {
 
   @Field(() => String, { nullable: true })
   photo?: string;
+}
+
+@ObjectType()
+export class Proforma extends BaseModel {
+  @Field(() => String, { nullable: true })
+  projectId?: string;
+
+  @Field(() => Project, { nullable: true })
+  Project?: Project;
+
+  @Field(() => String, { nullable: true })
+  serialNumber?: string;
+
+  @Field(() => String, { nullable: true })
+  materialRequestItemId?: string;
+
+  @Field(() => MaterialRequestItem, { nullable: true })
+  materialRequestItem?: MaterialRequestItem;
+
+  @Field(() => [ProformaItem], { nullable: true })
+  items?: ProformaItem[];
 
   @Field(() => String, { nullable: true })
   preparedById?: string;
@@ -51,6 +57,12 @@ export class Proforma extends BaseModel {
 
   @Field(() => User, { nullable: true })
   approvedBy?: User;
+
+  @Field(() => String, { nullable: true })
+  selectedProformaItemId?: string;
+
+  @Field(() => ProformaItem, { nullable: true })
+  selectedProformaItem?: ProformaItem;
 
   @Field(() => ApprovalStatus, {
     defaultValue: ApprovalStatus.PENDING,

@@ -6,13 +6,11 @@ import { PaginationProformas } from 'src/common/pagination/pagination-info';
 import { FilterProformaInput } from './dto/filter-proforma.input';
 import { OrderByProformaInput } from './dto/order-by-proforma.input';
 import { PaginationInput } from 'src/common/pagination/pagination.input';
-import { ApprovalStatus, Prisma, User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Proforma } from './model/proforma.model';
 import { HasRoles, UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import * as FileUpload from 'graphql-upload/Upload.js';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @UseGuards(GqlAuthGuard, RolesGuard)
@@ -22,6 +20,7 @@ export class ProformaResolver {
 
   @Query(() => PaginationProformas)
   async getProformas(
+    @UserEntity() user: User,
     @Args('filterProformaInput', {
       type: () => FilterProformaInput,
       nullable: true,
@@ -34,9 +33,23 @@ export class ProformaResolver {
     orderBy?: OrderByProformaInput,
     @Args('paginationInput', { type: () => PaginationInput, nullable: true })
     paginationInput?: PaginationInput,
+    @Args('mine', { type: () => Boolean, defaultValue: false })
+    mine?: boolean,
   ): Promise<PaginationProformas> {
-    const where: Prisma.ProformaWhereInput = {
-      AND: [
+    let approverIds: string[] = [];
+
+    if (filterProformaInput?.projectId) {
+      const approvers =
+        await this.proformaService.getProformaApprovers(
+          filterProformaInput.projectId,
+        );
+      approverIds = approvers.flatMap((approver) =>
+        approver.ProjectUsers.map((projectUser) => projectUser.userId),
+      );
+    }
+
+    try {
+      const baseConditions: Prisma.ProformaWhereInput[] = [
         {
           id: filterProformaInput?.id,
         },
@@ -48,12 +61,6 @@ export class ProformaResolver {
             {
               materialRequestItemId: filterProformaInput?.materialRequestItemId,
             },
-            {
-              vendor: filterProformaInput?.vendor,
-            },
-            {
-              remark: filterProformaInput?.remark,
-            },
           ],
         },
         {
@@ -62,10 +69,28 @@ export class ProformaResolver {
         {
           updatedAt: filterProformaInput?.updatedAt,
         },
-      ],
-    };
+      ].filter(Boolean);
 
-    try {
+      if (mine) {
+        baseConditions.push({
+          OR: [
+            { preparedById: user.id },
+            { approvedById: user.id },
+            ...(approverIds.includes(user.id)
+              ? [
+                  {
+                    projectId: filterProformaInput?.projectId,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
+
+      const where: Prisma.ProformaWhereInput = {
+        AND: baseConditions,
+      };
+
       const proformas = await this.proformaService.getProformas({
         where,
         orderBy,
@@ -102,10 +127,9 @@ export class ProformaResolver {
   async createProforma(
     @Args('createProformaInput')
     createProforma: CreateProformaInput,
-    @Args('photo', { type: () => GraphQLUpload, nullable: true }) photo?: FileUpload,
   ) {
     try {
-      return await this.proformaService.createProforma(createProforma, photo);
+      return await this.proformaService.createProforma(createProforma);
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Error creating proforma!');
@@ -117,10 +141,9 @@ export class ProformaResolver {
   async updateProforma(
     @Args('updateProformaInput')
     updateProformaInput: UpdateProformaInput,
-    @Args('newPhoto', { type: () => GraphQLUpload, nullable: true }) newPhoto?: FileUpload,
   ) {
     try {
-      return this.proformaService.updateProforma(updateProformaInput, newPhoto);
+      return this.proformaService.updateProforma(updateProformaInput);
     } catch (e) {
       console.log(e);
       throw new BadRequestException('Error updating proforma!');
@@ -142,14 +165,13 @@ export class ProformaResolver {
   async approveProforma(
     @UserEntity() user: User,
     @Args('proformaId') proformaId: string,
-    @Args('decision', { type: () => ApprovalStatus })
-    decision: ApprovalStatus,
+    @Args('selectedProformaItemId') selectedProformaItemId: string,
   ) {
     try {
       return this.proformaService.approveProforma(
         proformaId,
         user.id,
-        decision,
+        selectedProformaItemId
       );
     } catch (e) {
       console.log(e)

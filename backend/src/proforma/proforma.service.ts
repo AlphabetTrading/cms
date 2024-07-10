@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { ApprovalStatus, Prisma, UserRole } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 import { CreateProformaInput } from './dto/create-proforma.input';
 import { Proforma } from './model/proforma.model';
 import { UpdateProformaInput } from './dto/update-proforma.input';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
-import * as FileUpload from 'graphql-upload/Upload.js';
 import { StorageResolver } from 'src/storage/storage.resolver';
 
 @Injectable()
@@ -18,7 +21,6 @@ export class ProformaService {
 
   async createProforma(
     createProformaInput: CreateProformaInput,
-    photo?: FileUpload,
   ): Promise<Proforma> {
     const lastProforma = await this.prisma.proforma.findFirst({
       select: {
@@ -35,21 +37,26 @@ export class ProformaService {
         parseInt(lastProforma.serialNumber.split('/')[1]) + 1;
     }
     const serialNumber =
-      'PRO/' + currentSerialNumber.toString().padStart(5, '0');
-
-    console.log(photo);
-    let photoUrl: string | undefined;
-    if (photo) {
-      photoUrl = await this.storageResolver.uploadFile(photo);
-    }
+      'PRO/' + currentSerialNumber.toString().padStart(4, '0');
 
     const createdProforma = await this.prisma.proforma.create({
       data: {
         ...createProformaInput,
-        photo: photoUrl,
         serialNumber: serialNumber,
+        items: {
+          create: createProformaInput.items.map((item) => ({
+            photo: item.photo,
+            vendor: item.vendor,
+            unitPrice: item.unitPrice,
+            totalPrice: item.totalPrice,
+            quantity: item.quantity,
+            remark: item.remark,
+          })),
+        },
       },
       include: {
+        items: true,
+        selectedProformaItem: true,
         materialRequestItem: {
           include: {
             MaterialRequestVoucher: true,
@@ -85,6 +92,8 @@ export class ProformaService {
       where,
       orderBy,
       include: {
+        items: true,
+        selectedProformaItem: true,
         materialRequestItem: {
           include: {
             MaterialRequestVoucher: true,
@@ -136,6 +145,8 @@ export class ProformaService {
     const proforma = await this.prisma.proforma.findUnique({
       where: { id: proformaId },
       include: {
+        items: true,
+        selectedProformaItem: true,
         materialRequestItem: {
           include: {
             MaterialRequestVoucher: true,
@@ -155,53 +166,90 @@ export class ProformaService {
     return proforma;
   }
 
-  async updateProforma(
-    input: UpdateProformaInput,
-    newPhoto: FileUpload,
-  ): Promise<Proforma> {
-    let newPhotoUrl: string | undefined;
+  async updateProforma(input: UpdateProformaInput): Promise<Proforma> {
     const { id: proformaId, ...updateData } = input;
 
-    const existingProforma = await this.prisma.proforma.findUnique({
-      where: { id: proformaId },
-    });
+    return await this.prisma.$transaction(async (prisma) => {
+      const existingProforma = await prisma.proforma.findUnique({
+        where: { id: proformaId },
+      });
 
-    if (!existingProforma) {
-      throw new NotFoundException('Proforma not found');
-    }
-
-    if (newPhoto) {
-      newPhotoUrl = await this.storageResolver.uploadFile(newPhoto);
-
-      if (existingProforma.photo) {
-        await this.storageResolver.deleteFile(existingProforma.photo);
+      if (!existingProforma) {
+        throw new NotFoundException('Proforma not found');
       }
-    }
 
-    const updatedProforma = await this.prisma.proforma.update({
-      where: { id: proformaId },
-      data: {
+      const updatedItems = await Promise.all(
+        updateData.items.map(async (item) => {
+          let newPhotoUrl: string | undefined;
+
+          if (item.id) {
+            if (item.photo) {
+              newPhotoUrl = item.photo;
+              const existingItem = await this.prisma.proformaItem.findUnique({
+                where: { id: item.id },
+              });
+
+              if (existingItem && existingItem.photo) {
+                await this.storageResolver.deleteFile(existingItem.photo);
+              }
+
+              return { ...item, photo: newPhotoUrl };
+            }
+          }
+
+          return item;
+        }),
+      );
+
+      const updatePayload: Prisma.ProformaUpdateInput = {
         ...updateData,
-        photo: newPhotoUrl || existingProforma.photo,
-      },
-      include: {
-        materialRequestItem: {
+        items: {
+          update: updatedItems
+            .filter((item) => item.id)
+            .map((item) => ({
+              where: { id: item.id },
+              data: { ...item, newPhoto: undefined },
+            })),
+          create: updatedItems
+            .filter((item) => !item.id)
+            .map((item) => ({
+              vendor: item.vendor,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              totalPrice: item.totalPrice,
+              remark: item.remark,
+              photo: item.photo,
+            })),
+        },
+      };
+
+      try {
+        const updatedProforma = await prisma.proforma.update({
+          where: { id: proformaId },
+          data: updatePayload,
           include: {
-            MaterialRequestVoucher: true,
-            productVariant: {
+            items: true,
+            selectedProformaItem: true,
+            materialRequestItem: {
               include: {
-                product: true,
+                MaterialRequestVoucher: true,
+                productVariant: {
+                  include: {
+                    product: true,
+                  },
+                },
               },
             },
+            approvedBy: true,
+            preparedBy: true,
+            Project: true,
           },
-        },
-        approvedBy: true,
-        preparedBy: true,
-        Project: true,
-      },
+        });
+        return updatedProforma;
+      } catch (e) {
+        throw new BadRequestException('Unable to update proforma!');
+      }
     });
-
-    return updatedProforma;
   }
 
   async deleteProforma(proformaId: string): Promise<Proforma> {
@@ -244,7 +292,7 @@ export class ProformaService {
   async approveProforma(
     proformaId: string,
     userId: string,
-    status: ApprovalStatus,
+    selectedProformaItemId: string,
   ): Promise<Proforma> {
     const proforma = await this.prisma.proforma.findUnique({
       where: { id: proformaId },
@@ -262,7 +310,25 @@ export class ProformaService {
       where: { id: proformaId },
       data: {
         approvedById: userId,
-        status: status,
+        status: 'COMPLETED',
+        selectedProformaItemId: selectedProformaItemId,
+      },
+      include: {
+        items: true,
+        selectedProformaItem: true,
+        materialRequestItem: {
+          include: {
+            MaterialRequestVoucher: true,
+            productVariant: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
+        approvedBy: true,
+        preparedBy: true,
+        Project: true,
       },
     });
 

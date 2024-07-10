@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
-import { StringFilter } from 'src/common/filter/string-filter';
 import { FilterProjectInput } from 'src/project/dto/filter-project.input';
 
 @InputType()
@@ -16,13 +15,7 @@ export class FilterProformaInput {
   project?: Prisma.ProjectWhereInput;
 
   @Field(() => String, { nullable: true })
-  vendor?: string;
-
-  @Field(() => String, { nullable: true })
   materialRequestItemId?: string;
-
-  @Field(() => StringFilter, { nullable: true })
-  remark?: StringFilter;
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

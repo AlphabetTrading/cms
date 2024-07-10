@@ -209,9 +209,14 @@ input CreateProductVariantInput {
 
 input CreateProformaInput {
   approvedById: String
+  items: [CreateProformaItemInput!]!
   materialRequestItemId: String!
   preparedById: String!
   projectId: String!
+}
+
+input CreateProformaItemInput {
+  photo: String
   quantity: Float!
   remark: String
   totalPrice: Float!
@@ -592,9 +597,7 @@ input FilterProformaInput {
   materialRequestItemId: String
   project: FilterProjectInput
   projectId: String
-  remark: StringFilter
   updatedAt: DateTimeFilter
-  vendor: String
 }
 
 input FilterProjectInput {
@@ -915,7 +918,7 @@ type Mutation {
   approveMaterialRequest(decision: ApprovalStatus!, materialRequestId: String!): MaterialRequestVoucher!
   approveMaterialReturn(decision: ApprovalStatus!, materialReturnId: String!): MaterialReturnVoucher!
   approveMaterialTransfer(decision: ApprovalStatus!, materialTransferId: String!): MaterialTransferVoucher!
-  approveProforma(decision: ApprovalStatus!, proformaId: String!): Proforma!
+  approveProforma(proformaId: String!, selectedProformaItemId: String!): Proforma!
   approvePurchaseOrder(decision: ApprovalStatus!, purchaseOrderId: String!): PurchaseOrderVoucher!
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
   createCompanyOwner(createOwner: CreateOwnerInput!): User!
@@ -929,7 +932,7 @@ type Mutation {
   createPriceHistory(createPriceHistoryInput: CreatePriceHistoryInput!): PriceHistory!
   createProduct(createProductInput: CreateProductInput!): Product!
   createProductVariant(createProductVariantInput: CreateProductVariantInput!): ProductVariant!
-  createProforma(createProformaInput: CreateProformaInput!, photo: Upload): Proforma!
+  createProforma(createProformaInput: CreateProformaInput!): Proforma!
   createProject(createProjectInput: CreateProjectInput!): Project!
   createPurchaseOrder(createPurchaseOrderInput: CreatePurchaseOrderInput!): PurchaseOrderVoucher!
   createTask(createTaskInput: CreateTaskInput!): Task!
@@ -967,7 +970,7 @@ type Mutation {
   updateMilestone(updateMilestoneInput: UpdateMilestoneInput!): Milestone!
   updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
   updateProductVariant(id: String!, updateProductVariantInput: UpdateProductVariantInput!): ProductVariant!
-  updateProforma(newPhoto: Upload, updateProformaInput: UpdateProformaInput!): Proforma!
+  updateProforma(updateProformaInput: UpdateProformaInput!): Proforma!
   updateProject(id: String!, updateProjectInput: UpdateProjectInput!): Project!
   updatePurchaseOrder(updatePurchaseOrderInput: UpdatePurchaseOrderInput!): PurchaseOrderVoucher!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
@@ -1263,16 +1266,28 @@ type Proforma {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
+  items: [ProformaItem!]
   materialRequestItem: MaterialRequestItem
   materialRequestItemId: String
-  photo: String
   preparedBy: User
   preparedById: String
   projectId: String
-  quantity: Float
-  remark: String
+  selectedProformaItem: ProformaItem
+  selectedProformaItemId: String
   serialNumber: String
   status: ApprovalStatus
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type ProformaItem {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  id: ID!
+  photo: String
+  quantity: Float
+  remark: String
   totalPrice: Float
   unitPrice: Float
 
@@ -1390,7 +1405,7 @@ type Query {
   getProductVariants(filterProductVariantInput: FilterProductVariantInput, orderBy: OrderByProductVariantInput, paginationInput: PaginationInput): PaginationProductVariants!
   getProducts(filterProductInput: FilterProductInput, orderBy: OrderByProductInput, paginationInput: PaginationInput): PaginationProducts!
   getProformaById(id: String!): Proforma!
-  getProformas(filterProformaInput: FilterProformaInput, orderBy: OrderByProformaInput, paginationInput: PaginationInput): PaginationProformas!
+  getProformas(filterProformaInput: FilterProformaInput, mine: Boolean! = false, orderBy: OrderByProformaInput, paginationInput: PaginationInput): PaginationProformas!
   getProject(id: String!): Project!
   getProjects(filterProjectInput: FilterProjectInput, orderBy: OrderByProjectInput, paginationInput: PaginationInput): PaginationProjects!
   getPurchaseOrderById(id: String!): PurchaseOrderVoucher!
@@ -1650,12 +1665,18 @@ input UpdateProductVariantInput {
 input UpdateProformaInput {
   approvedById: String
   id: String!
+  items: [UpdateProformaItemInput!]!
   materialRequestItemId: String
   preparedById: String
   projectId: String
+  status: ApprovalStatus
+}
+
+input UpdateProformaItemInput {
+  id: String
+  photo: String
   quantity: Float
   remark: String
-  status: ApprovalStatus
   totalPrice: Float
   unitPrice: Float
   vendor: String
