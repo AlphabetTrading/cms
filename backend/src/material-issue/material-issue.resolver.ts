@@ -13,7 +13,8 @@ import { HasRoles, UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard, RolesGuard)
+@UseGuards(GqlAuthGuard)
+//@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('MaterialIssue')
 export class MaterialIssueResolver {
   constructor(private readonly materialIssueService: MaterialIssueService) {}

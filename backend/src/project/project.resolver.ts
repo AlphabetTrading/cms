@@ -13,7 +13,8 @@ import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { HasRoles } from 'src/common/decorators';
 
-@UseGuards(GqlAuthGuard, RolesGuard)
+@UseGuards(GqlAuthGuard)
+//@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('Project')
 export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}

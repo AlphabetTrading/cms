@@ -13,7 +13,8 @@ import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { HasRoles, UserEntity } from 'src/common/decorators';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard, RolesGuard)
+@UseGuards(GqlAuthGuard)
+//@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('PurchaseOrder')
 export class PurchaseOrderResolver {
   constructor(private readonly purchaseOrderService: PurchaseOrderService) {}

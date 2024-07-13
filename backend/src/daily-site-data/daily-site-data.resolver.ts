@@ -13,7 +13,8 @@ import { CreateDailySiteDataInput } from './dto/create-daily-site-data.input';
 import { UpdateDailySiteDataInput } from './dto/update-daily-site-data.input';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
-@UseGuards(GqlAuthGuard, RolesGuard)
+@UseGuards(GqlAuthGuard)
+//@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver('DailySiteData')
 export class DailySiteDataResolver {
   constructor(private readonly dailySiteDataService: DailySiteDataService) {}
