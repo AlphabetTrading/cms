@@ -200,7 +200,7 @@ model ProformaItem {
   unitPrice        Float
   totalPrice       Float
   remark           String?
-  photo            String
+  photo            String?
   Proforma         Proforma? @relation(fields: [proformaId], references: [id], name: "items")
   proformaId       String?
   SelectedProforma Proforma? @relation(name: "selectedProformaItem")
