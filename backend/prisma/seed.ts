@@ -1122,7 +1122,7 @@ async function seedMaterialReturnVouchers() {
             },
           });
         }
-}
+      }
     }
     console.log('Material Return models seeded successfully');
   } catch (error) {
@@ -1524,7 +1524,7 @@ async function seedProformas() {
             serialNumber: generateSerialNumber(),
             materialRequestItemId: materialRequests[1].items[0].id,
             preparedById: purchasers[0].id,
-          }
+          },
         ];
 
         for (const data of proformas) {
@@ -1541,7 +1541,7 @@ async function seedProformas() {
                     remark:
                       'Proforma for ' +
                       materialRequests[0].items[0].productVariant.variant,
-                    photo: '',
+                    photos: [],
                   },
                   {
                     vendor: 'Vendor 2',
@@ -1551,7 +1551,7 @@ async function seedProformas() {
                     remark:
                       'Proforma for ' +
                       materialRequests[2].items[0].productVariant.variant,
-                    photo: '',
+                    photos: [],
                   },
                   {
                     vendor: 'Vendor 3',
@@ -1561,7 +1561,7 @@ async function seedProformas() {
                     remark:
                       'Proforma for ' +
                       materialRequests[1].items[0].productVariant.variant,
-                    photo: '',
+                    photos: [],
                   },
                 ],
               },

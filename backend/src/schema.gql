@@ -216,7 +216,7 @@ input CreateProformaInput {
 }
 
 input CreateProformaItemInput {
-  photo: String
+  photos: [String!]!
   quantity: Float!
   remark: String
   totalPrice: Float!
@@ -977,7 +977,7 @@ type Mutation {
   updateUser(email: String!, updateUser: UpdateUserInput!): User!
   updateWarehouseProduct(id: String!, updateWarehouseProductInput: UpdateWarehouseProductInput!): WarehouseProduct!
   updateWarehouseStore(id: String!, updateWarehouseStoreInput: UpdateWarehouseStoreInput!): WarehouseStore!
-  uploadFile(files: [Upload!]!): [String!]!
+  uploadFiles(files: [Upload!]!): [String!]!
 }
 
 input NumberFilter {
@@ -1285,7 +1285,7 @@ type ProformaItem {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
-  photo: String
+  photos: [String!]
   quantity: Float
   remark: String
   totalPrice: Float
@@ -1674,7 +1674,7 @@ input UpdateProformaInput {
 
 input UpdateProformaItemInput {
   id: String
-  photo: String
+  photos: [String!]!
   quantity: Float
   remark: String
   totalPrice: Float

@@ -1,5 +1,5 @@
 import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { IsOptional } from 'class-validator';
+import { IsOptional, ValidateNested } from 'class-validator';
 import { CreateProformaItemInput } from './create-proforma-item.input';
 
 @InputType()
@@ -30,7 +30,7 @@ export class UpdateProformaItemInput extends PartialType(
   @Field(() => String, { nullable: true })
   remark?: string;
 
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  photo?: string;
+  @ValidateNested({ each: true })
+  @Field(() => [String])
+  photos?: string[];
 }

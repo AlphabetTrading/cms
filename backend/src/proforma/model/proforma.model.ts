@@ -22,8 +22,8 @@ export class ProformaItem extends BaseModel {
   @Field(() => String, { nullable: true })
   remark?: string;
 
-  @Field(() => String, { nullable: true })
-  photo?: string;
+  @Field(() => [String], { nullable: true })
+  photos?: string[];
 }
 
 @ObjectType()

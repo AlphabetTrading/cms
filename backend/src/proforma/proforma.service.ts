@@ -45,7 +45,7 @@ export class ProformaService {
         serialNumber: serialNumber,
         items: {
           create: createProformaInput.items.map((item) => ({
-            photo: item.photo,
+            photos: item.photos,
             vendor: item.vendor,
             unitPrice: item.unitPrice,
             totalPrice: item.totalPrice,
@@ -180,21 +180,20 @@ export class ProformaService {
 
       const updatedItems = await Promise.all(
         updateData.items.map(async (item) => {
-          let newPhotoUrl: string | undefined;
-
           if (item.id) {
-            if (item.photo) {
-              newPhotoUrl = item.photo;
-              const existingItem = await this.prisma.proformaItem.findUnique({
-                where: { id: item.id },
-              });
+            const existingItem = await this.prisma.proformaItem.findUnique({
+              where: { id: item.id },
+            });
 
-              if (existingItem && existingItem.photo) {
-                await this.storageResolver.deleteFile(existingItem.photo);
+            if (existingItem) {
+              if (existingItem.photos) {
+                for (const photo of existingItem.photos) {
+                  await this.storageResolver.deleteFile(photo);
+                }
               }
-
-              return { ...item, photo: newPhotoUrl };
             }
+
+            return { ...item, photo: item.photos };
           }
 
           return item;
@@ -208,7 +207,14 @@ export class ProformaService {
             .filter((item) => item.id)
             .map((item) => ({
               where: { id: item.id },
-              data: { ...item, newPhoto: undefined },
+              data: {
+                vendor: item.vendor,
+                quantity: item.quantity,
+                unitPrice: item.unitPrice,
+                totalPrice: item.totalPrice,
+                remark: item.remark,
+                photos: item.photos,
+              },
             })),
           create: updatedItems
             .filter((item) => !item.id)
@@ -218,7 +224,7 @@ export class ProformaService {
               unitPrice: item.unitPrice,
               totalPrice: item.totalPrice,
               remark: item.remark,
-              photo: item.photo,
+              photo: item.photos,
             })),
         },
       };

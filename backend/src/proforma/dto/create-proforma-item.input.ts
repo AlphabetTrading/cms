@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
 @InputType()
 export class CreateProformaItemInput {
@@ -23,7 +23,7 @@ export class CreateProformaItemInput {
   @Field(() => String, { nullable: true })
   remark?: string;
 
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  photo?: string;
+  @ValidateNested({ each: true })
+  @Field(() => [String])
+  photos?: string[];
 }
