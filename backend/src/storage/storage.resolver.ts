@@ -11,47 +11,53 @@ import { v4 as uuidv4 } from 'uuid';
 export class StorageResolver {
   constructor(private readonly storageService: StorageService) {}
 
-  @Mutation(() => String)
-  async uploadFile(
-    @Args('file', { type: () => GraphQLUpload })
-    file: FileUpload,
-  ) {
+  @Mutation(() => [String])
+  async uploadFiles(
+    @Args('files', { type: () => [GraphQLUpload] })
+    files: Promise<FileUpload>[],
+  ): Promise<string[]> {
     try {
       const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-      const fileExtension = file.filename.split('.').pop().toLowerCase();
-  
-      if (!allowedExtensions.includes(fileExtension)) {
-        throw new BadRequestException('File type must be an image');
-      }
-  
-      const { createReadStream } = file;
+      const resolvedFiles = await Promise.all(files);
+      const uploadPromises = resolvedFiles.map(async (file) => {
+        const fileExtension = file.filename.split('.').pop().toLowerCase();
 
-      const stream = createReadStream();
-      const chunks = [];
+        if (!allowedExtensions.includes(fileExtension)) {
+          throw new BadRequestException('File type must be an image');
+        }
 
-      const buffer = await new Promise<Buffer>((resolve, reject) => {
-        let buffer: Buffer;
+        const { createReadStream } = file;
 
-        stream.on('data', function (chunk) {
-          chunks.push(chunk);
+        const stream = createReadStream();
+        const chunks = [];
+
+        const buffer = await new Promise<Buffer>((resolve, reject) => {
+          let buffer: Buffer;
+
+          stream.on('data', function (chunk) {
+            chunks.push(chunk);
+          });
+
+          stream.on('end', function () {
+            buffer = Buffer.concat(chunks);
+            resolve(buffer);
+          });
+
+          stream.on('error', reject);
         });
 
-        stream.on('end', function () {
-          buffer = Buffer.concat(chunks);
-          resolve(buffer);
-        });
+        const newFilename = `${uuidv4()}.${fileExtension}`;
 
-        stream.on('error', reject);
+        const fileData = await this.storageService.uploadPublicFile(
+          buffer,
+          newFilename,
+        );
+        return fileData.url;
       });
-
-      const newFilename = `${uuidv4()}.${fileExtension}`;
-
-      const fileData = await this.storageService.uploadPublicFile(
-        buffer,
-        newFilename,
-      );
-      return fileData.url;
+      const urls = await Promise.all(uploadPromises);
+      return urls;
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(error.message);
     }
   }
