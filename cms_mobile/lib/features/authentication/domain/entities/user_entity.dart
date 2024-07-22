@@ -96,14 +96,14 @@ class UserEntity extends Equatable {
   bool get stringify => true;
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
+    print("UserEntity.fromJson ${json}");
+
     return UserEntity(
       id: json['id'],
       email: json['email'],
       phoneNumber: json['phoneNumber'],
       fullName: json['fullName'],
-      role: json['role'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      role: userRoleFromJson(json['role']),
       purchaseOrders: json['purchaseOrders'],
       purchaseOrdersApproved: json['purchaseOrdersApproved'],
       materialIssueVouchers: json['materialIssueVouchers'],
@@ -118,6 +118,8 @@ class UserEntity extends Equatable {
       materialReturnVouchersReturned: json['materialReturnVouchersReturned'],
       projects: json['projects'],
       tasks: json['tasks'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 
@@ -127,7 +129,7 @@ class UserEntity extends Equatable {
       'email': email,
       'phoneNumber': phoneNumber,
       'fullName': fullName,
-      'role': role,
+      'role': userRoleToJson(role),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'purchaseOrders': purchaseOrders,
@@ -145,5 +147,43 @@ class UserEntity extends Equatable {
       'projects': projects,
       'tasks': tasks,
     };
+  }
+}
+
+UserRole userRoleFromJson(String role) {
+  switch (role) {
+    case 'CLIENT':
+      return UserRole.CLIENT;
+    case 'PROJECT_MANAGER':
+      return UserRole.PROJECT_MANAGER;
+    case 'CONSULTANT':
+      return UserRole.CONSULTANT;
+    case 'SITE_MANAGER':
+      return UserRole.SITE_MANAGER;
+    case 'PURCHASE':
+      return UserRole.PURCHASE;
+    case 'STORE_MANAGER':
+      return UserRole.STORE_MANAGER;
+    default:
+      return UserRole.CLIENT;
+  }
+}
+
+String userRoleToJson(UserRole role) {
+  switch (role) {
+    case UserRole.CLIENT:
+      return 'CLIENT';
+    case UserRole.PROJECT_MANAGER:
+      return 'PROJECT_MANAGER';
+    case UserRole.CONSULTANT:
+      return 'CONSULTANT';
+    case UserRole.SITE_MANAGER:
+      return 'SITE_MANAGER';
+    case UserRole.PURCHASE:
+      return 'PURCHASE';
+    case UserRole.STORE_MANAGER:
+      return 'STORE_MANAGER';
+    default:
+      return 'CLIENT';
   }
 }

@@ -58,7 +58,12 @@ class DailySiteDataRepositoryImpl extends DailySiteDataRepository {
       OrderByDailySiteDataInput? orderBy,
       PaginationInput? paginationInput,
       bool? mine}) {
-    return dataSource.fetchDailySiteDatas();
+    return dataSource.fetchDailySiteDatas(
+      filterDailySiteDataInput: filterDailySiteDataInput,
+      orderBy: orderBy,
+      paginationInput: paginationInput,
+      mine: mine,
+    );
   }
 }
 

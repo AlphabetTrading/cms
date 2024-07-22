@@ -7,7 +7,6 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transactions/material_transactions_event.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MaterialRequestsPage extends StatefulWidget {
-  const MaterialRequestsPage({Key? key}) : super(key: key);
+  const MaterialRequestsPage({super.key});
 
   @override
   State<MaterialRequestsPage> createState() => _MaterialRequestsPageState();
@@ -150,7 +149,7 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
                     ],
                     children: const [
                       Text('All'),
-                      Text('My Issues'),
+                      Text('Mine'),
                     ]),
               ],
             ),

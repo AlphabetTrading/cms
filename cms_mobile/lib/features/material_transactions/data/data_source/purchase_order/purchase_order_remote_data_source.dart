@@ -12,6 +12,7 @@ abstract class PurchaseOrderDataSource {
     FilterPurchaseOrderInput? filterPurchaseOrderInput,
     OrderByPurchaseOrderInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   });
 
   Future<DataState<String>> createPurchaseOrder(
@@ -126,79 +127,120 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
     FilterPurchaseOrderInput? filterPurchaseOrderInput,
     OrderByPurchaseOrderInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   }) async {
     String fetchMaterialReceiveQuery;
 
     fetchMaterialReceiveQuery = r'''
-    query GetPurchaseOrders($filterPurchaseOrderInput: FilterPurchaseOrderInput, $mine: Boolean!, $orderBy: OrderByPurchaseOrderInput, $paginationInput: PaginationInput) {
-      getPurchaseOrders(filterPurchaseOrderInput: $filterPurchaseOrderInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
-       items {
-          approvedBy {
-            createdAt
-            email
-            fullName
-            id
-            phoneNumber
-            role
-            updatedAt
-          }
-          approvedById
-          createdAt
-          grandTotal
-          id
-          items {
-            createdAt
-            id
-            productVariant {
-              createdAt
-              description
-              id
-              product {
+        query GetPurchaseOrders($mine: Boolean!, $filterPurchaseOrderInput: FilterPurchaseOrderInput, $orderBy: OrderByPurchaseOrderInput, $paginationInput: PaginationInput) {
+          getPurchaseOrders(mine: $mine, filterPurchaseOrderInput: $filterPurchaseOrderInput, orderBy: $orderBy, paginationInput: $paginationInput) {
+            items {
+              approvedBy {
                 createdAt
+                email
+                fullName
                 id
-                name
-                productType
+                phoneNumber
+                role
                 updatedAt
               }
-              productId
-              unitOfMeasure
+              approvedById
+              createdAt
+              grandTotal
+              id
+              items {
+                createdAt
+                id
+                materialRequestItemId
+                proforma {
+                  approvedBy {
+                    createdAt
+                    email
+                    fullName
+                    id
+                    phoneNumber
+                    role
+                    updatedAt
+                  }
+                  approvedById
+                  createdAt
+                  id
+                  materialRequestItemId
+                  preparedBy {
+                    createdAt
+                    email
+                    fullName
+                    id
+                    phoneNumber
+                    role
+                    updatedAt
+                  }
+                  preparedById
+                  projectId
+                  serialNumber
+                  status
+                  updatedAt
+                  selectedProformaItem {
+                    createdAt
+                    id
+                    photos
+                    quantity
+                    remark
+                    totalPrice
+                    unitPrice
+                    updatedAt
+                    vendor
+                  }
+                  selectedProformaItemId
+                  materialRequestItem {
+                    createdAt
+                    id
+                    productVariantId
+                    quantity
+                    remark
+                    updatedAt
+                  }
+                }
+                proformaId
+                purchaseOrderId
+                quantity
+                remark
+                totalPrice
+                unitPrice
+                updatedAt
+                materialRequestItem {
+                  createdAt
+                  id
+                  productVariantId
+                  quantity
+                  remark
+                  updatedAt
+                }
+              }
+              preparedBy {
+                createdAt
+                email
+                fullName
+                id
+                phoneNumber
+                role
+                updatedAt
+              }
+              preparedById
+              projectId
+              serialNumber
+              status
+              subTotal
               updatedAt
-              variant
+              vat
             }
-            productVariantId
-            purchaseOrderId
-            quantity
-            remark
-            totalPrice
-            unitPrice
-            updatedAt
+            meta {
+              count
+              limit
+              page
+            }
           }
-          materialRequestId
-          preparedBy {
-            createdAt
-            email
-            fullName
-            id
-            phoneNumber
-            role
-            updatedAt
-          }
-          preparedById
-          projectId
-          serialNumber
-          status
-          subTotal
-          supplierName
-          updatedAt
-          vat
         }
-        meta {
-          count
-          limit
-          page
-        }
-      }
-    }
     ''';
 
     final filterInput = filterPurchaseOrderInput?.toJson();
@@ -216,8 +258,9 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
           'filterPurchaseOrderInput': filterInput,
           'orderBy': orderBy ?? {},
           'paginationInput': paginationInput ?? {},
-          "mine": false,
+          "mine": mine ?? false,
         },
+        fetchPolicy: FetchPolicy.noCache,
       ),
     )
         .then((response) {

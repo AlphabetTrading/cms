@@ -108,6 +108,7 @@ void main() async {
           BlocProvider<MilestoneDetailsCubit>(
             create: (context) => sl<MilestoneDetailsCubit>(),
           ),
+          
         ],
         child: EasyLocalization(
           path: 'assets/translations',

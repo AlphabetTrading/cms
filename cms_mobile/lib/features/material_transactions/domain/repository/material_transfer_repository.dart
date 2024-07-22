@@ -8,6 +8,7 @@ abstract class MaterialTransferRepository {
     FilterMaterialTransferInput? filterMaterialTransferInput,
     OrderByMaterialTransferInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   );
 
   Future<DataState<String>> createMaterialTransfer(

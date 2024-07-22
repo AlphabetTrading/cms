@@ -17,7 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MaterialReceivingPage extends StatefulWidget {
-  const MaterialReceivingPage({Key? key}) : super(key: key);
+  const MaterialReceivingPage({super.key});
 
   @override
   State<MaterialReceivingPage> createState() => _MaterialReceivingPageState();
@@ -150,7 +150,7 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
                     ],
                     children: const [
                       Text('All'),
-                      Text('My Issues'),
+                      Text('Mine'),
                     ]),
               ],
             ),

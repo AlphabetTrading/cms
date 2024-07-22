@@ -27,10 +27,12 @@ class GetMaterialReturnParams {
   FilterMaterialReturnInput? filterMaterialReturnInput;
   OrderByMaterialReturnInput? orderBy;
   PaginationInput? paginationInput;
+  bool? mine;
 
   GetMaterialReturnParams({
     this.filterMaterialReturnInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }

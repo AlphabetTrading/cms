@@ -15,13 +15,15 @@ import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PurchaseOrdersPage extends StatefulWidget {
-  const PurchaseOrdersPage({Key? key}) : super(key: key);
+  const PurchaseOrdersPage({super.key});
 
   @override
   State<PurchaseOrdersPage> createState() => _PurchaseOrdersPageState();
 }
 
 class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
+  bool selectedMineFilter = false;
+
   @override
   void initState() {
     super.initState();
@@ -104,6 +106,54 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                     width: 25,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            // toggle button for filter all, and my issues
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ToggleButtons(
+                    onPressed: (index) {
+                      setState(() {
+                        debugPrint("Selected index: $index");
+                        if (index == 0) {
+                          selectedMineFilter = false;
+                        } else if (index == 1) {
+                          selectedMineFilter = true;
+                        }
+
+                        context.read<PurchaseOrderBloc>().add(
+                              GetPurchaseOrders(
+                                filterPurchaseOrderInput:
+                                    FilterPurchaseOrderInput(),
+                                orderBy: OrderByPurchaseOrderInput(
+                                    createdAt: "desc"),
+                                paginationInput:
+                                    PaginationInput(skip: 0, take: 20),
+                                mine: selectedMineFilter,
+                              ),
+                            );
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: [
+                      !selectedMineFilter,
+                      selectedMineFilter
+                    ],
+                    children: const [
+                      Text('All'),
+                      Text('Mine'),
+                    ]),
               ],
             ),
             const SizedBox(

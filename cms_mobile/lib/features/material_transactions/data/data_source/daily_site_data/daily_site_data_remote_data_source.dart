@@ -5,6 +5,7 @@ import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/daily_site_data.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:flutter/material.dart';
 
 abstract class DailySiteDataDataSource {
   Future<DataState<DailySiteDataListWithMeta>> fetchDailySiteDatas({
@@ -338,6 +339,8 @@ class DailySiteDataDataSourceImpl extends DailySiteDataDataSource {
       }
     ''';
 
+    debugPrint('fetchDailySiteDatasQuery: $filterDailySiteDataInput');
+
     dynamic filterInput = filterDailySiteDataInput!.toJson();
     final selectedProjectId =
         await GQLClient.getFromLocalStorage('selected_project_id');
@@ -367,6 +370,9 @@ class DailySiteDataDataSourceImpl extends DailySiteDataDataSource {
           ),
         );
       }
+
+      return DataSuccess(DailySiteDataListWithMeta.fromJson(
+          response.data!['getDailySiteDatas']));
 
       // debugPrint('fetchDailySiteDatasQuery: ${response.data}');
       final issues = response.data!['getDailySiteDatas']["items"] as List;

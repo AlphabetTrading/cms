@@ -9,10 +9,12 @@ class GetPurchaseOrders extends PurchaseOrderEvent {
   final FilterPurchaseOrderInput? filterPurchaseOrderInput;
   final OrderByPurchaseOrderInput? orderBy;
   final PaginationInput? paginationInput;
+  final bool? mine;
   const GetPurchaseOrders({
     this.filterPurchaseOrderInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }
 

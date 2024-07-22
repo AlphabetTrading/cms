@@ -5,7 +5,6 @@ import 'package:cms_mobile/features/home/domain/repository/material_transaction_
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/repository/purchase_order_repository.dart';
-import 'package:cms_mobile/features/material_transactions/domain/repository/vouchers_repository.dart';
 
 class GetPurchaseOrderUseCase
     implements UseCase<List<PurchaseOrderEntity>, void> {
@@ -32,6 +31,7 @@ class GetPurchaseOrdersUseCase
       filterPurchaseOrderInput: params?.filterPurchaseOrderInput,
       orderBy: params?.orderBy,
       paginationInput: params?.paginationInput,
+      mine: params?.mine,
     );
   }
 }
@@ -40,10 +40,12 @@ class PurchaseOrderParams {
   FilterPurchaseOrderInput? filterPurchaseOrderInput;
   OrderByPurchaseOrderInput? orderBy;
   PaginationInput? paginationInput;
+  bool? mine;
 
   PurchaseOrderParams({
     this.filterPurchaseOrderInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }

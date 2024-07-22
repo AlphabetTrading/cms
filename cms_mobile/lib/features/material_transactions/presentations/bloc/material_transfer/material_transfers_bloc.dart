@@ -32,6 +32,7 @@ class MaterialTransferBloc
       filterMaterialTransferInput: event.filterMaterialTransferInput,
       orderBy: event.orderBy,
       paginationInput: event.paginationInput,
+      mine: event.mine,
     ));
     if (dataState is DataSuccess) {
       debugPrint('DataState is success, data: ${dataState.data!.meta.count}');

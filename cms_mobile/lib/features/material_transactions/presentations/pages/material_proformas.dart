@@ -154,7 +154,7 @@ class _MaterialProformasPageState extends State<MaterialProformasPage> {
                     ],
                     children: const [
                       Text('All'),
-                      Text('My Issues'),
+                      Text('Mine'),
                     ]),
               ],
             ),

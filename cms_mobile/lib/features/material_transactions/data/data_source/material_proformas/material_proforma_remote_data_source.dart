@@ -238,8 +238,8 @@ class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
     String fetchMaterialProformasQuery;
 
     fetchMaterialProformasQuery = r'''
-      query GetProformas($filterProformaInput: FilterProformaInput, $paginationInput: PaginationInput, $orderBy: OrderByProformaInput) {
-        getProformas(filterProformaInput: $filterProformaInput, paginationInput: $paginationInput, orderBy: $orderBy) {
+      query GetProformas($filterProformaInput: FilterProformaInput, $mine: Boolean!, $orderBy: OrderByProformaInput, $paginationInput: PaginationInput) {
+        getProformas(filterProformaInput: $filterProformaInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
           items {
             approvedBy {
               createdAt
@@ -253,51 +253,92 @@ class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
             approvedById
             createdAt
             id
+            items {
+              createdAt
+              id
+              photos
+              quantity
+              remark
+              totalPrice
+              unitPrice
+              updatedAt
+              vendor
+            }
             materialRequestItem {
               createdAt
               id
-              productVariant {
+              productVariantId
+              proformas {
+                approvedById
                 createdAt
-                description
                 id
-                product {
+                materialRequestItemId
+                preparedBy {
                   createdAt
+                  email
+                  fullName
                   id
-                  name
-                  productType
+                  phoneNumber
+                  role
                   updatedAt
                 }
-                productId
-                unitOfMeasure
+                preparedById
+                projectId
+                selectedProformaItem {
+                  createdAt
+                  id
+                  photos
+                  quantity
+                  remark
+                  totalPrice
+                  unitPrice
+                  updatedAt
+                  vendor
+                }
+                selectedProformaItemId
+                serialNumber
+                status
                 updatedAt
-                variant
+                approvedBy {
+                  createdAt
+                  email
+                  fullName
+                  id
+                  phoneNumber
+                  role
+                  updatedAt
+                }
+                materialRequestItem {
+                  createdAt
+                  id
+                  productVariantId
+                  quantity
+                  remark
+                  updatedAt
+                }
               }
-              productVariantId
               quantity
               remark
               updatedAt
             }
             materialRequestItemId
-            photo
-            preparedBy {
-              createdAt
-              email
-              fullName
-              id
-              phoneNumber
-              role
-              updatedAt
-            }
             preparedById
             projectId
-            quantity
-            remark
+            selectedProformaItemId
             serialNumber
             status
-            totalPrice
-            unitPrice
             updatedAt
-            vendor
+            selectedProformaItem {
+              createdAt
+              id
+              photos
+              quantity
+              remark
+              totalPrice
+              unitPrice
+              updatedAt
+              vendor
+            }
           }
           meta {
             count

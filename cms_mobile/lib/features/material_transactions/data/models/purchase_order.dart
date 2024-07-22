@@ -7,40 +7,23 @@ import 'package:flutter/material.dart';
 
 class PurchaseOrderModel extends PurchaseOrderEntity {
   const PurchaseOrderModel({
-    required String id,
-    required String? approvedById,
-    required UserModel? approvedBy,
-    required double? grandTotal,
-    required List<PurchaseOrderItemModel> items,
-    required String? materialRequestId,
-    required String? preparedById,
-    required UserModel? preparedBy,
-    required String? projectId,
-    required String? serialNumber,
-    required PurchaseOrderStatus? status,
-    required double? subTotal,
-    required String? supplierName,
-    required DateTime updatedAt,
-    required DateTime createdAt,
-    required double vat,
-  }) : super(
-          approvedById: approvedById,
-          approvedBy: approvedBy,
-          createdAt: createdAt,
-          grandTotal: grandTotal,
-          id: id,
-          items: items,
-          materialRequestId: materialRequestId,
-          preparedById: preparedById,
-          preparedBy: preparedBy,
-          projectId: projectId,
-          serialNumber: serialNumber,
-          status: status,
-          subTotal: subTotal,
-          supplierName: supplierName,
-          updatedAt: updatedAt,
-          vat: vat,
-        );
+    required super.id,
+    required super.approvedById,
+    required UserModel? super.approvedBy,
+    required super.grandTotal,
+    required List<PurchaseOrderItemModel> super.items,
+    required super.materialRequestId,
+    required super.preparedById,
+    required UserModel? super.preparedBy,
+    required super.projectId,
+    required super.serialNumber,
+    required super.status,
+    required super.subTotal,
+    required super.supplierName,
+    required super.updatedAt,
+    required super.createdAt,
+    required double super.vat,
+  });
 
   factory PurchaseOrderModel.fromJson(Map<String, dynamic> json) {
     debugPrint('PurchaseOrderModel.fromJson: $json');
@@ -100,34 +83,24 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
 
 class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
   const PurchaseOrderItemModel({
-    required String id,
-    ProductVariantModel? productVariant,
-    String? productVariantId,
-    String? purchaseOrderId,
-    double? quantityRequested,
-    String? remark,
-    double? totalPrice,
-    double? unitPrice,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : super(
-          createdAt: createdAt,
-          id: id,
-          productVariant: productVariant,
-          productVariantId: productVariantId,
-          purchaseOrderId: purchaseOrderId,
-          quantityRequested: quantityRequested,
-          remark: remark,
-          totalPrice: totalPrice,
-          unitPrice: unitPrice,
-          updatedAt: updatedAt,
-        );
+    required super.id,
+    ProductVariantModel? super.productVariant,
+    super.productVariantId,
+    super.purchaseOrderId,
+    super.quantityRequested,
+    super.remark,
+    super.totalPrice,
+    super.unitPrice,
+    required super.createdAt,
+    required super.updatedAt,
+  });
 
   factory PurchaseOrderItemModel.fromJson(Map<String, dynamic> json) {
-    final productVariant = ProductVariantModel.fromJson(json['productVariant']);
+    final productVariant = json['productVariant'] != null
+        ? ProductVariantModel.fromJson(json['productVariant'])
+        : null;
 
     return PurchaseOrderItemModel(
-      createdAt: DateTime.parse(json['createdAt']),
       id: json['id'],
       productVariant: productVariant,
       productVariantId: json['productVariantId'],
@@ -136,6 +109,7 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
       remark: json['remark'],
       totalPrice: json['totalPrice'],
       unitPrice: json['unitPrice'],
+      createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }

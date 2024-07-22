@@ -120,6 +120,7 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
         'orderBy': orderBy?.toJson() ?? {},
         'paginationInput': paginationInput?.toJson() ?? {},
       },
+      fetchPolicy: FetchPolicy.noCache,
     ));
 
     if (response.hasException) {

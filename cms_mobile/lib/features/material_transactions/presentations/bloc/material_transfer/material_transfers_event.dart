@@ -10,10 +10,12 @@ class GetMaterialTransfers extends MaterialTransferEvent {
   final FilterMaterialTransferInput? filterMaterialTransferInput;
   final OrderByMaterialTransferInput? orderBy;
   final PaginationInput? paginationInput;
+  final bool? mine;
   const GetMaterialTransfers({
     this.filterMaterialTransferInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }
 
@@ -21,10 +23,13 @@ class GetMaterialTransfer extends MaterialTransferEvent {
   final FilterMaterialTransferInput filterMaterialTransferInput;
   final OrderByMaterialTransferInput orderBy;
   final PaginationInput paginationInput;
+  final bool? mine;
   const GetMaterialTransfer(
     this.filterMaterialTransferInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
+
   );
 }
 
@@ -66,9 +71,11 @@ class LoadMoreMaterialTransfers extends MaterialTransferEvent {
   final FilterMaterialTransferInput? filterMaterialTransferInput;
   final OrderByMaterialTransferInput? orderBy;
   final PaginationInput? paginationInput;
+  final bool? mine;
   const LoadMoreMaterialTransfers({
     this.filterMaterialTransferInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }
