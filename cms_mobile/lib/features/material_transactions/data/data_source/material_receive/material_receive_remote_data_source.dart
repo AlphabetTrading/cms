@@ -125,6 +125,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
         .query(QueryOptions(
       document: gql(fetchMaterialReceiveDetailsQuery),
       variables: {"getMaterialReceiveByIdId": params},
+      fetchPolicy: FetchPolicy.noCache,
     ))
         .then((response) {
       if (response.hasException) {
@@ -145,23 +146,55 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
   }
 
   @override
-  Future<DataState<MaterialReceiveListWithMeta>> fetchMaterialReceivings(
-      {FilterMaterialReceiveInput? filterMaterialReceiveInput,
-      OrderByMaterialReceiveInput? orderBy,
-      PaginationInput? paginationInput,
-      bool? mine,
-      }) async {
+  Future<DataState<MaterialReceiveListWithMeta>> fetchMaterialReceivings({
+    FilterMaterialReceiveInput? filterMaterialReceiveInput,
+    OrderByMaterialReceiveInput? orderBy,
+    PaginationInput? paginationInput,
+    bool? mine,
+  }) async {
     String fetchMaterialReceiveQuery;
 
     fetchMaterialReceiveQuery = r'''
-      query GetMaterialRequests($filterMaterialReceiveInput: FilterMaterialReceiveInput, $mine: Boolean!, $orderBy: OrderByMaterialReceiveInput, $paginationInput: PaginationInput) {
-        getMaterialReceives(filterMaterialReceiveInput: $filterMaterialReceiveInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
-          meta {
-            count
-            limit
-            page
+     query GetMaterialReceives($filterMaterialReceiveInput: FilterMaterialReceiveInput, $orderBy: OrderByMaterialReceiveInput, $paginationInput: PaginationInput, $mine: Boolean!) {
+      getMaterialReceives(filterMaterialReceiveInput: $filterMaterialReceiveInput, orderBy: $orderBy, paginationInput: $paginationInput, mine: $mine) {
+        items {
+          approvedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
           }
-          items {
+          approvedById
+          createdAt
+          id
+          projectId
+          purchaseOrderId
+          purchasedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
+          }
+          purchasedById
+          serialNumber
+          status
+          updatedAt
+          WarehouseStore {
+            companyId
+            createdAt
+            id
+            location
+            name
+            updatedAt
+          }
+          warehouseStoreId
+          purchaseOrder {
             approvedBy {
               createdAt
               email
@@ -173,41 +206,16 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
             }
             approvedById
             createdAt
+            grandTotal
             id
-            invoiceId
-            items {
-              createdAt
-              id
-              loadingCost
-              materialReceiveVoucherId
-              productVariant {
-                createdAt
-                description
-                id
-                product {
-                  createdAt
-                  id
-                  name
-                  productType
-                  updatedAt
-                }
-                productId
-                unitOfMeasure
-                updatedAt
-                variant
-              }
-              productVariantId
-              quantity
-              totalCost
-              transportationCost
-              unitCost
-              unloadingCost
-              updatedAt
-            }
-            materialRequestId
+            preparedById
             projectId
-            purchaseOrderId
-            purchasedBy {
+            serialNumber
+            status
+            subTotal
+            updatedAt
+            vat
+            preparedBy {
               createdAt
               email
               fullName
@@ -216,14 +224,28 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
               role
               updatedAt
             }
-            purchasedById
-            serialNumber
-            status
-            supplierName
+          }
+          items {
+            createdAt
+            id
+            loadingCost
+            materialReceiveVoucherId
+            productVariantId
+            quantity
+            totalCost
+            transportationCost
+            unitCost
+            unloadingCost
             updatedAt
           }
         }
+        meta {
+          count
+          limit
+          page
+        }
       }
+    }
     ''';
 
     final filterInput = filterMaterialReceiveInput?.toJson();

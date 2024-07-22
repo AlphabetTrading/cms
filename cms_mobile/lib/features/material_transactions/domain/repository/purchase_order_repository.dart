@@ -19,5 +19,6 @@ abstract class PurchaseOrderRepository {
     FilterPurchaseOrderInput? filterPurchaseOrderInput,
     OrderByPurchaseOrderInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   });
 }

@@ -2,49 +2,32 @@ import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:flutter/material.dart';
 
 class MaterialReceiveModel extends MaterialReceiveEntity {
   const MaterialReceiveModel({
-    required String? id,
-    required String? serialNumber,
-    required String? status,
-    required String? approvedById,
-    UserModel? approvedBy,
-    required String? projectDetails,
-    required String? requisitionNumber,
-    List<ReceiveVoucherMaterialModel>? items,
-    required String? preparedById,
-    UserModel? preparedBy,
-    required String? receivedById,
-    UserModel? receivedBy,
-    required DateTime? createdAt,
-    required DateTime? updatedAt,
-    WarehouseModel? warehouse,
-  }) : super(
-            id: id,
-            serialNumber: serialNumber,
-            status: status,
-            approvedById: approvedById,
-            approvedBy: approvedBy,
-            projectDetails: projectDetails,
-            requisitionNumber: requisitionNumber,
-            items: items,
-            preparedById: preparedById,
-            preparedBy: preparedBy,
-            receivedById: receivedById,
-            receivedBy: receivedBy,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            warehouse: warehouse);
+    required super.id,
+    required super.serialNumber,
+    required super.status,
+    required super.approvedById,
+    UserModel? super.approvedBy,
+    required super.projectDetails,
+    required super.requisitionNumber,
+    List<ReceiveVoucherMaterialModel>? super.items,
+    required super.preparedById,
+    UserModel? super.preparedBy,
+    required super.receivedById,
+    UserModel? super.receivedBy,
+    required super.createdAt,
+    required super.updatedAt,
+    WarehouseModel? super.warehouse,
+  });
 
   @override
   List<Object?> get props {
@@ -61,9 +44,15 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
         serialNumber: json['serialNumber'],
         projectDetails: json['projectDetails'],
         requisitionNumber: json['requisitionNumber'],
-        items: json['items'].map<ReceiveVoucherMaterialModel>((item) {
-          return ReceiveVoucherMaterialModel.fromJson(item);
-        }).toList(),
+        // items: json['items'].map<ReceiveVoucherMaterialModel>((item) {
+        //   return ReceiveVoucherMaterialModel.fromJson(item);
+        // }).toList(),
+        items: json['items'] != null
+            ? json['items']
+                .map<ReceiveVoucherMaterialModel>(
+                    (item) => ReceiveVoucherMaterialModel.fromJson(item))
+                .toList()
+            : <ReceiveVoucherMaterialModel>[], // if items is null, return an empty list
         preparedById: json['preparedById'],
         preparedBy: json['preparedBy'] != null
             ? UserModel.fromJson(json['preparedBy'])
@@ -110,49 +99,24 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
 
 class ReceiveVoucherMaterialModel extends ReceiveVoucherMaterialEntity {
   const ReceiveVoucherMaterialModel({
-    required String? id,
-    required ProductVariantModel? productVariant,
-    required double? quantity,
-    required String? remark,
-    required double? totalCost,
-    required double? unitCost,
-    required SubStructureUseDescription? subStructureDescription,
-    required SuperStructureUseDescription? superStructureDescription,
-    required UseType? useType,
-    required String? materialReceiveVoucherId,
-  }) : super(
-            id: id,
-            productVariant: productVariant,
-            quantity: quantity,
-            remark: remark,
-            totalCost: totalCost,
-            unitCost: unitCost,
-            subStructureDescription: subStructureDescription,
-            superStructureDescription: superStructureDescription,
-            useType: useType,
-            materialReceiveVoucherId: materialReceiveVoucherId);
+    required super.id,
+    required ProductVariantModel? super.productVariant,
+    required super.quantity,
+    required super.remark,
+    required super.totalCost,
+    required super.unitCost,
+    required super.subStructureDescription,
+    required super.superStructureDescription,
+    required super.useType,
+    required super.materialReceiveVoucherId,
+  });
 
   factory ReceiveVoucherMaterialModel.fromJson(Map<String, dynamic> json) {
-    try {
-      return ReceiveVoucherMaterialModel(
-          id: json['id'],
-          productVariant: ProductVariantModel.fromJson(json['productVariant']),
-          quantity: json['quantity'],
-          remark: json['remark'],
-          totalCost: json['totalCost'],
-          unitCost: json['unitCost'],
-          subStructureDescription: subStructureUseDescriptionFromString(
-              json['subStructureDescription']),
-          superStructureDescription: superStructureUseDescriptionFromString(
-              json['superStructureDescription']),
-          useType: useTypeFromString(json['useType']),
-          materialReceiveVoucherId: json['materialReceiveVoucherId']);
-    } catch (e) {
-      print('Error in Receive Voucer Material Model ${e}');
-    }
     return ReceiveVoucherMaterialModel(
         id: json['id'],
-        productVariant: ProductVariantModel.fromJson(json['productVariant']),
+        productVariant: json["productVariant"] != null
+            ? ProductVariantModel.fromJson(json['productVariant'])
+            : null,
         quantity: json['quantity'],
         remark: json['remark'],
         totalCost: json['totalCost'],
@@ -229,19 +193,18 @@ class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
 class CreateMaterialReceiveParamsModel
     extends CreateMaterialReceiveParamsEntity<MaterialReceiveMaterialModel> {
   const CreateMaterialReceiveParamsModel({
-    required String projectId,
-    required List<MaterialReceiveMaterialModel> materialReceiveMaterials,
-    required String returnedById,
-    required String receivingStoreId,
-  }) : super(
-            projectId: projectId,
-            materialReceiveMaterials: materialReceiveMaterials,
-            returnedById: returnedById,
-            receivingStoreId: receivingStoreId);
+    required super.projectId,
+    required super.materialReceiveMaterials,
+    required super.returnedById,
+    required super.receivingStoreId,
+  });
 
   Map<String, dynamic> toJson() {
     return {
       "projectId": projectId,
+      "materialReceiveMaterials": materialReceiveMaterials,
+      "returnedById": returnedById,
+      "receivingStoreId": receivingStoreId,
     };
   }
 
@@ -274,13 +237,14 @@ class FilterMaterialReceiveInput {
   final List<String>? status;
   final String? projectId;
 
-  FilterMaterialReceiveInput(
-      {this.createdAt,
-      this.approvedBy,
-      this.preparedBy,
-      this.serialNumber,
-      this.status,
-      this.projectId});
+  FilterMaterialReceiveInput({
+    this.createdAt,
+    this.approvedBy,
+    this.preparedBy,
+    this.serialNumber,
+    this.status,
+    this.projectId,
+  });
 
   Map<String, dynamic> toJson() {
     // include the property if it is only not null
@@ -295,7 +259,7 @@ class FilterMaterialReceiveInput {
         },
       if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
       if (status != null) 'status': status,
-      'projectId': projectId,
+      if (projectId != null) 'projectId': projectId,
     };
   }
 }

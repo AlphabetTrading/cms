@@ -22,7 +22,13 @@ class MaterialReturnBloc
       GetMaterialReturns event, Emitter<MaterialReturnState> emit) async {
     emit(const MaterialReturnLoading());
 
-    final dataState = await _materialReturnUseCase();
+    final dataState = await _materialReturnUseCase(
+        params: GetMaterialReturnParams(
+      filterMaterialReturnInput: event.filterMaterialReturnInput,
+      orderBy: event.orderBy,
+      paginationInput: event.paginationInput,
+      mine: event.mine,
+    ));
     debugPrint('dataState: $dataState');
     if (dataState is DataSuccess) {
       emit(MaterialReturnSuccess(materialReturns: dataState.data!));

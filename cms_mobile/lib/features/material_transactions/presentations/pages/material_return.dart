@@ -19,13 +19,15 @@ import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MaterialReturnsPage extends StatefulWidget {
-  const MaterialReturnsPage({Key? key}) : super(key: key);
+  const MaterialReturnsPage({super.key});
 
   @override
   State<MaterialReturnsPage> createState() => _MaterialReturnsPageState();
 }
 
 class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
+  bool selectedMineFilter = false;
+
   @override
   void initState() {
     super.initState();
@@ -108,6 +110,52 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
                     width: 25,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+
+            // toggle button for filter all, and my issues
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ToggleButtons(
+                    onPressed: (index) {
+                      setState(() {
+                        debugPrint("Selected index: $index");
+                        if (index == 0) {
+                          selectedMineFilter = false;
+                        } else if (index == 1) {
+                          selectedMineFilter = true;
+                        }
+
+                        context.read<MaterialReturnBloc>().add(
+                              GetMaterialReturns(
+                                filterMaterialReturnInput:
+                                    FilterMaterialReturnInput(),
+                                orderBy: OrderByMaterialReturnInput(
+                                    createdAt: "desc"),
+                                paginationInput:
+                                    PaginationInput(skip: 0, take: 20),
+                                mine: selectedMineFilter,
+                              ),
+                            );
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: [
+                      !selectedMineFilter,
+                      selectedMineFilter
+                    ],
+                    children: const [
+                      Text('All'),
+                      Text('Mine'),
+                    ]),
               ],
             ),
             const SizedBox(

@@ -41,11 +41,13 @@ class PurchaseOrderRepositoryImpl extends PurchaseOrderRepository {
   Future<DataState<PurchaseOrderEntityListWithMeta>> getPurchaseOrders(
       {FilterPurchaseOrderInput? filterPurchaseOrderInput,
       OrderByPurchaseOrderInput? orderBy,
-      PaginationInput? paginationInput}) {
+      PaginationInput? paginationInput,
+      bool? mine}) {
     return dataSource.fetchPurchaseOrders(
       filterPurchaseOrderInput: filterPurchaseOrderInput,
       orderBy: orderBy,
       paginationInput: paginationInput,
+      mine: mine,
     );
   }
 }

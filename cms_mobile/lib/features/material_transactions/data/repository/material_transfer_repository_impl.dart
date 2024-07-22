@@ -73,11 +73,14 @@ class MaterialTransferRepositoryImpl extends MaterialTransferRepository {
   Future<DataState<MaterialTransferEntityListWithMeta>> getMaterialTransfers(
       FilterMaterialTransferInput? filterMaterialTransferInput,
       OrderByMaterialTransferInput? orderBy,
-      PaginationInput? paginationInput) {
+      PaginationInput? paginationInput,
+      bool? mine
+      ) {
     return dataSource.fetchMaterialTransfers(
       filterMaterialTransferInput: filterMaterialTransferInput,
       orderBy: orderBy,
       paginationInput: paginationInput,
+      mine: mine,
     );
   }
 }

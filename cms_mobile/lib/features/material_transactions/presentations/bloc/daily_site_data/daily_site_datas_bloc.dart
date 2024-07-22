@@ -36,7 +36,7 @@ class DailySiteDataBloc extends Bloc<DailySiteDataEvent, DailySiteDataState> {
   void onGetDailySiteDatas(
       GetDailySiteDatas event, Emitter<DailySiteDataState> emit) async {
     emit(const DailySiteDatasLoading());
-    debugPrint("onGetDailySiteDatas, event: $event");
+    debugPrint("onGetDailySiteDatas, event: ${event.filterDailySiteDataInput}");
 
     final dataState = await _dailySiteDataUseCase(
         params: DailySiteDataParams(

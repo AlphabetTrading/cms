@@ -1,8 +1,8 @@
+import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/details_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -16,13 +16,11 @@ abstract class MaterialReturnDataSource {
   Future<DataState<String>> createMaterialReturn(
       {required CreateMaterialReturnParamsModel
           createMaterialReturnParamsModel});
-    Future<DataState<String>> deleteMaterialReturn(
-      {required String
-          materialReturnId});
-              
-      Future<DataState<MaterialReturnModel>> getMaterialReturnDetails(
-      {required String
-          params});
+  Future<DataState<String>> deleteMaterialReturn(
+      {required String materialReturnId});
+
+  Future<DataState<MaterialReturnModel>> getMaterialReturnDetails(
+      {required String params});
 }
 
 class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
@@ -54,7 +52,6 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
         "productVariantId": materialReturnMaterial.material!.productVariant?.id,
         "quantity": materialReturnMaterial.quantity,
         "remark": materialReturnMaterial.remark,
-
       };
     }).toList();
 
@@ -67,6 +64,7 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
           "items": materialReturnMaterialsMap
         }
       },
+      fetchPolicy: FetchPolicy.noCache,
     );
 
     try {
@@ -92,7 +90,7 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
   Future<DataState<MaterialReturnListWithMeta>> fetchMaterialReturns(
       {FilterMaterialReturnInput? filterMaterialReturnInput,
       OrderByMaterialReturnInput? orderBy,
-      PaginationInput? paginationInput}) {
+      PaginationInput? paginationInput}) async {
     const String fetchMaterialReturnsQuery = r'''
       query GetMaterialReturns($filterMaterialReturnInput: FilterMaterialReturnInput, $mine: Boolean!, $orderBy: OrderByMaterialReturnInput, $paginationInput: PaginationInput) {
         getMaterialReturns(filterMaterialReturnInput: $filterMaterialReturnInput, mine: $mine, orderBy: $orderBy, paginationInput: $paginationInput) {
@@ -126,6 +124,44 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
               unitCost
               updatedAt
               quantity
+              issueVoucher {
+                approvedBy {
+                  createdAt
+                  email
+                  fullName
+                  id
+                  phoneNumber
+                  role
+                  updatedAt
+                }
+                approvedById
+                createdAt
+                id
+                preparedBy {
+                  createdAt
+                  email
+                  fullName
+                  id
+                  phoneNumber
+                  role
+                  updatedAt
+                }
+                preparedById
+                projectId
+                requisitionNumber
+                serialNumber
+                status
+                updatedAt
+                warehouseStore {
+                  companyId
+                  createdAt
+                  id
+                  location
+                  name
+                  updatedAt
+                }
+                warehouseStoreId
+              }
             }
             projectId
             receivedBy {
@@ -169,10 +205,24 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
       }
     ''';
 
+    final filterInput = filterMaterialReturnInput?.toJson();
+    debugPrint("filterInput: $filterMaterialReturnInput");
+    if (filterMaterialReturnInput != null &&
+        filterMaterialReturnInput.projectId != null) {
+      filterInput?['projectId'] = filterMaterialReturnInput.projectId;
+    } else {
+      final selectedProjectId =
+          await GQLClient.getFromLocalStorage('selected_project_id');
+
+      debugPrint('selectedProjectId: $selectedProjectId');
+      filterInput!["projectId"] = selectedProjectId;
+    }
+    debugPrint('filterInput: $filterInput');
+
     final QueryOptions options = QueryOptions(
       document: gql(fetchMaterialReturnsQuery),
       variables: {
-        "filterMaterialReturnInput": filterMaterialReturnInput?.toJson(),
+        "filterMaterialReturnInput": filterInput,
         "orderByMaterialReturnInput": orderBy?.toJson(),
         "paginationInput": paginationInput?.toJson(),
         "mine": false,
@@ -189,22 +239,24 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
       }
 
       debugPrint('fetchMaterialReturnsQuery: ${response.data}');
-      
+
       final materialReturnsListWithMeta = MaterialReturnListWithMeta.fromJson(
           response.data!['getMaterialReturns']);
 
       return DataSuccess(materialReturnsListWithMeta);
     });
   }
-  
+
   @override
-  Future<DataState<String>> deleteMaterialReturn({required String materialReturnId}) {
+  Future<DataState<String>> deleteMaterialReturn(
+      {required String materialReturnId}) {
     // TODO: implement deleteMaterialReturn
     throw UnimplementedError();
   }
-  
+
   @override
-  Future<DataState<MaterialReturnModel>> getMaterialReturnDetails({required String params}) {
+  Future<DataState<MaterialReturnModel>> getMaterialReturnDetails(
+      {required String params}) {
     // TODO: implement getMaterialReturnDetails
     throw UnimplementedError();
   }
@@ -216,6 +268,7 @@ class FilterMaterialReturnInput {
   final StringFilter? approvedBy;
   final StringFilter? serialNumber;
   final List<String>? status;
+  final String? projectId;
 
   FilterMaterialReturnInput({
     this.createdAt,
@@ -223,6 +276,7 @@ class FilterMaterialReturnInput {
     this.approvedBy,
     this.serialNumber,
     this.status,
+    this.projectId,
   });
 
   Map<String, dynamic> toJson() {
@@ -237,6 +291,7 @@ class FilterMaterialReturnInput {
         },
       if (serialNumber != null) 'serialNumber': serialNumber!.toJson(),
       if (status != null) 'status': status,
+      if (projectId != null) 'projectId': projectId,
     };
   }
 }

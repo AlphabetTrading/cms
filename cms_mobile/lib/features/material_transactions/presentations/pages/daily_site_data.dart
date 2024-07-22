@@ -77,7 +77,7 @@ class _DailySiteDatasPageState extends State<DailySiteDatasPage> {
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Create Material Issue'),
+          child: const Text('Create Daily Site Data'),
         ),
       ),
       body: Container(
@@ -146,15 +146,21 @@ class _DailySiteDatasPageState extends State<DailySiteDatasPage> {
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                     constraints: const BoxConstraints(
                       minHeight: 40.0,
-                      minWidth: 80.0,
+                      minWidth: 100.0,
                     ),
                     isSelected: [
                       !selectedMineFilter,
                       selectedMineFilter
                     ],
                     children: const [
-                      Text('All'),
-                      Text('My Issues'),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text('All'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text('Mine', style: TextStyle(fontSize: 12)),
+                      ),
                     ]),
               ],
             ),
@@ -199,7 +205,7 @@ class _DailySiteDatasPageState extends State<DailySiteDatasPage> {
 
   _buildAppbar(BuildContext context) {
     return AppBar(
-      title: const Text('Material Issues'),
+      title: const Text('Daily Site Data'),
     );
   }
 
@@ -279,7 +285,7 @@ class _DailySiteDatasPageState extends State<DailySiteDatasPage> {
                           ),
                         ))
                     : const Center(
-                        child: Text('No Material Issues'),
+                        child: Text('No Daily Site Data'),
                       );
               }
 
@@ -364,7 +370,7 @@ class _DailySiteDatasPageState extends State<DailySiteDatasPage> {
                           ),
                         )
                       : const Center(
-                          child: Text('No Material Issues'),
+                          child: Text('No Daily Site Data'),
                         );
                 }
 
@@ -398,7 +404,7 @@ class _DailySiteDatasPageState extends State<DailySiteDatasPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                dailySiteData.approvedBy?.fullName ?? 'N/A',
+                dailySiteData.preparedBy?.fullName ?? 'N/A',
                 style: const TextStyle(
                   color: Color(0xFF111416),
                   fontSize: 18,

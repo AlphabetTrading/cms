@@ -7,10 +7,17 @@ abstract class MaterialReturnEvent {
 }
 
 class GetMaterialReturns extends MaterialReturnEvent {
-  const GetMaterialReturns(
-      {required FilterMaterialReturnInput filterMaterialReturnInput,
-      required PaginationInput paginationInput,
-      required OrderByMaterialReturnInput orderBy});
+  final FilterMaterialReturnInput? filterMaterialReturnInput;
+  final OrderByMaterialReturnInput? orderBy;
+  final PaginationInput? paginationInput;
+  final bool? mine;
+
+  const GetMaterialReturns({
+    this.filterMaterialReturnInput,
+    this.orderBy,
+    this.paginationInput,
+    this.mine,
+  });
 }
 
 class GetMaterialReturn extends MaterialReturnEvent {

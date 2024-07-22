@@ -1,5 +1,4 @@
 import 'package:cms_mobile/core/entities/meta.dart';
-import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
@@ -26,25 +25,25 @@ class MaterialProformaEntity extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  MaterialProformaEntity({
-    required this.approvedBy,
-    required this.approvedById,
-    required this.createdAt,
+  const MaterialProformaEntity({
     required this.id,
-    required this.materialRequestItem,
-    required this.materialRequestItemId,
-    required this.photo,
-    required this.preparedBy,
-    required this.preparedById,
-    required this.projectId,
-    required this.quantity,
-    required this.remark,
-    required this.serialNumber,
-    required this.status,
-    required this.totalPrice,
-    required this.unitPrice,
-    required this.updatedAt,
-    required this.vendor,
+    this.approvedBy,
+    this.approvedById,
+    this.createdAt,
+    this.materialRequestItem,
+    this.materialRequestItemId,
+    this.photo,
+    this.preparedBy,
+    this.preparedById,
+    this.projectId,
+    this.quantity,
+    this.remark,
+    this.serialNumber,
+    this.status,
+    this.totalPrice,
+    this.unitPrice,
+    this.updatedAt,
+    this.vendor,
   });
 
   MaterialProformaEntity copyWith({

@@ -14,6 +14,8 @@ class GetDailySiteDatasUseCase
   @override
   Future<DataState<DailySiteDataEntityListWithMeta>> call(
       {DailySiteDataParams? params}) {
+    print("from daily usecase: ${params?.filterDailySiteDataInput}");
+
     return _materialTransactionRepository.getDailySiteDatas(
       filterDailySiteDataInput: params!.filterDailySiteDataInput,
       orderBy: params.orderBy,

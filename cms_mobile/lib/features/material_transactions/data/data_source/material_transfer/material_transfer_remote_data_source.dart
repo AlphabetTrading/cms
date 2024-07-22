@@ -14,6 +14,7 @@ abstract class MaterialTransferDataSource {
     FilterMaterialTransferInput? filterMaterialTransferInput,
     OrderByMaterialTransferInput? orderBy,
     PaginationInput? paginationInput,
+    bool? mine,
   });
 
   Future<DataState<MaterialTransferModel>> getMaterialTransferDetails(
@@ -37,7 +38,9 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
   Future<DataState<MaterialTransferEntityListWithMeta>> fetchMaterialTransfers(
       {FilterMaterialTransferInput? filterMaterialTransferInput,
       OrderByMaterialTransferInput? orderBy,
-      PaginationInput? paginationInput}) async {
+      PaginationInput? paginationInput, 
+      bool? mine,
+      }) async {
     String fetchMaterialTransfersQuery;
 
     fetchMaterialTransfersQuery = r'''
@@ -98,33 +101,17 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
               approvedById
               createdAt
               id
-              invoiceId
-              
-              materialRequest {
-              
-                approvedById
-                createdAt
-                id
-                projectId
-                requestedById
-                serialNumber
-                status
-                updatedAt
-              }
-              materialRequestId
               projectId
               purchaseOrder {
                 approvedById
                 createdAt
                 grandTotal
                 id
-                materialRequestId
                 preparedById
                 projectId
                 serialNumber
                 status
                 subTotal
-                supplierName
                 updatedAt
                 vat
               }
@@ -132,7 +119,6 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
               purchasedById
               serialNumber
               status
-              supplierName
               updatedAt
             }
             materialReceiveId
@@ -186,8 +172,9 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
         "filterMaterialTransferInput": filterMaterialTransferInput?.toJson(),
         "orderBy": orderBy?.toJson(),
         "paginationInput": paginationInput?.toJson(),
-        "mine": false
+        "mine": mine ?? false,
       },
+      fetchPolicy: FetchPolicy.noCache,
     ));
 
     if (response.hasException) {

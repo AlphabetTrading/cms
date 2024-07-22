@@ -59,6 +59,10 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/purcha
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/edit_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order_details.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/daily_site_datas_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/delete/delete_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
@@ -244,7 +248,7 @@ Future<void> initializeDependencies() async {
       client: sl<GraphQLClient>(),
     ),
   );
-    sl.registerLazySingleton<TaskDataSource>(
+  sl.registerLazySingleton<TaskDataSource>(
     () => TaskDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),
@@ -493,6 +497,18 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<EditDailySiteDataUseCase>(
     () => EditDailySiteDataUseCase(
+      sl<DailySiteDataRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<CreateDailySiteDataUseCase>(
+    () => CreateDailySiteDataUseCase(
+      sl<DailySiteDataRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<DeleteDailySiteDataUseCase>(
+    () => DeleteDailySiteDataUseCase(
       sl<DailySiteDataRepository>(),
     ),
   );
@@ -822,6 +838,30 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<MaterialProformaLocalBloc>(
     () => MaterialProformaLocalBloc(),
+  );
+
+  // daily site data
+  sl.registerFactory<DailySiteDataBloc>(
+    () => DailySiteDataBloc(
+      sl<GetDailySiteDatasUseCase>(),
+      sl<CreateDailySiteDataUseCase>(),
+    ),
+  );
+
+  sl.registerFactory<DailySiteDataLocalBloc>(
+    () => DailySiteDataLocalBloc(),
+  );
+
+  sl.registerFactory<DailySiteDataDetailsCubit>(
+    () => DailySiteDataDetailsCubit(
+      sl<GetDailySiteDataDetailsUseCase>(),
+    ),
+  );
+
+  sl.registerFactory<DeleteDailySiteDataCubit>(
+    () => DeleteDailySiteDataCubit(
+      sl<DeleteDailySiteDataUseCase>(),
+    ),
   );
 
   // progress

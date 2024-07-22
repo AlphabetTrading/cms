@@ -7,7 +7,7 @@ import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 
 class MaterialProformaModel extends MaterialProformaEntity {
-  MaterialProformaModel({
+  const MaterialProformaModel({
     required UserModel? super.approvedBy,
     required super.approvedById,
     required super.createdAt,
@@ -31,14 +31,18 @@ class MaterialProformaModel extends MaterialProformaEntity {
   factory MaterialProformaModel.fromJson(Map<String, dynamic> json) {
     return MaterialProformaModel(
       id: json['id'],
-      approvedBy: UserModel.fromJson(json['approvedBy']),
+      approvedBy: json['approvedBy'] != null
+          ? UserModel.fromJson(json['approvedBy'])
+          : null,
       approvedById: json['approvedById'],
-      createdAt: DateTime.parse(json['createdAt']),
-      materialRequestItem:
-          MaterialRequestItemModel.fromJson(json['materialRequestItem']),
+      materialRequestItem: json['materialRequestItem'] != null
+          ? MaterialRequestItemModel.fromJson(json['materialRequestItem'])
+          : null,
       materialRequestItemId: json['materialRequestItemId'],
       photo: json['photo'],
-      preparedBy: UserModel.fromJson(json['preparedBy']),
+      preparedBy: json['preparedBy'] != null
+          ? UserModel.fromJson(json['preparedBy'])
+          : null,
       preparedById: json['preparedById'],
       projectId: json['projectId'],
       quantity: json['quantity'],
@@ -47,8 +51,9 @@ class MaterialProformaModel extends MaterialProformaEntity {
       status: json['status'],
       totalPrice: json['totalPrice'],
       unitPrice: json['unitPrice'],
-      updatedAt: DateTime.parse(json['updatedAt']),
       vendor: json['vendor'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 

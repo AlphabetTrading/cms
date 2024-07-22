@@ -410,7 +410,7 @@ class SiteTaskModel extends SiteTaskEntity {
       executedQuantity: json['executedQuantity'],
       unit: json['unit'],
       laborDetails: json['laborDetails']
-          .map<LaborDetailEntity>((labor) => LaborDetailEntity.fromJson(labor))
+          .map<LaborDetailEntity>((labor) => LaborDetailModel.fromJson(labor))
           .toList(),
     );
   }
@@ -453,6 +453,7 @@ class LaborDetailModel extends LaborDetailEntity {
   });
 
   factory LaborDetailModel.fromJson(Map<String, dynamic> json) {
+    print("LaborDetailModel.fromJson: $json");
     return LaborDetailModel(
       id: json['id'],
       quantity: json['quantity'],

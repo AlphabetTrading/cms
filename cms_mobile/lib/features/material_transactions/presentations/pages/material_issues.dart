@@ -154,7 +154,7 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                     ],
                     children: const [
                       Text('All'),
-                      Text('My Issues'),
+                      Text('Mine'),
                     ]),
               ],
             ),

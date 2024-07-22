@@ -19,6 +19,7 @@ class GetMaterialTransfersUseCase
       params!.filterMaterialTransferInput,
       params.orderBy,
       params.paginationInput,
+      params.mine
     );
   }
 }
@@ -27,10 +28,12 @@ class MaterialTransferParams {
   FilterMaterialTransferInput? filterMaterialTransferInput;
   OrderByMaterialTransferInput? orderBy;
   PaginationInput? paginationInput;
+  bool? mine;
 
   MaterialTransferParams({
     this.filterMaterialTransferInput,
     this.orderBy,
     this.paginationInput,
+    this.mine,
   });
 }
