@@ -2,7 +2,7 @@ import 'package:cms_mobile/features/home/presentation/tabs/store_tab.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/material-transactions_tab.dart';
 import 'package:cms_mobile/features/home/presentation/tabs/dashboard_tab.dart';
 import 'package:cms_mobile/features/home/presentation/widgets/home_appbar.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/proforma/create_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/create_material_proforma.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/progress/presentation/tabs/milestones_tab.dart';
@@ -72,14 +72,14 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'icons/navigations/milestone.svg',
+              'assets/icons/navigations/milestone.svg',
               height: 24,
               width: 24,
               colorFilter: ColorFilter.mode(
                   themeBloc.state.themeData.dividerColor, BlendMode.srcIn),
             ),
             activeIcon: SvgPicture.asset(
-              'icons/navigations/milestone.svg',
+              'assets/icons/navigations/milestone.svg',
               height: 24,
               width: 24,
               colorFilter: ColorFilter.mode(
@@ -106,7 +106,7 @@ Widget _buildScreen({
     case 2:
       return const MaterialTransactionsTabScreen();
     case 3:
-      return const CreateProformaPage();
+      return const CreateMaterialProformaPage();
     default:
       return const Text("index default");
   }

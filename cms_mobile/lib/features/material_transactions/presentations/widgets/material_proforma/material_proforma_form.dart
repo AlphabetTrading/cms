@@ -1,25 +1,37 @@
+import 'dart:io';
+
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/cubit/proforma_form/proforma_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_proforma_form/material_proforma_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/form_info_item.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/modal_error.dart';
+import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ProformaFrom extends StatefulWidget {
+class MaterialProformaFrom extends StatefulWidget {
   final bool isEdit;
   final int index;
+  final Function(MaterialProformaMaterialEntity) onAddItem;
+  final MaterialRequestItem? selectedRequestedMaterial;
 
-  ProformaFrom({
-    super.key,
-    this.isEdit = false,
-    this.index = -1,
-  });
+  MaterialProformaFrom(
+      {super.key,
+      this.isEdit = false,
+      this.index = -1,
+      required this.onAddItem,
+      required this.selectedRequestedMaterial});
 
   @override
-  State<ProformaFrom> createState() => _ProformaFromState();
+  State<MaterialProformaFrom> createState() => _MaterialProformaFromState();
 }
 
-class _ProformaFromState extends State<ProformaFrom> {
+class _MaterialProformaFromState extends State<MaterialProformaFrom> {
   final myController = TextEditingController();
   @override
   void initState() {
@@ -39,13 +51,43 @@ class _ProformaFromState extends State<ProformaFrom> {
     print('Second text field: $text (${text.characters.length})');
   }
 
+  File? image;
+  MultipartFile? multipartFile;
+
+  Future pickImage(
+      ImageSource source, MaterialProformaItemFormCubit proformaCubit) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      proformaCubit.photoChanged(image.path);
+
+      final bytes = await image.readAsBytes();
+      multipartFile = MultipartFile.fromBytes(
+        'photo',
+        bytes,
+        filename: '${DateTime.now().second}.jpg',
+      );
+
+      setState(() => this.image = imageTemporary);
+    } on PlatformException catch (e) {
+      print('Failed to pick image $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final proformaItemFormCubit = context.watch<ProformaItemFormCubit>();
+    final proformaItemFormCubit =
+        context.watch<MaterialProformaItemFormCubit>();
     final priceField = proformaItemFormCubit.state.priceField;
     final vendorField = proformaItemFormCubit.state.vendorField;
     final remarkField = proformaItemFormCubit.state.remarkField;
     final photoField = proformaItemFormCubit.state.photoField;
+    UnitOfMeasure? unit =
+        widget.selectedRequestedMaterial?.productVariant?.unitOfMeasure;
+    double? quantity = widget.selectedRequestedMaterial?.quantity;
+    double? price = double.tryParse(priceField.value) ?? 0;
+    double? totalPrice = quantity != null ? price * quantity : 0;
 
     // Build a Form widget using the _formKey created above.
     return Form(
@@ -53,17 +95,27 @@ class _ProformaFromState extends State<ProformaFrom> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        (widget.selectedRequestedMaterial == null)
+            ? const ModalError(
+                errorMessage: "Please select material request and material")
+            : Container(),
         CustomTextFormField(
           initialValue: vendorField.value,
           label: "Vendor Name",
           onChanged: proformaItemFormCubit.vendorChanged,
           errorMessage: vendorField.errorMessage,
         ),
+        const SizedBox(
+          height: 10,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            FormInfoItem(title: "Quantity Requested", value: "N/A"),
-            FormInfoItem(title: "Unit", value: "N/A"),
+            FormInfoItem(
+                title: "Quantity Requested",
+                value: quantity != null ? quantity.toString() : "N/A"),
+            FormInfoItem(
+                title: "Unit", value: unit != null ? unit.name : "N/A"),
           ],
         ),
         const SizedBox(
@@ -82,12 +134,53 @@ class _ProformaFromState extends State<ProformaFrom> {
                 errorMessage: priceField.errorMessage,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
-            FormInfoItem(title: "Total Price", value: "N/A"),
+            FormInfoItem(title: "Total Price", value: totalPrice.toString()),
           ],
         ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          children: [
+            Flexible(
+              child: ElevatedButton(
+                onPressed: () {
+                  pickImage(ImageSource.gallery, proformaItemFormCubit);
+                },
+                child: Text("Upload Photo"),
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: ElevatedButton(
+                onPressed: () {
+                  pickImage(ImageSource.camera, proformaItemFormCubit);
+                },
+                child: Text("Take Photo"),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(
+          height: 10,
+        ),
+        if (image != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.file(
+              image!,
+              height: 80,
+              width: 60,
+              fit: BoxFit.cover,
+            ),
+          ),
+
         const SizedBox(
           height: 10,
         ),
@@ -104,34 +197,34 @@ class _ProformaFromState extends State<ProformaFrom> {
           height: 10,
         ), //
         ElevatedButton(
-          onPressed: () {
-            // priceField.onSubmit();
-            // if (priceField.state.isValid) {
-            //   if (widget.isEdit) {
-            //     final updated = MaterialReturnMaterialEntity(
-            //       material: selectedMaterial,
-            //       issueVoucherId: selectedMaterialIssue?.id ?? "",
-            //       quantity: double.parse(quantityField.value),
-            //       remark: remarkField.value,
-            //     );
+          onPressed: (widget.selectedRequestedMaterial == null)
+              ? null
+              : () {
+                  proformaItemFormCubit.onSubmit();
+                  if (proformaItemFormCubit.state.isValid) {
+                    if (widget.isEdit) {
+                      // final updated = MaterialReturnMaterialEntity(
+                      //   material: selectedMaterial,
+                      //   issueVoucherId: selectedMaterialIssue?.id ?? "",
+                      //   quantity: double.parse(quantityField.value),
+                      //   remark: remarkField.value,
+                      // );
 
-            //     BlocProvider.of<MaterialReturnLocalBloc>(context).add(
-            //         EditMaterialReturnMaterialLocal(updated, widget.index));
-            //   } else {
-            //     BlocProvider.of<MaterialReturnLocalBloc>(context).add(
-            //       AddMaterialReturnMaterialLocal(
-            //         MaterialReturnMaterialEntity(
-            //           material: selectedMaterial,
-            //           issueVoucherId: selectedMaterialIssue?.id ?? "",
-            //           quantity: double.parse(quantityField.value),
-            //           remark: remarkField.value,
-            //         ),
-            //       ),
-            //     );
-            //   }
-            //   Navigator.pop(context);
-            // }
-          },
+                      // BlocProvider.of<MaterialReturnLocalBloc>(context).add(
+                      //     EditMaterialReturnMaterialLocal(updated, widget.index));
+                    } else {
+                      final newItem = MaterialProformaMaterialEntity(
+                          vendor: vendorField.value,
+                          unitPrice: double.parse(priceField.value),
+                          multipartFile: multipartFile,
+                          photo: photoField.value,
+                          remark: remarkField.value,
+                          quantity: quantity ?? 0);
+                      widget.onAddItem(newItem);
+                    }
+                    Navigator.pop(context);
+                  }
+                },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
@@ -222,9 +315,9 @@ class PhotoField extends FormzInput<String, PhotoFieldError> {
 
   @override
   PhotoFieldError? validator(String? value) {
-    if (value?.isEmpty ?? true) {
-      return PhotoFieldError.invalid;
-    }
+    // if (value?.isEmpty ?? true) {
+    //   return PhotoFieldError.invalid;
+    // }
     return null;
   }
 }

@@ -11,7 +11,7 @@ class FormInfoItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: Theme.of(context).textTheme.labelMedium),
+          Text(title, style: Theme.of(context).textTheme.labelSmall),
           Text(value)
         ],
       ),

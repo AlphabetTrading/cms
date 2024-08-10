@@ -36,12 +36,11 @@ class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
   }
 
   static const String _createMaterialProformaMutation = r'''
-    mutation CreateMaterialProforma($createMaterialProformaInput: CreateMaterialProformaInput!) {
-      createMaterialProforma(createMaterialProformaInput: $createMaterialProformaInput) {
-        id
-      }
-    }
-
+mutation CreateProforma($createProformaInput: CreateProformaInput!) {
+  createProforma(createProformaInput: $createProformaInput) {
+    id
+  }
+}
   ''';
 
   static const String _deleteMaterialProformaMutation = r'''
@@ -52,16 +51,34 @@ class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
     }
 ''';
 
+  static const String _uploadFiles = r'''
+mutation UploadFiles($files: [Upload!]!) {
+  uploadFiles(files: $files)
+}
+''';
+
   // Override the function in the implementation class
   @override
   Future<DataState<String>> createMaterialProforma(
       {required CreateMaterialProformaParamsModel
           createMaterialProformaParamsModel}) async {
+    final MutationOptions options_file =
+        MutationOptions(document: gql(_uploadFiles), variables: {
+      "files": createMaterialProformaParamsModel.materialProformaMaterials
+          .map((e) => e.multipartFile)
+          .toList()
+    });
+
+    try {
+      final QueryResult file_result = await _client.mutate(options_file);
+      print("*********file_result: $file_result");
+      print("*********file_result list: ${file_result.data}");
+    } catch (e) {}
+
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialProformaMutation),
       variables: {
-        "createMaterialProformaInput":
-            createMaterialProformaParamsModel.toJson()
+        "createProformaInput": createMaterialProformaParamsModel.toJson()
       },
     );
 
@@ -165,8 +182,8 @@ class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
         );
       }
 
-      final materialProforma = MaterialProformaModel.fromJson(
-          response.data!['getProformaById']);
+      final materialProforma =
+          MaterialProformaModel.fromJson(response.data!['getProformaById']);
       print(response.data!['getProformaById']);
 
       return DataSuccess(materialProforma);

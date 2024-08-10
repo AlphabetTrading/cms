@@ -55,8 +55,8 @@ class MaterialIssueModel extends MaterialIssueEntity {
       warehouseStore: json['warehouseStore'] != null
           ? WarehouseModel.fromJson(json['warehouseStore'])
           : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt']!= null? DateTime.parse(json['createdAt']):null,
+      updatedAt: json['updatedAt']!= null? DateTime.parse(json['updatedAt']):null,
     );
   }
 
@@ -112,10 +112,10 @@ class IssueVoucherMaterialModel extends IssueVoucherMaterialEntity {
     return IssueVoucherMaterialModel(
       id: json['id'],
       productVariant: ProductVariantModel.fromJson(json['productVariant']),
-      quantity: json['quantity'],
+      quantity: (json['quantity'] as num).toDouble(),
       remark: json['remark'],
-      totalCost: json['totalCost'],
-      unitCost: json['unitCost'],
+      totalCost: (json['totalCost'] as num).toDouble(),
+      unitCost: (json['unitCost'] as num).toDouble(),
       subStructureDescription:
           subStructureUseDescriptionFromString(json['subStructureDescription']),
       superStructureDescription: superStructureUseDescriptionFromString(

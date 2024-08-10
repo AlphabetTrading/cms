@@ -105,13 +105,13 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
       }
         ''';
 
-    final filterInput = filterMaterialRequestInput?.toJson();
+    final filterInput = filterMaterialRequestInput?.toJson()??{};
     debugPrint('filterInput: $filterInput');
 
     final selectedProjectId =
         await GQLClient.getFromLocalStorage('selected_project_id');
 
-    filterInput!["projectId"] = selectedProjectId;
+    filterInput["projectId"] = selectedProjectId;
 
     final response = await _client.query(QueryOptions(
       document: gql(fetchMaterialRequestsQuery),
@@ -136,7 +136,7 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
     final items =
         requests.map((e) => MaterialRequestModel.fromJson(e)).toList();
 
-    debugPrint('fetchMaterialRequests: ${items.length}-itemsss');
+    debugPrint('fetchMaterialRequests: ${items.length} - itemsss');
 
     return DataSuccess(
       MaterialRequestEntityListWithMeta(

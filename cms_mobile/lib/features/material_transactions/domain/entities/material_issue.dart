@@ -20,8 +20,8 @@ class MaterialIssueEntity extends Equatable {
   final String? warehouseStoreId;
   final ProjectEntity? project;
   final WarehouseEntity? warehouseStore;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const MaterialIssueEntity({
     this.id,

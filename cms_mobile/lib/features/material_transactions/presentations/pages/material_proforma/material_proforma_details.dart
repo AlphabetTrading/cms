@@ -1,3 +1,6 @@
+// boilerplate
+
+
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';

@@ -19,17 +19,15 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 
 class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaState> {
   final GetMaterialProformasUseCase _materialProformaUseCase;
-  final CreateMaterialProformaUseCase _createMaterialProformaUseCase;
   DateTime? lastUpdated;
 
   MaterialProformaBloc(
-      this._materialProformaUseCase, this._createMaterialProformaUseCase)
+      this._materialProformaUseCase)
       : super(const MaterialProformaInitial()) {
     on<GetMaterialProformas>(
       onGetMaterialProformas,
       transformer: throttleDroppable(throttleDuration),
     );
-    on<CreateMaterialProformaEvent>(onCreateMaterialProforma);
     on<DeleteMaterialProformaEventLocal>(onDeleteMaterialProforma);
   }
 
@@ -78,21 +76,6 @@ class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaS
     }
   }
 
-  void onCreateMaterialProforma(
-      CreateMaterialProformaEvent event, Emitter<MaterialProformaState> emit) async {
-    emit(const CreateMaterialProformaLoading());
-
-    final dataState = await _createMaterialProformaUseCase(
-        params: event.createMaterialProformaParamsEntity);
-
-    if (dataState is DataSuccess) {
-      emit(const CreateMaterialProformaSuccess());
-    }
-
-    if (dataState is DataFailed) {
-      emit(CreateMaterialProformaFailed(error: dataState.error!));
-    }
-  }
 
   void onDeleteMaterialProforma(
       DeleteMaterialProformaEventLocal event, Emitter<MaterialProformaState> emit) {

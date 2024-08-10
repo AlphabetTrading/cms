@@ -130,6 +130,9 @@ ThemeData DARK_THEME = baseTheme.copyWith(
   appBarTheme: baseTheme.appBarTheme.copyWith(
     backgroundColor: Color(0xFF121212),
     iconTheme: IconThemeData(color: Colors.white),
+    titleTextStyle: TextStyle(
+      color: Colors.white,
+    ),
   ),
   primaryColor: Color(0xFF1A80E5),
   // primaryColorDark: Color(0xFFBB86FC),
@@ -185,6 +188,9 @@ ThemeData LIGHT_THEME = baseTheme.copyWith(
   appBarTheme: baseTheme.appBarTheme.copyWith(
     backgroundColor: Colors.white,
     iconTheme: IconThemeData(color: Color(0xFF637587)),
+        titleTextStyle: TextStyle(
+      color: Color(0xFF121212),
+    ),
   ),
   dividerTheme: baseTheme.dividerTheme.copyWith(color: Color(0xffC2D2E2)),
   primaryColor: Color(0xFF1A80E5),

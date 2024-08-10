@@ -1,208 +1,200 @@
-import 'package:cms_mobile/core/entities/pagination.dart';
-import 'package:cms_mobile/core/utils/ids.dart';
-
+import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/data_source/material_proformas/material_proforma_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma_local/material_proforma_local_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma_local/material_proforma_local_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma_local/material_proforma_local_state.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/create/create_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_proforma_form/material_proforma_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_proforma_form/material_proforma_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
-import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
-import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
-import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_proforma/material_proforma_form.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_proforma/material_proforma_input_list.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
-import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 
-class MaterialProformaCreatePage extends StatefulWidget {
-  const MaterialProformaCreatePage({super.key});
+class CreateMaterialProformaPage extends StatefulWidget {
+  const CreateMaterialProformaPage({super.key});
 
   @override
-  State<MaterialProformaCreatePage> createState() =>
-      _MaterialProformaCreatePageState();
+  State<CreateMaterialProformaPage> createState() =>
+      _CreateMaterialProformaPageState();
 }
 
-class _MaterialProformaCreatePageState
-    extends State<MaterialProformaCreatePage> {
+class _CreateMaterialProformaPageState
+    extends State<CreateMaterialProformaPage> {
+  List<MaterialProformaMaterialEntity> materialProformaMaterials = [];
+  MaterialRequestItem? selectedRequestedMaterial;
+
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<WarehouseBloc>(context).add(const GetWarehousesEvent());
+    BlocProvider.of<MaterialRequestBloc>(context)
+        .add(const GetMaterialRequestEvent());
   }
 
-  // final String savedUserId = await GQLClient.getUserIdFromStorage();
-
-  _buildOnCreateSuccess(BuildContext context) {
-    // context.goNamed(RouteNames.materialProforma);
-    BlocProvider.of<MaterialProformaLocalBloc>(context)
-        .add(const ClearMaterialProformaMaterialsLocal());
-    context.pop();
-    Fluttertoast.showToast(
-        msg: "Material Proforma Created",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: const Color.fromARGB(255, 1, 135, 23),
-        textColor: Colors.white,
-        fontSize: 16.0);
-
-    context.read<MaterialProformaBloc>().add(
-          GetMaterialProformas(
-            filterMaterialProformaInput: FilterMaterialProformaInput(),
-            orderBy: OrderByMaterialProformaInput(createdAt: "desc"),
-            paginationInput: PaginationInput(skip: 0, take: 20),
-          ),
-        );
-  }
-
-  _buildOnCreateFailed(BuildContext context) {
-    Fluttertoast.showToast(
-        msg: "Create Material Proforma Failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
+  void _addProformaItem(MaterialProformaMaterialEntity item) {
+    setState(() {
+      materialProformaMaterials.add(item);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final materialProformaFormCubit = context.watch<MaterialProformaFormCubit>();
-    // final warehouseDropdown = materialProformaFormCubit.state.warehouseDropdown;
-    return BlocProvider(
-      create: (context) => MaterialProformaWarehouseFormCubit(),
-      child: BlocBuilder<MaterialProformaLocalBloc, MaterialProformaLocalState>(
-        builder: (localContext, localState) {
-          return BlocBuilder<MaterialProformaWarehouseFormCubit,
-                  MaterialProformaWarehouseFormState>(
-              builder: (warehouseFormContext, warehouseFormState) {
-            return BlocConsumer<MaterialProformaBloc, MaterialProformaState>(
-              listener: (issueContext, issueState) {
-                debugPrint("Material Proforma Create Page: $issueState");
-                if (issueState is CreateMaterialProformaSuccess) {
-                  _buildOnCreateSuccess(issueContext);
-                } else if (issueState is CreateMaterialProformaFailed) {
-                  _buildOnCreateFailed(issueContext);
-                }
-              },
-              builder: (issueContext, issueState) {
-                return Scaffold(
-                    appBar: AppBar(title: const Text("Create Material Proforma")),
-                    bottomSheet: _buildButtons(issueContext, localState,
-                        issueState, warehouseFormState, warehouseFormContext),
-                    body: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: BlocBuilder<WarehouseBloc, WarehouseState>(
-                          builder: (warehouseContext, warehouseState) {
-                            final warehouseForm = warehouseFormContext
-                                .watch<MaterialProformaWarehouseFormCubit>();
+    // final materialReturnFormCubit = context.watch<MaterialReturnFormCubit>();
+    // final warehouseDropdown = materialReturnFormCubit.state.warehouseDropdown;
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<MaterialProformaMainFormCubit>(
+            create: (context) => MaterialProformaMainFormCubit(),
+          ),
+          BlocProvider<CreateMaterialProformaCubit>(
+            create: (context) => sl<CreateMaterialProformaCubit>(),
+          ),
+        ],
+        child: BlocBuilder<MaterialProformaMainFormCubit,
+                MaterialProformaMainFormState>(
+            builder: (proformaMainFormContext, proformaMainFormState) {
+          return BlocConsumer<CreateMaterialProformaCubit,
+              CreateMaterialProformaState>(
+            listener: (createProformaContext, createProformaState) {
+              if (createProformaState is CreateMaterialProformaSuccess) {
+                context.goNamed(RouteNames.materialProforma);
+                showStatusMessage(Status.SUCCESS, "Proforma Created");
+              } else if (createProformaState is CreateMaterialProformaFailed) {
+                showStatusMessage(Status.FAILED, createProformaState.error);
+              }
+            },
+            builder: (createProformaContext, createProformaState) {
+              final proformaMainFormCubit =
+                  proformaMainFormContext.read<MaterialProformaMainFormCubit>();
+              final materialRequestDropdown =
+                  proformaMainFormState.materialRequestDropdown;
+              final materialDropdown = proformaMainFormState.materialDropdown;
 
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Column(
-                                children: [
-                                  CustomDropdown(
-                                    onSelected: (dynamic value) {
-                                      warehouseForm.warehouseChanged(value);
-                                      context.read<ProductBloc>().add(
-                                            GetWarehouseProducts(
-                                              getProductsInputEntity:
-                                                  GetWarehouseProductsInputEntity(
-                                                filterWarehouseProductInput:
-                                                    FilterWarehouseProductInput(
-                                                        warehouseId: value.id),
-                                              ),
-                                            ),
-                                          );
-                                    },
-                                    dropdownMenuEntries: warehouseState
-                                            .warehouses
-                                            ?.map((e) => DropdownMenuEntry<
-                                                    WarehouseEntity>(
-                                                label: e.name, value: e))
-                                            .toList() ??
-                                        [],
-                                    enableFilter: false,
-                                    errorMessage: warehouseForm
-                                        .state.warehouseDropdown.errorMessage,
-                                    label: 'From Warehouse',
-                                    trailingIcon:
-                                        warehouseState is WarehousesLoading
-                                            ? const CircularProgressIndicator()
-                                            : null,
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    "Materials to be issued:",
-                                    textAlign: TextAlign.start,
-                                    style:
-                                        Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  (localState.materialProformaMaterials ==
-                                              null ||
-                                          localState.materialProformaMaterials!
-                                              .isEmpty)
-                                      ? const EmptyList() : const SizedBox(),
-                                      // ? const EmptyList()
-                                      // : MaterialProformaInputList(
-                                      //     materialProformas: localState
-                                      //         ?.materialProformaMaterials!,
-                                      //   ),
-                                ],
-                              ),
-                            );
-                          },
-                        )));
-              },
-            );
-          });
-        },
-      ),
-    );
+              return Scaffold(
+                  appBar: AppBar(title: const Text("Create Material Proforma")),
+                  bottomSheet: _buildButtons(createProformaContext,
+                      createProformaState, proformaMainFormCubit),
+                  body: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: BlocBuilder<MaterialRequestBloc,
+                          MaterialRequestState>(
+                        builder:
+                            (materialRequestContext, materialRequestState) {
+                          List<MaterialRequestItem> requestedMaterials =
+                              materialRequestDropdown.value != ""
+                                  ? materialRequestState.materialRequests?.items
+                                          .firstWhere((element) =>
+                                              element.id ==
+                                              materialRequestDropdown.value)
+                                          .items ??
+                                      []
+                                  : [];
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              children: [
+                                CustomDropdown(
+                                  onSelected: (dynamic value) {
+                                    proformaMainFormCubit
+                                        .materialRequestChanged(value);
+                                  },
+                                  dropdownMenuEntries: materialRequestState
+                                          .materialRequests?.items
+                                          .map((e) => DropdownMenuEntry<
+                                                  MaterialRequestEntity>(
+                                              label: e.serialNumber ?? "N/A",
+                                              value: e))
+                                          .toList() ??
+                                      [],
+                                  enableFilter: false,
+                                  errorMessage:
+                                      materialRequestDropdown.errorMessage,
+                                  label: 'Material Request',
+                                  trailingIcon: materialRequestState
+                                          is MaterialRequestLoading
+                                      ? const CircularProgressIndicator()
+                                      : null,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CustomDropdown(
+                                  onSelected: (dynamic value) {
+                                    proformaMainFormCubit
+                                        .materialChanged(value);
+                                    setState(() {
+                                      selectedRequestedMaterial = value;
+                                    });
+                                  },
+                                  dropdownMenuEntries: requestedMaterials
+                                      .map((e) => DropdownMenuEntry<
+                                              MaterialRequestItem>(
+                                          label:
+                                              "${e.productVariant?.product?.name} - ${e.productVariant?.variant}",
+                                          value: e))
+                                      .toList(),
+                                  enableFilter: false,
+                                  errorMessage: materialDropdown.errorMessage,
+                                  label: 'Material',
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Proforma list:",
+                                  textAlign: TextAlign.start,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                (materialProformaMaterials.isEmpty)
+                                    ? const EmptyList()
+                                    : MaterialProformaInputList(
+                                        materialProformaMaterials:
+                                            materialProformaMaterials,
+                                      )
+                              ],
+                            ),
+                          );
+                        },
+                      )));
+            },
+          );
+        }));
   }
 
-  _buildButtons(
-    BuildContext context,
-    MaterialProformaLocalState localState,
-    MaterialProformaState state,
-    MaterialProformaWarehouseFormState warehouseFormState,
-    BuildContext warehouseFormContext,
-  ) {
+  _buildButtons(BuildContext context, CreateMaterialProformaState state,
+      MaterialProformaMainFormCubit proformaMainFrom) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         OutlinedButton(
-          // onPressed:(){},
           onPressed: () => showModalBottomSheet(
             context: context,
             isScrollControlled: true,
             builder: (context) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(
-                    value: warehouseFormContext
-                        .read<MaterialProformaWarehouseFormCubit>(),
+                    value: proformaMainFrom,
                   ),
-                  BlocProvider<MaterialProformaFormCubit>(
-                    create: (_) => MaterialProformaFormCubit(),
+                  BlocProvider<MaterialProformaItemFormCubit>(
+                    create: (_) => MaterialProformaItemFormCubit(),
                   )
                 ],
                 child: Column(
@@ -210,10 +202,10 @@ class _MaterialProformaCreatePageState
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(32.0),
-                      child: Text(
-                        "Add Material",
+                      child: MaterialProformaFrom(
+                        onAddItem: _addProformaItem,
+                        selectedRequestedMaterial: selectedRequestedMaterial,
                       ),
-                      // child: CreateMaterialProformaForm(),
                     )
                   ],
                 )),
@@ -221,55 +213,46 @@ class _MaterialProformaCreatePageState
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
           ),
-          child: const Text('Add Material'),
+          child: const Text('Add Proforma'),
         ),
         const SizedBox(height: 10),
         ElevatedButton(
-          onPressed: (state is CreateMaterialProformaLoading ||
-                  localState.materialProformaMaterials == null ||
-                  localState.materialProformaMaterials!.isEmpty)
+          onPressed: (materialProformaMaterials.isEmpty)
               ? null
               : () {
-                  context.read<MaterialProformaBloc>().add(
-                        CreateMaterialProformaEvent(
-                          createMaterialProformaParamsEntity:
-                              CreateMaterialProformaParamsEntity(
-                            projectId: context
-                                    .read<ProjectBloc>()
-                                    .state
-                                    .selectedProjectId ??
-                                "",
-                            preparedById:
-                                context.read<AuthBloc>().state.user?.id ??
-                                    USER_ID,
-                            warehouseStoreId:
-                                warehouseFormState.warehouseDropdown.value,
-                            materialProformaMaterials:
-                                localState.materialProformaMaterials!
-                                    .map((e) => MaterialProformaMaterialEntity(
-                                          quantity: e.quantity,
-                                          remark: e.remark,
-                                          useType: e.useType,
-                                          subStructureDescription:
-                                              e.subStructureDescription,
-                                          superStructureDescription:
-                                              e.superStructureDescription,
-                                          material: e.material,
-                                        ))
-                                    .toList(),
-                          ),
-                        ),
-                      );
+                  proformaMainFrom.onSubmit();
+                  if (proformaMainFrom.state.isValid) {
+                    print(CreateMaterialProformaParamsEntity(
+                        materialRequestItemId:
+                            proformaMainFrom.state.materialDropdown.value,
+                        preparedById:
+                            context.read<AuthBloc>().state.userId ?? "",
+                        projectId: context
+                                .read<ProjectBloc>()
+                                .state
+                                .selectedProjectId ??
+                            "",
+                        materialProformaMaterials: materialProformaMaterials));
 
-                  context.read<MaterialProformaBloc>().add(
-                        GetMaterialProformas(
-                          filterMaterialProformaInput:
-                              FilterMaterialProformaInput(),
-                          orderBy:
-                              OrderByMaterialProformaInput(createdAt: "desc"),
-                          paginationInput: PaginationInput(skip: 0, take: 10),
-                        ),
-                      );
+                        
+                    context
+                        .read<CreateMaterialProformaCubit>()
+                        .onCreateMaterialProforma(
+                            createMaterialProformaParamsEntity:
+                                CreateMaterialProformaParamsEntity(
+                                    materialRequestItemId: proformaMainFrom
+                                        .state.materialDropdown.value,
+                                    preparedById:
+                                        context.read<AuthBloc>().state.userId ??
+                                            "",
+                                    projectId: context
+                                            .read<ProjectBloc>()
+                                            .state
+                                            .selectedProjectId ??
+                                        "",
+                                    materialProformaMaterials:
+                                        materialProformaMaterials));
+                  }
                 },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),
@@ -288,7 +271,7 @@ class _MaterialProformaCreatePageState
                           )),
                     )
                   : const SizedBox(),
-              const Text('Create Material Proforma')
+              const Text('Create Proforma Request')
             ],
           ),
         )
@@ -297,25 +280,50 @@ class _MaterialProformaCreatePageState
   }
 }
 
-enum WarehouseDropdownError { invalid }
+enum MaterialRequestDropdownError { invalid }
 
-class WarehouseDropdown extends FormzInput<String, WarehouseDropdownError> {
-  const WarehouseDropdown.pure([String value = '']) : super.pure(value);
-  const WarehouseDropdown.dirty([String value = '']) : super.dirty(value);
+class MaterialRequestDropdown
+    extends FormzInput<String, MaterialRequestDropdownError> {
+  const MaterialRequestDropdown.pure([String value = '']) : super.pure(value);
+  const MaterialRequestDropdown.dirty([String value = '']) : super.dirty(value);
 
   String? get errorMessage {
     if (isValid || isPure) return null;
 
-    if (displayError == WarehouseDropdownError.invalid) {
-      return 'This field is required';
+    if (displayError == MaterialRequestDropdownError.invalid) {
+      return 'Select a material request';
     }
     return null;
   }
 
   @override
-  WarehouseDropdownError? validator(String? value) {
+  MaterialRequestDropdownError? validator(String? value) {
     if (value?.isEmpty ?? true) {
-      return WarehouseDropdownError.invalid;
+      return MaterialRequestDropdownError.invalid;
+    }
+    return null;
+  }
+}
+
+enum MaterialDropdownError { invalid }
+
+class MaterialDropdown extends FormzInput<String, MaterialDropdownError> {
+  const MaterialDropdown.pure([String value = '']) : super.pure(value);
+  const MaterialDropdown.dirty([String value = '']) : super.dirty(value);
+
+  String? get errorMessage {
+    if (isValid || isPure) return null;
+
+    if (displayError == MaterialDropdownError.invalid) {
+      return 'Select a material request';
+    }
+    return null;
+  }
+
+  @override
+  MaterialDropdownError? validator(String? value) {
+    if (value?.isEmpty ?? true) {
+      return MaterialDropdownError.invalid;
     }
     return null;
   }

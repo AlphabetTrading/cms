@@ -99,93 +99,63 @@ class MaterialProformaListWithMeta extends MaterialProformaEntityListWithMeta {
 }
 
 class MaterialProformaMaterialModel extends MaterialProformaMaterialEntity {
-  const MaterialProformaMaterialModel(
-      {required double quantity,
-      String? remark,
-      WarehouseProductModel? material,
-      required UseType useType,
-      SubStructureUseDescription? subStructureDescription,
-      SuperStructureUseDescription? superStructureDescription})
-      : super(
-            quantity: quantity,
-            material: material,
-            remark: remark,
-            useType: useType,
-            subStructureDescription: subStructureDescription,
-            superStructureDescription: superStructureDescription
-            // unit: unit
-            );
+  MaterialProformaMaterialModel({
+    required super.unitPrice,
+    required super.remark,
+    required super.photo,
+    required super.vendor,
+    required super.quantity,
+    required super.multipartFile
+  });
 
   Map<String, dynamic> toJson() {
     return {
-      'quantity': quantity,
-      'remark': remark,
-      "productVariantId": material!.productVariant.id,
-      "useType": useType.name,
-      "unitCost": material!.currentPrice,
-      "totalCost": material!.currentPrice * quantity,
-      "subStructureDescription":
-          subStructureDescription != SubStructureUseDescription.DEFAULT_VALUE
-              ? subStructureDescription!.name
-              : null,
-      "superStructureDescription": superStructureDescription !=
-              SuperStructureUseDescription.DEFAULT_VALUE
-          ? superStructureDescription!.name
-          : null,
+      "quantity": quantity,
+      "totalPrice": unitPrice * quantity,
+      "unitPrice": unitPrice,
+      "remark": remark,
+      "photo": photo,
+      "vendor": vendor
     };
   }
 
   @override
-  List<Object?> get props => [
-        remark,
-        quantity,
-        material,
-        useType,
-        subStructureDescription,
-        superStructureDescription
-      ];
+  List<Object?> get props => [unitPrice, remark, photo, vendor, quantity];
 }
 
 class CreateMaterialProformaParamsModel
     extends CreateMaterialProformaParamsEntity<MaterialProformaMaterialModel> {
-  const CreateMaterialProformaParamsModel({
-    required String projectId,
-    required List<MaterialProformaMaterialModel> materialProformaMaterials,
-    required String preparedById,
-    required String warehouseStoreId,
-  }) : super(
-            warehouseStoreId: warehouseStoreId,
-            preparedById: preparedById,
-            projectId: projectId,
-            materialProformaMaterials: materialProformaMaterials);
+  const CreateMaterialProformaParamsModel(
+      {required super.projectId,
+      required super.preparedById,
+      required super.materialProformaMaterials,
+      required super.materialRequestItemId
+      
+      });
 
   Map<String, dynamic> toJson() {
     return {
+      "materialRequestItemId": materialRequestItemId,
       "preparedById": preparedById,
       "projectId": projectId,
-      "warehouseStoreId": warehouseStoreId,
       "items": materialProformaMaterials.map((e) => e.toJson()).toList()
     };
   }
-
-  @override
-  List<Object?> get props =>
-      [projectId, preparedById, materialProformaMaterials];
 
   factory CreateMaterialProformaParamsModel.fromEntity(
       CreateMaterialProformaParamsEntity entity) {
     return CreateMaterialProformaParamsModel(
         projectId: entity.projectId,
         preparedById: entity.preparedById,
-        warehouseStoreId: entity.warehouseStoreId,
+        materialRequestItemId: entity.materialRequestItemId,
         materialProformaMaterials: entity.materialProformaMaterials
             .map((e) => MaterialProformaMaterialModel(
-                quantity: e.quantity,
-                material: e.material as WarehouseProductModel,
+                unitPrice: e.unitPrice,
                 remark: e.remark,
-                useType: e.useType,
-                subStructureDescription: e.subStructureDescription,
-                superStructureDescription: e.superStructureDescription))
+                multipartFile: e.multipartFile,
+                quantity: e.quantity,
+                vendor: e.vendor,
+                photo: e.photo))
             .toList());
   }
 }
@@ -210,9 +180,10 @@ class EditMaterialProformaParamsModel
       "warehouseStoreId": warehouseStoreId,
       "approved": approved,
       "approvedById": approvedById,
-      "items": materialProformaMaterials.map((e) => e.toJson()).toList(),
+      // "items": materialProformaMaterials.map((e) => e.toJson()).toList(),
     };
   }
+
 
   @override
   List<Object?> get props => [
@@ -232,12 +203,12 @@ class EditMaterialProformaParamsModel
         approvedById: entity.approvedById,
         materialProformaMaterials: entity.materialProformaMaterials
             .map((e) => MaterialProformaMaterialModel(
-                quantity: e.quantity,
-                material: e.material as WarehouseProductModel,
+                unitPrice: e.unitPrice,
                 remark: e.remark,
-                useType: e.useType,
-                subStructureDescription: e.subStructureDescription,
-                superStructureDescription: e.superStructureDescription))
+                quantity: e.quantity,
+                multipartFile: e.multipartFile,
+                vendor: e.vendor,
+                photo: e.photo))
             .toList());
   }
 }

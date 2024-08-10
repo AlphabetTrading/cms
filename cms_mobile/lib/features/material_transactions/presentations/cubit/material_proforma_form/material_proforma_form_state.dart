@@ -1,103 +1,77 @@
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/create_material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_proforma/material_proforma_form.dart';
 import 'package:equatable/equatable.dart';
 
 enum FormStatus { invalid, valid, validating }
 
-class MaterialProformaWarehouseFormState extends Equatable {
-  final WarehouseDropdown warehouseDropdown;
-  final bool isValid;
-
-  const MaterialProformaWarehouseFormState({
-    this.warehouseDropdown = const WarehouseDropdown.pure(),
-    this.isValid = false
-  });
-
-  MaterialProformaWarehouseFormState copyWith({
-    WarehouseDropdown? warehouseDropdown,
-    bool? isValid,
-  }) {
-    return MaterialProformaWarehouseFormState(
-      isValid: isValid ?? this.isValid,
-      warehouseDropdown: warehouseDropdown ?? this.warehouseDropdown,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-        warehouseDropdown,
-      ];
-}
-
-class MaterialProformaFormState extends Equatable {
-  final bool isValid;
+class MaterialProformaMainFormState extends Equatable {
   final FormStatus formStatus;
-  final QuantityField quantityField;
+  final MaterialRequestDropdown materialRequestDropdown;
   final MaterialDropdown materialDropdown;
-  // final WarehouseDropdown warehouseDropdown;
-  final UseTypeDropdown useTypeDropdown;
-  final SubStructureUseDropdown subStructureUseDropdown;
-  final SuperStructureUseDropdown superStructureUseDropdown;
 
-  // final UnitDropdown unitDropdown;
-  final RemarkField remarkField;
-  final double inStock;
+  final bool isValid;
 
-  MaterialProformaFormState(
-      {this.isValid = false,
-      this.formStatus = FormStatus.invalid,
-      this.quantityField = const QuantityField.pure(),
+  const MaterialProformaMainFormState(
+      {this.materialRequestDropdown = const MaterialRequestDropdown.pure(),
       this.materialDropdown = const MaterialDropdown.pure(),
-      // this.warehouseDropdown = const WarehouseDropdown.pure(),
-      this.useTypeDropdown = const UseTypeDropdown.pure(),
-      this.subStructureUseDropdown = const SubStructureUseDropdown.pure(),
-      this.superStructureUseDropdown = const SuperStructureUseDropdown.pure(),
+      this.formStatus = FormStatus.invalid,
+      this.isValid = false});
 
-      // this.unitDropdown = const UnitDropdown.pure(),
-      this.remarkField = const RemarkField.pure(),
-      this.inStock = 0.0});
-
-  MaterialProformaFormState copyWith({
-    bool? isValid,
-    FormStatus? formStatus,
-    QuantityField? quantityField,
-    MaterialDropdown? materialDropdown,
-    // WarehouseDropdown? warehouseDropdown,
-    UseTypeDropdown? useTypeDropdown,
-    SubStructureUseDropdown? subStructureUseDropdown,
-    SuperStructureUseDropdown? superStructureUseDropdown,
-    // UnitDropdown? unitDropdown,
-    RemarkField? remarkField,
-    double? inStock,
-  }) {
-    return MaterialProformaFormState(
+  MaterialProformaMainFormState copyWith(
+      {bool? isValid,
+      FormStatus? formStatus,
+      MaterialRequestDropdown? materialRequestDropdown,
+      MaterialDropdown? materialDropdown}) {
+    return MaterialProformaMainFormState(
         isValid: isValid ?? this.isValid,
         formStatus: formStatus ?? this.formStatus,
-        quantityField: quantityField ?? this.quantityField,
-        materialDropdown: materialDropdown ?? this.materialDropdown,
-        // warehouseDropdown: warehouseDropdown ?? this.warehouseDropdown,
-        useTypeDropdown: useTypeDropdown ?? this.useTypeDropdown,
-        subStructureUseDropdown:
-            subStructureUseDropdown ?? this.subStructureUseDropdown,
-        superStructureUseDropdown:
-            superStructureUseDropdown ?? this.superStructureUseDropdown,
-        // unitDropdown: unitDropdown ?? this.unitDropdown,
-        remarkField: remarkField ?? this.remarkField,
-        inStock: inStock ?? this.inStock);
+        materialRequestDropdown:
+            materialRequestDropdown ?? this.materialRequestDropdown,
+        materialDropdown: materialDropdown ?? this.materialDropdown);
   }
 
   @override
-  List<Object?> get props => [
-        isValid,
-        formStatus,
-        quantityField,
-        materialDropdown,
-        // warehouseDropdown,
-        useTypeDropdown,
-        subStructureUseDropdown,
-        superStructureUseDropdown,
-        // unitDropdown,
-        remarkField,
-        inStock
-      ];
+  String toString() {
+    return 'ProformaMainFormState(materialRequestDropdown: $materialRequestDropdown, materialDropdown: $materialDropdown, isValid: $isValid, formStatus: $formStatus)';
+  }
+
+  @override
+  List<Object?> get props =>
+      [materialRequestDropdown, materialDropdown, isValid, formStatus];
+}
+
+class MaterialProformaItemFormState extends Equatable {
+  final FormStatus formStatus;
+  final bool isValid;
+  final PriceField priceField;
+  final VendorField vendorField;
+  final RemarkField remarkField;
+  final PhotoField photoField;
+
+  const MaterialProformaItemFormState(
+      { this.formStatus = FormStatus.invalid,
+       this.isValid = false,
+       this.priceField = const PriceField.pure(),
+       this.vendorField = const VendorField.pure(),
+       this.remarkField = const RemarkField.pure(),
+       this.photoField = const PhotoField.pure()});
+
+  MaterialProformaItemFormState copyWith(
+      {FormStatus? formStatus,
+      bool? isValid,
+      PriceField? priceField,
+      VendorField? vendorField,
+      RemarkField? remarkField,
+      PhotoField? photoField}) {
+    return MaterialProformaItemFormState(
+        formStatus: formStatus ?? this.formStatus,
+        isValid: isValid ?? this.isValid,
+        priceField: priceField ?? this.priceField,
+        vendorField: vendorField ?? this.vendorField,
+        remarkField: remarkField ?? this.remarkField,
+        photoField: photoField ?? this.photoField);
+  }
+
+  @override
+  List<Object?> get props => [formStatus, isValid, priceField, vendorField, remarkField, photoField];
 }
