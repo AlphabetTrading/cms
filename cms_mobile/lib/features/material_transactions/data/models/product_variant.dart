@@ -28,8 +28,10 @@ class ProductVariantModel extends ProductVariantEntity {
       product: json['product'] != null
           ? ProductModel.fromJson(json['product'])
           : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
 
     return productVariantModel;

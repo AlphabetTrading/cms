@@ -64,10 +64,10 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/dai
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma_local/material_proforma_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
@@ -820,8 +820,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialProformaBloc>(
     () => MaterialProformaBloc(
       sl<GetMaterialProformasUseCase>(),
-      sl<CreateMaterialProformaUseCase>(),
-    ),
+    )
   );
 
   sl.registerFactory<MaterialProformaDetailsCubit>(
@@ -835,9 +834,10 @@ Future<void> initializeDependencies() async {
       sl<DeleteMaterialProformaUseCase>(),
     ),
   );
-
-  sl.registerFactory<MaterialProformaLocalBloc>(
-    () => MaterialProformaLocalBloc(),
+    sl.registerFactory<CreateMaterialProformaCubit>(
+    () => CreateMaterialProformaCubit(
+      sl<CreateMaterialProformaUseCase>(),
+    ),
   );
 
   // daily site data

@@ -279,14 +279,14 @@ class AppRouter {
                   name: RouteNames.materialProformaCreate,
                   path: RoutePaths.materialProformaCreate,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const MaterialProformaCreatePage();
+                    return const CreateMaterialProformaPage();
                   },
                 ),
                 GoRoute(
                   name: RouteNames.materialProformaEdit,
                   path: RoutePaths.materialProformaEdit,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const MaterialProformaCreatePage();
+                    return const CreateMaterialProformaPage();
                   },
                 ),
                 GoRoute(

@@ -1,31 +1,45 @@
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_proforma_form/material_proforma_form_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
-import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/create_material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_proforma/material_proforma_form.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
+enum FormStatus { invalid, valid, validating }
 
-class MaterialProformaWarehouseFormCubit
-    extends Cubit<MaterialProformaWarehouseFormState> {
-  MaterialProformaWarehouseFormCubit({
-    String? warehouseId,
-  }) : super(MaterialProformaWarehouseFormState(
-          warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
+class MaterialProformaMainFormCubit extends Cubit<MaterialProformaMainFormState> {
+  MaterialProformaMainFormCubit({
+    String? materialRequestId,
+    String? materialId,
+  }) : super(MaterialProformaMainFormState(
+          materialRequestDropdown:
+              MaterialRequestDropdown.pure(materialRequestId ?? ""),
+          materialDropdown: MaterialDropdown.pure(materialId ?? ""),
         ));
- 
-  void warehouseChanged(WarehouseEntity warehouseEntity) {
-    final WarehouseDropdown warehouseDropdown =
-        WarehouseDropdown.dirty(warehouseEntity.id);
+
+  void materialRequestChanged(MaterialRequestEntity materialRequest) {
+    final MaterialRequestDropdown materialRequestDropdown =
+        MaterialRequestDropdown.dirty(materialRequest.id ?? "");
 
     emit(
       state.copyWith(
-        warehouseDropdown: warehouseDropdown,
-        isValid: Formz.validate([
-          state.warehouseDropdown,
-        ]),
+        materialRequestDropdown: materialRequestDropdown,
+        isValid: Formz.validate(
+            [state.materialDropdown, state.materialRequestDropdown]),
+      ),
+    );
+  }
+
+  void materialChanged(MaterialRequestItem material) {
+    // could be productVariantId
+    final MaterialDropdown materialDropdown =
+        MaterialDropdown.dirty(material.id ?? "");
+
+    emit(
+      state.copyWith(
+        materialDropdown: materialDropdown,
+        isValid: Formz.validate(
+            [state.materialDropdown, state.materialRequestDropdown]),
       ),
     );
   }
@@ -33,218 +47,88 @@ class MaterialProformaWarehouseFormCubit
   void onSubmit() {
     emit(
       state.copyWith(
-        warehouseDropdown:
-            WarehouseDropdown.dirty(state.warehouseDropdown.value),
-        isValid: Formz.validate([
-          state.warehouseDropdown,
-        ]),
+        materialRequestDropdown:
+            MaterialRequestDropdown.dirty(state.materialRequestDropdown.value),
+        materialDropdown: MaterialDropdown.dirty(state.materialDropdown.value),
+        isValid: Formz.validate(
+            [state.materialDropdown, state.materialRequestDropdown]),
       ),
     );
   }
-
-  // @override
-  // void onChange(Change<MaterialProformaFormState> change) {
-  //   super.onChange(change);
-  //   print('Current State: ${change.currentState}');
-  //   print('Next State: ${change.nextState}');
-  // }
-
-  // MaterialProformaFormState copyWith({
-  //   bool? isValid,
-  //   FormStatus? formStatus,
-  //   QuantityField? quantityField,
-  // }) {
-  //   return MaterialProformaFormState(
-  //     isValid: isValid ?? this.isValid,
-  //     formStatus: formStatus ?? this.formStatus,
-  //     quantityField: quantityField ?? this.quantityField,
-  //   );
-  // }
 }
 
-class MaterialProformaFormCubit extends Cubit<MaterialProformaFormState> {
-  MaterialProformaFormCubit({
-    String? materialId,
-    // String? warehouseId,
-    double? quantity,
-    SubStructureUseDescription? subUseDescription,
-    SuperStructureUseDescription? superUseDescription,
-    UseType? useType,
-    double? inStock,
+class MaterialProformaItemFormCubit extends Cubit<MaterialProformaItemFormState> {
+  MaterialProformaItemFormCubit({
+    String? vendor,
+    double? price,
+    String? photo,
     String? remark,
-  }) : super(MaterialProformaFormState(
-            materialDropdown: MaterialDropdown.pure(materialId ?? ""),
-            // warehouseDropdown: WarehouseDropdown.pure(warehouseId ?? ""),
-            subStructureUseDropdown: SubStructureUseDropdown.pure(
-              value:
-                  subUseDescription ?? SubStructureUseDescription.DEFAULT_VALUE,
-            ),
-            superStructureUseDropdown: SuperStructureUseDropdown.pure(
-                value: superUseDescription ??
-                    SuperStructureUseDescription.DEFAULT_VALUE),
-            useTypeDropdown:
-                UseTypeDropdown.pure(useType ?? UseType.DEFAULT_VALUE),
-            quantityField: QuantityField.pure(value: quantity.toString()),
-            inStock: inStock ?? 0.0,
-            remarkField: RemarkField.pure(remark ?? "")));
+  }) : super(MaterialProformaItemFormState(
+          priceField: PriceField.pure(price.toString()),
+          vendorField: VendorField.pure(vendor ?? ""),
+          remarkField: RemarkField.pure(remark ?? ""),
+          photoField: PhotoField.pure(photo ?? ""),
+        ));
 
-  void quantityChanged(String value) {
-    final QuantityField quantityField =
-        QuantityField.dirty(value, inStock: state.inStock);
+  void vendorChanged(String vendor) {
+    final VendorField vendorField = VendorField.dirty(vendor);
 
     emit(
       state.copyWith(
-        quantityField: quantityField,
+        vendorField: vendorField,
         isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          state.subStructureUseDropdown,
-          state.superStructureUseDropdown,
-          state.useTypeDropdown,
-          state.remarkField
+          state.priceField,
+          state.vendorField,
+          state.remarkField,
+          state.photoField
         ]),
       ),
     );
   }
 
-  void materialChanged(WarehouseProductEntity materialEntity) {
-    final MaterialDropdown materialDropdown =
-        MaterialDropdown.dirty(materialEntity.productVariant.id!);
+  void priceChanged(String price) {
+    final PriceField priceField = PriceField.dirty(price);
 
     emit(
       state.copyWith(
-        materialDropdown: materialDropdown,
-        inStock: materialEntity.quantity,
+        priceField: priceField,
         isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          // state.warehouseDropdown,
-          state.useTypeDropdown,
-          state.subStructureUseDropdown,
-          state.superStructureUseDropdown,
-          // state.unitDropdown,
-          state.remarkField
+          state.priceField,
+          state.vendorField,
+          state.remarkField,
+          state.photoField
         ]),
       ),
     );
   }
 
-  // void warehouseChanged(WarehouseEntity warehouseEntity) {
-  //   final WarehouseDropdown warehouseDropdown =
-  //       WarehouseDropdown.dirty(warehouseEntity.id);
-
-  //   emit(
-  //     state.copyWith(
-  //       warehouseDropdown: warehouseDropdown,
-  //       isValid: Formz.validate([
-  //         state.quantityField,
-  //         state.materialDropdown,
-  //         state.warehouseDropdown,
-  //         state.useTypeDropdown,
-  //         state.subStructureUseDropdown,
-  //         state.superStructureUseDropdown,
-  //         // state.unitDropdown,
-  //         state.remarkField
-  //       ]),
-  //     ),
-  //   );
-  // }
-
-  void useTypeChanged(UseType value) {
-    final UseTypeDropdown useTypeDropdown = UseTypeDropdown.dirty(value);
+  void photoChanged(String photo) {
+    final PhotoField photoField = PhotoField.dirty(photo);
 
     emit(
       state.copyWith(
-        useTypeDropdown: useTypeDropdown,
+        photoField: photoField,
         isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          state.subStructureUseDropdown,
-          // state.warehouseDropdown,
-
-          state.superStructureUseDropdown,
-          state.useTypeDropdown,
-          // state.unitDropdown,
-          state.remarkField
+          state.priceField,
+          state.vendorField,
+          state.remarkField,
+          state.photoField
         ]),
       ),
     );
   }
 
-  void subStructureDescriptionChanged(SubStructureUseDescription value) {
-    final SubStructureUseDropdown subStructureUseDropdown =
-        SubStructureUseDropdown.dirty(value,
-            useType: state.useTypeDropdown.value);
-
-    emit(
-      state.copyWith(
-        subStructureUseDropdown: subStructureUseDropdown,
-        isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          state.subStructureUseDropdown,
-          // state.warehouseDropdown,
-          state.superStructureUseDropdown,
-          state.useTypeDropdown,
-          state.remarkField
-        ]),
-      ),
-    );
-  }
-
-  void superStructureDescriptionChanged(SuperStructureUseDescription value) {
-    final SuperStructureUseDropdown superStructureUseDropdown =
-        SuperStructureUseDropdown.dirty(value,
-            useType: state.useTypeDropdown.value);
-
-    emit(
-      state.copyWith(
-        superStructureUseDropdown: superStructureUseDropdown,
-        isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          // state.warehouseDropdown,
-          state.subStructureUseDropdown,
-          state.superStructureUseDropdown,
-          state.useTypeDropdown,
-          // state.unitDropdown,
-          state.remarkField
-        ]),
-      ),
-    );
-  }
-
-  // void unitChanged(String value) {
-  //   final UnitDropdown unitDropdown = UnitDropdown.dirty(value);
-
-  //   emit(
-  //     state.copyWith(
-  //       // unitDropdown: unitDropdown,
-  //       isValid: Formz.validate([
-  //         state.quantityField,
-  //         state.materialDropdown,
-  //         // state.unitDropdown,
-  //         state.remarkField
-  //       ]),
-  //     ),
-  //   );
-  // }
-
-  void remarkChanged(String value) {
-    final RemarkField remarkField = RemarkField.dirty(value);
+  void remarkChanged(String remark) {
+    final RemarkField remarkField = RemarkField.dirty(remark);
 
     emit(
       state.copyWith(
         remarkField: remarkField,
         isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          // state.warehouseDropdown,
-          state.subStructureUseDropdown,
-          state.superStructureUseDropdown,
-          state.useTypeDropdown,
-          // state.unitDropdown,
-          state.remarkField
+          state.priceField,
+          state.vendorField,
+          state.remarkField,
+          state.photoField
         ]),
       ),
     );
@@ -253,51 +137,18 @@ class MaterialProformaFormCubit extends Cubit<MaterialProformaFormState> {
   void onSubmit() {
     emit(
       state.copyWith(
-        formStatus: FormStatus.validating,
-        quantityField: QuantityField.dirty(state.quantityField.value,
-            inStock: state.inStock),
-        materialDropdown: MaterialDropdown.dirty(state.materialDropdown.value),
-        // warehouseDropdown:
-        //     WarehouseDropdown.dirty(state.warehouseDropdown.value),
-        useTypeDropdown: UseTypeDropdown.dirty(state.useTypeDropdown.value),
-        subStructureUseDropdown: SubStructureUseDropdown.dirty(
-            state.subStructureUseDropdown.value,
-            useType: state.useTypeDropdown.value),
-        superStructureUseDropdown: SuperStructureUseDropdown.dirty(
-            state.superStructureUseDropdown.value,
-            useType: state.useTypeDropdown.value),
-        // unitDropdown: UnitDropdown.dirty(state.unitDropdown.value),
+        priceField: PriceField.dirty(state.priceField.value),
+        vendorField: VendorField.dirty(state.vendorField.value),
         remarkField: RemarkField.dirty(state.remarkField.value),
+        photoField: PhotoField.dirty(state.photoField.value),
         isValid: Formz.validate([
-          state.quantityField,
-          state.materialDropdown,
-          // state.warehouseDropdown,
-          state.subStructureUseDropdown,
-          state.superStructureUseDropdown,
-          state.useTypeDropdown,
-          // state.unitDropdown,
-          state.remarkField
+          state.priceField,
+          state.vendorField,
+          state.remarkField,
+          state.photoField
         ]),
+      
       ),
     );
   }
-
-  // @override
-  // void onChange(Change<MaterialProformaFormState> change) {
-  //   super.onChange(change);
-  //   print('Current State: ${change.currentState}');
-  //   print('Next State: ${change.nextState}');
-  // }
-
-  // MaterialProformaFormState copyWith({
-  //   bool? isValid,
-  //   FormStatus? formStatus,
-  //   QuantityField? quantityField,
-  // }) {
-  //   return MaterialProformaFormState(
-  //     isValid: isValid ?? this.isValid,
-  //     formStatus: formStatus ?? this.formStatus,
-  //     quantityField: quantityField ?? this.quantityField,
-  //   );
-  // }
 }

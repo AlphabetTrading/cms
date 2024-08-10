@@ -103,7 +103,7 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
                     _showCustomPopupMenu(context);
                   },
                   icon: SvgPicture.asset(
-                    "icons/common/filter.svg",
+                    "assets/icons/common/filter.svg",
                     height: 25,
                     width: 25,
                   ),
@@ -510,7 +510,7 @@ class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
-                        "../../../../../assets/icons/common/filter.svg",
+                        "assets/icons/common/filter.svg",
                         height: 20,
                         width: 20,
                       ),

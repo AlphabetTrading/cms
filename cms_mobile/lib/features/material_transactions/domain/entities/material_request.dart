@@ -66,17 +66,7 @@ class MaterialRequestItem extends Equatable {
 
 
   // from json
-  factory MaterialRequestItem.fromJson(Map<String, dynamic> json) {
-    return MaterialRequestItem(
-      id: json['id'],
-      quantity: json['quantity'],
-      remark: json['remark'],
-      productVariantId: json['productVariantId'],
-      productVariant: json['productVariant'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-    );
-  }
+
 
   // to json
   Map<String, dynamic> toJson() {

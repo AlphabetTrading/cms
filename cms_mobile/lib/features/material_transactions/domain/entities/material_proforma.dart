@@ -4,6 +4,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart';
 
 class MaterialProformaEntity extends Equatable {
   final UserEntity? approvedBy;
@@ -148,48 +149,50 @@ class MaterialProformaEntityListWithMeta extends Equatable {
 
 class MaterialProformaMaterialEntity extends Equatable {
   final double quantity;
+  final double unitPrice;
   final String? remark;
-  final WarehouseProductEntity? material;
-  final UseType useType;
-  final SubStructureUseDescription? subStructureDescription;
-  final SuperStructureUseDescription? superStructureDescription;
+  final String photo;
+  final String vendor;
+  final MultipartFile? multipartFile;
 
-  const MaterialProformaMaterialEntity({
-    this.remark,
-    this.material,
-    required this.quantity,
-    this.subStructureDescription,
-    this.superStructureDescription,
-    required this.useType,
-  });
+  const MaterialProformaMaterialEntity(
+      {required this.unitPrice,
+      required this.remark,
+      required this.photo,
+      required this.quantity,
+      required this.vendor,
+      required this.multipartFile,
+      });
 
   @override
-  List<Object?> get props => [
-        remark,
-        quantity,
-        material,
-        useType,
-        subStructureDescription,
-        superStructureDescription,
-      ];
+  List<Object?> get props => [unitPrice, remark, photo, vendor, quantity,multipartFile];
 }
 
 class CreateMaterialProformaParamsEntity<
     T extends MaterialProformaMaterialEntity> extends Equatable {
   final String projectId;
   final String preparedById;
-  final String warehouseStoreId;
+  final String materialRequestItemId;
   final List<T> materialProformaMaterials;
 
   const CreateMaterialProformaParamsEntity(
       {required this.projectId,
       required this.preparedById,
       required this.materialProformaMaterials,
-      required this.warehouseStoreId});
+      required this.materialRequestItemId});
 
   @override
-  List<Object?> get props =>
-      [preparedById, projectId, materialProformaMaterials];
+  String toString() {
+    return 'CreateMaterialProformaParamsEntity(projectId: $projectId, preparedById: $preparedById, materialRequestItemId: $materialRequestItemId, materialProformaMaterials: $materialProformaMaterials)';
+  }
+
+  @override
+  List<Object?> get props => [
+        projectId,
+        preparedById,
+        materialProformaMaterials,
+        materialRequestItemId
+      ];
 }
 
 class EditMaterialProformaParamsEntity<T extends MaterialProformaMaterialEntity>

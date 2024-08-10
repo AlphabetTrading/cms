@@ -6,6 +6,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_issue_form/material_issue_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/modal_error.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
@@ -56,14 +57,7 @@ class _CreateMaterialIssueFormState extends State<CreateMaterialIssueForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   state.warehouseProducts == null || state.warehouseProducts!.isEmpty
-                      ? Text(
-                          "Please select a warehouse first",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(
-                                  color: Theme.of(context).colorScheme.error),
-                        )
+                      ? const ModalError(errorMessage: "Please select a warehouse first")
                       : const SizedBox(),
                   CustomDropdown(
                     initialSelection: materialDropdown.value != ""

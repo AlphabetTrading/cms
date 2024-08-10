@@ -114,16 +114,4 @@ class MaterialProformasEmpty extends MaterialProformaState {
 //       : super(error: error);
 // }
 
-// Create Material Issue
-class CreateMaterialProformaLoading extends MaterialProformaState {
-  const CreateMaterialProformaLoading();
-}
 
-class CreateMaterialProformaSuccess extends MaterialProformaState {
-  const CreateMaterialProformaSuccess();
-}
-
-class CreateMaterialProformaFailed extends MaterialProformaState {
-  const CreateMaterialProformaFailed({required Failure error})
-      : super(error: error);
-}

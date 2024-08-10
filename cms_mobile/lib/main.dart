@@ -7,7 +7,6 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/dai
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma_local/material_proforma_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
@@ -80,9 +79,6 @@ void main() async {
           ),
           BlocProvider<MaterialReceiveLocalBloc>(
             create: (context) => sl<MaterialReceiveLocalBloc>(),
-          ),
-          BlocProvider<MaterialProformaLocalBloc>(
-            create: (context) => sl<MaterialProformaLocalBloc>(),
           ),
           BlocProvider<MaterialIssueLocalBloc>(
             create: (context) => sl<MaterialIssueLocalBloc>(),

@@ -9,8 +9,8 @@ class ProductVariantEntity extends Equatable {
   final ProductEntity? product;
   final String? productId;
   final String? variant;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const ProductVariantEntity(
       {required this.id,

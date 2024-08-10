@@ -93,8 +93,8 @@ class WarehouseProductModel extends WarehouseProductEntity {
   factory WarehouseProductModel.fromJson(Map<String, dynamic> json) {
     return WarehouseProductModel(
       productVariant: ProductVariantModel.fromJson(json['productVariant']),
-      quantity: json['quantity'],
-      currentPrice: json['currentPrice'],
+      quantity: (json['quantity'] as num).toDouble(),
+      currentPrice: (json['currentPrice'] as num).toDouble(),
     );
   }
 }

@@ -1,3 +1,4 @@
+// boilerplate
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
