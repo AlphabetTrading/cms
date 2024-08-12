@@ -68,17 +68,6 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
         );
   }
 
-  _buildOnCreateFailed(BuildContext context) {
-    Fluttertoast.showToast(
-        msg: "Create Material Issue Failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final materialIssueFormCubit = context.watch<MaterialIssueFormCubit>();
@@ -96,7 +85,15 @@ class _MaterialIssueCreatePageState extends State<MaterialIssueCreatePage> {
                 if (issueState is CreateMaterialIssueSuccess) {
                   _buildOnCreateSuccess(issueContext);
                 } else if (issueState is CreateMaterialIssueFailed) {
-                  _buildOnCreateFailed(issueContext);
+    
+                  Fluttertoast.showToast(
+                      msg: issueState.error?.errorMessage??"Error creating material issue",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 3,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 }
               },
               builder: (issueContext, issueState) {

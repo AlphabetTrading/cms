@@ -117,10 +117,10 @@ class ReceiveVoucherMaterialModel extends ReceiveVoucherMaterialEntity {
         productVariant: json["productVariant"] != null
             ? ProductVariantModel.fromJson(json['productVariant'])
             : null,
-        quantity: json['quantity'],
+        quantity: (json['quantity'] as num).toDouble(),
         remark: json['remark'],
-        totalCost: json['totalCost'],
-        unitCost: json['unitCost'],
+        totalCost: (json['totalCost'] as num).toDouble(),
+        unitCost: (json['unitCost'] as num).toDouble(),
         subStructureDescription: subStructureUseDescriptionFromString(
             json['subStructureDescription']),
         superStructureDescription: superStructureUseDescriptionFromString(

@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
@@ -200,7 +201,8 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                                   "",
                               receivingStoreId:
                                   warehouseForm.state.warehouseDropdown.value,
-                              returnedById: USER_ID,
+                              returnedById:  context.read<AuthBloc>().state.user?.id ??
+                                    USER_ID,
                               // warehouseStoreId: "",
 
                               materialReturnMaterials:
