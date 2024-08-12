@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_state.dart';
@@ -211,7 +212,8 @@ class _CreateMaterialReceivePageState
                                   "",
                               receivingStoreId:
                                   warehouseForm.state.warehouseDropdown.value,
-                              returnedById: USER_ID,
+                              returnedById: context.read<AuthBloc>().state.user?.id ??
+                                    USER_ID,
                               materialReceiveMaterials: localState
                                   .materialReceiveMaterials!
                                   .map((e) => MaterialReceiveMaterialEntity(

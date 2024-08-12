@@ -106,7 +106,7 @@ Widget _buildScreen({
     case 2:
       return const MaterialTransactionsTabScreen();
     case 3:
-      return const CreateMaterialProformaPage();
+      return const MilestonesTabScreen();
     default:
       return const Text("index default");
   }

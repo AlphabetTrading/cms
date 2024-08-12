@@ -2,6 +2,7 @@ import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
 import 'package:cms_mobile/core/widgets/status_message.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
@@ -207,7 +208,8 @@ class _MilestoneFormState extends State<MilestoneForm> {
                                             .read<CreateMilestoneCubit>()
                                             .onCreateMilestone(
                                                 params: CreateMilestoneParamsEntity(
-                                                    createdById: USER_ID,
+                                                    createdById: context.read<AuthBloc>().state.user?.id ??
+                                    USER_ID,
                                                     description:
                                                         descriptionField.value,
                                                     dueDate:

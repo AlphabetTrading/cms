@@ -11,12 +11,15 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/create_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proforma/material_proforma_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_proformas.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receive/create_material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receive/material_receive_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_request/material_request_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return/create_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
 import 'package:cms_mobile/features/products/presentation/pages/products_page.dart';
@@ -208,7 +211,7 @@ class AppRouter {
                   name: RouteNames.materialReceivingCreate,
                   path: RoutePaths.materialReceivingCreate,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const CreateMaterialRequestPage();
+                    return const CreateMaterialReceivePage();
                   },
                 ),
                 GoRoute(
@@ -222,8 +225,8 @@ class AppRouter {
                   name: RouteNames.materialReceivingDetails,
                   path: RoutePaths.materialReceivingDetails,
                   builder: (BuildContext context, GoRouterState state) {
-                    return MaterialRequestDetailsPage(
-                        materialRequestId:
+                    return MaterialReceiveDetailsPage(
+                        materialReceiveId:
                             state.pathParameters['materialReceivingId']!);
                   },
                 ),
@@ -235,6 +238,13 @@ class AppRouter {
               builder: (BuildContext context, GoRouterState state) {
                 return const MaterialReturnsPage();
               },
+              routes: <RouteBase>[
+                GoRoute(
+                  name: RouteNames.materialReturnCreate,
+                  path: RoutePaths.materialReturnCreate,
+                  builder: (context, state) => const CreateMaterialReturnPage(),
+                ),
+              ],
             ),
             GoRoute(
               name: RouteNames.purchaseOrder,

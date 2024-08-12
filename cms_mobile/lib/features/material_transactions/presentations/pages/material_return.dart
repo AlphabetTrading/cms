@@ -71,7 +71,7 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            context.goNamed(RouteNames.materialIssueCreate);
+            context.goNamed(RouteNames.materialReturnCreate);
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),

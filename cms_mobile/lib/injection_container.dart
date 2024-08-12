@@ -68,9 +68,11 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
@@ -739,7 +741,15 @@ Future<void> initializeDependencies() async {
     () => MaterialReceiveBloc(sl<GetMaterialReceivesUseCase>(),
         sl<GetMaterialReceiveDetailsUseCase>()),
   );
+    sl.registerFactory<MaterialReceiveLocalBloc>(
+    () => MaterialReceiveLocalBloc(),
+  );
 
+  sl.registerFactory<CreateMaterialReceiveCubit>(
+    () => CreateMaterialReceiveCubit(
+      sl<CreateMaterialReceiveUseCase>(),
+    ),
+  );
   sl.registerFactory<MaterialReceiveDetailsCubit>(
     () => MaterialReceiveDetailsCubit(
       sl<GetMaterialReceiveDetailsUseCase>(),

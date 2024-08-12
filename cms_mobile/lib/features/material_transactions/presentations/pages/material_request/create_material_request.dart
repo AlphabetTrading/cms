@@ -144,7 +144,8 @@ class CreateMaterialRequestPage extends StatelessWidget {
                                                 projectId:
                                                    context.read<ProjectBloc>().state.selectedProjectId??"",
                                                 requestedById:
-                                                   USER_ID,
+                                                   context.read<AuthBloc>().state.user?.id ??
+                                    USER_ID,
                                                 materialRequestMaterials: localState
                                                     .materialRequestMaterials!
                                                     .map((e) =>
