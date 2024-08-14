@@ -104,7 +104,7 @@ export class DocumentTransactionService {
                   approvedById: userId,
                 },
                 {
-                  purchasedById: userId,
+                  preparedById: userId,
                 },
                 ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
                   userId,

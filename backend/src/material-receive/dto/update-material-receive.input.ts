@@ -21,11 +21,7 @@ export class UpdateMaterialReceiveInput {
 
   @IsOptional()
   @Field(() => String, { nullable: true })
-  purchaseOrderId?: string;
-
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  purchasedById?: string;
+  preparedById?: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

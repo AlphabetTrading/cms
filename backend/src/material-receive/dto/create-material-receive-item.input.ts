@@ -6,19 +6,11 @@ export class CreateMaterialReceiveItemInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  productVariantId: string;
+  purchaseOrderItemId: string;
 
   @Field(() => Number)
   @IsNotEmpty()
-  quantity: number;
-
-  @Field(() => Number)
-  @IsNotEmpty()
-  unitCost: number;
-
-  @Field(() => Number)
-  @IsNotEmpty()
-  totalCost: number;
+  receivedQuantity: number;
 
   @Field(() => Number)
   @IsNotEmpty()

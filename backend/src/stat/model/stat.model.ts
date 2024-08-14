@@ -49,4 +49,10 @@ export class DetailedStockStat {
 
   @Field(() => Number, { nullable: true })
   totalItemWasted?: number;
+
+  @Field(() => Number, { nullable: true })
+  totalItemBought?: number;
+
+  @Field(() => Number, { nullable: true })
+  totalItemLost?: number;
 }

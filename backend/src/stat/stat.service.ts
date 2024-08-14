@@ -77,23 +77,66 @@ export class StatService {
     };
 
     if (productVariantId) {
-      where.items = { some: { productVariantId } };
-    }
-    if (productId) {
       where.items = {
         some: {
-          productVariant: {
-            productId,
+          purchaseOrderItem: {
+            proforma: {
+              materialRequestItem: {
+                productVariant: {
+                  id: productVariantId,
+                },
+              },
+            },
+            materialRequestItem: {
+              productVariant: {
+                id: productVariantId,
+              },
+            },
           },
         },
       };
     }
+
+    if (productId) {
+      where.items = {
+        some: {
+          purchaseOrderItem: {
+            proforma: {
+              materialRequestItem: {
+                productVariant: {
+                  productId,
+                },
+              },
+            },
+            materialRequestItem: {
+              productVariant: {
+                productId,
+              },
+            },
+          },
+        },
+      };
+    }
+
     if (productType) {
       where.items = {
         some: {
-          productVariant: {
-            product: {
-              productType,
+          purchaseOrderItem: {
+            proforma: {
+              materialRequestItem: {
+                productVariant: {
+                  product: {
+                    productType,
+                  },
+                },
+              },
+            },
+            materialRequestItem: {
+              productVariant: {
+                product: {
+                  productType,
+                },
+              },
             },
           },
         },
@@ -107,9 +150,30 @@ export class StatService {
           Project: true,
           items: {
             include: {
-              productVariant: {
+              purchaseOrderItem: {
                 include: {
-                  product: true,
+                  proforma: {
+                    include: {
+                      materialRequestItem: {
+                        include: {
+                          productVariant: {
+                            include: {
+                              product: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  materialRequestItem: {
+                    include: {
+                      productVariant: {
+                        include: {
+                          product: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -123,12 +187,22 @@ export class StatService {
       for (const item of voucher.items) {
         if (
           (!productVariantId && !productId && !productType) ||
-          (productVariantId && item.productVariantId === productVariantId) ||
-          (productId && item.productVariant.productId === productId) ||
+          (productVariantId &&
+            (item.purchaseOrderItem.materialRequestItem.productVariantId ||
+              item.purchaseOrderItem.proforma.materialRequestItem
+                .productVariantId) === productVariantId) ||
+          (productId &&
+            (item.purchaseOrderItem.materialRequestItem.productVariant
+              .productId ||
+              item.purchaseOrderItem.proforma.materialRequestItem.productVariant
+                .productId) === productId) ||
           (productType &&
-            item.productVariant.product.productType === productType)
+            (item.purchaseOrderItem.materialRequestItem.productVariant.product
+              .productType ||
+              item.purchaseOrderItem.materialRequestItem.productVariant.product
+                .productType) === productType)
         ) {
-          totalItemCost += item.totalCost;
+          totalItemCost += item.purchaseOrderItem.totalPrice;
         }
       }
     }
@@ -181,6 +255,15 @@ export class StatService {
       },
     };
 
+    const materialReceiveWhere: Prisma.MaterialReceiveVoucherWhereInput = {
+      projectId,
+      status: 'COMPLETED',
+      createdAt: {
+        gte: start,
+        lte: end,
+      },
+    };
+
     if (productVariantId) {
       where.tasks = {
         some: {
@@ -208,6 +291,37 @@ export class StatService {
       },
     });
 
+    const materialReceives = await this.prisma.materialReceiveVoucher.findMany({
+      where: materialReceiveWhere,
+      include: {
+        Project: true,
+        items: {
+          include: {
+            purchaseOrderItem: {
+              include: {
+                materialRequestItem: {
+                  include: {
+                    productVariant: true,
+                  },
+                },
+                proforma: {
+                  include: {
+                    materialRequestItem: {
+                      include: {
+                        productVariant: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    let totalItemBought = 0;
+    let totalItemLost = 0;
     let totalItemUsed = 0;
     let totalItemWasted = 0;
 
@@ -224,9 +338,27 @@ export class StatService {
       }
     }
 
+    for (const materialReceive of materialReceives) {
+      for (const item of materialReceive.items) {
+        if (
+          !productVariantId ||
+          (productVariantId &&
+            (item.purchaseOrderItem.materialRequestItem.productVariantId ||
+              item.purchaseOrderItem.proforma.materialRequestItem
+                .productVariantId) === productVariantId)
+        ) {
+          totalItemBought += item.purchaseOrderItem.quantity;
+          totalItemLost +=
+            item.purchaseOrderItem.quantity - item.receivedQuantity;
+        }
+      }
+    }
+
     return {
       totalItemUsed,
       totalItemWasted,
+      totalItemBought,
+      totalItemLost,
     };
   }
 
@@ -242,8 +374,14 @@ export class StatService {
   private async getProjectExpenditure(projectId: string) {
     const materialReceiveVouchers =
       await this.prisma.materialReceiveVoucher.findMany({
-        where: { projectId, status: "COMPLETED" },
-        include: { items: true },
+        where: { projectId, status: 'COMPLETED' },
+        include: {
+          items: {
+            include: {
+              purchaseOrderItem: true,
+            },
+          },
+        },
       });
 
     let totalItemCost = 0;
@@ -252,7 +390,7 @@ export class StatService {
 
     for (const voucher of materialReceiveVouchers) {
       for (const item of voucher.items) {
-        totalItemCost += item.totalCost;
+        totalItemCost += item.purchaseOrderItem.totalPrice;
         totalLaborCost += item.unloadingCost + item.loadingCost;
         totalTransportationCost += item.transportationCost;
       }

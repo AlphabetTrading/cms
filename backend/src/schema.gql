@@ -105,19 +105,16 @@ input CreateMaterialIssueItemInput {
 input CreateMaterialReceiveInput {
   approvedById: String
   items: [CreateMaterialReceiveItemInput!]!
+  preparedById: String!
   projectId: String!
-  purchaseOrderId: String!
-  purchasedById: String!
   warehouseStoreId: String!
 }
 
 input CreateMaterialReceiveItemInput {
   loadingCost: Float!
-  productVariantId: String!
-  quantity: Float!
-  totalCost: Float!
+  purchaseOrderItemId: String!
+  receivedQuantity: Float!
   transportationCost: Float!
-  unitCost: Float!
   unloadingCost: Float!
 }
 
@@ -403,6 +400,8 @@ input DateTimeFilter {
 }
 
 type DetailedStockStat {
+  totalItemBought: Float
+  totalItemLost: Float
   totalItemUsed: Float
   totalItemWasted: Float
 }
@@ -502,12 +501,10 @@ input FilterMaterialReceiveInput {
   approvedById: String
   createdAt: DateTimeFilter
   id: String
+  preparedBy: FilterUserDocumentsInput
+  preparedById: String
   project: FilterProjectInput
   projectId: String
-  purchaseOrder: FilterPurchaseOrderInput
-  purchaseOrderId: String
-  purchasedBy: FilterUserDocumentsInput
-  purchasedById: String
   serialNumber: StringFilter
   status: [ApprovalStatus!]
 }
@@ -736,13 +733,12 @@ type MaterialReceiveItem {
   createdAt: DateTime!
   id: ID!
   loadingCost: Float
+  materialReceiveVoucher: MaterialReceiveVoucher
   materialReceiveVoucherId: String
-  productVariant: ProductVariant
-  productVariantId: String
-  quantity: Float
-  totalCost: Float
+  purchaseOrderItem: PurchaseOrderItem
+  purchaseOrderItemId: String
+  receivedQuantity: Float
   transportationCost: Float
-  unitCost: Float
   unloadingCost: Float
 
   """Identifies the date and time when the object was last updated."""
@@ -750,6 +746,7 @@ type MaterialReceiveItem {
 }
 
 type MaterialReceiveVoucher {
+  MaterialTransferVoucher: [MaterialTransferVoucher!]
   Project: Project
   WarehouseStore: WarehouseStore
   approvedBy: User
@@ -759,11 +756,9 @@ type MaterialReceiveVoucher {
   createdAt: DateTime!
   id: ID!
   items: [MaterialReceiveItem!]
+  preparedBy: User
+  preparedById: String
   projectId: String
-  purchaseOrder: PurchaseOrderVoucher
-  purchaseOrderId: String
-  purchasedBy: User
-  purchasedById: String
   serialNumber: String
   status: ApprovalStatus
 
@@ -1565,20 +1560,17 @@ input UpdateMaterialReceiveInput {
   approvedById: String
   id: String!
   items: [UpdateMaterialReceiveItemInput!]
+  preparedById: String
   projectId: String
-  purchaseOrderId: String
-  purchasedById: String
   status: ApprovalStatus
   warehouseStoreId: String
 }
 
 input UpdateMaterialReceiveItemInput {
   loadingCost: Float
-  productVariantId: String
-  quantity: Float
-  totalCost: Float
+  purchaseOrderItemId: String
+  receivedQuantity: Float
   transportationCost: Float
-  unitCost: Float
   unloadingCost: Float
 }
 

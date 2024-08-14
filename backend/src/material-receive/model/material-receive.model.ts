@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ApprovalStatus } from '@prisma/client';
 import { BaseModel } from 'src/common/models/base.model';
-import { ProductVariant } from 'src/product-variant/model/product-variant.model';
+import { MaterialTransferVoucher } from 'src/material-transfer/model/material-transfer.model';
 import { Project } from 'src/project/model/project.model';
-import { PurchaseOrderVoucher } from 'src/purchase-order/model/purchase-order.model';
+import { PurchaseOrderItem } from 'src/purchase-order/model/purchase-order.model';
 import { User } from 'src/user/user.model';
 import { WarehouseStore } from 'src/warehouse-store/model/warehouse-store.model';
 
@@ -22,16 +22,10 @@ export class MaterialReceiveVoucher extends BaseModel {
   items?: MaterialReceiveItem[];
 
   @Field(() => String, { nullable: true })
-  purchaseOrderId?: string;
-
-  @Field(() => PurchaseOrderVoucher, { nullable: true })
-  purchaseOrder?: PurchaseOrderVoucher;
-
-  @Field(() => String, { nullable: true })
-  purchasedById?: string;
+  preparedById?: string;
 
   @Field(() => User, { nullable: true })
-  purchasedBy?: User;
+  preparedBy?: User;
 
   @Field(() => String, { nullable: true })
   approvedById?: string;
@@ -50,24 +44,21 @@ export class MaterialReceiveVoucher extends BaseModel {
     nullable: true,
   })
   status?: ApprovalStatus;
+
+  @Field(() => [MaterialTransferVoucher], { nullable: true })
+  MaterialTransferVoucher?: MaterialTransferVoucher[];
 }
 
 @ObjectType()
 export class MaterialReceiveItem extends BaseModel {
   @Field(() => String, { nullable: true })
-  productVariantId?: string;
+  purchaseOrderItemId?: string;
 
-  @Field(() => ProductVariant, { nullable: true })
-  productVariant?: ProductVariant;
-
-  @Field(() => Number, { nullable: true })
-  quantity?: number;
+  @Field(() => PurchaseOrderItem, { nullable: true })
+  purchaseOrderItem?: PurchaseOrderItem;
 
   @Field(() => Number, { nullable: true })
-  unitCost?: number;
-
-  @Field(() => Number, { nullable: true })
-  totalCost?: number;
+  receivedQuantity?: number;
 
   @Field(() => Number, { nullable: true })
   unloadingCost?: number;
@@ -80,4 +71,7 @@ export class MaterialReceiveItem extends BaseModel {
 
   @Field(() => String, { nullable: true })
   materialReceiveVoucherId?: string;
+
+  @Field(() => MaterialReceiveVoucher, { nullable: true })
+  materialReceiveVoucher?: MaterialReceiveVoucher;
 }

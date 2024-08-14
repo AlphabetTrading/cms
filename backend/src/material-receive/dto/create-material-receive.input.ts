@@ -14,11 +14,7 @@ export class CreateMaterialReceiveInput {
 
   @IsNotEmpty()
   @Field(() => String)
-  purchaseOrderId: string;
-
-  @IsNotEmpty()
-  @Field(() => String)
-  purchasedById: string;
+  preparedById: string;
 
   @IsNotEmpty()
   @Field(() => String)

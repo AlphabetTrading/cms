@@ -8,16 +8,10 @@ export class UpdateMaterialReceiveItemInput extends PartialType(
 ) {
   @Field(() => String, { nullable: true })
   @IsString()
-  productVariantId?: string;
+  purchaseOrderItemId?: string;
 
   @Field(() => Number, { nullable: true })
-  quantity?: number;
-
-  @Field(() => Number, { nullable: true })
-  unitCost?: number;
-
-  @Field(() => Number, { nullable: true })
-  totalCost?: number;
+  receivedQuantity?: number;
 
   @Field(() => Number, { nullable: true })
   unloadingCost?: number;

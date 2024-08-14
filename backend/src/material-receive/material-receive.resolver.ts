@@ -11,7 +11,7 @@ import { ApprovalStatus, Prisma, User } from '@prisma/client';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { HasRoles, UserEntity } from 'src/common/decorators';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
+// import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @UseGuards(GqlAuthGuard)
 //@UseGuards(GqlAuthGuard, RolesGuard)
@@ -65,16 +65,10 @@ export class MaterialReceiveResolver {
               serialNumber: filterMaterialReceiveInput?.serialNumber,
             },
             {
-              purchasedById: filterMaterialReceiveInput?.purchasedById,
+              preparedById: filterMaterialReceiveInput?.preparedById,
             },
             {
-              purchasedBy: filterMaterialReceiveInput?.purchasedBy,
-            },
-            {
-              purchaseOrderId: filterMaterialReceiveInput?.purchaseOrderId,
-            },
-            {
-              purchaseOrder: filterMaterialReceiveInput?.purchaseOrder,
+              preparedBy: filterMaterialReceiveInput?.preparedBy,
             },
             {
               approvedById: filterMaterialReceiveInput?.approvedById,
@@ -97,7 +91,7 @@ export class MaterialReceiveResolver {
       if (mine) {
         baseConditions.push({
           OR: [
-            { purchasedById: user.id },
+            { preparedById: user.id },
             { approvedById: user.id },
             ...(approverIds.includes(user.id)
               ? [

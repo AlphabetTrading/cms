@@ -40,10 +40,8 @@ export class MaterialReceiveService {
           serialNumber: serialNumber,
           items: {
             create: createMaterialReceive.items.map((item) => ({
-              productVariantId: item.productVariantId,
-              quantity: item.quantity,
-              unitCost: item.unitCost,
-              totalCost: item.totalCost,
+              purchaseOrderItemId: item.purchaseOrderItemId,
+              receivedQuantity: item.receivedQuantity,
               loadingCost: item.loadingCost,
               unloadingCost: item.unloadingCost,
               transportationCost: item.transportationCost,
@@ -53,17 +51,37 @@ export class MaterialReceiveService {
         include: {
           items: {
             include: {
-              productVariant: {
+              purchaseOrderItem: {
                 include: {
-                  product: true,
+                  proforma: {
+                    include: {
+                      materialRequestItem: {
+                        include: {
+                          productVariant: {
+                            include: {
+                              product: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  materialRequestItem: {
+                    include: {
+                      productVariant: {
+                        include: {
+                          product: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
           },
           Project: true,
           approvedBy: true,
-          purchasedBy: true,
-          purchaseOrder: true,
+          preparedBy: true,
           WarehouseStore: true,
         },
       });
@@ -90,17 +108,37 @@ export class MaterialReceiveService {
       include: {
         items: {
           include: {
-            productVariant: {
+            purchaseOrderItem: {
               include: {
-                product: true,
+                proforma: {
+                  include: {
+                    materialRequestItem: {
+                      include: {
+                        productVariant: {
+                          include: {
+                            product: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                materialRequestItem: {
+                  include: {
+                    productVariant: {
+                      include: {
+                        product: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
         Project: true,
         approvedBy: true,
-        purchasedBy: true,
-        purchaseOrder: true,
+        preparedBy: true,
         WarehouseStore: true,
       },
     });
@@ -145,18 +183,37 @@ export class MaterialReceiveService {
         include: {
           items: {
             include: {
-              productVariant: {
+              purchaseOrderItem: {
                 include: {
-                  product: true,
+                  proforma: {
+                    include: {
+                      materialRequestItem: {
+                        include: {
+                          productVariant: {
+                            include: {
+                              product: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  materialRequestItem: {
+                    include: {
+                      productVariant: {
+                        include: {
+                          product: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
           },
           Project: true,
-
           approvedBy: true,
-          purchasedBy: true,
-          purchaseOrder: true,
+          preparedBy: true,
           WarehouseStore: true,
         },
       },
@@ -181,7 +238,7 @@ export class MaterialReceiveService {
       }
 
       const itemUpdateConditions = updateData.items.map((item) => ({
-        productVariantId: item.productVariantId,
+        purchaseOrderItemId: item.purchaseOrderItemId,
       }));
 
       const updatedMaterialReceive = await prisma.materialReceiveVoucher.update(
@@ -201,18 +258,37 @@ export class MaterialReceiveService {
           include: {
             items: {
               include: {
-                productVariant: {
+                purchaseOrderItem: {
                   include: {
-                    product: true,
+                    proforma: {
+                      include: {
+                        materialRequestItem: {
+                          include: {
+                            productVariant: {
+                              include: {
+                                product: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                    materialRequestItem: {
+                      include: {
+                        productVariant: {
+                          include: {
+                            product: true,
+                          },
+                        },
+                      },
+                    },
                   },
                 },
               },
             },
             Project: true,
-
             approvedBy: true,
-            purchasedBy: true,
-            purchaseOrder: true,
+            preparedBy: true,
             WarehouseStore: true,
           },
         },
@@ -271,12 +347,40 @@ export class MaterialReceiveService {
       {
         where: { id: materialReceiveId },
         include: {
-          Project: true,
           items: {
             include: {
-              productVariant: true,
+              purchaseOrderItem: {
+                include: {
+                  proforma: {
+                    include: {
+                      materialRequestItem: {
+                        include: {
+                          productVariant: {
+                            include: {
+                              product: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  materialRequestItem: {
+                    include: {
+                      productVariant: {
+                        include: {
+                          product: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
+          Project: true,
+          approvedBy: true,
+          preparedBy: true,
+          WarehouseStore: true,
         },
       },
     );
@@ -295,7 +399,10 @@ export class MaterialReceiveService {
           const stock = await prisma.warehouseProduct.findUnique({
             where: {
               productVariantId_warehouseId_projectId: {
-                productVariantId: item.productVariantId,
+                productVariantId:
+                  item.purchaseOrderItem.materialRequestItem.productVariantId ||
+                  item.purchaseOrderItem.proforma.materialRequestItem
+                    .productVariantId,
                 warehouseId: materialReceive.warehouseStoreId,
                 projectId: materialReceive.projectId,
               },
@@ -307,16 +414,20 @@ export class MaterialReceiveService {
               data: {
                 projectId: materialReceive.projectId,
                 warehouseId: materialReceive.warehouseStoreId,
-                productVariantId: item.productVariantId,
-                quantity: item.quantity,
-                currentPrice: item.unitCost,
+                productVariantId:
+                  item.purchaseOrderItem.materialRequestItem.productVariantId ||
+                  item.purchaseOrderItem.proforma.materialRequestItem
+                    .productVariantId,
+                quantity: item.receivedQuantity,
+                currentPrice: item.purchaseOrderItem.unitPrice,
               },
             });
           } else {
             const totalValueOfExistingStock =
               stock.currentPrice * stock.quantity;
-            const totalValueOfNewStock = item.unitCost * item.quantity;
-            const totalQuantityOfStock = stock.quantity + item.quantity;
+            const totalValueOfNewStock =
+              item.purchaseOrderItem.unitPrice * item.receivedQuantity;
+            const totalQuantityOfStock = stock.quantity + item.receivedQuantity;
             const newAveragePrice =
               (totalValueOfExistingStock + totalValueOfNewStock) /
               totalQuantityOfStock;
@@ -331,12 +442,15 @@ export class MaterialReceiveService {
           }
 
           const companyId = materialReceive.Project.companyId;
-  
+
           await prisma.priceHistory.create({
             data: {
-              productVariantId: item.productVariantId,
+              productVariantId:
+                item.purchaseOrderItem.materialRequestItem.productVariantId ||
+                item.purchaseOrderItem.proforma.materialRequestItem
+                  .productVariantId,
               companyId: companyId,
-              price: item.unitCost,
+              price: item.purchaseOrderItem.unitPrice,
             },
           });
         }
@@ -375,18 +489,37 @@ export class MaterialReceiveService {
         include: {
           items: {
             include: {
-              productVariant: {
+              purchaseOrderItem: {
                 include: {
-                  product: true,
+                  proforma: {
+                    include: {
+                      materialRequestItem: {
+                        include: {
+                          productVariant: {
+                            include: {
+                              product: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  materialRequestItem: {
+                    include: {
+                      productVariant: {
+                        include: {
+                          product: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
           },
           Project: true,
-
           approvedBy: true,
-          purchasedBy: true,
-          purchaseOrder: true,
+          preparedBy: true,
           WarehouseStore: true,
         },
       },
@@ -493,11 +626,6 @@ export class MaterialReceiveService {
                     <label>Document No:</label>
                     <span id="reference-no">${materialReceive.serialNumber}</span>
                   </div>
-
-                  <div>
-                    <label>Purchase Req. No:</label>
-                    <span id="store-name">${materialReceive.purchaseOrder.serialNumber || ''}</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -518,13 +646,28 @@ export class MaterialReceiveService {
                       (item, index) => `
                 <tr>
                   <td class="col-item-no">${index + 1}</td>
-                  <td class="col-description">${item.productVariant.variant} ${item.productVariant.product.name}</td>
-                  <td style="text-transform: lowercase;" class="col-uom">${item.productVariant.unitOfMeasure}</td>
-                  <td class="col-quantity">${item.quantity}</td>
-                  <td class="col-cost-money">${item.unitCost.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(item.unitCost.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
-                  <td class="col-cost-money">${item.totalCost.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(item.totalCost.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-description">${
+                    item.purchaseOrderItem.materialRequestItem.productVariant
+                      .variant ||
+                    item.purchaseOrderItem.proforma.materialRequestItem
+                      .productVariant.variant
+                  } ${
+                    item.purchaseOrderItem.materialRequestItem.productVariant
+                      .product.name ||
+                    item.purchaseOrderItem.proforma.materialRequestItem
+                      .productVariant.product.name
+                  }</td>
+                  <td style="text-transform: lowercase;" class="col-uom">${
+                    item.purchaseOrderItem.materialRequestItem.productVariant
+                      .unitOfMeasure ||
+                    item.purchaseOrderItem.proforma.materialRequestItem
+                      .productVariant.unitOfMeasure
+                  }</td>
+                  <td class="col-quantity">${item.receivedQuantity}</td>
+                  <td class="col-cost-money">${item.purchaseOrderItem.unitPrice.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(item.purchaseOrderItem.unitPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${item.purchaseOrderItem.totalPrice.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(item.purchaseOrderItem.totalPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                 </tr>
                 `,
                     )
@@ -534,7 +677,7 @@ export class MaterialReceiveService {
             <div class="approval">
               <div class="approval-section">
                 <label>Prepared By:</label>
-                <span id="requested-by">${materialReceive.purchasedBy.fullName}</span>
+                <span id="requested-by">${materialReceive.preparedBy.fullName}</span>
               </div>
               <div class="approval-section">
                 <label>Approved By:</label>

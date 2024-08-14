@@ -1145,11 +1145,19 @@ async function seedMaterialReceiveVouchers() {
       ProjectUsers: true,
     },
   });
-  const purchase_orders = await prisma.purchaseOrder.findMany();
   const warehouse_stores = await prisma.warehouseStore.findMany();
 
   try {
     for (const project of projects) {
+      const purchase_orders = await prisma.purchaseOrder.findMany({
+        where: {
+          projectId: project.id,
+        },
+        include: {
+          items: true,
+        },
+      });
+
       const project_managers = await prisma.user.findMany({
         where: {
           role: 'PROJECT_MANAGER',
@@ -1177,64 +1185,78 @@ async function seedMaterialReceiveVouchers() {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
             approvedById: project_managers[0].id,
-            purchasedById: purchasers[0].id,
+            preparedById: purchasers[0].id,
             warehouseStoreId: warehouse_stores[0].id,
-            purchaseOrderId: purchase_orders[0].id,
             status: ApprovalStatus.COMPLETED,
           },
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
             warehouseStoreId: warehouse_stores[1].id,
-            purchasedById: purchasers[0].id,
-            purchaseOrderId: purchase_orders[3].id,
+            preparedById: purchasers[0].id,
             status: ApprovalStatus.PENDING,
           },
           {
             serialNumber: generateSerialNumber(),
             projectId: project.id,
             warehouseStoreId: warehouse_stores[2].id,
-            purchasedById: purchasers[0].id,
-            purchaseOrderId: purchase_orders[3].id,
+            preparedById: purchasers[0].id,
             status: ApprovalStatus.PENDING,
           },
         ];
-
-        const productVariants = await prisma.productVariant.findMany();
 
         for (const data of receiveVouchers) {
           const materialReceiveVoucher =
             await prisma.materialReceiveVoucher.create({
               include: {
-                items: true,
+                items: {
+                  include: {
+                    purchaseOrderItem: {
+                      include: {
+                        materialRequestItem: true,
+                        proforma: {
+                          include: {
+                            materialRequestItem: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
               data: {
                 ...data,
                 items: {
                   create: [
                     {
-                      quantity: 10,
-                      productVariantId: productVariants[0].id,
-                      totalCost: 100,
-                      unitCost: 10,
+                      receivedQuantity:
+                        Math.floor(
+                          Math.random() *
+                            (purchase_orders[0].items[1].quantity - 1),
+                        ) + 1,
+                      purchaseOrderItemId: purchase_orders[0].items[1].id,
                       loadingCost: 800,
                       unloadingCost: 1100,
                       transportationCost: 1500,
                     },
                     {
-                      quantity: 10,
-                      productVariantId: productVariants[1].id,
-                      totalCost: 50,
-                      unitCost: 5,
+                      receivedQuantity:
+                        Math.floor(
+                          Math.random() *
+                            (purchase_orders[1].items[2].quantity - 1),
+                        ) + 1,
+                      purchaseOrderItemId: purchase_orders[1].items[2].id,
                       loadingCost: 1200,
                       unloadingCost: 600,
                       transportationCost: 1000,
                     },
                     {
-                      quantity: 100,
-                      productVariantId: productVariants[2].id,
-                      totalCost: 150,
-                      unitCost: 1.5,
+                      receivedQuantity:
+                        Math.floor(
+                          Math.random() *
+                            (purchase_orders[2].items[0].quantity - 1),
+                        ) + 1,
+                      purchaseOrderItemId: purchase_orders[2].items[0].id,
                       loadingCost: 1000,
                       unloadingCost: 1000,
                       transportationCost: 2000,
@@ -1247,9 +1269,13 @@ async function seedMaterialReceiveVouchers() {
             if (data.status === 'COMPLETED') {
               await prisma.priceHistory.create({
                 data: {
-                  productVariantId: item.productVariantId,
+                  productVariantId:
+                    item.purchaseOrderItem.materialRequestItem
+                      ?.productVariantId ||
+                    item.purchaseOrderItem.proforma.materialRequestItem
+                      ?.productVariantId,
                   companyId: project.companyId,
-                  price: item.unitCost,
+                  price: item.purchaseOrderItem.unitPrice,
                 },
               });
             }
@@ -1455,8 +1481,20 @@ async function seedPurchaseOrders() {
                   {
                     materialRequestItemId: materialRequests[0].items[0].id,
                     quantity: materialRequests[0].items[0].quantity,
-                    totalPrice: 1000,
+                    totalPrice: materialRequests[0].items[0].quantity * 100,
                     unitPrice: 100,
+                  },
+                  {
+                    materialRequestItemId: materialRequests[0].items[1].id,
+                    quantity: materialRequests[0].items[1].quantity,
+                    totalPrice: materialRequests[0].items[1].quantity * 15,
+                    unitPrice: 15,
+                  },
+                  {
+                    materialRequestItemId: materialRequests[0].items[2].id,
+                    quantity: materialRequests[0].items[2].quantity,
+                    totalPrice: materialRequests[0].items[2].quantity * 35,
+                    unitPrice: 35,
                   },
                 ],
               },

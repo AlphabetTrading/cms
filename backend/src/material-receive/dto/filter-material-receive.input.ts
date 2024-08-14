@@ -3,7 +3,6 @@ import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { StringFilter } from 'src/common/filter/string-filter';
 import { FilterProjectInput } from 'src/project/dto/filter-project.input';
-import { FilterPurchaseOrderInput } from 'src/purchase-order/dto/filter-purchase-order.input';
 import { FilterUserDocumentsInput } from 'src/user/dto/filter-user-documents.input';
 
 registerEnumType(ApprovalStatus, {
@@ -26,16 +25,10 @@ export class FilterMaterialReceiveInput {
   project?: Prisma.ProjectWhereInput;
 
   @Field(() => String, { nullable: true })
-  purchasedById?: string;
+  preparedById?: string;
 
   @Field(() => FilterUserDocumentsInput, { nullable: true })
-  purchasedBy?: Prisma.UserWhereInput;
-
-  @Field(() => String, { nullable: true })
-  purchaseOrderId?: string;
-
-  @Field(() => FilterPurchaseOrderInput, { nullable: true })
-  purchaseOrder?: Prisma.PurchaseOrderWhereInput;
+  preparedBy?: Prisma.UserWhereInput;
 
   @Field(() => String, { nullable: true })
   approvedById?: string;
