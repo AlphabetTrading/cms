@@ -21,4 +21,8 @@ export class UpdateMaterialReceiveItemInput extends PartialType(
 
   @Field(() => Number, { nullable: true })
   transportationCost?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  remark?: string;
 }

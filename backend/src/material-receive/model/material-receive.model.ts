@@ -70,6 +70,9 @@ export class MaterialReceiveItem extends BaseModel {
   transportationCost?: number;
 
   @Field(() => String, { nullable: true })
+  remark?: string;
+
+  @Field(() => String, { nullable: true })
   materialReceiveVoucherId?: string;
 
   @Field(() => MaterialReceiveVoucher, { nullable: true })

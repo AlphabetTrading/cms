@@ -370,6 +370,7 @@ model MaterialReceiveItem {
   unloadingCost            Float
   loadingCost              Float
   transportationCost       Float
+  remark                   String?
   materialReceiveVoucherId String
   MaterialReceiveVoucher   MaterialReceiveVoucher @relation(fields: [materialReceiveVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 

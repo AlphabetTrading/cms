@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateMaterialReceiveItemInput {
@@ -23,4 +23,9 @@ export class CreateMaterialReceiveItemInput {
   @Field(() => Number)
   @IsNotEmpty()
   transportationCost: number;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  remark?: string;
 }

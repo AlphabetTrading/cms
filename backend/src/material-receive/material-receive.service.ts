@@ -45,6 +45,7 @@ export class MaterialReceiveService {
               loadingCost: item.loadingCost,
               unloadingCost: item.unloadingCost,
               transportationCost: item.transportationCost,
+              remark: item.remark,
             })),
           },
         },
@@ -638,6 +639,7 @@ export class MaterialReceiveService {
                   <th class="col-quantity">Quantity</th>
                   <th colspan="2" class="col-cost">Unit Cost</th>
                   <th colspan="2" class="col-cost">Total Cost</th>
+                  <th class="col-remark">Remark</th>
                 </tr>
               </thead>
               <tbody id="items">
@@ -668,7 +670,8 @@ export class MaterialReceiveService {
                   <td class="col-cost-cent">${(item.purchaseOrderItem.unitPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                   <td class="col-cost-money">${item.purchaseOrderItem.totalPrice.toLocaleString().split('.')[0]}</td>
                   <td class="col-cost-cent">${(item.purchaseOrderItem.totalPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
-                </tr>
+                  <td class="col-remark">${item.remark || ''}</td>
+                  </tr>
                 `,
                     )
                     .join('')}
