@@ -39,7 +39,12 @@ export class ProjectService {
           },
         },
         Milestones: true,
-        ProjectUsers: true,
+        ProjectUsers: {
+          include: {
+            user: true,
+            project: true,
+          },
+        },
       },
     });
 
@@ -70,7 +75,12 @@ export class ProjectService {
           },
         },
         Milestones: true,
-        ProjectUsers: true,
+        ProjectUsers: {
+          include: {
+            user: true,
+            project: true,
+          },
+        },
       },
     });
     return projects;
@@ -89,7 +99,12 @@ export class ProjectService {
           },
         },
         Milestones: true,
-        ProjectUsers: true,
+        ProjectUsers: {
+          include: {
+            user: true,
+            project: true,
+          },
+        },
       },
     });
     return project;
@@ -117,7 +132,12 @@ export class ProjectService {
           },
         },
         Milestones: true,
-        ProjectUsers: true,
+        ProjectUsers: {
+          include: {
+            user: true,
+            project: true,
+          },
+        },
       },
     });
 
