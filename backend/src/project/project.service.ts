@@ -41,8 +41,16 @@ export class ProjectService {
         Milestones: true,
         ProjectUsers: {
           include: {
-            user: true,
-            project: true,
+            user: {
+              include: {
+                company: true,
+              },
+            },
+            project: {
+              include: {
+                company: true,
+              },
+            },
           },
         },
       },
@@ -77,8 +85,16 @@ export class ProjectService {
         Milestones: true,
         ProjectUsers: {
           include: {
-            user: true,
-            project: true,
+            user: {
+              include: {
+                company: true,
+              },
+            },
+            project: {
+              include: {
+                company: true,
+              },
+            },
           },
         },
       },
@@ -101,8 +117,16 @@ export class ProjectService {
         Milestones: true,
         ProjectUsers: {
           include: {
-            user: true,
-            project: true,
+            user: {
+              include: {
+                company: true,
+              },
+            },
+            project: {
+              include: {
+                company: true,
+              },
+            },
           },
         },
       },
@@ -134,8 +158,16 @@ export class ProjectService {
         Milestones: true,
         ProjectUsers: {
           include: {
-            user: true,
-            project: true,
+            user: {
+              include: {
+                company: true,
+              },
+            },
+            project: {
+              include: {
+                company: true,
+              },
+            },
           },
         },
       },

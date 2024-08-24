@@ -114,6 +114,7 @@ input CreateMaterialReceiveItemInput {
   loadingCost: Float!
   purchaseOrderItemId: String!
   receivedQuantity: Float!
+  remark: String
   transportationCost: Float!
   unloadingCost: Float!
 }
@@ -738,6 +739,7 @@ type MaterialReceiveItem {
   purchaseOrderItem: PurchaseOrderItem
   purchaseOrderItemId: String
   receivedQuantity: Float
+  remark: String
   transportationCost: Float
   unloadingCost: Float
 
@@ -1314,10 +1316,12 @@ type ProjectUser {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   id: ID!
+  project: Project
   projectId: String
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
+  user: User
   userId: String
 }
 
@@ -1570,6 +1574,7 @@ input UpdateMaterialReceiveItemInput {
   loadingCost: Float
   purchaseOrderItemId: String
   receivedQuantity: Float
+  remark: String
   transportationCost: Float
   unloadingCost: Float
 }
