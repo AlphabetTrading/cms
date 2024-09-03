@@ -35,12 +35,12 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
     _client = client;
   }
   @override
-  Future<DataState<MaterialTransferEntityListWithMeta>> fetchMaterialTransfers(
-      {FilterMaterialTransferInput? filterMaterialTransferInput,
-      OrderByMaterialTransferInput? orderBy,
-      PaginationInput? paginationInput, 
-      bool? mine,
-      }) async {
+  Future<DataState<MaterialTransferEntityListWithMeta>> fetchMaterialTransfers({
+    FilterMaterialTransferInput? filterMaterialTransferInput,
+    OrderByMaterialTransferInput? orderBy,
+    PaginationInput? paginationInput,
+    bool? mine,
+  }) async {
     String fetchMaterialTransfersQuery;
 
     fetchMaterialTransfersQuery = r'''
@@ -102,21 +102,6 @@ class MaterialTransferDataSourceImpl extends MaterialTransferDataSource {
               createdAt
               id
               projectId
-              purchaseOrder {
-                approvedById
-                createdAt
-                grandTotal
-                id
-                preparedById
-                projectId
-                serialNumber
-                status
-                subTotal
-                updatedAt
-                vat
-              }
-              purchaseOrderId
-              purchasedById
               serialNumber
               status
               updatedAt

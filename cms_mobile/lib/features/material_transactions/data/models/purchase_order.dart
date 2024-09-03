@@ -82,6 +82,18 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
 }
 
 class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
+  //            __typename: PurchaseOrderItem,
+//            createdAt: 2024-08-14T12:05:31.315Z,
+//            id: 84d47293-e5a0-4372-9028-477e2a99b504,
+//            materialRequestItemId: 540a5fa4-db98-4060-8178-988a4de827c7,
+//            proformaId: null,
+//            purchaseOrderId: c144367d-2eb9-46c4-88b1-2cfbbf20a25e,
+//            quantity: 10,
+//            remark: null,
+//            totalPrice: 150,
+//            unitPrice: 15,
+//            updatedAt: 2024-08-14T12:05:31.315Z
+  //          }
   const PurchaseOrderItemModel({
     required super.id,
     ProductVariantModel? super.productVariant,

@@ -6,29 +6,17 @@ import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 // ignore: must_be_immutable
 class MaterialTransferItemModel extends MaterialTransferItemEntity {
   MaterialTransferItemModel(
-      {String? id,
-      String? materialTransferVoucherId,
-      ProductVariantModel? productVariant,
-      String? productVariantId,
-      int? quantityRequested,
-      int? quantityTransferred,
-      String? remark,
-      int? totalCost,
-      int? unitCost,
-      required DateTime createdAt,
-      required DateTime updatedAt})
-      : super(
-            id: id,
-            materialTransferVoucherId: materialTransferVoucherId,
-            productVariant: productVariant,
-            productVariantId: productVariantId,
-            quantityRequested: quantityRequested,
-            quantityTransferred: quantityTransferred,
-            remark: remark,
-            totalCost: totalCost,
-            unitCost: unitCost,
-            createdAt: createdAt,
-            updatedAt: updatedAt);
+      {super.id,
+      super.materialTransferVoucherId,
+      ProductVariantModel? super.productVariant,
+      super.productVariantId,
+      super.quantityRequested,
+      super.quantityTransferred,
+      super.remark,
+      super.totalCost,
+      super.unitCost,
+      required super.createdAt,
+      required super.updatedAt});
 
   factory MaterialTransferItemModel.fromJson(Map<String, dynamic> json) {
     return MaterialTransferItemModel(

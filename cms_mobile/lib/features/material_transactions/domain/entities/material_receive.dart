@@ -1,11 +1,10 @@
 import 'package:cms_mobile/core/entities/meta.dart';
-import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:equatable/equatable.dart';
 
 class MaterialReceiveEntity extends Equatable {
@@ -16,11 +15,9 @@ class MaterialReceiveEntity extends Equatable {
   final UserEntity? approvedBy;
   final String? projectDetails;
   final String? requisitionNumber;
-  final List<ReceiveVoucherMaterialEntity>? items;
+  final List<MaterialReceiveItemEntity>? items;
   final String? preparedById;
   final UserEntity? preparedBy;
-  final String? receivedById;
-  final UserEntity? receivedBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final ProjectEntity? project;
@@ -37,8 +34,6 @@ class MaterialReceiveEntity extends Equatable {
     this.approvedById,
     this.approvedBy,
     this.status,
-    this.receivedBy,
-    this.receivedById,
     this.updatedAt,
     this.createdAt,
     this.project,
@@ -104,10 +99,9 @@ class MaterialReceiveEntityListWithMeta {
   });
 }
 
-
 class MaterialReceiveMaterialEntity extends Equatable {
   final String purchaseOrderId;
-  final IssueVoucherMaterialEntity? material;
+  // final ReceiveVoucherMaterialModel? material;
   final double? transportationCost;
   final double? loadingCost;
   final double? unloadingCost;
@@ -116,7 +110,7 @@ class MaterialReceiveMaterialEntity extends Equatable {
 
   const MaterialReceiveMaterialEntity({
     required this.purchaseOrderId,
-    required this.material,
+    // required this.material,
     required this.transportationCost,
     required this.loadingCost,
     required this.unloadingCost,
@@ -124,9 +118,8 @@ class MaterialReceiveMaterialEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-        purchaseOrderId, material, transportationCost, loadingCost, unloadingCost
-      ];
+  List<Object?> get props =>
+      [purchaseOrderId, transportationCost, loadingCost, unloadingCost];
 }
 
 class CreateMaterialReceiveParamsEntity<T extends MaterialReceiveMaterialEntity>
@@ -140,12 +133,48 @@ class CreateMaterialReceiveParamsEntity<T extends MaterialReceiveMaterialEntity>
       {required this.projectId,
       required this.materialReceiveMaterials,
       required this.receivingStoreId,
-      required this.returnedById
-      });
+      required this.returnedById});
 
   @override
   List<Object?> get props =>
       [projectId, receivingStoreId, returnedById, materialReceiveMaterials];
 }
 
+class MaterialReceiveItemEntity extends Equatable {
+  final String id;
+  final String materialReceiveVoucherId;
+  final String purchaseOrderItemId;
+  final double loadingCost;
+  final double transportationCost;
+  final double unloadingCost;
+  final String remark;
+  final double receivedQuantity;
+  final PurchaseOrderItemEntity? purchaseOrderItem;
 
+  const MaterialReceiveItemEntity({
+    required this.id,
+    required this.materialReceiveVoucherId,
+    required this.purchaseOrderItemId,
+    required this.loadingCost,
+    required this.transportationCost,
+    required this.unloadingCost,
+    required this.remark,
+    required this.receivedQuantity,
+    required this.purchaseOrderItem,
+  });
+
+  @override
+  List<Object?> get props => [
+        id,
+        materialReceiveVoucherId,
+        purchaseOrderItemId,
+        loadingCost,
+        transportationCost,
+        unloadingCost,
+        remark,
+        receivedQuantity,
+        purchaseOrderItem
+      ];
+}
+
+class MaterialReceiveVoucherEntity {}

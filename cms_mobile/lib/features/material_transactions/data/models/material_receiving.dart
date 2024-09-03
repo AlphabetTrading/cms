@@ -1,13 +1,12 @@
 import 'package:cms_mobile/core/entities/string_filter.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:flutter/material.dart';
 
 class MaterialReceiveModel extends MaterialReceiveEntity {
@@ -19,11 +18,9 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
     UserModel? super.approvedBy,
     required super.projectDetails,
     required super.requisitionNumber,
-    List<ReceiveVoucherMaterialModel>? super.items,
+    List<MaterialReceiveItemModel>? super.items,
     required super.preparedById,
     UserModel? super.preparedBy,
-    required super.receivedById,
-    UserModel? super.receivedBy,
     required super.createdAt,
     required super.updatedAt,
     WarehouseModel? super.warehouse,
@@ -47,12 +44,18 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
         // items: json['items'].map<ReceiveVoucherMaterialModel>((item) {
         //   return ReceiveVoucherMaterialModel.fromJson(item);
         // }).toList(),
+        // items: json['items'] != null
+        //     ? json['items']
+        //         .map<ReceiveVoucherMaterialModel>(
+        //             (item) => ReceiveVoucherMaterialModel.fromJson(item))
+        //         .toList()
+        //     : <ReceiveVoucherMaterialModel>[], // if items is null, return an empty list
         items: json['items'] != null
             ? json['items']
-                .map<ReceiveVoucherMaterialModel>(
-                    (item) => ReceiveVoucherMaterialModel.fromJson(item))
+                .map<MaterialReceiveItemModel>(
+                    (item) => MaterialReceiveItemModel.fromJson(item))
                 .toList()
-            : <ReceiveVoucherMaterialModel>[], // if items is null, return an empty list
+            : <MaterialReceiveItemModel>[], // if items is null, return an empty list
         preparedById: json['preparedById'],
         preparedBy: json['preparedBy'] != null
             ? UserModel.fromJson(json['preparedBy'])
@@ -62,10 +65,6 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
             ? UserModel.fromJson(json['approvedBy'])
             : null,
         status: json['status'],
-        receivedById: json['receivedById'],
-        receivedBy: json['receivedBy'] != null
-            ? UserModel.fromJson(json['receivedBy'])
-            : null,
         createdAt: json['createdAt'] != null
             ? DateTime.parse(json['createdAt'])
             : null,
@@ -89,8 +88,6 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
       'items': items,
       'preparedById': preparedById,
       'preparedBy': preparedBy,
-      'receivedById': receivedById,
-      'receivedBy': receivedBy,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -164,28 +161,103 @@ class MaterialReceiveListWithMeta extends MaterialReceiveEntityListWithMeta {
 
 class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
   const MaterialReceiveMaterialModel({
-    required String purchaseOrderId,
-    final IssueVoucherMaterialModel? material,
-    final double? transportationCost,
-    final double? loadingCost,
-    final double? unloadingCost,
-    final String? remark,
-  }) : super(
-            purchaseOrderId: purchaseOrderId,
-            material: material,
-            transportationCost: transportationCost,
-            loadingCost: loadingCost,
-            unloadingCost: unloadingCost,
-            remark: remark);
+    required super.purchaseOrderId,
+    // super.material,
+    super.transportationCost,
+    super.loadingCost,
+    super.unloadingCost,
+    super.remark,
+  });
 
   Map<String, dynamic> toJson() {
     return {
       'purchaseOrderId': purchaseOrderId,
-      'material': material,
+      // 'material': material,
       'transportationCost': transportationCost,
       'loadingCost': loadingCost,
       'unloadingCost': unloadingCost,
       'remark': remark,
+    };
+  }
+
+  factory MaterialReceiveMaterialModel.fromJson(Map<String, dynamic> json) {
+    debugPrint("MaterialReceiveMaterialModel.fromJson: $json");
+// {__typename: MaterialReceiveItem,
+//createdAt: 2024-08-14T12:06:35.012Z,
+//id: fe5f60c7-38e5-402d-b400-2426a2edf8d8, loadingCost: 800,
+//materialReceiveVoucherId: 702581fb-c8b7-408b-994c-3d5c2e96b5b1,
+// transportationCost: 1500,
+// unloadingCost: 1100,
+// updatedAt: 2024-08-14T12:06:35.012Z,
+// remark: null,
+// receivedQuantity: 2,
+// purchaseOrderItemId: 84d47293-e5a0-4372-9028-477e2a99b504,
+// purchaseOrderItem: {
+//    __typename: PurchaseOrderItem,
+//    createdAt: 2024-08-14T12:05:31.315Z,
+//    id: 84d47293-e5a0-4372-9028-477e2a99b504,
+//    materialRequestItemId: 540a5fa4-db98-4060-8178-988a4de827c7,
+//    proformaId: null,
+//    purchaseOrderId: c144367d-2eb9-46c4-88b1-2cfbbf20a25e,
+//    quantity: 10,
+//    remark: null,
+//    totalPrice: 150,
+//    unitPrice: 15,
+// updatedAt: 2024-08-14T12:05:31.315Z}}
+    return MaterialReceiveMaterialModel(
+        purchaseOrderId: json['purchaseOrderItemId'],
+        // material: json['purchaseOrderItem'] != null
+        //     ? ReceiveVoucherMaterialModel.fromJson(json['purchaseOrderItem'])
+        //     : null,
+        transportationCost: json['transportationCost'],
+        loadingCost: json['loadingCost'],
+        unloadingCost: json['unloadingCost'],
+        remark: json['remark']);
+  }
+}
+
+class MaterialReceiveItemModel extends MaterialReceiveItemEntity {
+  const MaterialReceiveItemModel({
+    required super.id,
+    required super.materialReceiveVoucherId,
+    required super.purchaseOrderItemId,
+    required super.loadingCost,
+    required super.transportationCost,
+    required super.unloadingCost,
+    required super.remark,
+    required super.receivedQuantity,
+    super.purchaseOrderItem,
+  });
+
+  factory MaterialReceiveItemModel.fromJson(Map<String, dynamic> json) {
+    debugPrint("MaterialReceiveItemModel.fromJson: $json");
+
+    return MaterialReceiveItemModel(
+      id: json['id'],
+      materialReceiveVoucherId: json['materialReceiveVoucherId'],
+      purchaseOrderItemId: json['purchaseOrderItemId'],
+      loadingCost: json['loadingCost'],
+      transportationCost: json['transportationCost'],
+      unloadingCost: json['unloadingCost'],
+      remark: json['remark'] ?? '',
+      receivedQuantity: json['receivedQuantity'],
+      purchaseOrderItem: json['purchaseOrderItem'] != null
+          ? PurchaseOrderItemModel.fromJson(json['purchaseOrderItem'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'materialReceiveVoucherId': materialReceiveVoucherId,
+      'purchaseOrderItemId': purchaseOrderItemId,
+      'loadingCost': loadingCost,
+      'transportationCost': transportationCost,
+      'unloadingCost': unloadingCost,
+      'remark': remark,
+      'receivedQuantity': receivedQuantity,
+      'purchaseOrderItem': purchaseOrderItem,
     };
   }
 }
@@ -220,7 +292,7 @@ class CreateMaterialReceiveParamsModel
         materialReceiveMaterials: entity.materialReceiveMaterials
             .map((e) => MaterialReceiveMaterialModel(
                 purchaseOrderId: e.purchaseOrderId,
-                material: e.material as IssueVoucherMaterialModel,
+                // material: e.material as ReceiveVoucherMaterialModel,
                 transportationCost: e.transportationCost,
                 loadingCost: e.loadingCost,
                 unloadingCost: e.unloadingCost,

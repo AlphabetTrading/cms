@@ -4,7 +4,6 @@ import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/create/create_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_state.dart';
@@ -31,8 +30,7 @@ class CreateMaterialReceivePage extends StatefulWidget {
       _CreateMaterialReceivePageState();
 }
 
-class _CreateMaterialReceivePageState
-    extends State<CreateMaterialReceivePage> {
+class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
   @override
   void initState() {
     super.initState();
@@ -80,13 +78,13 @@ class _CreateMaterialReceivePageState
           create: (context) => sl<MaterialReceiveLocalBloc>(),
         ),
       ],
-      child:
-          BlocBuilder<MaterialReceiveLocalBloc, MaterialReceiveLocalState>(
+      child: BlocBuilder<MaterialReceiveLocalBloc, MaterialReceiveLocalState>(
         builder: (localContext, localState) {
           return BlocBuilder<MaterialReceiveWarehouseFormCubit,
                   MaterialReceiveWarehouseFormState>(
               builder: (warehouseFormContext, warehouseFormState) {
-            return BlocConsumer<CreateMaterialReceiveCubit, CreateMaterialReceiveState>(
+            return BlocConsumer<CreateMaterialReceiveCubit,
+                CreateMaterialReceiveState>(
               listener: (receivingContext, receivingState) {
                 if (receivingState is CreateMaterialReceiveSuccess) {
                   _buildOnCreateSuccess(receivingContext);
@@ -201,33 +199,34 @@ class _CreateMaterialReceivePageState
               : () {
                   warehouseForm.onSubmit();
                   if (warehouseForm.state.isValid) {
-                    context.read<CreateMaterialReceiveCubit>().
-                          onCreateMaterialReceive(
-                            createMaterialReceiveParamsEntity:
-                                CreateMaterialReceiveParamsEntity(
-                              projectId: context
-                                      .read<ProjectBloc>()
-                                      .state
-                                      .selectedProjectId ??
-                                  "",
-                              receivingStoreId:
-                                  warehouseForm.state.warehouseDropdown.value,
-                              returnedById: context.read<AuthBloc>().state.user?.id ??
+                    context
+                        .read<CreateMaterialReceiveCubit>()
+                        .onCreateMaterialReceive(
+                          createMaterialReceiveParamsEntity:
+                              CreateMaterialReceiveParamsEntity(
+                            projectId: context
+                                    .read<ProjectBloc>()
+                                    .state
+                                    .selectedProjectId ??
+                                "",
+                            receivingStoreId:
+                                warehouseForm.state.warehouseDropdown.value,
+                            returnedById:
+                                context.read<AuthBloc>().state.user?.id ??
                                     USER_ID,
-                              materialReceiveMaterials: localState
-                                  .materialReceiveMaterials!
-                                  .map((e) => MaterialReceiveMaterialEntity(
-                                        transportationCost: e.transportationCost,
-                                        loadingCost: e.loadingCost,
-                                        unloadingCost: e.unloadingCost,
-                                        purchaseOrderId: e.purchaseOrderId,
-                                        remark: e.remark,
-                                        material: e.material,
-                                      ))
-                                  .toList(),
-                            ),
-                          )
-                        ;
+                            materialReceiveMaterials: localState
+                                .materialReceiveMaterials!
+                                .map((e) => MaterialReceiveMaterialEntity(
+                                      transportationCost: e.transportationCost,
+                                      loadingCost: e.loadingCost,
+                                      unloadingCost: e.unloadingCost,
+                                      purchaseOrderId: e.purchaseOrderId,
+                                      remark: e.remark,
+                                      // material: e.material,
+                                    ))
+                                .toList(),
+                          ),
+                        );
                   }
                 },
           style: ElevatedButton.styleFrom(

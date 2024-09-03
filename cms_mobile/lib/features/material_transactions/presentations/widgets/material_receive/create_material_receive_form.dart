@@ -32,8 +32,7 @@ class CreateMaterialReceiveForm extends StatefulWidget {
       _CreateMaterialReceiveFormState();
 }
 
-class _CreateMaterialReceiveFormState
-    extends State<CreateMaterialReceiveForm> {
+class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
   final myController = TextEditingController();
   @override
   void initState() {
@@ -55,8 +54,7 @@ class _CreateMaterialReceiveFormState
 
   @override
   Widget build(BuildContext context) {
-    final materialReceiveFormCubit =
-        context.watch<MaterialReceiveFormCubit>();
+    final materialReceiveFormCubit = context.watch<MaterialReceiveFormCubit>();
     final transportationField =
         materialReceiveFormCubit.state.transportationField;
     final loadingField = materialReceiveFormCubit.state.loadingField;
@@ -168,8 +166,8 @@ class _CreateMaterialReceiveFormState
                     children: [
                       FormInfoItem(
                           title: "Unit Cost",
-                          value:
-                              selectedMaterialIssue?.warehouseStore?.name ?? "N/A"),
+                          value: selectedMaterialIssue?.warehouseStore?.name ??
+                              "N/A"),
                       FormInfoItem(
                           title: "Total Quantity Purchased",
                           value:
@@ -204,8 +202,7 @@ class _CreateMaterialReceiveFormState
                                   : "",
                           keyboardType: TextInputType.number,
                           label: "Unloading Cost",
-                          onChanged:
-                              materialReceiveFormCubit.unloadingChanged,
+                          onChanged: materialReceiveFormCubit.unloadingChanged,
                           errorMessage: unloadingField.errorMessage,
                         ),
                       ),
@@ -256,36 +253,36 @@ class _CreateMaterialReceiveFormState
                       materialReceiveFormCubit.onSubmit();
                       if (materialReceiveFormCubit.state.isValid) {
                         if (widget.isEdit) {
-                          final updated = MaterialReceiveMaterialEntity(
-                            material: selectedMaterial,
-                            purchaseOrderId: selectedMaterialIssue?.id ?? "",
-                            transportationCost:
-                                double.parse(transportationField.value),
-                            loadingCost: double.parse(loadingField.value),
-                            unloadingCost: double.parse(unloadingField.value),
-                            remark: remarkField.value,
-                          );
+                          // final updated = MaterialReceiveMaterialEntity(
+                          //   material: selectedMaterial,
+                          //   purchaseOrderId: selectedMaterialIssue?.id ?? "",
+                          //   transportationCost:
+                          //       double.parse(transportationField.value),
+                          //   loadingCost: double.parse(loadingField.value),
+                          //   unloadingCost: double.parse(unloadingField.value),
+                          //   remark: remarkField.value,
+                          // );
 
-                          BlocProvider.of<MaterialReceiveLocalBloc>(context)
-                              .add(EditMaterialReceiveMaterialLocal(
-                                  updated, widget.index));
+                          // BlocProvider.of<MaterialReceiveLocalBloc>(context)
+                          //     .add(EditMaterialReceiveMaterialLocal(
+                          // updated, widget.index));
                         } else {
-                          BlocProvider.of<MaterialReceiveLocalBloc>(context)
-                              .add(
-                            AddMaterialReceiveMaterialLocal(
-                              MaterialReceiveMaterialEntity(
-                                material: selectedMaterial,
-                                purchaseOrderId:
-                                    selectedMaterialIssue?.id ?? "",
-                                transportationCost:
-                                    double.parse(transportationField.value),
-                                loadingCost: double.parse(loadingField.value),
-                                unloadingCost:
-                                    double.parse(unloadingField.value),
-                                remark: remarkField.value,
-                              ),
-                            ),
-                          );
+                          // BlocProvider.of<MaterialReceiveLocalBloc>(context)
+                          //     .add(
+                          //   AddMaterialReceiveMaterialLocal(
+                          //     MaterialReceiveMaterialEntity(
+                          //       material: selectedMaterial,
+                          //       purchaseOrderId:
+                          //           selectedMaterialIssue?.id ?? "",
+                          //       transportationCost:
+                          //           double.parse(transportationField.value),
+                          //       loadingCost: double.parse(loadingField.value),
+                          //       unloadingCost:
+                          //           double.parse(unloadingField.value),
+                          //       remark: remarkField.value,
+                          //     ),
+                          //   ),
+                          // );
                         }
                         Navigator.pop(context);
                       }

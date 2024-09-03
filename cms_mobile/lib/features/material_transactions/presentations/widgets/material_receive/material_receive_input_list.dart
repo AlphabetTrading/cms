@@ -19,13 +19,15 @@ class MaterialReceiveInputList extends StatelessWidget {
       itemCount: materialReceives.length,
       itemBuilder: (context, index) {
         final materialReceive = materialReceives[index];
-        final productVariant = materialReceive.material?.productVariant;
+        // final productVariant = materialReceive.material?.productVariant;
         return MaterialTransactionMaterialItem(
-          title:
-              '${productVariant?.product?.name} - ${productVariant?.variant}',
-          subtitle:
-              'Amount: ${materialReceive.material?.quantity} ${unitOfMeasureDisplay(materialReceive.material?.productVariant?.unitOfMeasure)}',
-          iconSrc: productVariant?.product?.iconSrc,
+          title: "Material Receive",
+          // '${productVariant?.product?.name} - ${productVariant?.variant}',
+          subtitle: "",
+          // subtitle:
+          //     'Amount: ${materialReceive.material?.quantity} ${unitOfMeasureDisplay(materialReceive.material?.productVariant?.unitOfMeasure)}',
+          // iconSrc: productVariant?.product?.iconSrc,
+          iconSrc: "",
           onDelete: () => BlocProvider.of<MaterialReceiveLocalBloc>(context)
               .add(DeleteMaterialReceiveMaterialLocal(index)),
           onEdit: () => showModalBottomSheet(
@@ -36,12 +38,11 @@ class MaterialReceiveInputList extends StatelessWidget {
                   BlocProvider<MaterialReceiveFormCubit>(
                     create: (_) => MaterialReceiveFormCubit(
                       purchaseOrderId: materialReceive.purchaseOrderId,
-                      materialId: materialReceive.material?.productVariant?.id,
+                      // materialId: materialReceive.material?.productVariant?.id,
                       transportationCost: materialReceive.transportationCost,
                       loadingCost: materialReceive.loadingCost,
                       unloadingCost: materialReceive.unloadingCost,
                       remark: materialReceive.remark,
-                      
                     ),
                   )
                 ],

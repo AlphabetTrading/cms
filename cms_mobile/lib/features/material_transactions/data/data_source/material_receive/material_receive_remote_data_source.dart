@@ -171,17 +171,6 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
           createdAt
           id
           projectId
-          purchaseOrderId
-          purchasedBy {
-            createdAt
-            email
-            fullName
-            id
-            phoneNumber
-            role
-            updatedAt
-          }
-          purchasedById
           serialNumber
           status
           updatedAt
@@ -194,50 +183,59 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
             updatedAt
           }
           warehouseStoreId
-          purchaseOrder {
-            approvedBy {
-              createdAt
-              email
-              fullName
-              id
-              phoneNumber
-              role
-              updatedAt
-            }
-            approvedById
-            createdAt
-            grandTotal
-            id
-            preparedById
-            projectId
-            serialNumber
-            status
-            subTotal
-            updatedAt
-            vat
-            preparedBy {
-              createdAt
-              email
-              fullName
-              id
-              phoneNumber
-              role
-              updatedAt
-            }
-          }
+        
           items {
             createdAt
             id
             loadingCost
             materialReceiveVoucherId
-            productVariantId
-            quantity
-            totalCost
             transportationCost
-            unitCost
             unloadingCost
             updatedAt
+            remark
+            receivedQuantity
+            purchaseOrderItemId
+            purchaseOrderItem {
+              createdAt
+              id
+              materialRequestItemId
+              proformaId
+              purchaseOrderId
+              quantity
+              remark
+              totalPrice
+              unitPrice
+              updatedAt
+            }
           }
+          MaterialTransferVoucher {
+            approvedById
+            createdAt
+            id
+            materialGroup
+            materialReceiveId
+            preparedById
+            projectId
+            receivingWarehouseStoreId
+            requisitionNumber
+            sendingStore
+            sendingWarehouseStoreId
+            sentThroughName
+            serialNumber
+            status
+            updatedAt
+            vehiclePlateNo
+          }
+          preparedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
+          }
+          preparedById
         }
         meta {
           count
