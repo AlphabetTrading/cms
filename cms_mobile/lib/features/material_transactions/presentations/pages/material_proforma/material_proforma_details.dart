@@ -33,7 +33,7 @@ class _MaterialProformaDetailsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Material Issue Details")),
+      appBar: AppBar(title: const Text("Material Proforma Details")),
       body: BlocProvider<MaterialProformaDetailsCubit>(
         create: (context) => sl<MaterialProformaDetailsCubit>()
           ..onGetMaterialProformaDetails(
@@ -49,7 +49,7 @@ class _MaterialProformaDetailsPageState
               final materialProforma = state.materialProforma;
               final preparedBy = materialProforma?.preparedBy;
               final approvedBy = materialProforma?.approvedBy;
-
+              // final proformaItems = materialProforma?.
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -58,7 +58,7 @@ class _MaterialProformaDetailsPageState
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Issue Info",
+                          "Proforma Info",
                           style: Theme.of(context)
                               .textTheme
                               .labelLarge
@@ -85,7 +85,7 @@ class _MaterialProformaDetailsPageState
                         children: [
                           const SizedBox(height: 12),
                           TransactionInfoItem(
-                              title: 'Material Issue Number',
+                              title: 'Material Proforma Number',
                               value: materialProforma?.serialNumber ?? 'N/A'),
                           const SizedBox(height: 12),
                           TransactionInfoItem(
@@ -128,6 +128,95 @@ class _MaterialProformaDetailsPageState
                       ],
                     ),
                     const SizedBox(height: 24),
+                    //      Expanded(
+                    //   child: ListView.builder(
+                    //     itemCount: materialIssueMaterials.length,
+                    //     itemBuilder: (context, index) {
+                    //       final materialIssueMaterial =
+                    //           materialIssueMaterials[index];
+                    //       final productVariant =
+                    //           materialIssueMaterial.productVariant;
+                    //       return MaterialTransactionMaterialItem(
+                    //         title:
+                    //             '${productVariant?.product?.name} - ${productVariant?.variant}',
+                    //         subtitle:
+                    //             'Issued Quantity: ${materialIssueMaterial.quantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}',
+                    //         iconSrc:
+                    //             'assets/icons/transactions/light/material_issues.svg',
+                    //         onDelete: () {},
+                    //         onEdit: () {},
+                    //         onOpen: () {
+                    //           showModalBottomSheet(
+                    //             context: context,
+                    //             builder: (context) => Padding(
+                    //               padding: const EdgeInsets.all(32.0),
+                    //               child: Wrap(children: [
+                    //                 Column(
+                    //                   children: [
+                    //                     ProductDetail(
+                    //                         title: "Name",
+                    //                         value:
+                    //                             '${productVariant?.product?.name} - ${productVariant?.variant}'),
+                    //                     const SizedBox(
+                    //                       height: 10,
+                    //                     ),
+                    //                     ProductDetail(
+                    //                         title: "Use Type",
+                    //                         value: useTypeDisplay[
+                    //                                 materialIssueMaterial
+                    //                                     .useType] ??
+                    //                             'N/A'),
+                    //                     const SizedBox(
+                    //                       height: 10,
+                    //                     ),
+                    //                     materialIssueMaterial.useType ==
+                    //                             UseType.SUB_STRUCTURE
+                    //                         ? ProductDetail(
+                    //                             title: "Use Description",
+                    //                             value: subStructureUseDescriptionDisplay[
+                    //                                     materialIssueMaterial
+                    //                                         .subStructureDescription] ??
+                    //                                 'N/A')
+                    //                         : ProductDetail(
+                    //                             title: "Use Description",
+                    //                             value: superStructureUseDescriptionDisplay[
+                    //                                     materialIssueMaterial
+                    //                                         .superStructureDescription] ??
+                    //                                 'N/A'),
+                    //                     const SizedBox(
+                    //                       height: 10,
+                    //                     ),
+                    //                     ProductDetail(
+                    //                         title: "Issued Quantity",
+                    //                         value:
+                    //                             '${materialIssueMaterial.quantity} ${productVariant?.unitOfMeasure}'),
+                    //                     const SizedBox(
+                    //                       height: 10,
+                    //                     ),
+                    //                     ProductDetail(
+                    //                         title: "Unit Cost",
+                    //                         value:
+                    //                             '${materialIssueMaterial.unitCost.toString()} ETB'),
+                    //                     const SizedBox(
+                    //                       height: 10,
+                    //                     ),
+                    //                     ProductDetail(
+                    //                         title: "Total Cost",
+                    //                         value:
+                    //                             '${materialIssueMaterial.totalCost.toString()} ETB'),
+                    //                     const SizedBox(
+                    //                       height: 10,
+                    //                     ),
+                    //                   ],
+                    //                 )
+                    //               ]),
+                    //             ),
+                    //           );
+                    //         },
+                    //       );
+                    //     },
+                    //   ),
+                    // )
                   ],
                 ),
               );

@@ -22,33 +22,34 @@ class MaterialProformaInputList extends StatelessWidget {
         // final productVariant = materialProformaMaterial.material?.productVariant;
         return MaterialTransactionMaterialItem(
           title: '${materialProformaMaterial.vendor} ',
-          subtitle: 'Total Price: ${materialProformaMaterial.unitPrice * materialProformaMaterial.quantity} ',
+          subtitle:
+              'Total Price: ${materialProformaMaterial.unitPrice * materialProformaMaterial.quantity} ',
           onDelete: () => BlocProvider.of<MaterialReturnLocalBloc>(context)
               .add(DeleteMaterialReturnMaterialLocal(index)),
           onEdit: () => showModalBottomSheet(
             isScrollControlled: true,
             context: context,
             builder: (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<MaterialProformaItemFormCubit>(
-                    create: (_) => MaterialProformaItemFormCubit(
-                      vendor: materialProformaMaterial.vendor,
-                      price: materialProformaMaterial.unitPrice,
-                      remark: materialProformaMaterial.remark,
-                      photo: materialProformaMaterial.photo,
-                    ),
+              providers: [
+                BlocProvider<MaterialProformaItemFormCubit>(
+                  create: (_) => MaterialProformaItemFormCubit(
+                    vendor: materialProformaMaterial.vendor,
+                    price: materialProformaMaterial.unitPrice,
+                    remark: materialProformaMaterial.remark,
+                    photo: materialProformaMaterial.photos[0],
+                  ),
+                )
+              ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: CreateMaterialReturnForm(isEdit: true, index: index),
                   )
                 ],
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child:
-                          CreateMaterialReturnForm(isEdit: true, index: index),
-                    )
-                  ],
-                )),
+              ),
+            ),
           ),
         );
       },

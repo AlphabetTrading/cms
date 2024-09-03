@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_proformas/material_proforma_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
@@ -235,17 +236,7 @@ class _MaterialProformasPageState extends State<MaterialProformasPage> {
                                       isMine: selectedMineFilter,
                                       materialProformaId:
                                           state.materialProformaId,
-                                    )
-                                        // GetMaterialProformas(
-                                        //   filterMaterialProformaInput:
-                                        //       FilterMaterialProformaInput(),
-                                        //   orderBy: OrderByMaterialProformaInput(
-                                        //       createdAt: "desc"),
-                                        //   paginationInput:
-                                        //       PaginationInput(skip: 0, take: 20),
-                                        //   mine: selectedMineFilter,
-                                        // ),
-                                        );
+                                    ));
                               }
                             },
                             child: Container(
@@ -320,6 +311,8 @@ class _MaterialProformasPageState extends State<MaterialProformasPage> {
                               DeleteMaterialProformaState>(
                             listener: (context, state) {
                               if (state is DeleteMaterialProformaSuccess) {
+                                showStatusMessage(Status.SUCCESS,
+                                    "Material Proforma Deleted");
                                 context.read<MaterialProformaBloc>().add(
                                       GetMaterialProformas(
                                         filterMaterialProformaInput:
@@ -331,6 +324,9 @@ class _MaterialProformasPageState extends State<MaterialProformasPage> {
                                         mine: selectedMineFilter,
                                       ),
                                     );
+                              } else if (state
+                                  is DeleteMaterialProformaFailed) {
+                                showStatusMessage(Status.FAILED, state.error);
                               }
                             },
                             child: Container(
@@ -426,10 +422,11 @@ class _MaterialProformasPageState extends State<MaterialProformasPage> {
                       )),
                   PopupMenuItem(
                     onTap: () {
+                      print("Delete Proforma clicked ${materialProforma.id}");
                       context
                           .read<DeleteMaterialProformaCubit>()
                           .onMaterialProformaDelete(
-                              materialProformaId: materialProforma.id ?? "");
+                              materialProformaId: materialProforma.id);
                     },
                     child: const ListTile(
                       leading: Icon(Icons.delete, color: Colors.red),

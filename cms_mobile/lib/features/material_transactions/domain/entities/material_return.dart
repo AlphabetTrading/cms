@@ -236,19 +236,19 @@ class CreateMaterialReturnParamsEntity<T extends MaterialReturnMaterialEntity>
     extends Equatable {
   final String projectId;
   final String returnedById;
-  final String receivingStoreId;
+  final String receivingWarehouseStoreId;
   final List<T> materialReturnMaterials;
 
   const CreateMaterialReturnParamsEntity({
     required this.projectId,
     required this.returnedById,
-    required this.receivingStoreId,
+    required this.receivingWarehouseStoreId,
     required this.materialReturnMaterials,
   });
 
   @override
   List<Object?> get props =>
-      [returnedById, receivingStoreId, projectId, materialReturnMaterials];
+      [returnedById, receivingWarehouseStoreId, projectId, materialReturnMaterials];
 }
 
 class EditMaterialReturnParamsEntity<T extends MaterialReturnMaterialEntity>

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
 
@@ -102,7 +104,7 @@ class MaterialProformaMaterialModel extends MaterialProformaMaterialEntity {
   MaterialProformaMaterialModel({
     required super.unitPrice,
     required super.remark,
-    required super.photo,
+    required super.photos,
     required super.vendor,
     required super.quantity,
     required super.multipartFile
@@ -114,13 +116,13 @@ class MaterialProformaMaterialModel extends MaterialProformaMaterialEntity {
       "totalPrice": unitPrice * quantity,
       "unitPrice": unitPrice,
       "remark": remark,
-      "photo": photo,
+      "photos": jsonEncode(photos),
       "vendor": vendor
     };
   }
 
   @override
-  List<Object?> get props => [unitPrice, remark, photo, vendor, quantity];
+  List<Object?> get props => [unitPrice, remark, photos, vendor, quantity];
 }
 
 class CreateMaterialProformaParamsModel
@@ -155,7 +157,7 @@ class CreateMaterialProformaParamsModel
                 multipartFile: e.multipartFile,
                 quantity: e.quantity,
                 vendor: e.vendor,
-                photo: e.photo))
+                photos: e.photos))
             .toList());
   }
 }
@@ -208,7 +210,7 @@ class EditMaterialProformaParamsModel
                 quantity: e.quantity,
                 multipartFile: e.multipartFile,
                 vendor: e.vendor,
-                photo: e.photo))
+                photos: e.photos))
             .toList());
   }
 }

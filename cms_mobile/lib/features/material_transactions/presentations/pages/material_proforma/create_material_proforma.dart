@@ -222,17 +222,7 @@ class _CreateMaterialProformaPageState
               : () {
                   proformaMainFrom.onSubmit();
                   if (proformaMainFrom.state.isValid) {
-                    print(CreateMaterialProformaParamsEntity(
-                        materialRequestItemId:
-                            proformaMainFrom.state.materialDropdown.value,
-                        preparedById:
-                            context.read<AuthBloc>().state.userId ?? "",
-                        projectId: context
-                                .read<ProjectBloc>()
-                                .state
-                                .selectedProjectId ??
-                            "",
-                        materialProformaMaterials: materialProformaMaterials));
+                
 
                         
                     context

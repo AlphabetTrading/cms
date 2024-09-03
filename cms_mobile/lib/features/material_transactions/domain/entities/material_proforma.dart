@@ -151,21 +151,22 @@ class MaterialProformaMaterialEntity extends Equatable {
   final double quantity;
   final double unitPrice;
   final String? remark;
-  final String photo;
+  List<String> photos;
   final String vendor;
   final MultipartFile? multipartFile;
 
-  const MaterialProformaMaterialEntity(
-      {required this.unitPrice,
-      required this.remark,
-      required this.photo,
-      required this.quantity,
-      required this.vendor,
-      required this.multipartFile,
-      });
+  MaterialProformaMaterialEntity({
+    required this.unitPrice,
+    required this.remark,
+    required this.photos,
+    required this.quantity,
+    required this.vendor,
+    required this.multipartFile,
+  });
 
   @override
-  List<Object?> get props => [unitPrice, remark, photo, vendor, quantity,multipartFile];
+  List<Object?> get props =>
+      [unitPrice, remark, photos, vendor, quantity, multipartFile];
 }
 
 class CreateMaterialProformaParamsEntity<

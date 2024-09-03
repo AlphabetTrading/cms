@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
@@ -229,23 +230,14 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                               DeleteMaterialIssueState>(
                             listener: (context, state) {
                               if (state is DeleteMaterialIssueSuccess) {
+                              
                                 context
                                     .read<MaterialIssueBloc>()
                                     .add(DeleteMaterialIssueEventLocal(
                                       isMine: selectedMineFilter,
                                       materialIssueId: state.materialIssueId,
-                                    )
-                                        // GetMaterialIssues(
-                                        //   filterMaterialIssueInput:
-                                        //       FilterMaterialIssueInput(),
-                                        //   orderBy: OrderByMaterialIssueInput(
-                                        //       createdAt: "desc"),
-                                        //   paginationInput:
-                                        //       PaginationInput(skip: 0, take: 20),
-                                        //   mine: selectedMineFilter,
-                                        // ),
-                                        );
-                              }
+                                    ));
+                              } 
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -319,6 +311,8 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                               DeleteMaterialIssueState>(
                             listener: (context, state) {
                               if (state is DeleteMaterialIssueSuccess) {
+                                  showStatusMessage(
+                                    Status.SUCCESS, "Material Issue Deleted");
                                 context.read<MaterialIssueBloc>().add(
                                       GetMaterialIssues(
                                         filterMaterialIssueInput:
@@ -330,6 +324,9 @@ class _MaterialIssuesPageState extends State<MaterialIssuesPage> {
                                         mine: selectedMineFilter,
                                       ),
                                     );
+                              }
+                              else if (state is DeleteMaterialIssueFailed) {
+                                showStatusMessage(Status.FAILED, state.error);
                               }
                             },
                             child: Container(

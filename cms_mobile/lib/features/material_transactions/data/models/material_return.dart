@@ -122,18 +122,18 @@ class CreateMaterialReturnParamsModel
       {required super.projectId,
       required super.materialReturnMaterials,
       required super.returnedById,
-      required super.receivingStoreId});
+      required super.receivingWarehouseStoreId});
 
   @override
   List<Object?> get props =>
-      [projectId, returnedById, materialReturnMaterials, receivingStoreId];
+      [projectId, returnedById, materialReturnMaterials, receivingWarehouseStoreId];
 
   factory CreateMaterialReturnParamsModel.fromEntity(
       CreateMaterialReturnParamsEntity entity) {
     return CreateMaterialReturnParamsModel(
         projectId: entity.projectId,
         returnedById: entity.returnedById,
-        receivingStoreId: entity.receivingStoreId,
+        receivingWarehouseStoreId: entity.receivingWarehouseStoreId,
         materialReturnMaterials: entity.materialReturnMaterials
             .map((e) => MaterialReturnMaterialModel(
                   quantity: e.quantity,
@@ -147,7 +147,7 @@ class CreateMaterialReturnParamsModel
   Map<String, dynamic> toJson() {
     return {
       "projectId": projectId,
-      "receivingStore": receivingStoreId,
+      "receivingWarehouseStoreId": receivingWarehouseStoreId,
       "returnedById": returnedById,
       "items": materialReturnMaterials.map((e) => e.toJson()).toList()
     };

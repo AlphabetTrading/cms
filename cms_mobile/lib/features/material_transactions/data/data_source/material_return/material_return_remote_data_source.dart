@@ -45,31 +45,16 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
 
   ''';
 
-    List<Map<String, dynamic>> materialReturnMaterialsMap =
-        createMaterialReturnParamsModel.materialReturnMaterials
-            .map((materialReturnMaterial) {
-      return {
-        "productVariantId": materialReturnMaterial.material!.productVariant?.id,
-        "quantity": materialReturnMaterial.quantity,
-        "remark": materialReturnMaterial.remark,
-      };
-    }).toList();
-
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReturnMutation),
       variables: {
-        "createMaterialReturnInput": {
-          "projectId": "2cf44029-fe54-4e91-a031-f8fd7c65bce5",
-          "preparedById": "2bdcd10f-b487-4c1a-84a0-090fef032ba1",
-          "items": materialReturnMaterialsMap
-        }
+        "createMaterialReturnInput":createMaterialReturnParamsModel.toJson(),
       },
       fetchPolicy: FetchPolicy.noCache,
     );
 
     try {
       final QueryResult result = await _client.mutate(options);
-      print(result);
 
       if (result.hasException) {
         return DataFailed(

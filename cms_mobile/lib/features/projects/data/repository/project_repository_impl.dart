@@ -34,4 +34,9 @@ class ProjectRepositoryImpl extends ProjectRepository {
   Future<DataState<String?>> getSelectedProject() {
     return dataSource.getSelectedProject();
   }
+    @override
+  Future<DataState<ProjectModel>> getProject({required String projectId}) {
+    return dataSource.fetchProject(projectId: projectId);
+  }
+
 }

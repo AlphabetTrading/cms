@@ -19,43 +19,43 @@ class MaterialReceiveInputList extends StatelessWidget {
       itemCount: materialReceives.length,
       itemBuilder: (context, index) {
         final materialReceive = materialReceives[index];
-        // final productVariant = materialReceive.material?.productVariant;
+        final productVariant = materialReceive.purchaseOrderItem?.productVariant;
         return MaterialTransactionMaterialItem(
-          title: "Material Receive",
-          // '${productVariant?.product?.name} - ${productVariant?.variant}',
-          subtitle: "",
-          // subtitle:
-          //     'Amount: ${materialReceive.material?.quantity} ${unitOfMeasureDisplay(materialReceive.material?.productVariant?.unitOfMeasure)}',
-          // iconSrc: productVariant?.product?.iconSrc,
-          iconSrc: "",
+          title:
+              '${productVariant?.product?.name} - ${productVariant?.variant}',
+          subtitle:
+              'Amount: ${materialReceive.receivedQuantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}',
+          iconSrc: productVariant?.product?.iconSrc,
           onDelete: () => BlocProvider.of<MaterialReceiveLocalBloc>(context)
               .add(DeleteMaterialReceiveMaterialLocal(index)),
           onEdit: () => showModalBottomSheet(
             isScrollControlled: true,
             context: context,
-            builder: (context) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<MaterialReceiveFormCubit>(
-                    create: (_) => MaterialReceiveFormCubit(
-                      purchaseOrderId: materialReceive.purchaseOrderId,
-                      // materialId: materialReceive.material?.productVariant?.id,
-                      transportationCost: materialReceive.transportationCost,
-                      loadingCost: materialReceive.loadingCost,
-                      unloadingCost: materialReceive.unloadingCost,
-                      remark: materialReceive.remark,
+            builder: (context) {
+              return MultiBlocProvider(
+                  providers: [
+                    BlocProvider<MaterialReceiveFormCubit>(
+                      create: (_) => MaterialReceiveFormCubit(
+                        purchaseOrderItemId: materialReceive.purchaseOrderItem.id,
+                        // receivedQuantity: materialReceive.receivedQuantity,
+                        transportationCost: materialReceive.transportationCost,
+                        loadingCost: materialReceive.loadingCost,
+                        unloadingCost: materialReceive.unloadingCost,
+                        remark: materialReceive.remark,
+                      ),
                     ),
-                  )
-                ],
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(32.0),
-                      child:
-                          CreateMaterialReceiveForm(isEdit: true, index: index),
-                    )
                   ],
-                )),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: CreateMaterialReceiveForm(
+                            isEdit: true, index: index),
+                      )
+                    ],
+                  ));
+            },
           ),
         );
       },

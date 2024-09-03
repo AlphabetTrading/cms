@@ -100,44 +100,50 @@ class MaterialReceiveEntityListWithMeta {
 }
 
 class MaterialReceiveMaterialEntity extends Equatable {
-  final String purchaseOrderId;
-  // final ReceiveVoucherMaterialModel? material;
+  final PurchaseOrderItemEntity? purchaseOrderItem;
   final double? transportationCost;
   final double? loadingCost;
   final double? unloadingCost;
-
+  final double? receivedQuantity;
   final String? remark;
 
   const MaterialReceiveMaterialEntity({
-    required this.purchaseOrderId,
-    // required this.material,
-    required this.transportationCost,
     required this.loadingCost,
     required this.unloadingCost,
+    required this.transportationCost,
+    required this.purchaseOrderItem,
+    required this.receivedQuantity,
     this.remark,
   });
 
   @override
-  List<Object?> get props =>
-      [purchaseOrderId, transportationCost, loadingCost, unloadingCost];
+  List<Object?> get props => [
+        purchaseOrderItem,
+        transportationCost,
+        loadingCost,
+        unloadingCost,
+        receivedQuantity,
+        remark
+      ];
 }
 
 class CreateMaterialReceiveParamsEntity<T extends MaterialReceiveMaterialEntity>
     extends Equatable {
   final String projectId;
   final String receivingStoreId;
-  final String returnedById;
+  final String preparedById;
   final List<T> materialReceiveMaterials;
 
   const CreateMaterialReceiveParamsEntity(
       {required this.projectId,
       required this.materialReceiveMaterials,
       required this.receivingStoreId,
-      required this.returnedById});
+      required this.preparedById
+      });
 
   @override
   List<Object?> get props =>
-      [projectId, receivingStoreId, returnedById, materialReceiveMaterials];
+      [projectId, receivingStoreId, preparedById, materialReceiveMaterials];
 }
 
 class MaterialReceiveItemEntity extends Equatable {

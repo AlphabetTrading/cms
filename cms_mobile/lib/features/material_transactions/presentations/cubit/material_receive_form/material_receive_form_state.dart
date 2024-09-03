@@ -40,6 +40,7 @@ class MaterialReceiveFormState extends Equatable {
   final bool isValid;
   final FormStatus formStatus;
   final NumberField transportationField;
+  final NumberField receivedQuantityField;
   final NumberField loadingField;
   final NumberField unloadingField;
   final MaterialDropdown materialDropdown;
@@ -50,19 +51,20 @@ class MaterialReceiveFormState extends Equatable {
   final RemarkField remarkField;
   // final double issuedQuantity;
 
-  MaterialReceiveFormState(
-      {this.isValid = false,
-      this.formStatus = FormStatus.invalid,
-      this.transportationField = const NumberField.pure(),
-      this.loadingField = const NumberField.pure(),
-      this.unloadingField = const NumberField.pure(),
-      this.materialDropdown = const MaterialDropdown.pure(),
-      this.purchaseOrderDropdown = const PurchaseOrderDropdown.pure(),
-      // this.warehouseDropdown = const WarehouseDropdown.pure(),
+  MaterialReceiveFormState({
+    this.isValid = false,
+    this.formStatus = FormStatus.invalid,
+    this.transportationField = const NumberField.pure(),
+    this.loadingField = const NumberField.pure(),
+    this.unloadingField = const NumberField.pure(),
+    this.materialDropdown = const MaterialDropdown.pure(),
+    this.purchaseOrderDropdown = const PurchaseOrderDropdown.pure(),
+    this.receivedQuantityField = const NumberField.pure(),
+    // this.warehouseDropdown = const WarehouseDropdown.pure(),
 
-      // this.unitDropdown = const UnitDropdown.pure(),
-      this.remarkField = const RemarkField.pure(),
-     });
+    // this.unitDropdown = const UnitDropdown.pure(),
+    this.remarkField = const RemarkField.pure(),
+  });
 
   MaterialReceiveFormState copyWith({
     bool? isValid,
@@ -70,6 +72,7 @@ class MaterialReceiveFormState extends Equatable {
     NumberField? transportationField,
     NumberField? loadingField,
     NumberField? unloadingField,
+    NumberField? receivedQuantityField,
     PurchaseOrderDropdown? purchaseOrderDropdown,
     MaterialDropdown? materialDropdown,
 
@@ -79,24 +82,26 @@ class MaterialReceiveFormState extends Equatable {
     // double? issuedQuantity,
   }) {
     return MaterialReceiveFormState(
-        isValid: isValid ?? this.isValid,
-        formStatus: formStatus ?? this.formStatus,
-        transportationField: transportationField ?? this.transportationField,
-        loadingField: loadingField ?? this.loadingField,
-        unloadingField: unloadingField ?? this.unloadingField,
-        materialDropdown: materialDropdown ?? this.materialDropdown,
-        purchaseOrderDropdown:
-            purchaseOrderDropdown ?? this.purchaseOrderDropdown,
+      isValid: isValid ?? this.isValid,
+      formStatus: formStatus ?? this.formStatus,
+      transportationField: transportationField ?? this.transportationField,
+      loadingField: loadingField ?? this.loadingField,
+      unloadingField: unloadingField ?? this.unloadingField,
+      materialDropdown: materialDropdown ?? this.materialDropdown,
+      purchaseOrderDropdown:
+          purchaseOrderDropdown ?? this.purchaseOrderDropdown,
+      receivedQuantityField:
+          receivedQuantityField ?? this.receivedQuantityField,
 
-        // warehouseDropdown: warehouseDropdown ?? this.warehouseDropdown,
-        // unitDropdown: unitDropdown ?? this.unitDropdown,
-        remarkField: remarkField ?? this.remarkField,
+      // warehouseDropdown: warehouseDropdown ?? this.warehouseDropdown,
+      // unitDropdown: unitDropdown ?? this.unitDropdown,
+      remarkField: remarkField ?? this.remarkField,
     );
   }
 
   @override
   String toString() {
-   return 'MaterialReceiveFormState(isValid: $isValid, formStatus: $formStatus, transportationField: $transportationField, loadingField: $loadingField, unloadingField: $unloadingField, materialDropdown: $materialDropdown, purchaseOrderDropdown: $purchaseOrderDropdown, remarkField: $remarkField)';
+    return 'MaterialReceiveFormState(isValid: $isValid, formStatus: $formStatus, transportationField: $transportationField, loadingField: $loadingField, unloadingField: $unloadingField, materialDropdown: $materialDropdown, purchaseOrderDropdown: $purchaseOrderDropdown, remarkField: $remarkField)';
   }
 
   @override
@@ -108,6 +113,7 @@ class MaterialReceiveFormState extends Equatable {
         unloadingField,
         purchaseOrderDropdown,
         materialDropdown,
+        receivedQuantityField,
         // warehouseDropdown,
         // unitDropdown,
         remarkField,

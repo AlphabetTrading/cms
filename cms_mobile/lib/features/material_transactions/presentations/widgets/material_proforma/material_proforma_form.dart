@@ -217,7 +217,7 @@ class _MaterialProformaFromState extends State<MaterialProformaFrom> {
                           vendor: vendorField.value,
                           unitPrice: double.parse(priceField.value),
                           multipartFile: multipartFile,
-                          photo: photoField.value,
+                          photos: [],
                           remark: remarkField.value,
                           quantity: quantity ?? 0);
                       widget.onAddItem(newItem);

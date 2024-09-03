@@ -83,22 +83,21 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                 }
               },
               builder: (returnContext, returnState) {
-                 final warehouseForm = warehouseFormContext
-                                .watch<MaterialReturnWarehouseFormCubit>();
+                final warehouseForm = warehouseFormContext
+                    .watch<MaterialReturnWarehouseFormCubit>();
                 return Scaffold(
                     appBar: AppBar(title: const Text("Create Material Return")),
-                    bottomSheet: _buildButtons(returnContext, localState,
-                        returnState, warehouseForm),
+                    bottomSheet: _buildButtons(
+                        returnContext, localState, returnState, warehouseForm),
                     body: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: BlocBuilder<WarehouseBloc, WarehouseState>(
                           builder: (warehouseContext, warehouseState) {
-                           
-
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CustomDropdown(
                                     onSelected: (dynamic value) {
@@ -123,6 +122,13 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                                   const SizedBox(
                                     height: 10,
                                   ),
+                                  Text("Materials to return:",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
                                   (localState.materialReturnMaterials == null ||
                                           localState
                                               .materialReturnMaterials!.isEmpty)
@@ -144,11 +150,10 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
   }
 
   _buildButtons(
-    BuildContext context,
-    MaterialReturnLocalState localState,
-    MaterialReturnState state,
-    MaterialReturnWarehouseFormCubit warehouseForm
-  ) {
+      BuildContext context,
+      MaterialReturnLocalState localState,
+      MaterialReturnState state,
+      MaterialReturnWarehouseFormCubit warehouseForm) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -188,7 +193,7 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                   localState.materialReturnMaterials!.isEmpty)
               ? null
               : () {
-                   warehouseForm.onSubmit();
+                  warehouseForm.onSubmit();
                   if (warehouseForm.state.isValid) {
                     context.read<MaterialReturnBloc>().add(
                           CreateMaterialReturnEvent(
@@ -199,10 +204,11 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
                                       .state
                                       .selectedProjectId ??
                                   "",
-                              receivingStoreId:
+                              receivingWarehouseStoreId:
                                   warehouseForm.state.warehouseDropdown.value,
-                              returnedById:  context.read<AuthBloc>().state.user?.id ??
-                                    USER_ID,
+                              returnedById:
+                                  context.read<AuthBloc>().state.user?.id ??
+                                      USER_ID,
                               // warehouseStoreId: "",
 
                               materialReturnMaterials:

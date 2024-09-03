@@ -131,7 +131,9 @@ import 'package:cms_mobile/features/progress/presentation/cubit/task/edit/edit_c
 import 'package:cms_mobile/features/projects/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/projects/data/repository/project_repository_impl.dart';
 import 'package:cms_mobile/features/projects/domain/repository/project_repository.dart';
+import 'package:cms_mobile/features/projects/domain/usecases/get_project_detail_usecase.dart';
 import 'package:cms_mobile/features/projects/domain/usecases/get_project_issue.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/details/details_cubit.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_return_form/material_return_form_cubit.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
@@ -537,12 +539,6 @@ Future<void> initializeDependencies() async {
 
   // projects
 
-  sl.registerLazySingleton<CreateMaterialRequestUseCase>(
-    () => CreateMaterialRequestUseCase(
-      sl<MaterialRequestRepository>(),
-    ),
-  );
-
   sl.registerLazySingleton<GetProjectsUseCase>(
     () => GetProjectsUseCase(
       sl<ProjectRepository>(),
@@ -561,6 +557,12 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<CreateMaterialIssueUseCase>(
     () => CreateMaterialIssueUseCase(
       sl<MaterialIssueRepository>(),
+    ),
+  );
+
+    sl.registerLazySingleton<GetProjectDetailsUseCase>(
+    () => GetProjectDetailsUseCase(
+      sl<ProjectRepository>(),
     ),
   );
 
@@ -701,6 +703,11 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialRequestBloc>(() => MaterialRequestBloc(
       sl<GetMaterialRequestsUseCase>(), sl<CreateMaterialRequestUseCase>()));
 
+  sl.registerLazySingleton<CreateMaterialRequestUseCase>(
+    () => CreateMaterialRequestUseCase(
+      sl<MaterialRequestRepository>(),
+    ),
+  );
   sl.registerFactory<MaterialRequestLocalBloc>(
     () => MaterialRequestLocalBloc(),
   );
@@ -741,7 +748,7 @@ Future<void> initializeDependencies() async {
     () => MaterialReceiveBloc(sl<GetMaterialReceivesUseCase>(),
         sl<GetMaterialReceiveDetailsUseCase>()),
   );
-    sl.registerFactory<MaterialReceiveLocalBloc>(
+  sl.registerFactory<MaterialReceiveLocalBloc>(
     () => MaterialReceiveLocalBloc(),
   );
 
@@ -789,6 +796,8 @@ Future<void> initializeDependencies() async {
     () => ProjectBloc(sl<GetProjectsUseCase>(), sl<GetSelectedProjectUseCase>(),
         sl<SelectProjectUseCase>()),
   );
+  sl.registerFactory<ProjectDetailsCubit>(
+      () => ProjectDetailsCubit(sl<GetProjectDetailsUseCase>()));
 
   // purchase order
   sl.registerFactory<PurchaseOrderBloc>(
@@ -827,11 +836,9 @@ Future<void> initializeDependencies() async {
   );
 
   // material proforma
-  sl.registerFactory<MaterialProformaBloc>(
-    () => MaterialProformaBloc(
-      sl<GetMaterialProformasUseCase>(),
-    )
-  );
+  sl.registerFactory<MaterialProformaBloc>(() => MaterialProformaBloc(
+        sl<GetMaterialProformasUseCase>(),
+      ));
 
   sl.registerFactory<MaterialProformaDetailsCubit>(
     () => MaterialProformaDetailsCubit(
@@ -844,7 +851,7 @@ Future<void> initializeDependencies() async {
       sl<DeleteMaterialProformaUseCase>(),
     ),
   );
-    sl.registerFactory<CreateMaterialProformaCubit>(
+  sl.registerFactory<CreateMaterialProformaCubit>(
     () => CreateMaterialProformaCubit(
       sl<CreateMaterialProformaUseCase>(),
     ),

@@ -48,7 +48,7 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReceiveMutation),
       variables: {
-        "createMaterialReceivingInput":
+        "createMaterialReceiveInput":
             createMaterialReceiveParamsModel.toJson()
       },
     );
