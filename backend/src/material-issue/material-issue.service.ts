@@ -355,14 +355,14 @@ export class MaterialIssueService {
     });
 
     const browser = await puppeteer.launch({
-      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-      args: ['--headless'],
+      channel: 'chrome',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
     const htmlContent = this.getHtmlContent(materialIssue);
     await page.setContent(htmlContent);
     const pdfBuffer = await page.pdf({
-      path: 'hello.pdf',
+      path: `${materialIssueId}.pdf`,
       format: 'A4',
       printBackground: true,
       margin: {
