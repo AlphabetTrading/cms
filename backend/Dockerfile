@@ -1,4 +1,31 @@
-FROM ghcr.io/puppeteer/puppeteer:latest
+FROM node:18 AS builder
+
+RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libgtk-3-0 \
+    xdg-utils \
+    chromium \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN npm install puppeteer
+
+# Force download of the required Chromium version
+RUN npx puppeteer install --path=/usr/local/share/.cache/puppeteer
 
 # Create app directory
 WORKDIR /app
@@ -8,16 +35,23 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install app dependencies
-RUN sudo npm install
+RUN npm install
 
 COPY . .
 
 RUN npm run build
 
+FROM node:18
+
 WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/prisma ./
+COPY --from=builder /app/dist ./dist
 
 RUN npx prisma generate
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD [ "npm", "run", "start:prod" ]

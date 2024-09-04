@@ -356,6 +356,7 @@ export class MaterialIssueService {
 
     const browser = await puppeteer.launch({
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      headless: true,
     });
     const page = await browser.newPage();
     const htmlContent = this.getHtmlContent(materialIssue);
