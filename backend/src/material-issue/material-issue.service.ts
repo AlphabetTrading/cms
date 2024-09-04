@@ -10,7 +10,7 @@ import { MaterialIssueVoucher } from './model/material-issue.model';
 import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentType } from 'src/common/enums/document-type';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
 import { format } from 'date-fns';
 
 @Injectable()
@@ -355,7 +355,6 @@ export class MaterialIssueService {
     });
 
     const browser = await puppeteer.launch({
-      channel: 'chrome',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
