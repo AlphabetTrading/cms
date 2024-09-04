@@ -71,6 +71,12 @@ mutation UploadFiles($files: [Upload!]!) {
 
     try {
       final QueryResult file_result = await _client.mutate(options_file);
+      print("*************************");
+
+      print(file_result.data);
+      print(file_result.data?['uploadFiles']);
+      print(file_result.data?['uploadFiles'][0]);
+
       var i = 0;
       createMaterialProformaParamsModel.materialProformaMaterials.map((e) {
         e.photos = [file_result.data?['uploadFiles'][i++]];
@@ -81,6 +87,7 @@ mutation UploadFiles($files: [Upload!]!) {
           "createProformaInput": createMaterialProformaParamsModel.toJson()
         },
       );
+      // print(createMaterialProformaParamsModel.toJson());
 
       try {
         final QueryResult result = await _client.mutate(options);
@@ -98,9 +105,7 @@ mutation UploadFiles($files: [Upload!]!) {
         // In case of any other errors, return a DataFailed state
         return DataFailed(ServerFailure(errorMessage: e.toString()));
       }
-
     } catch (e) {
-      
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
   }
@@ -112,6 +117,19 @@ mutation UploadFiles($files: [Upload!]!) {
 query GetProformaById($getProformaByIdId: String!) {
   getProformaById(id: $getProformaByIdId) {
     id
+        materialRequestItem {
+      id
+      quantity
+      productVariant {
+        id
+        variant
+        product {
+          id
+          name
+        }
+        unitOfMeasure
+      }
+    }
     items {
       createdAt
       id

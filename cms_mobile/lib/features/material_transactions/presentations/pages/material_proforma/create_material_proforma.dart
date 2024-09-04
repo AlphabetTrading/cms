@@ -217,13 +217,11 @@ class _CreateMaterialProformaPageState
         ),
         const SizedBox(height: 10),
         ElevatedButton(
-          onPressed: (materialProformaMaterials.isEmpty)
+          onPressed: (materialProformaMaterials.isEmpty || state is CreateMaterialProformaLoading)
               ? null
               : () {
                   proformaMainFrom.onSubmit();
                   if (proformaMainFrom.state.isValid) {
-                
-
                         
                     context
                         .read<CreateMaterialProformaCubit>()

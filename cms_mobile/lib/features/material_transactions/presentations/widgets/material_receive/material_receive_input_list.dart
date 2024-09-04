@@ -36,7 +36,7 @@ class MaterialReceiveInputList extends StatelessWidget {
                   providers: [
                     BlocProvider<MaterialReceiveFormCubit>(
                       create: (_) => MaterialReceiveFormCubit(
-                        purchaseOrderItemId: materialReceive.purchaseOrderItem.id,
+                        purchaseOrderItemId: materialReceive.purchaseOrderItem?.id,
                         // receivedQuantity: materialReceive.receivedQuantity,
                         transportationCost: materialReceive.transportationCost,
                         loadingCost: materialReceive.loadingCost,

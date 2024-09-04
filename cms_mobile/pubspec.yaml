@@ -62,6 +62,7 @@ dependencies:
   bloc_concurrency: ^0.2.5
   bloc: ^8.1.4
   collection: ^1.18.0
+  photo_view: ^0.15.0
 
   # The following adds the http package to your application.
   # Use with the http package for making HTTP requests

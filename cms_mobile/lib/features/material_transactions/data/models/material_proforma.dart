@@ -11,6 +11,7 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/use_ty
 class MaterialProformaModel extends MaterialProformaEntity {
   const MaterialProformaModel({
     required UserModel? super.approvedBy,
+    required List<MaterialProformaItemModel>? super.items,
     required super.approvedById,
     required super.createdAt,
     required super.id,
@@ -20,19 +21,23 @@ class MaterialProformaModel extends MaterialProformaEntity {
     required UserModel? super.preparedBy,
     required super.preparedById,
     required super.projectId,
-    required super.quantity,
+    // required super.quantity,
     required super.remark,
     required super.serialNumber,
     required super.status,
-    required super.totalPrice,
-    required super.unitPrice,
     required super.updatedAt,
-    required super.vendor,
   });
 
   factory MaterialProformaModel.fromJson(Map<String, dynamic> json) {
     return MaterialProformaModel(
       id: json['id'],
+      // items: [],
+      items: json['items'] != null
+          ? json['items']
+              .map<MaterialProformaItemModel>(
+                  (item) => MaterialProformaItemModel.fromJson(item))
+              .toList()
+          : [],
       approvedBy: json['approvedBy'] != null
           ? UserModel.fromJson(json['approvedBy'])
           : null,
@@ -47,13 +52,10 @@ class MaterialProformaModel extends MaterialProformaEntity {
           : null,
       preparedById: json['preparedById'],
       projectId: json['projectId'],
-      quantity: json['quantity'],
+      // quantity: json['quantity'],
       remark: json['remark'],
       serialNumber: json['serialNumber'],
       status: json['status'],
-      totalPrice: json['totalPrice'],
-      unitPrice: json['unitPrice'],
-      vendor: json['vendor'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
@@ -75,11 +77,37 @@ class MaterialProformaModel extends MaterialProformaEntity {
       'remark': remark,
       'serialNumber': serialNumber,
       'status': status,
-      'totalPrice': totalPrice,
-      'unitPrice': unitPrice,
       'updatedAt': updatedAt!.toIso8601String(),
-      'vendor': vendor,
     };
+  }
+}
+
+class MaterialProformaItemModel extends MaterialProformaItemEntity {
+  const MaterialProformaItemModel(
+      {required super.id,
+      required super.createdAt,
+      required super.updatedAt,
+      required super.photos,
+      required super.quantity,
+      required super.unitPrice,
+      required super.totalPrice,
+      required super.remark,
+      required super.vendor});
+
+  factory MaterialProformaItemModel.fromJson(Map<String, dynamic> json) {
+    return MaterialProformaItemModel(
+      id: json['id'],
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      photos: List<String>.from(json['photos']),
+      quantity: (json['quantity'] as num).toDouble(),
+      unitPrice: (json['unitPrice'] as num).toDouble(),
+      totalPrice: (json['totalPrice'] as num).toDouble(),
+      remark: json['remark'],
+      vendor: json['vendor'],
+    );
   }
 }
 
@@ -101,14 +129,13 @@ class MaterialProformaListWithMeta extends MaterialProformaEntityListWithMeta {
 }
 
 class MaterialProformaMaterialModel extends MaterialProformaMaterialEntity {
-  MaterialProformaMaterialModel({
-    required super.unitPrice,
-    required super.remark,
-    required super.photos,
-    required super.vendor,
-    required super.quantity,
-    required super.multipartFile
-  });
+  MaterialProformaMaterialModel(
+      {required super.unitPrice,
+      required super.remark,
+      required super.photos,
+      required super.vendor,
+      required super.quantity,
+      required super.multipartFile});
 
   Map<String, dynamic> toJson() {
     return {
@@ -116,7 +143,7 @@ class MaterialProformaMaterialModel extends MaterialProformaMaterialEntity {
       "totalPrice": unitPrice * quantity,
       "unitPrice": unitPrice,
       "remark": remark,
-      "photos": jsonEncode(photos),
+      "photos": photos,
       "vendor": vendor
     };
   }
@@ -131,9 +158,7 @@ class CreateMaterialProformaParamsModel
       {required super.projectId,
       required super.preparedById,
       required super.materialProformaMaterials,
-      required super.materialRequestItemId
-      
-      });
+      required super.materialRequestItemId});
 
   Map<String, dynamic> toJson() {
     return {
@@ -185,7 +210,6 @@ class EditMaterialProformaParamsModel
       // "items": materialProformaMaterials.map((e) => e.toJson()).toList(),
     };
   }
-
 
   @override
   List<Object?> get props => [
