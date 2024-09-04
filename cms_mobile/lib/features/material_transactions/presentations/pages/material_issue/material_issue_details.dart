@@ -3,6 +3,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
+import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
 import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -138,7 +139,7 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
                             title:
                                 '${productVariant?.product?.name} - ${productVariant?.variant}',
                             subtitle:
-                                'Issued Quantity: ${materialIssueMaterial.quantity} ${productVariant?.unitOfMeasure}',
+                                'Issued Quantity: ${materialIssueMaterial.quantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}',
                             iconSrc:
                                 'assets/icons/transactions/light/material_issues.svg',
                             onDelete: () {},

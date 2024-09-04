@@ -10,6 +10,7 @@ class MaterialProformaEntity extends Equatable {
   final UserEntity? approvedBy;
   final String? approvedById;
   final String id;
+  final List<MaterialProformaItemEntity>? items;
   final MaterialRequestItem? materialRequestItem;
   final String? materialRequestItemId;
   final String? photo;
@@ -20,14 +21,12 @@ class MaterialProformaEntity extends Equatable {
   final String? remark;
   final String? serialNumber;
   final String? status;
-  final double? totalPrice;
-  final double? unitPrice;
-  final String? vendor;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   const MaterialProformaEntity({
     required this.id,
+    this.items,
     this.approvedBy,
     this.approvedById,
     this.createdAt,
@@ -41,10 +40,7 @@ class MaterialProformaEntity extends Equatable {
     this.remark,
     this.serialNumber,
     this.status,
-    this.totalPrice,
-    this.unitPrice,
     this.updatedAt,
-    this.vendor,
   });
 
   MaterialProformaEntity copyWith({
@@ -83,10 +79,7 @@ class MaterialProformaEntity extends Equatable {
         remark: remark ?? this.remark,
         serialNumber: serialNumber ?? this.serialNumber,
         status: status ?? this.status,
-        totalPrice: totalPrice ?? this.totalPrice,
-        unitPrice: unitPrice ?? this.unitPrice,
         updatedAt: updatedAt ?? this.updatedAt,
-        vendor: vendor ?? this.vendor,
       );
 
   @override
@@ -105,11 +98,35 @@ class MaterialProformaEntity extends Equatable {
         remark,
         serialNumber,
         status,
-        totalPrice,
-        unitPrice,
         updatedAt,
-        vendor
       ];
+}
+
+class MaterialProformaItemEntity extends Equatable {
+  final String id;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final List<String> photos;
+  final double quantity;
+  final double unitPrice;
+  final double totalPrice;
+  final String? remark;
+  final String vendor;
+
+  const MaterialProformaItemEntity(
+      {required this.id,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.photos,
+      required this.quantity,
+      required this.unitPrice,
+      required this.totalPrice,
+      required this.remark,
+      required this.vendor});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id, createdAt, updatedAt, photos, quantity, unitPrice, totalPrice, remark, vendor];
 }
 
 class MaterialProformaEntityListWithMeta extends Equatable {
@@ -151,21 +168,22 @@ class MaterialProformaMaterialEntity extends Equatable {
   final double quantity;
   final double unitPrice;
   final String? remark;
-  final String photo;
+  List<String> photos;
   final String vendor;
   final MultipartFile? multipartFile;
 
-  const MaterialProformaMaterialEntity(
-      {required this.unitPrice,
-      required this.remark,
-      required this.photo,
-      required this.quantity,
-      required this.vendor,
-      required this.multipartFile,
-      });
+  MaterialProformaMaterialEntity({
+    required this.unitPrice,
+    required this.remark,
+    required this.photos,
+    required this.quantity,
+    required this.vendor,
+    required this.multipartFile,
+  });
 
   @override
-  List<Object?> get props => [unitPrice, remark, photo, vendor, quantity,multipartFile];
+  List<Object?> get props =>
+      [unitPrice, remark, photos, vendor, quantity, multipartFile];
 }
 
 class CreateMaterialProformaParamsEntity<

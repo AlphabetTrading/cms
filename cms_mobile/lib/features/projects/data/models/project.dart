@@ -28,7 +28,7 @@ class ProjectModel extends ProjectEntity {
   }
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) {
-    try {
+  
       return ProjectModel(
         id: json['id'],
         name: json['name'],
@@ -37,9 +37,9 @@ class ProjectModel extends ProjectEntity {
             ? UserModel.fromJson(json['issuedTo'])
             : null,
         // budget: json['budget'],
-        projectUsers: json['projectUsers'].map<UserModel>((item) {
-          return UserModel.fromJson(item);
-        }).toList() as List<UserModel>,
+        projectUsers:json['ProjectUsers']!=null? json['ProjectUsers'].map<UserModel>((item) {
+          return UserModel.fromJson(item['user']);
+        }).toList() as List<UserModel>:[],
         // milestones: json['milestones'].map<MilestoneModel>((item) {
         //   return MilestoneModel.fromJson(item);
         // }).toList() as List<MilestoneModel>,
@@ -48,40 +48,12 @@ class ProjectModel extends ProjectEntity {
             ? UserModel.fromJson(json['projectManager'])
             : null,
         status: json['status'],
-        startDate: DateTime.parse(json['startDate']),
-        endDate: DateTime.parse(json['endDate']),
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
+        startDate:json['startDate']!=null? DateTime.parse(json['startDate']):null,
+        endDate: json['endDate']!=null?DateTime.parse(json['endDate']):null,
+        createdAt:json['createdAt']!=null? DateTime.parse(json['createdAt']):null,
+        updatedAt: json['updatedAt']!=null?DateTime.parse(json['updatedAt']):null,
       );
-    } catch (e) {
-      return ProjectModel(
-        id: json['id'],
-        name: json['name'],
-        clientId: json['clientId'],
-        client:
-            json['client'] != null ? UserModel.fromJson(json['client']) : null,
-        // budget: json['budget'],
-        projectUsers: json['projectUsers'] != null
-            ? json['projectUsers'].map<UserModel>((item) {
-                return UserModel.fromJson(item);
-              }).toList() as List<UserModel>
-            : [],
-        // milestones: json['milestones'] != null
-        //     ? json['milestones'].map<MilestoneModel>((item) {
-        //         return MilestoneModel.fromJson(item);
-        //       }).toList() as List<MilestoneModel>
-        //     : [],
-        projectManagerId: json['projectManagerId'],
-        projectManager: json['projectManager'] != null
-            ? UserModel.fromJson(json['projectManager'])
-            : null,
-        status: json['status'],
-        startDate: DateTime.parse(json['startDate']),
-        endDate: DateTime.parse(json['endDate']),
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
-      );
-    }
+   
   }
 
   Map<String, dynamic> toJson() {

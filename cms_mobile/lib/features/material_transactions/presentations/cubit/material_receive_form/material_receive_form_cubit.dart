@@ -51,22 +51,43 @@ class MaterialReceiveWarehouseFormCubit
 class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
   MaterialReceiveFormCubit({
     String? materialId,
-    String? purchaseOrderId,
+    String? purchaseOrderItemId,
     // String? warehouseId,
     double? transportationCost,
     double? loadingCost,
     double? unloadingCost,
-    // double? issuedQuantity,
+    double? receivedQuantity,
     String? remark,
   }) : super(MaterialReceiveFormState(
+            receivedQuantityField:NumberField.pure(value:receivedQuantity.toString()),
             materialDropdown: MaterialDropdown.pure(materialId ?? ""),
             purchaseOrderDropdown:
-                PurchaseOrderDropdown.pure(purchaseOrderId ?? ""),
+                PurchaseOrderDropdown.pure(purchaseOrderItemId ?? ""),
             transportationField:
                 NumberField.pure(value: transportationCost.toString()),
             loadingField: NumberField.pure(value: loadingCost.toString()),
             unloadingField: NumberField.pure(value: unloadingCost.toString()),
             remarkField: RemarkField.pure(remark ?? "")));
+
+  void receivedQuantityChanged(String value) {
+    final NumberField receivedQuantityField = NumberField.dirty(value);
+
+    emit(
+      state.copyWith(
+        receivedQuantityField: receivedQuantityField,
+        isValid: Formz.validate([
+          state.transportationField,
+          state.loadingField,
+          state.unloadingField,
+          state.materialDropdown,
+          state.purchaseOrderDropdown,
+          state.remarkField,
+          state.receivedQuantityField
+        ]),
+      ),
+    );
+  }
+            
 
   void materialChanged(IssueVoucherMaterialEntity materialEntity) {
     final MaterialDropdown materialDropdown =
@@ -81,7 +102,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );
@@ -101,7 +123,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );
@@ -119,7 +142,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );
@@ -137,7 +161,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );
@@ -155,7 +180,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );
@@ -171,7 +197,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
   //         state.quantityField,
   //         state.materialDropdown,
   //         // state.unitDropdown,
-  //         state.remarkField
+  //         state.remarkField,
+  // state.receivedQuantityField
   //       ]),
   //     ),
   //   );
@@ -189,7 +216,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );
@@ -206,13 +234,15 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
         loadingField: NumberField.dirty(state.loadingField.value),
         unloadingField: NumberField.dirty(state.unloadingField.value),
         remarkField: RemarkField.dirty(state.remarkField.value),
+        receivedQuantityField:NumberField.dirty(state.receivedQuantityField.value),
         isValid: Formz.validate([
           state.transportationField,
           state.loadingField,
           state.unloadingField,
           state.materialDropdown,
           state.purchaseOrderDropdown,
-          state.remarkField
+          state.remarkField,
+          state.receivedQuantityField
         ]),
       ),
     );

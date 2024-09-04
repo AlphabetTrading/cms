@@ -2,13 +2,18 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_receive_form/material_receive_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/form_info_item.dart';
 import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
@@ -21,7 +26,7 @@ class CreateMaterialReceiveForm extends StatefulWidget {
   final bool isEdit;
   final int index;
 
-  CreateMaterialReceiveForm({
+  const CreateMaterialReceiveForm({
     super.key,
     this.isEdit = false,
     this.index = -1,
@@ -37,10 +42,10 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
   @override
   void initState() {
     super.initState();
-    context.read<MaterialIssueBloc>().add(
-          GetMaterialIssues(
-            filterMaterialIssueInput: FilterMaterialIssueInput(),
-            orderBy: OrderByMaterialIssueInput(createdAt: "desc"),
+    context.read<PurchaseOrderBloc>().add(
+          GetPurchaseOrders(
+            filterPurchaseOrderInput: FilterPurchaseOrderInput(),
+            orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 20),
           ),
         );
@@ -66,25 +71,27 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
     // final warehouseDropdown = materialReceiveFormCubit.state.warehouseDropdown;
     // final unitDropdown = materialReceiveFormCubit.state.unitDropdown;
     final remarkField = materialReceiveFormCubit.state.remarkField;
+    final receivedQuantityField =
+        materialReceiveFormCubit.state.receivedQuantityField;
 
     // Build a Form widget using the _formKey created above.
     return Form(
       child: BlocBuilder<WarehouseBloc, WarehouseState>(
         builder: (warehouseContext, warehouseState) {
-          return BlocBuilder<MaterialIssueBloc, MaterialIssueState>(
+          return BlocBuilder<PurchaseOrderBloc, PurchaseOrderState>(
             builder: (context, state) {
-              List<MaterialIssueEntity>? materialIssues =
-                  state.materialIssues?.items;
-              MaterialIssueEntity? selectedMaterialIssue =
+              List<PurchaseOrderEntity>? purchaseOrders =
+                  state.purchaseOrders?.items;
+              PurchaseOrderEntity? selectedPurchaseOrder =
                   purchaseOrderDropdown.value != ""
-                      ? materialIssues?.firstWhere((element) =>
+                      ? purchaseOrders?.firstWhere((element) =>
                           element.id == purchaseOrderDropdown.value)
                       : null;
 
-              List<IssueVoucherMaterialEntity>? materials =
-                  selectedMaterialIssue?.items;
+              List<PurchaseOrderItemEntity>? materials =
+                  selectedPurchaseOrder?.items;
 
-              IssueVoucherMaterialEntity? selectedMaterial =
+              PurchaseOrderItemEntity? selectedMaterial =
                   materialDropdown.value != ""
                       ? materials?.firstWhere((element) =>
                           element.productVariant?.id == materialDropdown.value)
@@ -95,17 +102,17 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomDropdown(
-                    initialSelection: selectedMaterialIssue,
+                    initialSelection: selectedPurchaseOrder,
                     onSelected: (dynamic value) {
                       materialReceiveFormCubit.purchaseOrderChanged(value);
                       myController.text = "";
                       // context
-                      //     .read<MaterialIssueDetailsCubit>()
-                      //     .onGetMaterialIssueDetails(materialIssueId: value);
+                      //     .read<PurchaseOrderDetailsCubit>()
+                      //     .onGetPurchaseOrderDetails(purchaseOrderId: value);
                     },
-                    dropdownMenuEntries: materialIssues != null
-                        ? materialIssues
-                            .map((e) => DropdownMenuEntry<MaterialIssueEntity>(
+                    dropdownMenuEntries: purchaseOrders != null
+                        ? purchaseOrders
+                            .map((e) => DropdownMenuEntry<PurchaseOrderEntity>(
                                 label: e.serialNumber ?? e.id ?? "N/A",
                                 value: e))
                             .toList()
@@ -113,7 +120,7 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                     enableFilter: false,
                     errorMessage: purchaseOrderDropdown.errorMessage,
                     label: 'Purchase Order',
-                    trailingIcon: state is MaterialIssuesLoading
+                    trailingIcon: state is PurchaseOrderLoading
                         ? const CircularProgressIndicator()
                         : null,
                   ),
@@ -129,7 +136,7 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                     controller: myController,
                     dropdownMenuEntries: materials
                             ?.map((e) => DropdownMenuEntry<
-                                    IssueVoucherMaterialEntity>(
+                                    PurchaseOrderItemEntity>(
                                 label:
                                     "${e.productVariant?.product?.name} - ${e.productVariant?.variant}",
                                 value: e))
@@ -146,34 +153,34 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                     height: 10,
                   ),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      FormInfoItem(
-                          title: "Unit",
-                          value: unitOfMeasureDisplay(
-                              selectedMaterial?.productVariant?.unitOfMeasure)),
-                      FormInfoItem(
-                          title: "Quantity Issued",
-                          value:
-                              selectedMaterial?.quantity?.toString() ?? "N/A"),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //   children: [
+                  //     FormInfoItem(
+                  //         title: "Unit",
+                  //         value: unitOfMeasureDisplay(
+                  //             selectedMaterial?.productVariant?.unitOfMeasure)),
+                  //     FormInfoItem(
+                  //         title: "Quantity Issued",
+                  //         value:
+                  //             selectedMaterial?.quantity?.toString() ?? "N/A"),
+                  //   ],
+                  // ),
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: [
-                      FormInfoItem(
-                          title: "Unit Cost",
-                          value: selectedMaterialIssue?.warehouseStore?.name ??
-                              "N/A"),
-                      FormInfoItem(
-                          title: "Total Quantity Purchased",
-                          value:
-                              selectedMaterial?.unitCost.toString() ?? "N/A"),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     FormInfoItem(
+                  //         title: "Unit Cost",
+                  //         value:
+                  //             selectedPurchaseOrder?.warehouseStore?.name ?? "N/A"),
+                  //     FormInfoItem(
+                  //         title: "Total Quantity Purchased",
+                  //         value:
+                  //             selectedMaterial?.unitCost.toString() ?? "N/A"),
+                  //   ],
+                  // ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -228,6 +235,20 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                           errorMessage: transportationField.errorMessage,
                         ),
                       ),
+
+                      Flexible(
+                        child: CustomTextFormField(
+                          initialValue:
+                              double.tryParse(receivedQuantityField.value) != null
+                                  ? receivedQuantityField.value
+                                  : "",
+                          keyboardType: TextInputType.number,
+                          label: "Received Quantity",
+                          onChanged:
+                              materialReceiveFormCubit.receivedQuantityChanged,
+                          errorMessage: receivedQuantityField.errorMessage,
+                        ),
+                      ),
                       // FormInfoItem(
                       //     title: "Total Cost(To be returned)", value:(quantityField.value*selectedMaterial?.unitCost).toString()?? "N/A"),
                     ],
@@ -253,36 +274,36 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                       materialReceiveFormCubit.onSubmit();
                       if (materialReceiveFormCubit.state.isValid) {
                         if (widget.isEdit) {
-                          // final updated = MaterialReceiveMaterialEntity(
-                          //   material: selectedMaterial,
-                          //   purchaseOrderId: selectedMaterialIssue?.id ?? "",
-                          //   transportationCost:
-                          //       double.parse(transportationField.value),
-                          //   loadingCost: double.parse(loadingField.value),
-                          //   unloadingCost: double.parse(unloadingField.value),
-                          //   remark: remarkField.value,
-                          // );
+                          final updated = MaterialReceiveMaterialEntity(
+                            // material: selectedMaterial,
+                            receivedQuantity: double.parse(receivedQuantityField.value),
+                            purchaseOrderItem: selectedMaterial!,
+                            transportationCost:
+                                double.parse(transportationField.value),
+                            loadingCost: double.parse(loadingField.value),
+                            unloadingCost: double.parse(unloadingField.value),
+                            remark: remarkField.value,
+                          );
 
                           // BlocProvider.of<MaterialReceiveLocalBloc>(context)
                           //     .add(EditMaterialReceiveMaterialLocal(
                           // updated, widget.index));
                         } else {
-                          // BlocProvider.of<MaterialReceiveLocalBloc>(context)
-                          //     .add(
-                          //   AddMaterialReceiveMaterialLocal(
-                          //     MaterialReceiveMaterialEntity(
-                          //       material: selectedMaterial,
-                          //       purchaseOrderId:
-                          //           selectedMaterialIssue?.id ?? "",
-                          //       transportationCost:
-                          //           double.parse(transportationField.value),
-                          //       loadingCost: double.parse(loadingField.value),
-                          //       unloadingCost:
-                          //           double.parse(unloadingField.value),
-                          //       remark: remarkField.value,
-                          //     ),
-                          //   ),
-                          // );
+                          BlocProvider.of<MaterialReceiveLocalBloc>(context)
+                              .add(
+                            AddMaterialReceiveMaterialLocal(
+                              MaterialReceiveMaterialEntity(
+                                receivedQuantity: double.parse(receivedQuantityField.value),
+                                purchaseOrderItem: selectedMaterial!,
+                                transportationCost:
+                                    double.parse(transportationField.value),
+                                loadingCost: double.parse(loadingField.value),
+                                unloadingCost:
+                                    double.parse(unloadingField.value),
+                                remark: remarkField.value,
+                              ),
+                            ),
+                          );
                         }
                         Navigator.pop(context);
                       }

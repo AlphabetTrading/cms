@@ -51,17 +51,6 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
         fontSize: 16.0);
   }
 
-  _buildOnCreateFailed(BuildContext context) {
-    Fluttertoast.showToast(
-        msg: "Create Material Receive Failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final materialReceiveFormCubit = context.watch<MaterialReceiveFormCubit>();
@@ -74,9 +63,9 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
         BlocProvider(
           create: (context) => sl<CreateMaterialReceiveCubit>(),
         ),
-        BlocProvider(
-          create: (context) => sl<MaterialReceiveLocalBloc>(),
-        ),
+        // BlocProvider(
+        //   create: (context) => sl<MaterialReceiveLocalBloc>(),
+        // ),
       ],
       child: BlocBuilder<MaterialReceiveLocalBloc, MaterialReceiveLocalState>(
         builder: (localContext, localState) {
@@ -89,12 +78,21 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
                 if (receivingState is CreateMaterialReceiveSuccess) {
                   _buildOnCreateSuccess(receivingContext);
                 } else if (receivingState is CreateMaterialReceiveFailed) {
-                  _buildOnCreateFailed(receivingContext);
+          
+                  Fluttertoast.showToast(
+                      msg: receivingState.error,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 3,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
                 }
               },
               builder: (receivingContext, receivingState) {
                 final warehouseForm = warehouseFormContext
                     .watch<MaterialReceiveWarehouseFormCubit>();
+
                 return Scaffold(
                     appBar:
                         AppBar(title: const Text("Create Material Receive")),
@@ -173,7 +171,7 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
                   ),
                   BlocProvider<MaterialReceiveFormCubit>(
                     create: (_) => MaterialReceiveFormCubit(),
-                  )
+                  ),
                 ],
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -211,7 +209,7 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
                                 "",
                             receivingStoreId:
                                 warehouseForm.state.warehouseDropdown.value,
-                            returnedById:
+                            preparedById:
                                 context.read<AuthBloc>().state.user?.id ??
                                     USER_ID,
                             materialReceiveMaterials: localState
@@ -220,9 +218,9 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
                                       transportationCost: e.transportationCost,
                                       loadingCost: e.loadingCost,
                                       unloadingCost: e.unloadingCost,
-                                      purchaseOrderId: e.purchaseOrderId,
+                                      purchaseOrderItem: e.purchaseOrderItem,
                                       remark: e.remark,
-                                      // material: e.material,
+                                      receivedQuantity: e.receivedQuantity,
                                     ))
                                 .toList(),
                           ),

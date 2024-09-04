@@ -17,6 +17,7 @@ abstract class ProjectDataSource {
 
   Future<DataState<String>> selectProject(String id);
   Future<DataState<String?>> getSelectedProject();
+  Future<DataState<ProjectModel>> fetchProject({required String projectId});
 }
 
 class ProjectDataSourceImpl extends ProjectDataSource {
@@ -141,6 +142,49 @@ class ProjectDataSourceImpl extends ProjectDataSource {
       debugPrint('getSelectedProject: $selectedProjectId');
       return DataSuccess(selectedProjectId);
     }
+  }
+
+  @override
+  Future<DataState<ProjectModel>> fetchProject({required String projectId}) {
+    String fetchProjectQuery = r'''
+query ProjectUsers($getProjectId: String!) {
+  getProject(id: $getProjectId) {
+        id
+    ProjectUsers {
+      user {
+        createdAt
+        email
+        fullName
+        id
+        phoneNumber
+        role
+        updatedAt
+      }
+    }
+
+  }
+}
+
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(fetchProjectQuery),
+      variables: {"getProjectId": projectId},
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+      final materialRequest =
+          ProjectModel.fromJson(response.data!['getProject']);
+
+      return DataSuccess(materialRequest);
+    });
   }
 }
 

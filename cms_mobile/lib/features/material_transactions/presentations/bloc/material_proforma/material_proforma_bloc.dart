@@ -28,7 +28,7 @@ class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaS
       onGetMaterialProformas,
       transformer: throttleDroppable(throttleDuration),
     );
-    on<DeleteMaterialProformaEventLocal>(onDeleteMaterialProforma);
+    // on<DeleteMaterialProformaEventLocal>(onDeleteMaterialProforma);
   }
 
   void onGetMaterialProformas(

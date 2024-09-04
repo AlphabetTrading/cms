@@ -160,60 +160,43 @@ class MaterialReceiveListWithMeta extends MaterialReceiveEntityListWithMeta {
 }
 
 class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
-  const MaterialReceiveMaterialModel({
-    required super.purchaseOrderId,
-    // super.material,
-    super.transportationCost,
-    super.loadingCost,
-    super.unloadingCost,
-    super.remark,
-  });
+  MaterialReceiveMaterialModel(
+      {required super.loadingCost,
+      required super.unloadingCost,
+      required super.transportationCost,
+      required super.purchaseOrderItem,
+      required super.receivedQuantity,
+      super.remark
+      });
 
   Map<String, dynamic> toJson() {
     return {
-      'purchaseOrderId': purchaseOrderId,
-      // 'material': material,
+      'purchaseOrderItemId': purchaseOrderItem,
       'transportationCost': transportationCost,
       'loadingCost': loadingCost,
       'unloadingCost': unloadingCost,
-      'remark': remark,
+      'receivedQuantity': receivedQuantity,
+      // 'remark': remark
     };
   }
 
-  factory MaterialReceiveMaterialModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("MaterialReceiveMaterialModel.fromJson: $json");
-// {__typename: MaterialReceiveItem,
-//createdAt: 2024-08-14T12:06:35.012Z,
-//id: fe5f60c7-38e5-402d-b400-2426a2edf8d8, loadingCost: 800,
-//materialReceiveVoucherId: 702581fb-c8b7-408b-994c-3d5c2e96b5b1,
-// transportationCost: 1500,
-// unloadingCost: 1100,
-// updatedAt: 2024-08-14T12:06:35.012Z,
-// remark: null,
-// receivedQuantity: 2,
-// purchaseOrderItemId: 84d47293-e5a0-4372-9028-477e2a99b504,
-// purchaseOrderItem: {
-//    __typename: PurchaseOrderItem,
-//    createdAt: 2024-08-14T12:05:31.315Z,
-//    id: 84d47293-e5a0-4372-9028-477e2a99b504,
-//    materialRequestItemId: 540a5fa4-db98-4060-8178-988a4de827c7,
-//    proformaId: null,
-//    purchaseOrderId: c144367d-2eb9-46c4-88b1-2cfbbf20a25e,
-//    quantity: 10,
-//    remark: null,
-//    totalPrice: 150,
-//    unitPrice: 15,
-// updatedAt: 2024-08-14T12:05:31.315Z}}
-    return MaterialReceiveMaterialModel(
-        purchaseOrderId: json['purchaseOrderItemId'],
-        // material: json['purchaseOrderItem'] != null
-        //     ? ReceiveVoucherMaterialModel.fromJson(json['purchaseOrderItem'])
-        //     : null,
-        transportationCost: json['transportationCost'],
-        loadingCost: json['loadingCost'],
-        unloadingCost: json['unloadingCost'],
-        remark: json['remark']);
-  }
+  // factory MaterialReceiveMaterialModel.fromJson(Map<String, dynamic> json) {
+  //   debugPrint("MaterialReceiveMaterialModel.fromJson: $json");
+
+  //   return MaterialReceiveMaterialModel(
+  //       // purchaseOrderId: json['purchaseOrderItemId'],
+  //       purchaseOrderItem: json['purchaseOrderItem'] != null
+  //           ? PurchaseOrderItemModel.fromJson(json['purchaseOrderItem'])
+  //           : null,
+  //       // material: json['purchaseOrderItem'] != null
+  //       //     ? ReceiveVoucherMaterialModel.fromJson(json['purchaseOrderItem'])
+  //       //     : null,
+  //       transportationCost: json['transportationCost'],
+  //       loadingCost: json['loadingCost'],
+  //       unloadingCost: json['unloadingCost'],
+  //       remark: json['remark'],
+  //        receivedQuantity: null);
+  // }
 }
 
 class MaterialReceiveItemModel extends MaterialReceiveItemEntity {
@@ -267,16 +250,16 @@ class CreateMaterialReceiveParamsModel
   const CreateMaterialReceiveParamsModel({
     required super.projectId,
     required super.materialReceiveMaterials,
-    required super.returnedById,
+    required super.preparedById,
     required super.receivingStoreId,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      "preparedById": preparedById,
       "projectId": projectId,
-      "materialReceiveMaterials": materialReceiveMaterials,
-      "returnedById": returnedById,
-      "receivingStoreId": receivingStoreId,
+      "warehouseStoreId": receivingStoreId,
+      "items": materialReceiveMaterials.map((e) => e.toJson()).toList()
     };
   }
 
@@ -287,15 +270,15 @@ class CreateMaterialReceiveParamsModel
       CreateMaterialReceiveParamsEntity entity) {
     return CreateMaterialReceiveParamsModel(
         projectId: entity.projectId,
-        returnedById: entity.returnedById,
+        preparedById: entity.preparedById,
         receivingStoreId: entity.receivingStoreId,
         materialReceiveMaterials: entity.materialReceiveMaterials
             .map((e) => MaterialReceiveMaterialModel(
-                purchaseOrderId: e.purchaseOrderId,
-                // material: e.material as ReceiveVoucherMaterialModel,
+                purchaseOrderItem: e.purchaseOrderItem as PurchaseOrderItemModel,
                 transportationCost: e.transportationCost,
                 loadingCost: e.loadingCost,
                 unloadingCost: e.unloadingCost,
+                receivedQuantity: e.receivedQuantity,
                 remark: e.remark))
             .toList());
   }

@@ -44,11 +44,11 @@ mutation CreateProforma($createProformaInput: CreateProformaInput!) {
   ''';
 
   static const String _deleteMaterialProformaMutation = r'''
-    mutation DeleteMaterialProforma($deleteMaterialProformaId: String!) {
-      deleteMaterialProforma(id: $deleteMaterialProformaId) {
-        id
-      }
-    }
+    mutation DeleteProforma($deleteProformaId: String!) {
+  deleteProforma(id: $deleteProformaId) {
+    id
+  }
+}
 ''';
 
   static const String _uploadFiles = r'''
@@ -71,31 +71,41 @@ mutation UploadFiles($files: [Upload!]!) {
 
     try {
       final QueryResult file_result = await _client.mutate(options_file);
-      print("*********file_result: $file_result");
-      print("*********file_result list: ${file_result.data}");
-    } catch (e) {}
+      print("*************************");
 
-    final MutationOptions options = MutationOptions(
-      document: gql(_createMaterialProformaMutation),
-      variables: {
-        "createProformaInput": createMaterialProformaParamsModel.toJson()
-      },
-    );
+      print(file_result.data);
+      print(file_result.data?['uploadFiles']);
+      print(file_result.data?['uploadFiles'][0]);
 
-    try {
-      final QueryResult result = await _client.mutate(options);
+      var i = 0;
+      createMaterialProformaParamsModel.materialProformaMaterials.map((e) {
+        e.photos = [file_result.data?['uploadFiles'][i++]];
+      }).toList();
+      final MutationOptions options = MutationOptions(
+        document: gql(_createMaterialProformaMutation),
+        variables: {
+          "createProformaInput": createMaterialProformaParamsModel.toJson()
+        },
+      );
+      // print(createMaterialProformaParamsModel.toJson());
 
-      if (result.hasException) {
-        return DataFailed(
-            ServerFailure(errorMessage: result.exception.toString()));
+      try {
+        final QueryResult result = await _client.mutate(options);
+
+        if (result.hasException) {
+          return DataFailed(
+              ServerFailure(errorMessage: result.exception.toString()));
+        }
+
+        // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+        final String id = result.data!['createProforma']['id'];
+
+        return DataSuccess(id);
+      } catch (e) {
+        // In case of any other errors, return a DataFailed state
+        return DataFailed(ServerFailure(errorMessage: e.toString()));
       }
-
-      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['createMaterialProforma']['id'];
-
-      return DataSuccess(id);
     } catch (e) {
-      // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
   }
@@ -104,67 +114,57 @@ mutation UploadFiles($files: [Upload!]!) {
   Future<DataState<MaterialProformaModel>> getMaterialProformaDetails(
       {required String params}) {
     String fetchMaterialProformaDetailsQuery = r'''
-      query GetProformaById($getProformaByIdId: String!) {
-        getProformaById(id: $getProformaByIdId) {
-          approvedBy {
-            createdAt
-            email
-            fullName
-            id
-            phoneNumber
-            role
-            updatedAt
-          }
-          approvedById
-          createdAt
+query GetProformaById($getProformaByIdId: String!) {
+  getProformaById(id: $getProformaByIdId) {
+    id
+        materialRequestItem {
+      id
+      quantity
+      productVariant {
+        id
+        variant
+        product {
           id
-          materialRequestItem {
-            createdAt
-            id
-            productVariant {
-              createdAt
-              description
-              id
-              product {
-                createdAt
-                id
-                name
-                productType
-                updatedAt
-              }
-              productId
-              unitOfMeasure
-              updatedAt
-              variant
-            }
-            productVariantId
-            quantity
-            remark
-            updatedAt
-          }
-          materialRequestItemId
-          photo
-          preparedBy {
-            createdAt
-            email
-            fullName
-            id
-            phoneNumber
-            role
-            updatedAt
-          }
-          preparedById
-          projectId
-          quantity
-          remark
-          serialNumber
-          status
-          totalPrice
-          unitPrice
-          updatedAt
-          vendor
+          name
         }
+        unitOfMeasure
       }
+    }
+    items {
+      createdAt
+      id
+      photos
+      quantity
+      remark
+      totalPrice
+      unitPrice
+      updatedAt
+      vendor
+    }
+    serialNumber
+    status
+    updatedAt
+    preparedBy {
+      id
+      fullName
+      email
+      createdAt
+      phoneNumber
+      role
+      updatedAt
+    }
+    createdAt
+    approvedBy {
+      id
+      fullName
+      email
+      createdAt
+      phoneNumber
+      role
+      updatedAt
+    }
+  }
+}
     ''';
 
     return _client
@@ -224,7 +224,7 @@ mutation UploadFiles($files: [Upload!]!) {
       {required String materialProformaId}) async {
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMaterialProformaMutation),
-      variables: {"deleteMaterialProformaId": materialProformaId},
+      variables: {"deleteProformaId": materialProformaId},
     );
 
     try {
@@ -236,7 +236,7 @@ mutation UploadFiles($files: [Upload!]!) {
       }
 
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['deleteMaterialProforma']['id'];
+      final String id = result.data!['deleteProforma']['id'];
 
       return DataSuccess(id);
     } catch (e) {

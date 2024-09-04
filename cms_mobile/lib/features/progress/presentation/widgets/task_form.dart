@@ -12,12 +12,15 @@ import 'package:cms_mobile/features/progress/presentation/cubit/task/edit/edit_c
 import 'package:cms_mobile/features/progress/presentation/cubit/task/frorm/task_form_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/task/frorm/task_form_state.dart';
 import 'package:cms_mobile/features/progress/presentation/utils/progress_enums.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/details/details_cubit.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+
 
 class TaskForm extends StatefulWidget {
   final bool isEdit;
@@ -59,19 +62,11 @@ class _TaskFormState extends State<TaskForm> {
     }
   }
 
-  final users = [
-    UserEntity(
-        id: "30870314-fa1f-43b7-9785-cf8d4972686c",
-        fullName: "John Doe",
-        email: '',
-        phoneNumber: "",
-        role: UserRole.SITE_MANAGER,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now()),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final selectedProjectId =
+        context.read<ProjectBloc>().state.selectedProjectId ?? "";
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<TaskFormCubit>(
@@ -89,6 +84,10 @@ class _TaskFormState extends State<TaskForm> {
         ),
         BlocProvider(
           create: (context) => sl<EditTaskCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => sl<ProjectDetailsCubit>()
+            ..onGetProjectDetails(projectId: selectedProjectId),
         ),
       ],
       child: BlocConsumer<EditTaskCubit, EditTaskState>(
@@ -208,20 +207,31 @@ class _TaskFormState extends State<TaskForm> {
                           const SizedBox(
                             height: 10,
                           ),
-                          CustomDropdown(
-                            initialSelection: userDropdown.value != ""
-                                ? users.firstWhere((element) =>
-                                    element.id == userDropdown.value)
-                                : null,
-                            onSelected: (dynamic value) =>
-                                taskFormCubit.userChanged(value),
-                            dropdownMenuEntries: users
-                                .map((e) => DropdownMenuEntry<UserEntity>(
-                                    label: e.fullName, value: e))
-                                .toList(),
-                            enableFilter: false,
-                            errorMessage: userDropdown.errorMessage,
-                            label: 'Assign to',
+                          BlocBuilder<ProjectDetailsCubit, ProjectDetailsState>(
+                            builder: (context, state) {
+                              final users = (state is ProjectDetailsSuccess)
+                                  ? state.project.projectUsers!
+                                  : [];
+                              UserEntity? selectedUser  = users.firstWhereOrNull(
+                                        (element) =>
+                                            element.id == userDropdown.value);
+
+                              return CustomDropdown(
+                                initialSelection: selectedUser,
+                                onSelected: (dynamic value) =>
+                                    taskFormCubit.userChanged(value),
+                                dropdownMenuEntries: users
+                                    .map((e) => DropdownMenuEntry<UserEntity>(
+                                        label: e.fullName, value: e))
+                                    .toList(),
+                                enableFilter: false,
+                                errorMessage: userDropdown.errorMessage,
+                                label: 'Assign to',
+                                trailingIcon: state is ProjectDetailsLoading
+                                    ? const CircularProgressIndicator()
+                                    : null,
+                              );
+                            },
                           ),
                           const SizedBox(
                             height: 10,

@@ -7,6 +7,9 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 class GQLClient {
   static final HttpLink httpLink = HttpLink(
     URLs.graphqlEndpoint,
+    defaultHeaders: {
+      "Apollo-Require-Preflight": "true",
+    }
   );
 
   static final AuthLink authLink = AuthLink(
@@ -81,6 +84,7 @@ class GQLClient {
     GraphQLClient(
       cache: GraphQLCache(),
       link: link,
+    
     ),
   );
 

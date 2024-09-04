@@ -217,23 +217,11 @@ class _CreateMaterialProformaPageState
         ),
         const SizedBox(height: 10),
         ElevatedButton(
-          onPressed: (materialProformaMaterials.isEmpty)
+          onPressed: (materialProformaMaterials.isEmpty || state is CreateMaterialProformaLoading)
               ? null
               : () {
                   proformaMainFrom.onSubmit();
                   if (proformaMainFrom.state.isValid) {
-                    print(CreateMaterialProformaParamsEntity(
-                        materialRequestItemId:
-                            proformaMainFrom.state.materialDropdown.value,
-                        preparedById:
-                            context.read<AuthBloc>().state.userId ?? "",
-                        projectId: context
-                                .read<ProjectBloc>()
-                                .state
-                                .selectedProjectId ??
-                            "",
-                        materialProformaMaterials: materialProformaMaterials));
-
                         
                     context
                         .read<CreateMaterialProformaCubit>()
