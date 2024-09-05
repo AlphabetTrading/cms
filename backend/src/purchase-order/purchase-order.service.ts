@@ -6,7 +6,7 @@ import { UpdatePurchaseOrderInput } from './dto/update-purchase-order.input';
 import { ApprovalStatus, Prisma, UserRole } from '@prisma/client';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 import { DocumentType } from 'src/common/enums/document-type';
-import puppeteer from 'puppeteer-core';
+import * as pdf from 'html-pdf';
 import { format } from 'date-fns';
 
 @Injectable()
@@ -252,7 +252,7 @@ export class PurchaseOrderService {
               },
               proforma: {
                 include: {
-                selectedProformaItem: true,
+                  selectedProformaItem: true,
                   materialRequestItem: {
                     include: {
                       productVariant: {
@@ -267,7 +267,7 @@ export class PurchaseOrderService {
             },
           },
           approvedBy: true,
-            preparedBy: true,
+          preparedBy: true,
           Project: true,
         },
       });
@@ -383,26 +383,16 @@ export class PurchaseOrderService {
       },
     });
 
-    const browser = await puppeteer.launch({
-      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-      args: ['--headless'],
-    });
-    const page = await browser.newPage();
     const htmlContent = this.getHtmlContent(purchaseOrder);
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({
-      path: 'hello.pdf',
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        left: '0px',
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-      },
+    return new Promise<string>((resolve, reject) => {
+      pdf.create(htmlContent).toBuffer((err, buffer) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(buffer.toString('base64'));
+        }
+      });
     });
-    await browser.close();
-    return pdfBuffer.toString('base64');
   }
 
   private getHtmlContent(purchaseOrder: PurchaseOrderVoucher): string {
@@ -510,7 +500,8 @@ export class PurchaseOrderService {
                       ? `${item.materialRequestItem.productVariant.variant} ${item.materialRequestItem.productVariant.product.name}`
                       : `${item.proforma.materialRequestItem.productVariant.variant} ${item.proforma.materialRequestItem.productVariant.product.name}`
                   }</td>
-                  <td style="text-transform: lowercase;" class="col-uom">${item.materialRequestItem
+                  <td style="text-transform: lowercase;" class="col-uom">${
+                    item.materialRequestItem
                       ? `${item.materialRequestItem.productVariant.unitOfMeasure}`
                       : `${item.proforma.materialRequestItem.productVariant.unitOfMeasure}`
                   }</td>

@@ -10,7 +10,7 @@ import { MaterialIssueVoucher } from './model/material-issue.model';
 import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DocumentType } from 'src/common/enums/document-type';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
-import puppeteer from 'puppeteer';
+import * as pdf from 'html-pdf';
 import { format } from 'date-fns';
 
 @Injectable()
@@ -354,26 +354,17 @@ export class MaterialIssueService {
       },
     });
 
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      headless: true,
-    });
-    const page = await browser.newPage();
     const htmlContent = this.getHtmlContent(materialIssue);
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({
-      path: `${materialIssueId}.pdf`,
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        left: '0px',
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-      },
+
+    return new Promise<string>((resolve, reject) => {
+      pdf.create(htmlContent).toBuffer((err, buffer) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(buffer.toString('base64'));
+        }
+      });
     });
-    await browser.close();
-    return pdfBuffer.toString('base64');
   }
 
   private getHtmlContent(materialIssue: MaterialIssueVoucher): string {

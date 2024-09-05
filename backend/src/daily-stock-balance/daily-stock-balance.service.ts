@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { DailyStockBalance } from './model/daily-stock-balance.model';
 import { DailyStockBalanceItem } from './model/daily-stock-balance-item.model';
-import puppeteer from 'puppeteer-core';
+import * as pdf from 'html-pdf';
 import { format } from 'date-fns';
 
 @Injectable()
@@ -164,26 +164,17 @@ export class DailyStockBalanceService {
       },
     });
 
-    const browser = await puppeteer.launch({
-      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-      args: ['--headless'],
-    });
-    const page = await browser.newPage();
     const htmlContent = await this.getHtmlContent(dailyStockBalance);
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({
-      path: 'hello.pdf',
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        left: '0px',
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-      },
+
+    return new Promise<string>((resolve, reject) => {
+      pdf.create(htmlContent).toBuffer((err, buffer) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(buffer.toString('base64'));
+        }
+      });
     });
-    await browser.close();
-    return pdfBuffer.toString('base64');
   }
 
   async getHtmlContent(dailyStockBalance: any): Promise<string> {

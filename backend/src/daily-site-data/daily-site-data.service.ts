@@ -7,7 +7,7 @@ import { CreateDailySiteDataTaskLaborInput } from './dto/create-daily-site-data-
 import { CreateDailySiteDataTaskMaterialInput } from './dto/create-daily-site-data-task-material.input';
 import { UpdateDailySiteDataInput } from './dto/update-daily-site-data.input';
 import { DocumentType } from 'src/common/enums/document-type';
-import puppeteer from 'puppeteer-core';
+import * as pdf from 'html-pdf';
 import { format } from 'date-fns';
 import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
 
@@ -316,26 +316,17 @@ export class DailySiteDataService {
       },
     });
 
-    const browser = await puppeteer.launch({
-      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-      args: ['--headless'],
-    });
-    const page = await browser.newPage();
     const htmlContent = this.getHtmlContent(dailySiteData);
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({
-      path: 'hello.pdf',
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        left: '0px',
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-      },
+    
+    return new Promise<string>((resolve, reject) => {
+      pdf.create(htmlContent).toBuffer((err, buffer) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(buffer.toString('base64'));
+        }
+      });
     });
-    await browser.close();
-    return pdfBuffer.toString('base64');
   }
 
   private getHtmlContent(dailySiteData: DailySiteData): string {
