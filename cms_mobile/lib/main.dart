@@ -1,6 +1,7 @@
 import 'package:cms_mobile/app.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/daily_site_datas_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
@@ -59,6 +60,9 @@ void main() async {
           BlocProvider<MaterialTransactionBloc>(
             create: (context) => sl<MaterialTransactionBloc>(),
           ),
+          BlocProvider<DashboardBloc>(
+            create: (context) => sl<DashboardBloc>(),
+          ),
           BlocProvider<MaterialIssueBloc>(
             create: (context) => sl<MaterialIssueBloc>(),
           ),
@@ -104,7 +108,6 @@ void main() async {
           BlocProvider<MilestoneDetailsCubit>(
             create: (context) => sl<MilestoneDetailsCubit>(),
           ),
-          
         ],
         child: EasyLocalization(
           path: 'assets/translations',

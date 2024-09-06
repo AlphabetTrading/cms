@@ -6,10 +6,15 @@ import 'package:cms_mobile/features/authentication/domain/repository/authenticat
 import 'package:cms_mobile/features/authentication/domain/usecases/authentication_usecase.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
+import 'package:cms_mobile/features/home/data/data_source/dashboard/dashboard_remote_data_source.dart';
 import 'package:cms_mobile/features/home/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/home/data/repository/dashboard_repository_impl.dart';
 import 'package:cms_mobile/features/home/data/repository/material_transactions_repository_impl.dart';
+import 'package:cms_mobile/features/home/domain/repository/dashboard_repository.dart';
 import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
+import 'package:cms_mobile/features/home/domain/usecases/get_dashboard_stats.dart';
 import 'package:cms_mobile/features/home/domain/usecases/get_material_transactions.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/daily_site_data/daily_site_data_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_proformas/material_proforma_remote_data_source.dart';
@@ -163,6 +168,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<DashboardDataSource>(
+    () => DashboardDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
+
   sl.registerLazySingleton<MaterialTransactionsDataSource>(
     () => MaterialTransactionsDataSourceImpl(
       client: sl<GraphQLClient>(),
@@ -267,6 +278,13 @@ Future<void> initializeDependencies() async {
       () => AuthenticationRepositoryImpl(
             dataSource: sl<AuthenticationRemoteDataSource>(),
           ));
+
+  // dashboard
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(
+      dataSource: sl<DashboardDataSource>(),
+    ),
+  );
 
   // material transactions
   sl.registerLazySingleton<MaterialTransactionRepository>(
@@ -425,6 +443,13 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  // dashboard
+  sl.registerLazySingleton<GetDashboardUseCase>(
+    () => GetDashboardUseCase(
+      sl<DashboardRepository>(),
+    ),
+  );
+
   // material transaction
   sl.registerLazySingleton<GetMaterialTransactionUseCase>(
     () => GetMaterialTransactionUseCase(
@@ -560,7 +585,7 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-    sl.registerLazySingleton<GetProjectDetailsUseCase>(
+  sl.registerLazySingleton<GetProjectDetailsUseCase>(
     () => GetProjectDetailsUseCase(
       sl<ProjectRepository>(),
     ),
@@ -692,6 +717,11 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<LoginBloc>(
     () => LoginBloc(sl<LoginUseCase>()),
+  );
+
+  // dashboard
+  sl.registerFactory<DashboardBloc>(
+    () => DashboardBloc(sl<GetDashboardUseCase>()),
   );
 
   // material transaction
