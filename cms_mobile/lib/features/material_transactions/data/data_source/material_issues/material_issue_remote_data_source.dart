@@ -23,6 +23,7 @@ abstract class MaterialIssueDataSource {
       {required EditMaterialIssueParamsModel editMaterialIssueParamsModel});
   Future<DataState<String>> deleteMaterialIssue(
       {required String materialIssueId});
+  Future<DataState<String>> generateMaterialIssuePdf({required String id});
 }
 
 class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
@@ -226,6 +227,36 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
       // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
+  }
+
+  @override
+  Future<DataState<String>> generateMaterialIssuePdf({required String id}) {
+    String generateMaterialIssuePdfQuery = r'''
+      query Query($generateMaterialIssuePdfId: String!) {
+        generateMaterialIssuePdf(id: $generateMaterialIssuePdfId)
+      }
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(generateMaterialIssuePdfQuery),
+      variables: {"generateMaterialIssuePdfId": id},
+      fetchPolicy: FetchPolicy.noCache,
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final materialIssueReport = response.data!['generateMaterialIssuePdf'];
+
+      return DataSuccess(materialIssueReport);
+      
+    });
   }
 
   @override

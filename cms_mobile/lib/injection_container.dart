@@ -42,6 +42,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_datas.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/delete_material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/generate_material_issue_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/create_material_proforma.dart';
@@ -76,6 +77,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/dai
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
@@ -497,6 +499,11 @@ Future<void> initializeDependencies() async {
       sl<MaterialIssueRepository>(),
     ),
   );
+  sl.registerLazySingleton<GenerateMaterialIssuePdfUseCase>(
+    () => GenerateMaterialIssuePdfUseCase(
+      sl<MaterialIssueRepository>(),
+    ),
+  );
   sl.registerLazySingleton<DeleteMaterialRequestUseCase>(
     () => DeleteMaterialRequestUseCase(
       sl<MaterialRequestRepository>(),
@@ -790,7 +797,9 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialRequestLocalBloc>(
     () => MaterialRequestLocalBloc(),
   );
-
+  sl.registerFactory<MaterialIssueGeneratePdfCubit>(
+    () => MaterialIssueGeneratePdfCubit(sl<GenerateMaterialIssuePdfUseCase>()),
+  );
   sl.registerFactory<DeleteMaterialIssueCubit>(
     () => DeleteMaterialIssueCubit(sl<DeleteMaterialIssueUseCase>()),
   );
@@ -807,7 +816,8 @@ Future<void> initializeDependencies() async {
   // material issue
   sl.registerFactory<MaterialIssueBloc>(
     () => MaterialIssueBloc(
-        sl<GetMaterialIssuesUseCase>(), sl<CreateMaterialIssueUseCase>()),
+        sl<GetMaterialIssuesUseCase>(),
+        sl<CreateMaterialIssueUseCase>()),
   );
 
   sl.registerFactory<MaterialIssueDetailsCubit>(

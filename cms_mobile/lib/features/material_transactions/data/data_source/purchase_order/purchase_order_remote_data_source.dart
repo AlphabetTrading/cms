@@ -25,6 +25,8 @@ abstract class PurchaseOrderDataSource {
       {required EditPurchaseOrderParamsEntity editPurchaseOrderParamsModel});
 
   Future<DataState<String>> deletePurchaseOrder({required String materialId});
+
+  Future<DataState<String>> generatePurchaseOrderPdf({required String id});
 }
 
 class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
@@ -248,6 +250,36 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
       // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
+  }
+
+  @override
+  Future<DataState<String>> generatePurchaseOrderPdf({required String id}) {
+    String generatePurchaseOrderPdfQuery = r'''
+      query Query($generatePurchaseOrderPdfId: String!) {
+        generatePurchaseOrderPdf(id: $generatePurchaseOrderPdfId)
+      }
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(generatePurchaseOrderPdfQuery),
+      variables: {"generatePurchaseOrderPdfId": id},
+      fetchPolicy: FetchPolicy.noCache,
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final purchaseOrderReport = response.data!['generatePurchaseOrderPdf'];
+
+      return DataSuccess(purchaseOrderReport);
+      
+    });
   }
 
   @override
