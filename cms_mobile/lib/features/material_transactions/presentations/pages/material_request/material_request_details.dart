@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
@@ -6,6 +11,9 @@ import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MaterialRequestDetailsPage extends StatefulWidget {
   final String materialRequestId;
@@ -18,17 +26,89 @@ class MaterialRequestDetailsPage extends StatefulWidget {
       _MaterialRequestDetailsPageState();
 }
 
+Future<void> saveAndOpenPdf(String base64String) async {
+  try {
+    Uint8List bytes = base64Decode(base64String);
+
+    final directory = await getTemporaryDirectory();
+    final path = '${directory.path}/Material Request.pdf';
+
+    final file = File(path);
+    await file.writeAsBytes(bytes);
+
+    await OpenFile.open(path);
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
 class _MaterialRequestDetailsPageState
     extends State<MaterialRequestDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Material Request Details")),
-      body: BlocProvider<MaterialRequestDetailsCubit>(
-        create: (context) => sl<MaterialRequestDetailsCubit>()
-          ..onGetMaterialRequestDetails(
-              materialRequestId: widget.materialRequestId),
-        child: BlocBuilder<MaterialRequestDetailsCubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<MaterialRequestDetailsCubit>()
+            ..onGetMaterialRequestDetails(
+                materialRequestId: widget.materialRequestId),
+        ),
+        BlocProvider(
+            create: (context) => sl<MaterialRequestGeneratePdfCubit>()),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Material Request Details"),
+          actions: [
+            BlocConsumer<MaterialRequestGeneratePdfCubit,
+                MaterialRequestGeneratePdfState>(
+              listener: (context, state) {
+                if (state is MaterialRequestGeneratePdfSuccess) {
+                  // Show success message and handle PDF opening
+                  Fluttertoast.showToast(
+                    msg: "PDF download started",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                  );
+                  // Open or save PDF as required
+                  saveAndOpenPdf(state.materialRequest);
+                } else if (state is MaterialRequestGeneratePdfFailed) {
+                  // Show error message
+                  Fluttertoast.showToast(
+                    msg: "Failed to generate PDF: ${state.error}",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                  );
+                }
+              },
+              builder: (context, state) {
+                // Popup menu with the option to generate PDF
+                return PopupMenuButton(
+                  onSelected: (value) {
+                    if (value == 'generate_pdf') {
+                      // Trigger PDF generation
+                      context
+                          .read<MaterialRequestGeneratePdfCubit>()
+                          .onGetMaterialRequestGeneratePdf(
+                              materialRequestId: widget.materialRequestId);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'generate_pdf',
+                      child: Text('Generate PDF'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+        body: BlocBuilder<MaterialRequestDetailsCubit,
             MaterialRequestDetailsState>(
           builder: (context, state) {
             if (state is MaterialRequestDetailsLoading) {
@@ -61,7 +141,7 @@ class _MaterialRequestDetailsPageState
                                       Theme.of(context).colorScheme.onSurface,
                                 ),
                           ),
-                          Expanded(
+                          const Expanded(
                             child: Divider(),
                           )
                         ],
@@ -71,7 +151,7 @@ class _MaterialRequestDetailsPageState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 32),
                         decoration: ShapeDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
@@ -81,22 +161,22 @@ class _MaterialRequestDetailsPageState
                             TransactionInfoItem(
                                 title: 'Project',
                                 value: project?.name ?? 'N/A'),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             TransactionInfoItem(
                                 title: 'Material Request Number',
                                 value: materialRequest?.serialNumber ?? 'N/A'),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             TransactionInfoItem(
                                 title: 'Date',
                                 value: materialRequest?.createdAt != null
                                     ? DateFormat('MMMM dd, yyyy HH:mm')
                                         .format(materialRequest!.createdAt!)
                                     : 'N/A'),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             TransactionInfoItem(
                                 title: 'Status',
                                 value: materialRequest?.status?.name ?? 'N/A'),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             TransactionInfoItem(
                                 title: 'Approved by',
                                 value: approvedBy?.fullName ?? 'N/A'),
@@ -138,8 +218,8 @@ class _MaterialRequestDetailsPageState
                                   'Requested Quantity: ${materialRequestMaterial.quantity} ${productVariant?.unitOfMeasure}',
                               iconSrc:
                                   'assets/icons/transactions/light/material_requests.svg',
-                              onDelete: null,
-                              onEdit: null,
+                              onDelete: () {},
+                              onEdit: () {},
                               onOpen: () {
                                 showModalBottomSheet(
                                   context: context,
