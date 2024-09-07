@@ -1,4 +1,23 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { ProductVariant } from 'src/product-variant/model/product-variant.model';
+
+@ObjectType()
+export class SpendingHistory {
+  @Field(() => String, { nullable: true })
+  productVariantId?: string;
+
+  @Field(() => ProductVariant, { nullable: true })
+  productVariant?: ProductVariant;
+
+  @Field(() => Number, { nullable: true })
+  quantity?: number;
+
+  @Field(() => Number, { nullable: true })
+  itemCost?: number;
+
+  @Field(() => Date, { nullable: true })
+  date?: Date;
+}
 
 @ObjectType()
 export class Expenditure {
@@ -40,6 +59,18 @@ export class DashboardStat {
 
   @Field(() => Expenditure, { nullable: true })
   expenditure?: Expenditure;
+}
+
+@ObjectType()
+export class DetailedExpenseStat {
+  @Field(() => Number, { nullable: true })
+  totalItemCost?: number;
+
+  @Field(() => Number, { nullable: true })
+  totalItemCount?: number;
+
+  @Field(() => [SpendingHistory], { nullable: true })
+  spendingHistory?: SpendingHistory[];
 }
 
 @ObjectType()

@@ -1,7 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { StatService } from './stat.service';
 import { BadRequestException } from '@nestjs/common';
-import { DashboardStat, DetailedStockStat } from './model/stat.model';
+import { DashboardStat, DetailedExpenseStat, DetailedStockStat } from './model/stat.model';
 import { FilterExpenseInput } from './dto/filter-expense.input';
 import { FilterStockInput } from './dto/filter-stock.input';
 
@@ -18,7 +18,7 @@ export class StatResolver {
     }
   }
 
-  @Query(() => Number)
+  @Query(() => DetailedExpenseStat)
   async getDetailedExpenseStats(
     @Args('filterExpenseInput', {
       type: () => FilterExpenseInput,

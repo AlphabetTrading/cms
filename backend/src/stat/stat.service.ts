@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { FilterExpenseInput } from './dto/filter-expense.input';
 import { FilterStockInput } from './dto/filter-stock.input';
 import { Prisma } from '@prisma/client';
+import { SpendingHistory } from './model/stat.model';
 
 @Injectable()
 export class StatService {
@@ -74,55 +75,84 @@ export class StatService {
         gte: start,
         lte: end,
       },
+      items: {
+        some: {},
+      },
     };
 
     if (productVariantId) {
-      where.items = {
-        some: {
-          purchaseOrderItem: {
-            proforma: {
-              materialRequestItem: {
-                productVariant: {
-                  id: productVariantId,
+      where.items.some = {
+        ...where.items.some,
+        OR: [
+          {
+            purchaseOrderItem: {
+              proforma: {
+                materialRequestItem: {
+                  productVariantId,
                 },
               },
             },
-            materialRequestItem: {
-              productVariant: {
-                id: productVariantId,
+          },
+          {
+            purchaseOrderItem: {
+              materialRequestItem: {
+                productVariantId,
               },
             },
           },
-        },
+        ],
       };
     }
 
+    // Only add productId condition if it's provided
     if (productId) {
-      where.items = {
-        some: {
-          purchaseOrderItem: {
-            proforma: {
+      where.items.some = {
+        ...where.items.some,
+        OR: [
+          {
+            purchaseOrderItem: {
+              proforma: {
+                materialRequestItem: {
+                  productVariant: {
+                    productId,
+                  },
+                },
+              },
+            },
+          },
+          {
+            purchaseOrderItem: {
               materialRequestItem: {
                 productVariant: {
                   productId,
                 },
               },
             },
-            materialRequestItem: {
-              productVariant: {
-                productId,
-              },
-            },
           },
-        },
+        ],
       };
     }
 
+    // Only add productType condition if it's provided
     if (productType) {
-      where.items = {
-        some: {
-          purchaseOrderItem: {
-            proforma: {
+      where.items.some = {
+        ...where.items.some,
+        OR: [
+          {
+            purchaseOrderItem: {
+              proforma: {
+                materialRequestItem: {
+                  productVariant: {
+                    product: {
+                      productType,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            purchaseOrderItem: {
               materialRequestItem: {
                 productVariant: {
                   product: {
@@ -131,15 +161,8 @@ export class StatService {
                 },
               },
             },
-            materialRequestItem: {
-              productVariant: {
-                product: {
-                  productType,
-                },
-              },
-            },
           },
-        },
+        ],
       };
     }
 
@@ -182,6 +205,8 @@ export class StatService {
       });
 
     let totalItemCost = 0;
+    let totalItemCount = 0;
+    const spendingHistory: SpendingHistory[] = [];
 
     for (const voucher of materialReceiveVouchers) {
       for (const item of voucher.items) {
@@ -203,11 +228,29 @@ export class StatService {
                 .productType) === productType)
         ) {
           totalItemCost += item.purchaseOrderItem.totalPrice;
+          totalItemCount += item.purchaseOrderItem.quantity
+          spendingHistory.push({
+            productVariantId:
+              item.purchaseOrderItem.materialRequestItem.productVariantId ||
+              item.purchaseOrderItem.proforma.materialRequestItem
+                .productVariantId,
+            productVariant:
+              item.purchaseOrderItem.materialRequestItem.productVariant ||
+              item.purchaseOrderItem.proforma.materialRequestItem
+                .productVariant,
+            date: item.createdAt,
+            quantity: item.purchaseOrderItem.quantity,
+            itemCost: item.purchaseOrderItem.totalPrice,
+          });
         }
       }
     }
 
-    return totalItemCost;
+    return {
+      totalItemCost,
+      totalItemCount,
+      spendingHistory,
+    };
   }
 
   async getDetailedStockStats(filterStockInput: FilterStockInput) {

@@ -400,6 +400,12 @@ input DateTimeFilter {
   lte: DateTime
 }
 
+type DetailedExpenseStat {
+  spendingHistory: [SpendingHistory!]
+  totalItemCost: Float
+  totalItemCount: Float
+}
+
 type DetailedStockStat {
   totalItemBought: Float
   totalItemLost: Float
@@ -1383,7 +1389,7 @@ type Query {
   getDailyStockBalaceById(id: String!): DailyStockBalance!
   getDailyStockBalances(filterDailyStockBalanceInput: FilterDailyStockBalanceInput, orderBy: OrderByDailyStockBalanceInput, paginationInput: PaginationInput): PaginationDailyStockBalances!
   getDashboardStats(id: String!): DashboardStat!
-  getDetailedExpenseStats(filterExpenseInput: FilterExpenseInput!): Float!
+  getDetailedExpenseStats(filterExpenseInput: FilterExpenseInput!): DetailedExpenseStat!
   getDetailedStockStats(filterStockInput: FilterStockInput!): DetailedStockStat!
   getMaterialIssueById(id: String!): MaterialIssueVoucher!
   getMaterialIssues(filterMaterialIssueInput: FilterMaterialIssueInput, mine: Boolean! = false, orderBy: OrderByMaterialIssueInput, paginationInput: PaginationInput): PaginationMaterialIssues!
@@ -1424,6 +1430,14 @@ input RegistrationInput {
   confirmPassword: String!
   password: String!
   token: String!
+}
+
+type SpendingHistory {
+  date: DateTime
+  itemCost: Float
+  productVariant: ProductVariant
+  productVariantId: String
+  quantity: Float
 }
 
 input StringFilter {
