@@ -4,9 +4,11 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_state.dart';
+import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,10 +30,11 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   void initState() {
     super.initState();
     context.read<PurchaseOrderBloc>().add(
-          GetPurchaseOrders(
+          GetPurchaseOrdersEvent(
             filterPurchaseOrderInput: FilterPurchaseOrderInput(),
             orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 20),
+            mine: selectedMineFilter,
           ),
         );
 
@@ -50,14 +53,15 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
       query,
     ) {
       context.read<PurchaseOrderBloc>().add(
-            GetPurchaseOrders(
-                orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
-                paginationInput: PaginationInput(skip: 0, take: 10),
+            GetPurchaseOrdersEvent(
                 filterPurchaseOrderInput: FilterPurchaseOrderInput(
                   preparedBy: StringFilter(contains: query),
                   approvedBy: StringFilter(contains: query),
                   serialNumber: StringFilter(contains: query),
-                )),
+                ),
+                orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
+                paginationInput: PaginationInput(skip: 0, take: 10),
+                mine: selectedMineFilter),
           );
     });
 
@@ -129,7 +133,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                         }
 
                         context.read<PurchaseOrderBloc>().add(
-                              GetPurchaseOrders(
+                              GetPurchaseOrdersEvent(
                                 filterPurchaseOrderInput:
                                     FilterPurchaseOrderInput(),
                                 orderBy: OrderByPurchaseOrderInput(
@@ -176,67 +180,84 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
   }
 
   _buildBody(BuildContext context) {
-    return BlocBuilder<PurchaseOrderBloc, PurchaseOrderState>(
-      builder: (_, state) {
-        debugPrint('PurchaseOrderBlocBuilder state: $state');
-        if (state is PurchaseOrderInitial) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+    return BlocProvider<PurchaseOrderDeleteCubit>(
+      create: (context) => sl<PurchaseOrderDeleteCubit>(),
+      child: BlocBuilder<PurchaseOrderBloc, PurchaseOrderState>(
+        builder: (_, state) {
+          debugPrint('PurchaseOrderBlocBuilder state: $state');
+          if (state is PurchaseOrderInitial) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        if (state is PurchaseOrderLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+          if (state is PurchaseOrderLoading) {
+            debugPrint('PurchaseOrderBlocBuilder state: loading');
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        if (state is PurchaseOrderSuccess) {
-          debugPrint(
-              'PurchaseOrderSuccess ${state.purchaseOrders?.items.length} ');
-
-          return state.purchaseOrders!.items.isNotEmpty
-              ? Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            itemCount: state.purchaseOrders!.items.length,
-                            separatorBuilder: (_, index) => const SizedBox(
-                              height: 10,
-                            ),
-                            itemBuilder: (_, index) {
-                              final purchaseOrder =
-                                  state.purchaseOrders!.items[index];
-                              return _buildRequestListItem(
-                                  context, purchaseOrder);
-                            },
+          if (state is PurchaseOrderSuccess) {
+            return state.purchaseOrders!.items.isNotEmpty
+                ? BlocListener<PurchaseOrderDeleteCubit,
+                        PurchaseOrderDeleteState>(
+                    listener: (context, state) {
+                      if (state is PurchaseOrderDeleteSuccess) {
+                        context.read<PurchaseOrderBloc>().add(
+                              GetPurchaseOrdersEvent(
+                                  filterPurchaseOrderInput:
+                                      FilterPurchaseOrderInput(),
+                                  orderBy: OrderByPurchaseOrderInput(
+                                      createdAt: "desc"),
+                                  paginationInput:
+                                      PaginationInput(skip: 0, take: 20),
+                                  mine: selectedMineFilter),
+                            );
+                      }
+                    },
+                    child: Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                itemCount: state.purchaseOrders!.items.length,
+                                separatorBuilder: (_, index) => const SizedBox(
+                                  height: 10,
+                                ),
+                                itemBuilder: (_, index) {
+                                  final purchaseOrder =
+                                      state.purchaseOrders!.items[index];
+                                  return _buildRequestListItem(
+                                      context, purchaseOrder);
+                                },
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                )
-              : const Center(
-                  child: Text('No Purchase Order found'),
-                );
-        }
+                    ))
+                : const Center(
+                    child: Text('No Purchase Order found'),
+                  );
+          }
 
-        if (state is PurchaseOrderFailed) {
-          return Center(
-            child: Text(state.error!.errorMessage),
-          );
-        }
+          if (state is PurchaseOrderFailed) {
+            return Center(
+              child: Text(state.error!.errorMessage),
+            );
+          }
 
-        return const SizedBox();
-      },
+          return const SizedBox();
+        },
+      ),
     );
   }
 
@@ -429,7 +450,7 @@ class _CustomPopupMenuDialogState extends State<FilterPopupMenuDialog> {
 
   void _onStatusSelected() {
     context.read<PurchaseOrderBloc>().add(
-          GetPurchaseOrders(
+          GetPurchaseOrdersEvent(
             filterPurchaseOrderInput: FilterPurchaseOrderInput(
               status: selectedStatuses.contains('All')
                   ? null

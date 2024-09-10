@@ -1,6 +1,8 @@
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
@@ -12,14 +14,12 @@ class PurchaseOrderEntity extends Equatable {
   final UserEntity? approvedBy;
   final double? grandTotal;
   final List<PurchaseOrderItemEntity> items;
-  final String? materialRequestId;
   final String? preparedById;
   final UserEntity? preparedBy;
   final String? projectId;
   final String? serialNumber;
   final PurchaseOrderStatus? status;
   final double? subTotal;
-  final String? supplierName;
   final double? vat;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -31,14 +31,12 @@ class PurchaseOrderEntity extends Equatable {
     required this.grandTotal,
     required this.id,
     required this.items,
-    required this.materialRequestId,
     required this.preparedById,
     required this.preparedBy,
     required this.projectId,
     required this.serialNumber,
     required this.status,
     required this.subTotal,
-    required this.supplierName,
     required this.updatedAt,
     required this.vat,
   });
@@ -51,14 +49,12 @@ class PurchaseOrderEntity extends Equatable {
         grandTotal,
         id,
         items,
-        materialRequestId,
         preparedById,
         preparedBy,
         projectId,
         serialNumber,
         status,
         subTotal,
-        supplierName,
         updatedAt,
         vat,
       ];
@@ -66,10 +62,12 @@ class PurchaseOrderEntity extends Equatable {
 
 class PurchaseOrderItemEntity extends Equatable {
   final String id;
-  final ProductVariantEntity? productVariant;
-  final String? productVariantId;
+  final String? materialRequestItemId;
+  final MaterialRequestItem? materialRequestItem;
+  final String? proformaId;
+  final MaterialProformaEntity? proforma;
   final String? purchaseOrderId;
-  final double? quantityRequested;
+  final double? quantity;
   final String? remark;
   final double? totalPrice;
   final double? unitPrice;
@@ -78,10 +76,12 @@ class PurchaseOrderItemEntity extends Equatable {
 
   const PurchaseOrderItemEntity({
     required this.id,
-    this.productVariant,
-    this.productVariantId,
+    this.materialRequestItemId,
+    this.materialRequestItem,
+    this.proformaId,
+    this.proforma,
     this.purchaseOrderId,
-    this.quantityRequested,
+    this.quantity,
     this.remark,
     this.totalPrice,
     this.unitPrice,
@@ -93,10 +93,12 @@ class PurchaseOrderItemEntity extends Equatable {
   List<Object?> get props => [
         createdAt,
         id,
-        productVariant,
-        productVariantId,
+        materialRequestItemId,
+        materialRequestItem,
+        proformaId,
+        proforma,
         purchaseOrderId,
-        quantityRequested,
+        quantity,
         remark,
         totalPrice,
         unitPrice,
@@ -106,10 +108,12 @@ class PurchaseOrderItemEntity extends Equatable {
   PurchaseOrderItemEntity.fromJson(Map<String, dynamic> json)
       : createdAt = json['createdAt'],
         id = json['id'],
-        productVariant = json['productVariant'],
-        productVariantId = json['productVariantId'],
+        materialRequestItemId = json['materialRequestItemId'],
+        materialRequestItem = json['materialRequestItem'],
+        proformaId = json['proformaId'],
+        proforma = json['proforma'],
         purchaseOrderId = json['purchaseOrderId'],
-        quantityRequested = json['quantityRequested'],
+        quantity = json['quantity'],
         remark = json['remark'],
         totalPrice = json['totalPrice'],
         unitPrice = json['unitPrice'],
@@ -119,10 +123,12 @@ class PurchaseOrderItemEntity extends Equatable {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['createdAt'] = createdAt;
-    data['productVariant'] = productVariant;
-    data['productVariantId'] = productVariantId;
+    data['materialRequestItemId'] = materialRequestItemId;
+    data['materialRequestItem'] = materialRequestItem;
+    data['proformaId'] = proformaId;
+    data['proforma'] = proforma;
     data['purchaseOrderId'] = purchaseOrderId;
-    data['quantityRequested'] = quantityRequested;
+    data['quantity'] = quantity;
     data['remark'] = remark;
     data['totalPrice'] = totalPrice;
     data['unitPrice'] = unitPrice;
@@ -131,18 +137,20 @@ class PurchaseOrderItemEntity extends Equatable {
   }
 }
 
-class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderEntity>
+class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
     extends Equatable {
   final String projectId;
   final String preparedById;
-  final String warehouseStoreId;
+  final double subTotal;
+  final double vat;
   final List<T> purchaseOrderMaterials;
 
   const CreatePurchaseOrderParamsEntity({
     required this.projectId,
     required this.preparedById,
     required this.purchaseOrderMaterials,
-    required this.warehouseStoreId,
+    required this.subTotal,
+    required this.vat,
   });
 
   @override
@@ -185,29 +193,28 @@ class PurchaseOrderEntityListWithMeta {
 }
 
 class PurchaseOrderMaterialEntity extends Equatable {
+  final String? materialRequestItemId;
+  final String? proformaId;
   final double quantity;
   final String? remark;
-  final WarehouseProductEntity? material;
-  final UseType useType;
-  final SubStructureUseDescription? subStructureDescription;
-  final SuperStructureUseDescription? superStructureDescription;
+  final double unitPrice;
+  final double totalPrice;
 
-  const PurchaseOrderMaterialEntity({
-    this.remark,
-    this.material,
-    required this.quantity,
-    this.subStructureDescription,
-    this.superStructureDescription,
-    required this.useType,
-  });
+  const PurchaseOrderMaterialEntity(
+      {this.remark,
+      this.materialRequestItemId,
+      this.proformaId,
+      required this.unitPrice,
+      required this.totalPrice,
+      required this.quantity});
 
   @override
   List<Object?> get props => [
         remark,
         quantity,
-        material,
-        useType,
-        subStructureDescription,
-        superStructureDescription,
+        materialRequestItemId,
+        proformaId,
+        unitPrice,
+        totalPrice,
       ];
 }

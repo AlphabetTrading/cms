@@ -12,6 +12,7 @@ class MaterialProformaEntity extends Equatable {
   final String id;
   final List<MaterialProformaItemEntity>? items;
   final MaterialRequestItem? materialRequestItem;
+  final MaterialProformaItemEntity? selectedProformaItem;
   final String? materialRequestItemId;
   final String? photo;
   final UserEntity? preparedBy;
@@ -30,6 +31,7 @@ class MaterialProformaEntity extends Equatable {
     this.approvedBy,
     this.approvedById,
     this.createdAt,
+    this.selectedProformaItem,
     this.materialRequestItem,
     this.materialRequestItemId,
     this.photo,
@@ -49,6 +51,7 @@ class MaterialProformaEntity extends Equatable {
     DateTime? createdAt,
     String? id,
     MaterialRequestItem? materialRequestItem,
+    MaterialProformaItemEntity? selectedProformaItem,
     String? materialRequestItemId,
     String? photo,
     UserEntity? preparedBy,
@@ -68,6 +71,7 @@ class MaterialProformaEntity extends Equatable {
         approvedById: approvedById ?? this.approvedById,
         createdAt: createdAt ?? this.createdAt,
         id: id ?? this.id,
+        selectedProformaItem: selectedProformaItem ?? this.selectedProformaItem,
         materialRequestItem: materialRequestItem ?? this.materialRequestItem,
         materialRequestItemId:
             materialRequestItemId ?? this.materialRequestItemId,
@@ -88,6 +92,7 @@ class MaterialProformaEntity extends Equatable {
         approvedById,
         createdAt,
         id,
+        selectedProformaItem,
         materialRequestItem,
         materialRequestItemId,
         photo,
@@ -126,7 +131,17 @@ class MaterialProformaItemEntity extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => [id, createdAt, updatedAt, photos, quantity, unitPrice, totalPrice, remark, vendor];
+  List<Object?> get props => [
+        id,
+        createdAt,
+        updatedAt,
+        photos,
+        quantity,
+        unitPrice,
+        totalPrice,
+        remark,
+        vendor
+      ];
 }
 
 class MaterialProformaEntityListWithMeta extends Equatable {

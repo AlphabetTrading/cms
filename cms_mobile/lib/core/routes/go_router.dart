@@ -21,6 +21,8 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return/create_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_order/create_purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_order/material_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_orders.dart';
 import 'package:cms_mobile/features/products/presentation/pages/products_page.dart';
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
@@ -257,21 +259,21 @@ class AppRouter {
                   name: RouteNames.purchaseOrderCreate,
                   path: RoutePaths.purchaseOrderCreate,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const CreateMaterialRequestPage();
+                    return const CreatePurchaseOrderPage();
                   },
                 ),
                 GoRoute(
                   name: RouteNames.purchaseOrderEdit,
                   path: RoutePaths.purchaseOrderEdit,
                   builder: (BuildContext context, GoRouterState state) {
-                    return const CreateMaterialRequestPage();
+                    return const CreatePurchaseOrderPage();
                   },
                 ),
                 GoRoute(
                   name: RouteNames.purchaseOrderDetails,
                   path: RoutePaths.purchaseOrderDetails,
                   builder: (BuildContext context, GoRouterState state) {
-                    return MaterialRequestDetailsPage(
+                    return PurchaseOrderDetailsPage(
                         materialRequestId:
                             state.pathParameters['purchaseOrderId']!);
                   },

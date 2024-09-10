@@ -72,6 +72,9 @@ void main() async {
           BlocProvider<MaterialTransferBloc>(
             create: (context) => sl<MaterialTransferBloc>(),
           ),
+          BlocProvider<PurchaseOrderBloc>(
+            create: (context) => sl<PurchaseOrderBloc>(),
+          ),
           BlocProvider<DailySiteDataBloc>(
             create: (context) => sl<DailySiteDataBloc>(),
           ),

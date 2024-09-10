@@ -15,11 +15,6 @@ class PurchaseOrderLocalBloc
       emit(PurchaseOrderLocalState(purchaseOrderMaterials: updatedList));
     });
 
-    on<AddPurchaseOrderMaterialsLocal>((event, emit) {
-      emit(PurchaseOrderLocalState(
-          purchaseOrderMaterials: event.purchaseOrderMaterials));
-    });
-
     on<DeletePurchaseOrderMaterialLocal>((event, emit) {
       final updatedList = List<PurchaseOrderMaterialEntity>.from(
           state.purchaseOrderMaterials ?? [])

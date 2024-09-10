@@ -16,7 +16,7 @@ abstract class PurchaseOrderDataSource {
   });
 
   Future<DataState<String>> createPurchaseOrder(
-      {required CreatePurchaseOrderParamsEntity
+      {required CreatePurchaseOrderParamsModel
           createPurchaseOrderParamsModel});
 
   Future<DataState<PurchaseOrderModel>> getPurchaseOrderDetails(
@@ -102,10 +102,57 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
 
   @override
   Future<DataState<String>> createPurchaseOrder(
-      {required CreatePurchaseOrderParamsEntity<PurchaseOrderEntity>
-          createPurchaseOrderParamsModel}) {
-    // TODO: implement createPurchaseOrder
-    throw UnimplementedError();
+      {required CreatePurchaseOrderParamsModel
+          createPurchaseOrderParamsModel}) async {
+    const String _createPurchaseOrderMutation = r'''
+      mutation CreatePurchaseOrder($createPurchaseOrderInput: CreatePurchaseOrderInput!) {
+        createPurchaseOrder(createPurchaseOrderInput: $createPurchaseOrderInput) {
+          id
+        }
+      }
+    ''';
+
+    List<Map<String, dynamic>> purchaseOrderMaterialsMap =
+      createPurchaseOrderParamsModel.purchaseOrderMaterials
+            .map((purchaseOrderMaterial) {
+      return {
+        "quantity": purchaseOrderMaterial.quantity,
+        "unitPrice": purchaseOrderMaterial.unitPrice,
+        "totalPrice": purchaseOrderMaterial.totalPrice,
+        "materialRequestItemId": purchaseOrderMaterial.materialRequestItemId,
+        "proformaId": purchaseOrderMaterial.proformaId,
+        "remark": purchaseOrderMaterial.remark,
+      };
+    }).toList();
+
+    final MutationOptions options = MutationOptions(
+      document: gql(_createPurchaseOrderMutation),
+      variables: {
+        "createPurchaseOrderInput": {
+          "preparedById": createPurchaseOrderParamsModel.preparedById,
+          "projectId": createPurchaseOrderParamsModel.projectId,
+          "subTotal": createPurchaseOrderParamsModel.subTotal,
+          "vat": createPurchaseOrderParamsModel.vat,
+          "items": purchaseOrderMaterialsMap
+        }
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      final String id = result.data!['createPurchaseOrder']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
+
   }
 
   @override

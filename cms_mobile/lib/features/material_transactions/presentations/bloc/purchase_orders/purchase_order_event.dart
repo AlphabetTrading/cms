@@ -1,16 +1,17 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 
 abstract class PurchaseOrderEvent {
   const PurchaseOrderEvent();
 }
 
-class GetPurchaseOrders extends PurchaseOrderEvent {
+class GetPurchaseOrdersEvent extends PurchaseOrderEvent {
   final FilterPurchaseOrderInput? filterPurchaseOrderInput;
   final OrderByPurchaseOrderInput? orderBy;
   final PaginationInput? paginationInput;
   final bool? mine;
-  const GetPurchaseOrders({
+  const GetPurchaseOrdersEvent({
     this.filterPurchaseOrderInput,
     this.orderBy,
     this.paginationInput,
@@ -18,22 +19,24 @@ class GetPurchaseOrders extends PurchaseOrderEvent {
   });
 }
 
-class GetPurchaseOrder extends PurchaseOrderEvent {
+class GetPurchaseOrderEvent extends PurchaseOrderEvent {
   final String id;
-  const GetPurchaseOrder(this.id);
+  const GetPurchaseOrderEvent(this.id);
 }
 
-class CreatePurchaseOrder extends PurchaseOrderEvent {
-  final String id;
-  const CreatePurchaseOrder(this.id);
+class CreatePurchaseOrderEvent extends PurchaseOrderEvent {
+  final CreatePurchaseOrderParamsEntity createPurchaseOrderParamsEntity;
+
+  const CreatePurchaseOrderEvent(
+      {required this.createPurchaseOrderParamsEntity});
 }
 
-class UpdatePurchaseOrder extends PurchaseOrderEvent {
+class UpdatePurchaseOrderEvent extends PurchaseOrderEvent {
   final String id;
-  const UpdatePurchaseOrder(this.id);
+  const UpdatePurchaseOrderEvent(this.id);
 }
 
-class DeletePurchaseOrder extends PurchaseOrderEvent {
+class DeletePurchaseOrderEvent extends PurchaseOrderEvent {
   final String id;
-  const DeletePurchaseOrder(this.id);
+  const DeletePurchaseOrderEvent(this.id);
 }

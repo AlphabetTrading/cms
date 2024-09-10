@@ -21,6 +21,7 @@ class MaterialProformaModel extends MaterialProformaEntity {
     required UserModel? super.preparedBy,
     required super.preparedById,
     required super.projectId,
+    required MaterialProformaItemModel? super.selectedProformaItem,
     // required super.quantity,
     required super.remark,
     required super.serialNumber,
@@ -52,6 +53,9 @@ class MaterialProformaModel extends MaterialProformaEntity {
           : null,
       preparedById: json['preparedById'],
       projectId: json['projectId'],
+      selectedProformaItem: json['selectedProformaItem'] != null
+          ? MaterialProformaItemModel.fromJson(json['selectedProformaItem'])
+          : null,
       // quantity: json['quantity'],
       remark: json['remark'],
       serialNumber: json['serialNumber'],

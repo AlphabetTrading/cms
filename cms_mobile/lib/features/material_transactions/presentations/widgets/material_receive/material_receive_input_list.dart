@@ -19,7 +19,10 @@ class MaterialReceiveInputList extends StatelessWidget {
       itemCount: materialReceives.length,
       itemBuilder: (context, index) {
         final materialReceive = materialReceives[index];
-        final productVariant = materialReceive.purchaseOrderItem?.productVariant;
+        final productVariant = materialReceive
+                .purchaseOrderItem?.materialRequestItem?.productVariant ??
+            materialReceive.purchaseOrderItem?.proforma?.materialRequestItem
+                ?.productVariant;
         return MaterialTransactionMaterialItem(
           title:
               '${productVariant?.product?.name} - ${productVariant?.variant}',
@@ -36,7 +39,8 @@ class MaterialReceiveInputList extends StatelessWidget {
                   providers: [
                     BlocProvider<MaterialReceiveFormCubit>(
                       create: (_) => MaterialReceiveFormCubit(
-                        purchaseOrderItemId: materialReceive.purchaseOrderItem?.id,
+                        purchaseOrderItemId:
+                            materialReceive.purchaseOrderItem?.id,
                         // receivedQuantity: materialReceive.receivedQuantity,
                         transportationCost: materialReceive.transportationCost,
                         loadingCost: materialReceive.loadingCost,

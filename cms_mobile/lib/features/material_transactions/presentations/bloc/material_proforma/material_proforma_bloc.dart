@@ -1,6 +1,7 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/create_material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_all_material_proformas.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_state.dart';
@@ -17,17 +18,24 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaState> {
+class MaterialProformaBloc
+    extends Bloc<MaterialProformaEvent, MaterialProformaState> {
   final GetMaterialProformasUseCase _materialProformaUseCase;
+  final GetAllMaterialProformasUseCase _allMaterialProformaUseCase;
   DateTime? lastUpdated;
 
   MaterialProformaBloc(
-      this._materialProformaUseCase)
+      this._materialProformaUseCase, this._allMaterialProformaUseCase)
       : super(const MaterialProformaInitial()) {
     on<GetMaterialProformas>(
       onGetMaterialProformas,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<GetAllMaterialProformas>(
+      onGetAllMaterialProformas,
+      transformer: throttleDroppable(throttleDuration),
+    );
+
     // on<DeleteMaterialProformaEventLocal>(onDeleteMaterialProforma);
   }
 
@@ -45,22 +53,22 @@ class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaS
     ));
     if (dataState is DataSuccess) {
       if (event.mine == true) {
-        final myMaterialProformas =
-            (state.myMaterialProformas ?? MaterialProformaEntityListWithMeta.empty())
-                .copyWith(
-                    items: (state.myMaterialProformas?.items ?? [])
-                      ..addAll(dataState.data!.items));
+        final myMaterialProformas = (state.myMaterialProformas ??
+                MaterialProformaEntityListWithMeta.empty())
+            .copyWith(
+                items: (state.myMaterialProformas?.items ?? [])
+                  ..addAll(dataState.data!.items));
 
         emit(MaterialProformasSuccess(
             myMaterialProformas: myMaterialProformas,
             materialProformas: state.materialProformas ??
                 MaterialProformaEntityListWithMeta.empty()));
       } else {
-        final materialProformas =
-            (state.materialProformas ?? MaterialProformaEntityListWithMeta.empty())
-                .copyWith(
-                    items: (state.materialProformas?.items ?? [])
-                      ..addAll(dataState.data!.items));
+        final materialProformas = (state.materialProformas ??
+                MaterialProformaEntityListWithMeta.empty())
+            .copyWith(
+                items: (state.materialProformas?.items ?? [])
+                  ..addAll(dataState.data!.items));
 
         emit(MaterialProformasSuccess(
             materialProformas: materialProformas,
@@ -76,9 +84,21 @@ class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaS
     }
   }
 
+  void onGetAllMaterialProformas(GetAllMaterialProformas event,
+      Emitter<MaterialProformaState> emit) async {
+    emit(const AllMaterialProformasLoading());
+    final dataState = await _allMaterialProformaUseCase();
 
-  void onDeleteMaterialProforma(
-      DeleteMaterialProformaEventLocal event, Emitter<MaterialProformaState> emit) {
+    if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
+      emit(AllMaterialProformasSuccess(allMaterialProformas: dataState.data!));
+    }
+    if (dataState is DataFailed) {
+      emit(AllMaterialProformasFailed(error: dataState.error!));
+    }
+  }
+
+  void onDeleteMaterialProforma(DeleteMaterialProformaEventLocal event,
+      Emitter<MaterialProformaState> emit) {
     final materialProformas = state.materialProformas;
     final myMaterialProformas = state.myMaterialProformas;
     final materialProformaId = event.materialProformaId;
@@ -93,9 +113,10 @@ class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaS
               .toList());
       emit(MaterialProformasSuccess(
           materialProformas: newMaterialProformas.copyWith(
-              items: newMaterialProformas.items, meta: newMaterialProformas.meta),
-          myMaterialProformas:
-              myMaterialProformas ?? MaterialProformaEntityListWithMeta.empty()));
+              items: newMaterialProformas.items,
+              meta: newMaterialProformas.meta),
+          myMaterialProformas: myMaterialProformas ??
+              MaterialProformaEntityListWithMeta.empty()));
     }
 
     if (isMine == true && myMaterialProformas != null) {
@@ -105,7 +126,8 @@ class MaterialProformaBloc extends Bloc<MaterialProformaEvent, MaterialProformaS
               .toList());
       emit(MaterialProformasSuccess(
           myMaterialProformas: newMyMaterialProformas.copyWith(
-              items: newMyMaterialProformas.items, meta: newMyMaterialProformas.meta),
+              items: newMyMaterialProformas.items,
+              meta: newMyMaterialProformas.meta),
           materialProformas:
               materialProformas ?? MaterialProformaEntityListWithMeta.empty()));
     }

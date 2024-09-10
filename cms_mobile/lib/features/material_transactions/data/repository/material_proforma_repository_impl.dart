@@ -53,6 +53,14 @@ class MaterialProformaRepositoryImpl extends MaterialProformaRepository {
   @override
   Future<DataState<String>> deleteMaterialProforma(
       {required String materialProformaId}) {
-    return dataSource.deleteMaterialProforma(materialProformaId: materialProformaId);
+    return dataSource.deleteMaterialProforma(
+        materialProformaId: materialProformaId);
+  }
+
+  @override
+  Future<DataState<List<MaterialProformaEntity>>> getAllMaterialProformas(
+      FilterMaterialProformaInput? filterMaterialProformaInput) {
+    return dataSource.fetchAllMaterialProformas(
+        filterMaterialProformaInput: filterMaterialProformaInput);
   }
 }

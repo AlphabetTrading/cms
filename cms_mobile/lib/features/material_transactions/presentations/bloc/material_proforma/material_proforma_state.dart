@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 class MaterialProformaState extends Equatable {
   final MaterialProformaEntityListWithMeta? materialProformas;
   final MaterialProformaEntityListWithMeta? myMaterialProformas;
+  final List<MaterialProformaEntity>? allMaterialProformas;
   final MaterialProformaEntity? materialProforma;
   final bool hasReachedMax;
 
@@ -13,6 +14,7 @@ class MaterialProformaState extends Equatable {
   const MaterialProformaState({
     this.materialProformas,
     this.myMaterialProformas,
+    this.allMaterialProformas,
     this.error,
     this.materialProforma,
     this.hasReachedMax = false,
@@ -22,6 +24,7 @@ class MaterialProformaState extends Equatable {
   List<Object?> get props => [
         materialProformas,
         myMaterialProformas,
+        allMaterialProformas,
         error,
         materialProforma,
         hasReachedMax,
@@ -29,12 +32,13 @@ class MaterialProformaState extends Equatable {
 
   @override
   String toString() {
-    return 'MaterialProformaState { materialProformas: $materialProformas, myMaterialProformas: $myMaterialProformas, error: $error, materialProforma: $materialProforma, hasReachedMax: $hasReachedMax }';
+    return 'MaterialProformaState { materialProformas: $materialProformas, allMaterialProformas: $allMaterialProformas, myMaterialProformas: $myMaterialProformas, error: $error, materialProforma: $materialProforma, hasReachedMax: $hasReachedMax }';
   }
 
   MaterialProformaState copyWith({
     MaterialProformaEntityListWithMeta? materialProformas,
     MaterialProformaEntityListWithMeta? myMaterialProformas,
+    List<MaterialProformaEntity>? allMaterialProformas,
     MaterialProformaEntity? materialProforma,
     bool? hasReachedMax,
     Failure? error,
@@ -42,6 +46,7 @@ class MaterialProformaState extends Equatable {
     return MaterialProformaState(
       materialProformas: materialProformas ?? this.materialProformas,
       myMaterialProformas: myMaterialProformas ?? this.myMaterialProformas,
+      allMaterialProformas: allMaterialProformas ?? this.allMaterialProformas,
       materialProforma: materialProforma ?? this.materialProforma,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       error: error ?? this.error,
@@ -76,9 +81,11 @@ class MaterialProformasSuccess extends MaterialProformaState {
   //   );
   // }
 
+  @override
   MaterialProformaState copyWith({
     MaterialProformaEntityListWithMeta? materialProformas,
     MaterialProformaEntityListWithMeta? myMaterialProformas,
+    List<MaterialProformaEntity>? allMaterialProformas,
     MaterialProformaEntity? materialProforma,
     bool? hasReachedMax,
     Failure? error,
@@ -96,6 +103,21 @@ class MaterialProformasFailed extends MaterialProformaState {
 
 class MaterialProformasEmpty extends MaterialProformaState {
   const MaterialProformasEmpty();
+}
+
+class AllMaterialProformasLoading extends MaterialProformaState {
+  const AllMaterialProformasLoading();
+}
+
+class AllMaterialProformasSuccess extends MaterialProformaState {
+  const AllMaterialProformasSuccess(
+      {required List<MaterialProformaEntity> allMaterialProformas})
+      : super(allMaterialProformas: allMaterialProformas);
+}
+
+class AllMaterialProformasFailed extends MaterialProformaState {
+  const AllMaterialProformasFailed({required Failure error})
+      : super(error: error);
 }
 
 // Get Material Issue Details
