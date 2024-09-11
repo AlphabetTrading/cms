@@ -1,8 +1,10 @@
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
+import 'package:cms_mobile/features/projects/data/models/project.dart';
 import 'package:flutter/material.dart';
 
 class PurchaseOrderModel extends PurchaseOrderEntity {
@@ -12,18 +14,38 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
     required UserModel? super.approvedBy,
     required super.grandTotal,
     required List<PurchaseOrderItemModel> super.items,
-    required super.materialRequestId,
     required super.preparedById,
     required UserModel? super.preparedBy,
+    required super.project,
     required super.projectId,
     required super.serialNumber,
     required super.status,
     required super.subTotal,
-    required super.supplierName,
     required super.updatedAt,
     required super.createdAt,
-    required double super.vat,
+    required super.vat,
   });
+
+  @override
+  List<Object?> get props {
+    return [
+      id,
+      approvedById,
+      approvedBy,
+      grandTotal,
+      items,
+      preparedById,
+      preparedBy,
+      project,
+      projectId,
+      serialNumber,
+      status,
+      subTotal,
+      vat,
+      createdAt,
+      updatedAt
+    ];
+  }
 
   factory PurchaseOrderModel.fromJson(Map<String, dynamic> json) {
     debugPrint('PurchaseOrderModel.fromJson: $json');
@@ -39,21 +61,25 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
       approvedBy: json['approvedBy'] != null
           ? UserModel.fromJson(json['approvedBy'])
           : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      grandTotal: json['grandTotal'],
+      grandTotal: json['grandTotal'] != null
+          ? (json['grandTotal'] as num).toDouble()
+          : 0,
       items: items,
-      materialRequestId: json['materialRequestId'],
       preparedById: json['preparedById'],
       preparedBy: json['preparedBy'] != null
           ? UserModel.fromJson(json['preparedBy'])
           : null,
       projectId: json['projectId'],
+      project: json['project'] != null
+          ? ProjectModel.fromJson(json['project'])
+          : null,
       serialNumber: json['serialNumber'],
       status: toPurchaseOrderStatus(json['status']),
-      subTotal: json['subTotal'],
-      supplierName: json['supplierName'],
+      subTotal:
+          json['subTotal'] != null ? (json['subTotal'] as num).toDouble() : 0,
+      createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
-      vat: json['vat'],
+      vat: json['vat'] != null ? (json['vat'] as num).toDouble() : 0,
     );
   }
 
@@ -66,14 +92,12 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
       "approvedBy": approvedBy?.toJson(),
       "grandTotal": grandTotal,
       "items": items,
-      "materialRequestId": materialRequestId,
       "preparedById": preparedById,
       "preparedBy": preparedBy?.toJson(),
       "projectId": projectId,
       "serialNumber": serialNumber,
       "status": fromPurchaseOrderStatus(status),
       "subTotal": subTotal,
-      "supplierName": supplierName,
       "vat": vat,
       "createdAt": createdAt.toIso8601String(),
       "updatedAt": updatedAt.toIso8601String(),
@@ -82,24 +106,14 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
 }
 
 class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
-  //            __typename: PurchaseOrderItem,
-//            createdAt: 2024-08-14T12:05:31.315Z,
-//            id: 84d47293-e5a0-4372-9028-477e2a99b504,
-//            materialRequestItemId: 540a5fa4-db98-4060-8178-988a4de827c7,
-//            proformaId: null,
-//            purchaseOrderId: c144367d-2eb9-46c4-88b1-2cfbbf20a25e,
-//            quantity: 10,
-//            remark: null,
-//            totalPrice: 150,
-//            unitPrice: 15,
-//            updatedAt: 2024-08-14T12:05:31.315Z
-  //          }
   const PurchaseOrderItemModel({
     required super.id,
-    ProductVariantModel? super.productVariant,
-    super.productVariantId,
+    super.materialRequestItemId,
+    super.materialRequestItem,
+    super.proformaId,
+    super.proforma,
     super.purchaseOrderId,
-    super.quantityRequested,
+    super.quantity,
     super.remark,
     super.totalPrice,
     super.unitPrice,
@@ -108,19 +122,25 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
   });
 
   factory PurchaseOrderItemModel.fromJson(Map<String, dynamic> json) {
-    final productVariant = json['productVariant'] != null
-        ? ProductVariantModel.fromJson(json['productVariant'])
-        : null;
-
     return PurchaseOrderItemModel(
       id: json['id'],
-      productVariant: productVariant,
-      productVariantId: json['productVariantId'],
+      materialRequestItemId: json['materialRequestItemId'],
+      materialRequestItem: json['materialRequestItem'] != null
+          ? MaterialRequestItemModel.fromJson(json['materialRequestItem'])
+          : null,
+      proformaId: json['proformaId'],
+      proforma: json['proforma'] != null
+          ? MaterialProformaModel.fromJson(json['proforma'])
+          : null,
       purchaseOrderId: json['purchaseOrderId'],
-      quantityRequested: json['quantityRequested'],
+      quantity:
+          json['quantity'] != null ? (json['quantity'] as num).toDouble() : 0,
+      unitPrice:
+          json['unitPrice'] != null ? (json['unitPrice'] as num).toDouble() : 0,
+      totalPrice: json['totalPrice'] != null
+          ? (json['totalPrice'] as num).toDouble()
+          : 0,
       remark: json['remark'],
-      totalPrice: json['totalPrice'],
-      unitPrice: json['unitPrice'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
@@ -130,10 +150,12 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "productVariant": productVariant,
-      "productVariantId": productVariantId,
+      "materialRequestItemId": materialRequestItemId,
+      "materialRequestItem": materialRequestItem,
+      "proformaId": proformaId,
+      "proforma": proforma,
       "purchaseOrderId": purchaseOrderId,
-      "quantityRequested": quantityRequested,
+      "quantity": quantity,
       "remark": remark,
       "totalPrice": totalPrice,
       "unitPrice": unitPrice,
@@ -143,39 +165,97 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
   }
 }
 
-class CreatePurchaseOrderParamsModel
-    extends CreatePurchaseOrderParamsEntity<PurchaseOrderModel> {
-  const CreatePurchaseOrderParamsModel({
-    required String projectId,
-    required List<PurchaseOrderModel> purchaseOrderMaterials,
-    required String preparedById,
-    required String warehouseStoreId,
-  }) : super(
-            warehouseStoreId: warehouseStoreId,
-            preparedById: preparedById,
-            projectId: projectId,
-            purchaseOrderMaterials: purchaseOrderMaterials);
+class PurchaseOrderMaterialModel extends PurchaseOrderMaterialEntity {
+  const PurchaseOrderMaterialModel(
+      {String? materialRequestItemId,
+      MaterialRequestItemModel? materialRequestItem,
+      String? proformaId,
+      MaterialProformaModel? proforma,
+      required double quantity,
+      String? remark,
+      required double unitPrice,
+      required double totalPrice})
+      : super(
+            materialRequestItemId: materialRequestItemId,
+            materialRequestItem: materialRequestItem,
+            proforma: proforma,
+            proformaId: proformaId,
+            quantity: quantity,
+            remark: remark,
+            unitPrice: unitPrice,
+            totalPrice: totalPrice);
 
   Map<String, dynamic> toJson() {
     return {
-      "preparedById": preparedById,
-      "projectId": projectId,
-      "warehouseStoreId": warehouseStoreId,
-      "items": purchaseOrderMaterials.map((e) => e.toJson()).toList()
+      'materialRequestItemId': materialRequestItemId,
+      'materialRequestItem': materialRequestItem,
+      'proformaId': proformaId,
+      'proforma': proforma,
+      'remark': remark,
+      'quantity': quantity,
+      'unitPrice': unitPrice,
+      'totalPrice': totalPrice
     };
   }
 
   @override
-  List<Object?> get props => [projectId, preparedById, purchaseOrderMaterials];
+  List<Object?> get props => [
+        proformaId,
+        proforma,
+        materialRequestItemId,
+        materialRequestItem,
+        quantity,
+        unitPrice,
+        remark,
+        totalPrice
+      ];
+}
+
+class CreatePurchaseOrderParamsModel
+    extends CreatePurchaseOrderParamsEntity<PurchaseOrderMaterialModel> {
+  const CreatePurchaseOrderParamsModel({
+    required bool isProforma,
+    required String projectId,
+    required List<PurchaseOrderMaterialModel> purchaseOrderMaterials,
+    required String preparedById,
+    required double subTotal,
+    required double vat,
+  }) : super(
+            isProforma: isProforma,
+            subTotal: subTotal,
+            vat: vat,
+            preparedById: preparedById,
+            projectId: projectId,
+            purchaseOrderMaterials: purchaseOrderMaterials);
+
+  @override
+  List<Object?> get props => [
+        isProforma,
+        projectId,
+        preparedById,
+        purchaseOrderMaterials,
+        subTotal,
+        vat
+      ];
 
   factory CreatePurchaseOrderParamsModel.fromEntity(
       CreatePurchaseOrderParamsEntity entity) {
     return CreatePurchaseOrderParamsModel(
-      projectId: entity.projectId,
-      preparedById: entity.preparedById,
-      warehouseStoreId: entity.warehouseStoreId,
-      purchaseOrderMaterials: const [],
-    );
+        isProforma: entity.isProforma,
+        projectId: entity.projectId,
+        preparedById: entity.preparedById,
+        subTotal: entity.subTotal,
+        vat: entity.vat,
+        purchaseOrderMaterials: entity.purchaseOrderMaterials
+            .map((material) => PurchaseOrderMaterialModel(
+                  quantity: material.quantity,
+                  unitPrice: material.unitPrice,
+                  totalPrice: material.totalPrice,
+                  materialRequestItemId: material.materialRequestItemId,
+                  proformaId: material.proformaId,
+                  remark: material.remark,
+                ))
+            .toList());
   }
 }
 

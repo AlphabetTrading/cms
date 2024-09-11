@@ -4,12 +4,15 @@ import 'package:equatable/equatable.dart';
 
 abstract class PurchaseOrderState extends Equatable {
   final PurchaseOrderEntityListWithMeta? purchaseOrders;
+  final PurchaseOrderEntity? purchaseOrder;
+
   final Failure? error;
 
-  const PurchaseOrderState({this.purchaseOrders, this.error});
+  const PurchaseOrderState(
+      {this.purchaseOrders, this.purchaseOrder, this.error});
 
   @override
-  List<Object?> get props => [purchaseOrders, error];
+  List<Object?> get props => [purchaseOrders, purchaseOrder, error];
 }
 
 class PurchaseOrderInitial extends PurchaseOrderState {
@@ -33,3 +36,17 @@ class PurchaseOrderFailed extends PurchaseOrderState {
 class PurchaseOrderEmpty extends PurchaseOrderState {
   const PurchaseOrderEmpty();
 }
+
+class CreatePurchaseOrderLoading extends PurchaseOrderState {
+  const CreatePurchaseOrderLoading();
+}
+
+class CreatePurchaseOrderSuccess extends PurchaseOrderState {
+  const CreatePurchaseOrderSuccess();
+}
+
+class CreatePurchaseOrderFailed extends PurchaseOrderState {
+  const CreatePurchaseOrderFailed({required Failure error})
+      : super(error: error);
+}
+

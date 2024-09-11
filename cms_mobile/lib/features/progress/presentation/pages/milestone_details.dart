@@ -8,7 +8,7 @@ import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+// import 'package:syncfusion_flutter_charts/charts.dart';
 
 class MilestoneDetailsPage extends StatefulWidget {
   final String milestoneId;
@@ -27,11 +27,11 @@ class _ChartData {
 
 class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
   late List<_ChartData> data;
-  late TooltipBehavior _tooltip;
+  // late TooltipBehavior _tooltip;
 
   @override
   void initState() {
-    _tooltip = TooltipBehavior(enable: true);
+    // _tooltip = TooltipBehavior(enable: true);
     context
         .read<MilestoneDetailsCubit>()
         .onGetMilestoneDetails(milestoneId: widget.milestoneId);
@@ -195,24 +195,24 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
                           .textTheme
                           .bodyLarge
                           ?.copyWith(fontWeight: FontWeight.w800)),
-                  SfCircularChart(
-                      legend: Legend(isVisible: true),
-                      tooltipBehavior: _tooltip,
-                      series: <CircularSeries<_ChartData, String>>[
-                        DoughnutSeries<_ChartData, String>(
-                            dataSource: data,
-                            xValueMapper: (_ChartData data, _) => data.x,
-                            yValueMapper: (_ChartData data, _) => data.y,
-                            dataLabelMapper: (_ChartData data, _) =>
-                                "${data.y}%".toString(),
-                            dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
-                                labelPosition: ChartDataLabelPosition.outside,
-                                showZeroValue: false,
-                                // Renders background rectangle and fills it with series color
-                                useSeriesColor: true),
-                            name: 'Gold')
-                      ]),
+                  // SfCircularChart(
+                  //     legend: Legend(isVisible: true),
+                  //     tooltipBehavior: _tooltip,
+                  //     series: <CircularSeries<_ChartData, String>>[
+                  //       DoughnutSeries<_ChartData, String>(
+                  //           dataSource: data,
+                  //           xValueMapper: (_ChartData data, _) => data.x,
+                  //           yValueMapper: (_ChartData data, _) => data.y,
+                  //           dataLabelMapper: (_ChartData data, _) =>
+                  //               "${data.y}%".toString(),
+                  //           dataLabelSettings: DataLabelSettings(
+                  //               isVisible: true,
+                  //               labelPosition: ChartDataLabelPosition.outside,
+                  //               showZeroValue: false,
+                  //               // Renders background rectangle and fills it with series color
+                  //               useSeriesColor: true),
+                  //           name: 'Gold')
+                  //     ]),
                   const SizedBox(height: 10),
                   Text('Tasks',
                       style: Theme.of(context)

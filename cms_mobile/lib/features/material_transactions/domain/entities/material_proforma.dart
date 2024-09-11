@@ -12,13 +12,12 @@ class MaterialProformaEntity extends Equatable {
   final String id;
   final List<MaterialProformaItemEntity>? items;
   final MaterialRequestItem? materialRequestItem;
+  final MaterialProformaItemEntity? selectedProformaItem;
   final String? materialRequestItemId;
-  final String? photo;
   final UserEntity? preparedBy;
   final String? preparedById;
   final String? projectId;
   final double? quantity;
-  final String? remark;
   final String? serialNumber;
   final String? status;
   final DateTime? createdAt;
@@ -30,57 +29,17 @@ class MaterialProformaEntity extends Equatable {
     this.approvedBy,
     this.approvedById,
     this.createdAt,
+    this.selectedProformaItem,
     this.materialRequestItem,
     this.materialRequestItemId,
-    this.photo,
     this.preparedBy,
     this.preparedById,
     this.projectId,
     this.quantity,
-    this.remark,
     this.serialNumber,
     this.status,
     this.updatedAt,
   });
-
-  MaterialProformaEntity copyWith({
-    UserEntity? approvedBy,
-    String? approvedById,
-    DateTime? createdAt,
-    String? id,
-    MaterialRequestItem? materialRequestItem,
-    String? materialRequestItemId,
-    String? photo,
-    UserEntity? preparedBy,
-    String? preparedById,
-    String? projectId,
-    double? quantity,
-    String? remark,
-    String? serialNumber,
-    String? status,
-    double? totalPrice,
-    double? unitPrice,
-    DateTime? updatedAt,
-    String? vendor,
-  }) =>
-      MaterialProformaEntity(
-        approvedBy: approvedBy ?? this.approvedBy,
-        approvedById: approvedById ?? this.approvedById,
-        createdAt: createdAt ?? this.createdAt,
-        id: id ?? this.id,
-        materialRequestItem: materialRequestItem ?? this.materialRequestItem,
-        materialRequestItemId:
-            materialRequestItemId ?? this.materialRequestItemId,
-        photo: photo ?? this.photo,
-        preparedBy: preparedBy ?? this.preparedBy,
-        preparedById: preparedById ?? this.preparedById,
-        projectId: projectId ?? this.projectId,
-        quantity: quantity ?? this.quantity,
-        remark: remark ?? this.remark,
-        serialNumber: serialNumber ?? this.serialNumber,
-        status: status ?? this.status,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
 
   @override
   List<Object?> get props => [
@@ -88,14 +47,13 @@ class MaterialProformaEntity extends Equatable {
         approvedById,
         createdAt,
         id,
+        selectedProformaItem,
         materialRequestItem,
         materialRequestItemId,
-        photo,
         preparedBy,
         preparedById,
         projectId,
         quantity,
-        remark,
         serialNumber,
         status,
         updatedAt,
@@ -125,8 +83,17 @@ class MaterialProformaItemEntity extends Equatable {
       required this.vendor});
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [id, createdAt, updatedAt, photos, quantity, unitPrice, totalPrice, remark, vendor];
+  List<Object?> get props => [
+        id,
+        createdAt,
+        updatedAt,
+        photos,
+        quantity,
+        unitPrice,
+        totalPrice,
+        remark,
+        vendor
+      ];
 }
 
 class MaterialProformaEntityListWithMeta extends Equatable {

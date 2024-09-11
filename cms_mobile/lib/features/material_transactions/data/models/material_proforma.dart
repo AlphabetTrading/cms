@@ -7,6 +7,7 @@ import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
+import 'package:flutter/material.dart';
 
 class MaterialProformaModel extends MaterialProformaEntity {
   const MaterialProformaModel({
@@ -17,20 +18,40 @@ class MaterialProformaModel extends MaterialProformaEntity {
     required super.id,
     required MaterialRequestItemModel? super.materialRequestItem,
     required super.materialRequestItemId,
-    required super.photo,
     required UserModel? super.preparedBy,
     required super.preparedById,
     required super.projectId,
+    required MaterialProformaItemModel? super.selectedProformaItem,
     // required super.quantity,
-    required super.remark,
     required super.serialNumber,
     required super.status,
     required super.updatedAt,
   });
 
+    @override
+  List<Object?> get props {
+    return [
+      id,
+      approvedById,
+      approvedBy,
+      items,
+      preparedById,
+      preparedBy,
+      projectId,
+      selectedProformaItem,
+      materialRequestItem,
+      materialRequestItemId,
+      serialNumber,
+      status,
+      createdAt,
+      updatedAt
+    ];
+  }
+
+
   factory MaterialProformaModel.fromJson(Map<String, dynamic> json) {
     return MaterialProformaModel(
-      id: json['id'],
+      id: json['id'] ?? '',
       // items: [],
       items: json['items'] != null
           ? json['items']
@@ -41,23 +62,26 @@ class MaterialProformaModel extends MaterialProformaEntity {
       approvedBy: json['approvedBy'] != null
           ? UserModel.fromJson(json['approvedBy'])
           : null,
-      approvedById: json['approvedById'],
+      approvedById: json['approvedById'] ?? '',
       materialRequestItem: json['materialRequestItem'] != null
           ? MaterialRequestItemModel.fromJson(json['materialRequestItem'])
           : null,
-      materialRequestItemId: json['materialRequestItemId'],
-      photo: json['photo'],
+      materialRequestItemId: json['materialRequestItemId'] ?? "",
       preparedBy: json['preparedBy'] != null
           ? UserModel.fromJson(json['preparedBy'])
           : null,
-      preparedById: json['preparedById'],
-      projectId: json['projectId'],
+      preparedById: json['preparedById'] ?? '',
+      projectId: json['projectId'] ?? '',
+      selectedProformaItem: json['selectedProformaItem'] != null
+          ? MaterialProformaItemModel.fromJson(json['selectedProformaItem'])
+          : null,
       // quantity: json['quantity'],
-      remark: json['remark'],
-      serialNumber: json['serialNumber'],
+      serialNumber: json['serialNumber'] ?? '',
       status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -69,12 +93,10 @@ class MaterialProformaModel extends MaterialProformaEntity {
       'createdAt': createdAt!.toIso8601String(),
       'materialRequestItem': materialRequestItem!.toJson(),
       'materialRequestItemId': materialRequestItemId,
-      'photo': photo,
       'preparedBy': preparedBy!.toJson(),
       'preparedById': preparedById,
       'projectId': projectId,
       'quantity': quantity,
-      'remark': remark,
       'serialNumber': serialNumber,
       'status': status,
       'updatedAt': updatedAt!.toIso8601String(),

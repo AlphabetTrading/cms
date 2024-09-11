@@ -43,6 +43,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/create_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/delete_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/edit_material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_all_material_proformas.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_material_proforma_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/create_material_receive.dart';
@@ -83,6 +84,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
@@ -487,6 +489,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetAllMaterialProformasUseCase>(
+    () => GetAllMaterialProformasUseCase(
+      sl<MaterialProformaRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<CreateMaterialProformaUseCase>(
     () => CreateMaterialProformaUseCase(
       sl<MaterialProformaRepository>(),
@@ -831,7 +839,12 @@ Future<void> initializeDependencies() async {
 
   // purchase order
   sl.registerFactory<PurchaseOrderBloc>(
-    () => PurchaseOrderBloc(sl<GetPurchaseOrdersUseCase>()),
+    () => PurchaseOrderBloc(
+        sl<GetPurchaseOrdersUseCase>(), sl<CreatePurchaseOrderUseCase>()),
+  );
+
+  sl.registerFactory<PurchaseOrderLocalBloc>(
+    () => PurchaseOrderLocalBloc(),
   );
 
   sl.registerFactory<PurchaseOrderDetailsCubit>(
@@ -868,6 +881,7 @@ Future<void> initializeDependencies() async {
   // material proforma
   sl.registerFactory<MaterialProformaBloc>(() => MaterialProformaBloc(
         sl<GetMaterialProformasUseCase>(),
+        sl<GetAllMaterialProformasUseCase>(),
       ));
 
   sl.registerFactory<MaterialProformaDetailsCubit>(

@@ -16,8 +16,7 @@ abstract class PurchaseOrderDataSource {
   });
 
   Future<DataState<String>> createPurchaseOrder(
-      {required CreatePurchaseOrderParamsEntity
-          createPurchaseOrderParamsModel});
+      {required CreatePurchaseOrderParamsModel createPurchaseOrderParamsModel});
 
   Future<DataState<PurchaseOrderModel>> getPurchaseOrderDetails(
       {required String params});
@@ -39,42 +38,102 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
   Future<DataState<PurchaseOrderModel>> getPurchaseOrderDetails(
       {required String params}) {
     String fetchPurchaseOrderDetailsQuery = r'''
-query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
-  getPurchaseOrderById(id: $getPurchaseOrderByIdId) {
-    id
-    items {
-      id
-      quantity
-      remark
-      productVariant {
-        id
-        unitOfMeasure
-        variant
-        product {
+      query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
+        getPurchaseOrderById(id: $getPurchaseOrderByIdId) {
           id
-          name
+          serialNumber
+          projectId
+          subTotal
+          vat
+          status
+          grandTotal
+          createdAt
+          updatedAt
+          approvedById
+          preparedById
+          preparedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
+          }
+          approvedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
+          }
+          items {
+            id
+            quantity
+            remark
+            totalPrice
+            unitPrice
+            createdAt
+            materialRequestItemId
+            materialRequestItem {
+              createdAt
+              id
+              productVariantId
+              productVariant {
+                id
+                variant
+                unitOfMeasure
+                product {
+                  name
+                }
+              }
+              quantity
+              remark
+              updatedAt
+            }
+            proforma {
+              id
+              serialNumber
+              projectId
+              status
+              updatedAt
+              selectedProformaItemId
+              materialRequestItemId
+              materialRequestItem {
+                id
+                productVariantId
+                productVariant {
+                  id
+                  variant
+                  unitOfMeasure
+                  product {
+                    name
+                  }
+                }
+                quantity
+                remark
+                updatedAt
+              }
+              selectedProformaItem {
+                createdAt
+                id
+                photos
+                quantity
+                remark
+                totalPrice
+                unitPrice
+                updatedAt
+                vendor
+              }
+            }
+            proformaId
+            purchaseOrderId
+            updatedAt
+          }
         }
       }
-    }
-    serialNumber
-    status
-    receiveedBy {
-      id
-      fullName
-      email
-      phoneNumber
-      role
-    }
-    createdAt
-    approvedBy {
-      phoneNumber
-      id
-      fullName
-      email
-      role
-    }
-  }
-}
     ''';
 
     return _client
@@ -102,16 +161,93 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
 
   @override
   Future<DataState<String>> createPurchaseOrder(
-      {required CreatePurchaseOrderParamsEntity<PurchaseOrderEntity>
-          createPurchaseOrderParamsModel}) {
-    // TODO: implement createPurchaseOrder
-    throw UnimplementedError();
+      {required CreatePurchaseOrderParamsModel
+          createPurchaseOrderParamsModel}) async {
+    const String _createPurchaseOrderMutation = r'''
+      mutation CreatePurchaseOrder($createPurchaseOrderInput: CreatePurchaseOrderInput!) {
+        createPurchaseOrder(createPurchaseOrderInput: $createPurchaseOrderInput) {
+          id
+        }
+      }
+    ''';
+
+    List<Map<String, dynamic>> purchaseOrderMaterialsMap =
+        createPurchaseOrderParamsModel.purchaseOrderMaterials
+            .map((purchaseOrderMaterial) {
+      final isProforma = createPurchaseOrderParamsModel.isProforma;
+      return {
+        "quantity": purchaseOrderMaterial.quantity,
+        "unitPrice": purchaseOrderMaterial.unitPrice,
+        "totalPrice": purchaseOrderMaterial.totalPrice,
+        if (isProforma) "proformaId": purchaseOrderMaterial.proformaId ?? "",
+        if (!isProforma)
+          "materialRequestItemId":
+              purchaseOrderMaterial.materialRequestItemId ?? "",
+        "remark": purchaseOrderMaterial.remark ?? "",
+      };
+    }).toList();
+
+    final MutationOptions options = MutationOptions(
+      document: gql(_createPurchaseOrderMutation),
+      variables: {
+        "createPurchaseOrderInput": {
+          "preparedById": createPurchaseOrderParamsModel.preparedById,
+          "projectId": createPurchaseOrderParamsModel.projectId,
+          "subTotal": createPurchaseOrderParamsModel.subTotal,
+          "vat": createPurchaseOrderParamsModel.vat,
+          "items": purchaseOrderMaterialsMap
+        }
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      final String id = result.data!['createPurchaseOrder']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 
   @override
-  Future<DataState<String>> deletePurchaseOrder({required String materialId}) {
-    // TODO: implement deletePurchaseOrder
-    throw UnimplementedError();
+  Future<DataState<String>> deletePurchaseOrder(
+      {required String materialId}) async {
+    const String _deletePurchaseOrderMutation = r'''
+      mutation DeletePurchaseOrder($deletePurchaseOrderId: String!) {
+        deletePurchaseOrder(id: $deletePurchaseOrderId) {
+          id
+        }
+      }
+    ''';
+
+    final MutationOptions options = MutationOptions(
+      document: gql(_deletePurchaseOrderMutation),
+      variables: {"deletePurchaseOrderId": materialId},
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `PurchaseOrderModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['deletePurchaseOrder']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 
   @override

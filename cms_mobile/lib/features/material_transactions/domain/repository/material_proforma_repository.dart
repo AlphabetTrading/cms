@@ -23,4 +23,7 @@ abstract class MaterialProformaRepository {
 
   Future<DataState<String>> deleteMaterialProforma(
       {required String materialProformaId});
+
+  Future<DataState<List<MaterialProformaEntity>>> getAllMaterialProformas(
+      FilterMaterialProformaInput? filterMaterialProformaInput);
 }

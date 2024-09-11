@@ -30,8 +30,8 @@ class MaterialTransactionsHelperFunctions {
         };
       case 'PURCHASE_ORDER':
         return {
-          'path': RoutePaths.purchaseOrder,
-          'routeName': RouteNames.purchaseOrder,
+          'path': RoutePaths.purchaseOrders,
+          'routeName': RouteNames.purchaseOrders,
           'title': 'Purchase Orders',
         };
       case 'MATERIAL_TRANSFER':

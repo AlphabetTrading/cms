@@ -19,6 +19,11 @@ class GetMaterialProformas extends MaterialProformaEvent {
   });
 }
 
+class GetAllMaterialProformas extends MaterialProformaEvent {
+  final String projectId;
+  const GetAllMaterialProformas(this.projectId);
+}
+
 class GetMaterialProforma extends MaterialProformaEvent {
   final FilterMaterialProformaInput filterMaterialProformaInput;
   final OrderByMaterialProformaInput orderBy;

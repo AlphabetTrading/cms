@@ -43,7 +43,7 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
   void initState() {
     super.initState();
     context.read<PurchaseOrderBloc>().add(
-          GetPurchaseOrders(
+          GetPurchaseOrdersEvent(
             filterPurchaseOrderInput: FilterPurchaseOrderInput(),
             orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
             paginationInput: PaginationInput(skip: 0, take: 20),
@@ -94,7 +94,11 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
               PurchaseOrderItemEntity? selectedMaterial =
                   materialDropdown.value != ""
                       ? materials?.firstWhere((element) =>
-                          element.productVariant?.id == materialDropdown.value)
+                          element.materialRequestItem?.productVariantId ==
+                              materialDropdown.value ||
+                          element.proforma?.materialRequestItem
+                                  ?.productVariantId ==
+                              materialDropdown.value)
                       : null;
 
               return Column(
@@ -137,8 +141,8 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                     dropdownMenuEntries: materials
                             ?.map((e) => DropdownMenuEntry<
                                     PurchaseOrderItemEntity>(
-                                label:
-                                    "${e.productVariant?.product?.name} - ${e.productVariant?.variant}",
+                                label: "${e.materialRequestItem?.productVariant?.product?.name} - ${e.materialRequestItem?.productVariant?.variant}" ??
+                                    "${e.proforma?.materialRequestItem?.productVariant?.product?.name} - ${e.proforma?.materialRequestItem?.productVariant?.variant}",
                                 value: e))
                             .toList() ??
                         [],
@@ -239,7 +243,8 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                       Flexible(
                         child: CustomTextFormField(
                           initialValue:
-                              double.tryParse(receivedQuantityField.value) != null
+                              double.tryParse(receivedQuantityField.value) !=
+                                      null
                                   ? receivedQuantityField.value
                                   : "",
                           keyboardType: TextInputType.number,
@@ -276,7 +281,8 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                         if (widget.isEdit) {
                           final updated = MaterialReceiveMaterialEntity(
                             // material: selectedMaterial,
-                            receivedQuantity: double.parse(receivedQuantityField.value),
+                            receivedQuantity:
+                                double.parse(receivedQuantityField.value),
                             purchaseOrderItem: selectedMaterial!,
                             transportationCost:
                                 double.parse(transportationField.value),
@@ -293,7 +299,8 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                               .add(
                             AddMaterialReceiveMaterialLocal(
                               MaterialReceiveMaterialEntity(
-                                receivedQuantity: double.parse(receivedQuantityField.value),
+                                receivedQuantity:
+                                    double.parse(receivedQuantityField.value),
                                 purchaseOrderItem: selectedMaterial!,
                                 transportationCost:
                                     double.parse(transportationField.value),

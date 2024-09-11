@@ -18,12 +18,6 @@ class AddPurchaseOrderMaterialLocal extends PurchaseOrderLocalEvent {
   const AddPurchaseOrderMaterialLocal(this.purchaseOrderMaterial);
 }
 
-class AddPurchaseOrderMaterialsLocal extends PurchaseOrderLocalEvent {
-  final List<PurchaseOrderMaterialEntity> purchaseOrderMaterials;
-
-  const AddPurchaseOrderMaterialsLocal(this.purchaseOrderMaterials);
-}
-
 class EditPurchaseOrderMaterialLocal extends PurchaseOrderLocalEvent {
   final PurchaseOrderMaterialEntity purchaseOrderMaterial;
   final int index;

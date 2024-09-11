@@ -4,6 +4,7 @@ import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_proforma.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -25,6 +26,9 @@ abstract class MaterialProformaDataSource {
           editMaterialProformaParamsModel});
   Future<DataState<String>> deleteMaterialProforma(
       {required String materialProformaId});
+
+  Future<DataState<List<MaterialProformaEntity>>> fetchAllMaterialProformas(
+      {FilterMaterialProformaInput? filterMaterialProformaInput});
 }
 
 class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
@@ -410,6 +414,85 @@ query GetProformaById($getProformaByIdId: String!) {
           meta: MetaModel.fromJson(meta),
         ),
       );
+    });
+  }
+
+  @override
+  Future<DataState<List<MaterialProformaEntity>>> fetchAllMaterialProformas({
+    FilterMaterialProformaInput? filterMaterialProformaInput,
+  }) async {
+    String fetchAllMaterialProformasQuery;
+
+    fetchAllMaterialProformasQuery = r'''
+      query GetProformas($filterProformaInput: FilterProformaInput) {
+        getProformas(filterProformaInput: $filterProformaInput) {
+          items {
+            id
+            serialNumber
+            selectedProformaItemId
+            selectedProformaItem {
+              createdAt
+              id
+              photos
+              quantity
+              remark
+              totalPrice
+              unitPrice
+              updatedAt
+              vendor
+            }
+            items {
+              createdAt
+              id
+              photos
+              quantity
+              remark
+              totalPrice
+              unitPrice
+              updatedAt
+              vendor
+            }
+            status
+          }
+        }
+      }
+    ''';
+
+    dynamic filterInput = filterMaterialProformaInput?.toJson() ?? {};
+    final selectedProjectId =
+        await GQLClient.getFromLocalStorage('selected_project_id');
+
+    if (selectedProjectId != null) {
+      filterInput['projectId'] = selectedProjectId;
+    }
+
+    return _client
+        .query(
+      QueryOptions(
+        document: gql(fetchAllMaterialProformasQuery),
+        variables: {
+          'filterProformaInput': filterInput,
+        },
+        fetchPolicy: FetchPolicy.noCache,
+      ),
+    )
+        .then((response) {
+      if (response.hasException) {
+        debugPrint(
+            'fetchMaterialProformasQuery: ${response.exception.toString()}');
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final issues = response.data!['getProformas']["items"] as List;
+      final items =
+          issues.map((e) => MaterialProformaModel.fromJson(e)).toList();
+      debugPrint(
+          '******************Successfully converted to MaterialProformaModel: $items');
+      return DataSuccess(items);
     });
   }
 }

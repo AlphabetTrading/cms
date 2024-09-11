@@ -48,7 +48,7 @@ class PurchaseOrderDeleteCubit extends Cubit<PurchaseOrderDeleteState> {
     } else if (dataState is DataFailed) {
       emit(PurchaseOrderDeleteFailed(
           error: dataState.error?.errorMessage ??
-              'Failed to delete material issue '));
+              'Failed to delete purchase order'));
     }
   }
 }

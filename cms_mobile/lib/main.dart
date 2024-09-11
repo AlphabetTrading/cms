@@ -13,6 +13,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
@@ -72,6 +73,9 @@ void main() async {
           BlocProvider<MaterialTransferBloc>(
             create: (context) => sl<MaterialTransferBloc>(),
           ),
+          BlocProvider<PurchaseOrderBloc>(
+            create: (context) => sl<PurchaseOrderBloc>(),
+          ),
           BlocProvider<DailySiteDataBloc>(
             create: (context) => sl<DailySiteDataBloc>(),
           ),
@@ -89,6 +93,9 @@ void main() async {
           ),
           BlocProvider<MaterialReturnLocalBloc>(
             create: (context) => sl<MaterialReturnLocalBloc>(),
+          ),
+          BlocProvider<PurchaseOrderLocalBloc>(
+            create: (context) => sl<PurchaseOrderLocalBloc>(),
           ),
           BlocProvider<DailySiteDataLocalBloc>(
             create: (context) => sl<DailySiteDataLocalBloc>(),
