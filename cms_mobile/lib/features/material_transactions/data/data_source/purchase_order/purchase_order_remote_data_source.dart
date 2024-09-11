@@ -38,42 +38,102 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
   Future<DataState<PurchaseOrderModel>> getPurchaseOrderDetails(
       {required String params}) {
     String fetchPurchaseOrderDetailsQuery = r'''
-query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
-  getPurchaseOrderById(id: $getPurchaseOrderByIdId) {
-    id
-    items {
-      id
-      quantity
-      remark
-      productVariant {
-        id
-        unitOfMeasure
-        variant
-        product {
+      query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
+        getPurchaseOrderById(id: $getPurchaseOrderByIdId) {
           id
-          name
+          serialNumber
+          projectId
+          subTotal
+          vat
+          status
+          grandTotal
+          createdAt
+          updatedAt
+          approvedById
+          preparedById
+          preparedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
+          }
+          approvedBy {
+            createdAt
+            email
+            fullName
+            id
+            phoneNumber
+            role
+            updatedAt
+          }
+          items {
+            id
+            quantity
+            remark
+            totalPrice
+            unitPrice
+            createdAt
+            materialRequestItemId
+            materialRequestItem {
+              createdAt
+              id
+              productVariantId
+              productVariant {
+                id
+                variant
+                unitOfMeasure
+                product {
+                  name
+                }
+              }
+              quantity
+              remark
+              updatedAt
+            }
+            proforma {
+              id
+              serialNumber
+              projectId
+              status
+              updatedAt
+              selectedProformaItemId
+              materialRequestItemId
+              materialRequestItem {
+                id
+                productVariantId
+                productVariant {
+                  id
+                  variant
+                  unitOfMeasure
+                  product {
+                    name
+                  }
+                }
+                quantity
+                remark
+                updatedAt
+              }
+              selectedProformaItem {
+                createdAt
+                id
+                photos
+                quantity
+                remark
+                totalPrice
+                unitPrice
+                updatedAt
+                vendor
+              }
+            }
+            proformaId
+            purchaseOrderId
+            updatedAt
+          }
         }
       }
-    }
-    serialNumber
-    status
-    receiveedBy {
-      id
-      fullName
-      email
-      phoneNumber
-      role
-    }
-    createdAt
-    approvedBy {
-      phoneNumber
-      id
-      fullName
-      email
-      role
-    }
-  }
-}
     ''';
 
     return _client

@@ -61,6 +61,20 @@ class _ProformaFormState extends State<CreatePurchaseOrderProforma> {
               ),
               const SizedBox(height: 10),
               if (proformaDropdown.value.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Approved proforma preview",
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const Expanded(
+                        child: Divider(),
+                      )
+                    ],
+                  ),
+                ),
+              if (proformaDropdown.value.isNotEmpty)
                 Table(
                   columnWidths: const {
                     0: FlexColumnWidth(),

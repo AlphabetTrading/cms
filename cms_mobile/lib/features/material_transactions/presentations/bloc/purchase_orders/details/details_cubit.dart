@@ -57,7 +57,7 @@ class PurchaseOrderDetailsCubit extends Cubit<PurchaseOrderDetailsState> {
     } else if (dataState is DataFailed) {
       emit(PurchaseOrderDetailsFailed(
           error: dataState.error?.errorMessage ??
-              'Failed to get material issue details'));
+              'Failed to get purchase order details'));
     }
   }
 }

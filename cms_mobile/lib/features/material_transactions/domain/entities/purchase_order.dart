@@ -14,8 +14,8 @@ class PurchaseOrderEntity extends Equatable {
   final List<PurchaseOrderItemEntity> items;
   final String? preparedById;
   final UserEntity? preparedBy;
-  final String? projectId;
   final ProjectEntity? project;
+  final String? projectId;
   final String? serialNumber;
   final PurchaseOrderStatus? status;
   final double? subTotal;

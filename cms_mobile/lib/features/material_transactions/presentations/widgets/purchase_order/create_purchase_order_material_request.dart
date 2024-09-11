@@ -96,6 +96,21 @@ class _MaterialRequestFormState
               const SizedBox(height: 10),
               if (materialRequestDropdown.value.isNotEmpty &&
                   materialRequestItemDropdown.value.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text("Material Request preview",
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const Expanded(
+                        child: Divider(),
+                      )
+                    ],
+                  ),
+                ),
+              if (materialRequestDropdown.value.isNotEmpty &&
+                  materialRequestItemDropdown.value.isNotEmpty)
                 Table(
                   columnWidths: const {
                     0: FlexColumnWidth(),
