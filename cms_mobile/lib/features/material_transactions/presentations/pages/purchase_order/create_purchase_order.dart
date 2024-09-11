@@ -1,18 +1,19 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_state.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_request_form/material_request_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/purchase_order_form/purchase_order_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/create_material_request_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/purchase_order/create_purchase_order_form.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,26 +26,26 @@ class CreatePurchaseOrderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:const Text("Create Purchase Order")),
+      appBar: AppBar(title: const Text("Create Purchase Order")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: BlocConsumer<MaterialRequestBloc, MaterialRequestState>(
+        child: BlocConsumer<PurchaseOrderBloc, PurchaseOrderState>(
           listener: (context, state) {
-            if (state is CreateMaterialRequestSuccess) {
-              context.goNamed(RouteNames.materialRequests);
-              BlocProvider.of<MaterialRequestLocalBloc>(context)
-                  .add(const ClearMaterialRequestMaterialsLocal());
+            if (state is CreatePurchaseOrderSuccess) {
+              context.goNamed(RouteNames.purchaseOrders);
+              BlocProvider.of<PurchaseOrderLocalBloc>(context)
+                  .add(const ClearPurchaseOrderMaterialsLocal());
               Fluttertoast.showToast(
-                  msg: "Material Request Created",
+                  msg: "Purchase Order Created",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.CENTER,
                   timeInSecForIosWeb: 3,
                   backgroundColor: Color.fromARGB(255, 1, 135, 23),
                   textColor: Colors.white,
                   fontSize: 16.0);
-            } else if (state is CreateMaterialRequestFailed) {
+            } else if (state is CreatePurchaseOrderFailed) {
               Fluttertoast.showToast(
-                  msg: "Create Material Request Failed",
+                  msg: "Create Purchase Order Failed",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.CENTER,
                   timeInSecForIosWeb: 3,
@@ -54,53 +55,55 @@ class CreatePurchaseOrderPage extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            return BlocBuilder<MaterialRequestLocalBloc,
-                MaterialRequestLocalState>(
+            return BlocBuilder<PurchaseOrderLocalBloc, PurchaseOrderLocalState>(
               builder: (localContext, localState) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    (localState.materialRequestMaterials == null ||
-                            localState.materialRequestMaterials!.isEmpty)
+                    (localState.purchaseOrderMaterials == null ||
+                            localState.purchaseOrderMaterials!.isEmpty)
                         ? const EmptyList()
                         : ListView.builder(
                             shrinkWrap: true,
                             itemCount:
-                                localState.materialRequestMaterials?.length ??
-                                    0,
+                                localState.purchaseOrderMaterials?.length ?? 0,
                             itemBuilder: (context, index) {
-                              final materialRequest =
-                                  localState.materialRequestMaterials![index];
-                              final productVariant =
-                                  materialRequest.material!.productVariant;
+                              final purchaseOrder =
+                                  localState.purchaseOrderMaterials![index];
+                              final productVariant = purchaseOrder
+                                      .materialRequestItem?.productVariant ??
+                                  purchaseOrder.proforma?.materialRequestItem
+                                      ?.productVariant;
                               return MaterialTransactionMaterialItem(
                                 title:
-                                    '${productVariant.product!.name} - ${productVariant.variant}',
+                                    '${productVariant?.product!.name} - ${productVariant?.variant}',
                                 subtitle:
-                                    'Requested Amount: ${materialRequest.requestedQuantity} ${materialRequest.material!.productVariant.unitOfMeasure}',
-                                iconSrc: productVariant.product?.iconSrc,
+                                    'Quantity: ${purchaseOrder.quantity} ${productVariant?.unitOfMeasure?.name}',
+                                iconSrc: productVariant?.product?.iconSrc,
                                 onDelete: () =>
-                                    BlocProvider.of<MaterialRequestLocalBloc>(
+                                    BlocProvider.of<PurchaseOrderLocalBloc>(
                                             context)
-                                        .add(DeleteMaterialRequestMaterialLocal(
+                                        .add(DeletePurchaseOrderMaterialLocal(
                                             index)),
                                 onEdit: () => showModalBottomSheet(
                                   context: context,
                                   builder: (context) =>
-                                      BlocProvider<MaterialRequestFormCubit>(
-                                    create: (_) => MaterialRequestFormCubit(
-                                      materialId: materialRequest
-                                          .material!.productVariant.id,
-                                      requestedQuantity:
-                                          materialRequest.requestedQuantity,
-                                      remark: materialRequest.remark,
-                                      inStock:
-                                          materialRequest.material!.quantity,
+                                      BlocProvider<PurchaseOrderFormCubit>(
+                                    create: (_) => PurchaseOrderFormCubit(
+                                      // materialId: purchaseOrder
+                                      //     .material!.productVariant.id,
+                                      materialRequestItemId:
+                                          purchaseOrder.materialRequestItemId,
+                                      proformaId: purchaseOrder.proformaId,
+                                      unitPrice: purchaseOrder.unitPrice,
+                                      totalPrice: purchaseOrder.totalPrice,
+                                      quantity: purchaseOrder.quantity,
+                                      remark: purchaseOrder.remark,
                                     ),
                                     child: Padding(
                                       padding: EdgeInsets.all(32.0),
                                       child: Wrap(children: [
-                                        CreateMaterialRequestForm(
+                                        CreatePurchaseOrderForm(
                                             isEdit: true, index: index),
                                       ]),
                                     ),
@@ -115,13 +118,14 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                         // },
                         onPressed: () => showModalBottomSheet(
                           context: context,
+                          isScrollControlled: true,
                           builder: (context) =>
-                              BlocProvider<MaterialRequestFormCubit>(
-                            create: (_) => MaterialRequestFormCubit(),
+                              BlocProvider<PurchaseOrderFormCubit>(
+                            create: (_) => PurchaseOrderFormCubit(),
                             child: Padding(
                               padding: const EdgeInsets.all(32.0),
                               child:
-                                  Wrap(children: [CreateMaterialRequestForm()]),
+                                  Wrap(children: [CreatePurchaseOrderForm()]),
                             ),
                           ),
                         ),
@@ -132,47 +136,65 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton(
-                        onPressed: (state is CreateMaterialRequestLoading ||
-                                localState.materialRequestMaterials == null ||
-                                localState.materialRequestMaterials!.isEmpty)
+                        onPressed: (state is CreatePurchaseOrderLoading ||
+                                localState.purchaseOrderMaterials == null ||
+                                localState.purchaseOrderMaterials!.isEmpty)
                             ? null
                             : () {
-                                context.read<MaterialRequestBloc>().add(
-                                    CreateMaterialRequestEvent(
-                                        createMaterialRequestParamsEntity:
-                                            CreateMaterialRequestParamsEntity(
-                                                projectId:
-                                                   context.read<ProjectBloc>().state.selectedProjectId??"",
-                                                requestedById:
-                                                   context.read<AuthBloc>().state.user?.id ??
-                                    USER_ID,
-                                                materialRequestMaterials: localState
-                                                    .materialRequestMaterials!
-                                                    .map((e) =>
-                                                        MaterialRequestMaterialEntity(
-                                                          requestedQuantity: e
-                                                              .requestedQuantity,
-                                                          material: e.material,
-                                                          remark: e.remark,
-                                                        ))
-                                                    .toList())));
+                                double subTotal =
+                                    localState.purchaseOrderMaterials!.fold(0,
+                                        (sum, item) => sum + item.totalPrice);
+
+                                double vatPercentage = 0.15;
+                                double vat = subTotal * vatPercentage;
+
+                                bool isProforma = true;
+                                final materials =
+                                    localState.purchaseOrderMaterials!.map((e) {
+                                  isProforma = e.isProforma!;
+                                  return PurchaseOrderMaterialEntity(
+                                    isProforma: e.isProforma,
+                                    quantity: e.quantity,
+                                    unitPrice: e.unitPrice,
+                                    totalPrice: e.totalPrice,
+                                    remark: e.remark ?? "",
+                                    materialRequestItemId:
+                                        e.materialRequestItemId,
+                                    proformaId: e.proformaId,
+                                  );
+                                }).toList();
+                                debugPrint("Mapped Materials: $materials");
+                                context.read<PurchaseOrderBloc>().add(
+                                    CreatePurchaseOrderEvent(
+                                        createPurchaseOrderParamsEntity:
+                                            CreatePurchaseOrderParamsEntity(
+                                                isProforma: isProforma,
+                                                projectId: context
+                                                        .read<ProjectBloc>()
+                                                        .state
+                                                        .selectedProjectId ??
+                                                    "",
+                                                preparedById: context
+                                                        .read<AuthBloc>()
+                                                        .state
+                                                        .user
+                                                        ?.id ??
+                                                    USER_ID,
+                                                subTotal: subTotal,
+                                                vat: vat,
+                                                purchaseOrderMaterials:
+                                                    materials)));
+
+                                debugPrint(
+                                    "CreatePurchaseOrderEvent triggered");
                               },
-
-                        //  (state is CreateMaterialRequestLoading ||
-                        //         localState.materialRequestMaterials == null ||
-                        //         localState.materialRequestMaterials!.isEmpty)
-                        //     ? null
-                        //     : () {
-                        //         // context.read<AuthBloc>().state.user,
-
-                        //       },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            state is CreateMaterialRequestLoading
+                            state is CreatePurchaseOrderLoading
                                 ? const Padding(
                                     padding: EdgeInsets.only(right: 8),
                                     child: SizedBox(
@@ -183,7 +205,7 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                                         )),
                                   )
                                 : const SizedBox(),
-                            const Text('Create Material Request')
+                            const Text('Create Purchase Order')
                           ],
                         ),
                       )

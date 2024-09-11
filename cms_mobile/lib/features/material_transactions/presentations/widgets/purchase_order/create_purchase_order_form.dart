@@ -1,7 +1,12 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/purchase_order_form/purchase_order_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/purchase_order_form/purchase_order_form_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/purchase_order/create_purchase_order_material_request.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/purchase_order/create_purchase_order_proforma.dart';
 
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
@@ -38,192 +43,76 @@ class _CreatePurchaseOrderFormState extends State<CreatePurchaseOrderForm> {
   Widget build(BuildContext context) {
     final purchaseOrderFormCubit = context.watch<PurchaseOrderFormCubit>();
 
-    final unitPriceField = purchaseOrderFormCubit.state.unitPriceField;
-    final materialRequestDropdown =
-        purchaseOrderFormCubit.state.materialRequestDropdown;
-    final materialRequestItemDropdown =
-        purchaseOrderFormCubit.state.materialRequestItemDropdown;
-    final proformaDropdown = purchaseOrderFormCubit.state.proformaDropdown;
     final remarkField = purchaseOrderFormCubit.state.remarkField;
 
-    return Container();
-    // Build a Form widget using the _formKey created above.
-    // return Form(
-    //   child: BlocBuilder<ProductBloc, ProductState>(
-    //     builder: (context, state) {
-    //       return Column(
-    //         mainAxisAlignment: MainAxisAlignment.start,
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           CustomDropdown(
-    //             initialSelection: materialDropdown.value != ""
-    //                 ? state.allWarehouseProducts?.firstWhere((element) =>
-    //                     element.productVariant.id == materialDropdown.value)
-    //                 : null,
-    //             onSelected: (dynamic value) =>
-    //                 purchaseOrderFormCubit.materialChanged(value),
-    //             dropdownMenuEntries: state.allWarehouseProducts
-    //                     ?.map((e) => DropdownMenuEntry<WarehouseProductEntity>(
-    //                         label:
-    //                             '${e.productVariant.product!.name} - ${e.productVariant.variant}',
-    //                         value: e))
-    //                     .toList() ??
-    //                 [],
-    //             enableFilter: false,
-    //             errorMessage: materialDropdown.errorMessage, label: 'Material',
-    //             trailingIcon: state is AllWarehouseProductsLoading
-    //                 ? const CircularProgressIndicator()
-    //                 : null,
-    //             // label: "Material"
-    //           ),
-    //           const SizedBox(
-    //             height: 10,
-    //           ), // SizedBox(height: 10,
-    //           Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //             children: [
-    //               Flexible(
-    //                 child: Column(
-    //                   children: [
-    //                     Text("Unit",
-    //                         style: Theme.of(context).textTheme.labelMedium),
-    //                     materialDropdown.value != ""
-    //                         ? Text(state.allWarehouseProducts
-    //                                 ?.firstWhere((element) =>
-    //                                     element.productVariant.id ==
-    //                                     materialDropdown.value)
-    //                                 .productVariant
-    //                                 .unitOfMeasure
-    //                                 ?.name ??
-    //                             "N/A")
-    //                         : Text("N/A")
-    //                   ],
-    //                 ),
-    //               ),
-    //               Flexible(
-    //                 child: Column(
-    //                   children: [
-    //                     Text("In Stock",
-    //                         style: Theme.of(context).textTheme.labelMedium),
-    //                     materialDropdown.value != ""
-    //                         ? Text(state.allWarehouseProducts
-    //                                 ?.firstWhere((element) =>
-    //                                     element.productVariant.id ==
-    //                                     materialDropdown.value)
-    //                                 .quantity
-    //                                 .toString() ??
-    //                             "N/A")
-    //                         : Text("N/A")
-    //                   ],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //           const SizedBox(
-    //             height: 10,
-    //           ),
+    return BlocBuilder<PurchaseOrderFormCubit, PurchaseOrderFormState>(
+        builder: (context, state) {
+      return Form(
+          child: Column(children: [
+        SwitchListTile(
+          title: const Text("Toggle to use Proforma/Material Request"),
+          value: state.isProforma,
+          onChanged: (value) {
+            context.read<PurchaseOrderFormCubit>().toggleIsProforma(value);
+          },
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        state.isProforma
+            ? const CreatePurchaseOrderProforma()
+            : const CreatePurchaseOrderMaterialRequestForm(),
+        const SizedBox(
+          height: 10,
+        ),
+        ElevatedButton(
+          onPressed: () {
+            purchaseOrderFormCubit.onSubmit();
+            if (purchaseOrderFormCubit.state.isValid) {
+              final materialRequestItemId = purchaseOrderFormCubit
+                  .state.materialRequestItemDropdown.value;
+              final proformaId =
+                  purchaseOrderFormCubit.state.proformaDropdown.value;
 
-    //           Row(
-    //             children: [
-    //               Flexible(
-    //                 child: CustomTextFormField(
-    //                   initialValue:
-    //                       double.tryParse(unitPriceField.value) != null
-    //                           ? unitPriceField.value
-    //                           : "",
-    //                   keyboardType: TextInputType.number,
-    //                   label: "Requested Quantity (in unit)",
-    //                   onChanged: purchaseOrderFormCubit.quantityChanged,
-    //                   errorMessage: unitPriceField.errorMessage,
-    //                 ),
-    //               ),
-    //               const SizedBox(
-    //                 width: 10,
-    //               ),
-    //               Column(
-    //                 children: [
-    //                   Text("To be purchased",
-    //                       style: Theme.of(context).textTheme.labelMedium),
-    //                   materialDropdown.value != "" &&
-    //                           double.tryParse(unitPriceField.value) != null
-    //                       ? Text((double.parse(unitPriceField.value) -
-    //                               (state.allWarehouseProducts!
-    //                                   .firstWhere((element) =>
-    //                                       element.productVariant.id ==
-    //                                       materialDropdown.value)
-    //                                   .quantity))
-    //                           .toString())
-    //                       : Text("N/A"),
-    //                 ],
-    //               )
-    //             ],
-    //           ),
+              final updatedMaterialEntity = PurchaseOrderMaterialEntity(
+                isProforma: state.isProforma,
+                materialRequestItemId: materialRequestItemId,
+                materialRequestItem: state.selectedMaterialRequest?.items
+                    ?.firstWhere((element) =>
+                        element.id ==
+                        purchaseOrderFormCubit
+                            .state.materialRequestItemDropdown.value),
+                proformaId: proformaId,
+                quantity: purchaseOrderFormCubit.state.quantity,
+                remark: remarkField.value,
+                unitPrice: double.tryParse(state.unitPriceField.value) ?? 0,
+                totalPrice: purchaseOrderFormCubit.state.totalPrice,
+              );
 
-    //           const SizedBox(
-    //             height: 10,
-    //           ),
+              debugPrint(updatedMaterialEntity.toString());
+              debugPrint("updatedMaterialEntity");
 
-    //           CustomTextFormField(
-    //             initialValue: remarkField.value,
-    //             label: "Remark",
-    //             keyboardType: TextInputType.multiline,
-    //             maxLines: 3,
-    //             onChanged: purchaseOrderFormCubit.remarkChanged,
-    //             errorMessage: remarkField.errorMessage,
-    //           ),
-    //           const SizedBox(
-    //             height: 10,
-    //           ), //
-    //           // ElevatedButton(
-    //           //   onPressed: () {
-    //           //     materialRequestFormCubit.onSubmit();
-    //           //     if (materialRequestFormCubit.state.isValid) {
-    //           //       if (widget.isEdit) {
-    //           //         final updated = PurchaseOrderMaterialEntity(
-    //           //           material: state.allWarehouseProducts!.firstWhere(
-    //           //               (element) =>
-    //           //                   element.productVariant.id ==
-    //           //                   materialDropdown.value),
-    //           //           // unit: unitDropdown.value,
-    //           //           requestedQuantity: double.parse(quantityField.value),
-    //           //           remark: remarkField.value,
-    //           //         );
-
-    //           //         BlocProvider.of<PurchaseOrderLocalBloc>(context).add(
-    //           //             EditPurchaseOrderMaterialLocal(
-    //           //                 updated, widget.index));
-    //           //       } else {
-    //           //         BlocProvider.of<PurchaseOrderLocalBloc>(context).add(
-    //           //           AddPurchaseOrderMaterialLocal(
-    //           //             PurchaseOrderMaterialEntity(
-    //           //               material: state.allWarehouseProducts?.firstWhere(
-    //           //                   (element) =>
-    //           //                       element.productVariant.id ==
-    //           //                       materialDropdown.value),
-    //           //               // unit: unitDropdown.value,
-    //           //               requestedQuantity:
-    //           //                   double.parse(quantityField.value),
-    //           //               remark: remarkField.value,
-    //           //             ),
-    //           //           ),
-    //           //         );
-    //           //       }
-    //           //       Navigator.pop(context);
-    //           //     }
-    //           //   },
-    //           //   style: ElevatedButton.styleFrom(
-    //           //     minimumSize: const Size.fromHeight(50),
-    //           //   ),
-    //           //   child: widget.isEdit
-    //           //       ? const Text('Save Changes')
-    //           //       : const Text('Add Material'),
-    //           // ),
-    //         ],
-    //       );
-    //     },
-    //   ),
-
-    // );
+              if (widget.isEdit) {
+                BlocProvider.of<PurchaseOrderLocalBloc>(context).add(
+                    EditPurchaseOrderMaterialLocal(
+                        updatedMaterialEntity, widget.index));
+              } else {
+                BlocProvider.of<PurchaseOrderLocalBloc>(context).add(
+                  AddPurchaseOrderMaterialLocal(updatedMaterialEntity),
+                );
+              }
+              Navigator.pop(context);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+          ),
+          child: widget.isEdit
+              ? const Text('Save Changes')
+              : const Text('Add Material'),
+        ),
+      ]));
+    });
   }
 }
 

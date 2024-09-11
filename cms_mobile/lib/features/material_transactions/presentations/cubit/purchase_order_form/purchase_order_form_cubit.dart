@@ -2,7 +2,6 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/purchase_order_form/purchase_order_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/purchase_order/create_purchase_order_form.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
@@ -43,6 +42,9 @@ class PurchaseOrderFormCubit extends Cubit<PurchaseOrderFormState> {
           MaterialRequestDropdown.dirty(materialRequest.id!),
       selectedMaterialRequest: selectedRequest,
       materialRequestItemDropdown: const MaterialRequestItemDropdown.pure(),
+      unitPriceField: const UnitPriceField.pure(),
+      totalPrice: 0,
+      remarkField: const RemarkField.pure(),
       isValid: Formz.validate([state.materialRequestDropdown]),
     ));
   }
@@ -52,35 +54,45 @@ class PurchaseOrderFormCubit extends Cubit<PurchaseOrderFormState> {
       materialRequestItemDropdown:
           MaterialRequestItemDropdown.dirty(materialRequestItem.id!),
       quantity: materialRequestItem.quantity,
-      // unit: materialRequestItem.productVariant?.unitOfMeasure,
-      isValid: Formz.validate([state.materialRequestDropdown]),
+      unitPriceField: const UnitPriceField.pure(),
+      totalPrice: 0,
+      remarkField: const RemarkField.pure(),
+      isValid: Formz.validate([
+        state.materialRequestDropdown,
+        state.materialRequestItemDropdown,
+        state.unitPriceField,
+        state.remarkField
+      ]),
     ));
   }
 
   void proformaChanged(MaterialProformaEntity proforma) {
+    // final selectedProforma = proforma.items?[0];
     final selectedProforma = proforma.selectedProformaItem;
 
     emit(state.copyWith(
-      proformaDropdown: ProformaDropdown.dirty(proforma.id!),
-      materialRequestDropdown: MaterialRequestDropdown.pure(),
-      materialRequestItemDropdown: MaterialRequestItemDropdown.pure(),
+      proformaDropdown: ProformaDropdown.dirty(proforma.id),
+      materialRequestDropdown: const MaterialRequestDropdown.pure(),
+      materialRequestItemDropdown: const MaterialRequestItemDropdown.pure(),
       quantity: selectedProforma?.quantity,
-      unitPriceField: UnitPriceField.dirty(
-          selectedProforma?.unitPrice.toString() ?? "",
-          unitPrice: selectedProforma?.unitPrice ?? 0),
-      totalPrice: (selectedProforma?.unitPrice ?? 0) *
-          (selectedProforma?.quantity ?? 0),
-      vendor: selectedProforma?.vendor ?? "",
+      vendor: selectedProforma?.vendor ?? "N/A",
+      unitPriceField:
+          UnitPriceField.dirty('', unitPrice: selectedProforma?.unitPrice ?? 0),
+      totalPrice: (selectedProforma?.quantity ?? 0) *
+          (selectedProforma?.unitPrice ?? 0),
+      remarkField: const RemarkField.pure(),
       isValid: Formz.validate(
           [state.proformaDropdown, state.unitPriceField, state.vendorField]),
     ));
   }
 
   void unitPriceChanged(String value) {
+    final unitPrice = double.tryParse(value) ?? 0;
     final UnitPriceField unitPriceField =
         UnitPriceField.dirty(value, unitPrice: state.unitPriceField.unitPrice);
     emit(state.copyWith(
         unitPriceField: unitPriceField,
+        totalPrice: unitPrice * state.quantity,
         isValid: Formz.validate([state.unitPriceField])));
   }
 
@@ -96,26 +108,34 @@ class PurchaseOrderFormCubit extends Cubit<PurchaseOrderFormState> {
   }
 
   void onSubmit() {
+    final double? parsedUnitPrice = double.tryParse(state.unitPriceField.value);
+    if (state.isProforma) {
+      emit(
+        state.copyWith(
+          formStatus: FormStatus.validating,
+          proformaDropdown:
+              ProformaDropdown.dirty(state.proformaDropdown.value),
+          unitPriceField: UnitPriceField.dirty(state.unitPriceField.value,
+              unitPrice: parsedUnitPrice ?? 0),
+          remarkField: RemarkField.dirty(state.remarkField.value),
+          isValid: Formz.validate([state.proformaDropdown, state.remarkField]),
+        ),
+      );
+    } else {}
     emit(
       state.copyWith(
         formStatus: FormStatus.validating,
-        unitPriceField: UnitPriceField.dirty(
-            state.unitPriceField.unitPrice.toString(),
-            unitPrice: state.unitPriceField.unitPrice),
+        unitPriceField: UnitPriceField.dirty(state.unitPriceField.value,
+            unitPrice: parsedUnitPrice ?? 0),
         materialRequestDropdown:
             MaterialRequestDropdown.dirty(state.materialRequestDropdown.value),
         materialRequestItemDropdown: MaterialRequestItemDropdown.dirty(
             state.materialRequestItemDropdown.value),
-        proformaDropdown: ProformaDropdown.dirty(state.proformaDropdown.value),
-        quantity: state.quantity,
-        totalPrice: state.totalPrice,
-        vendor: state.vendor,
         remarkField: RemarkField.dirty(state.remarkField.value),
         isValid: Formz.validate([
           state.unitPriceField,
           state.materialRequestDropdown,
           state.materialRequestItemDropdown,
-          state.proformaDropdown,
           state.remarkField
         ]),
       ),

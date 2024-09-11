@@ -27,9 +27,8 @@ abstract class MaterialProformaDataSource {
   Future<DataState<String>> deleteMaterialProforma(
       {required String materialProformaId});
 
-  Future<DataState<List<MaterialProformaEntity>>>
-      fetchAllMaterialProformas(
-          {FilterMaterialProformaInput? filterMaterialProformaInput});
+  Future<DataState<List<MaterialProformaEntity>>> fetchAllMaterialProformas(
+      {FilterMaterialProformaInput? filterMaterialProformaInput});
 }
 
 class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
@@ -442,13 +441,24 @@ query GetProformaById($getProformaByIdId: String!) {
               updatedAt
               vendor
             }
+            items {
+              createdAt
+              id
+              photos
+              quantity
+              remark
+              totalPrice
+              unitPrice
+              updatedAt
+              vendor
+            }
             status
           }
         }
       }
     ''';
 
-    dynamic filterInput = filterMaterialProformaInput?.toJson();
+    dynamic filterInput = filterMaterialProformaInput?.toJson() ?? {};
     final selectedProjectId =
         await GQLClient.getFromLocalStorage('selected_project_id');
 

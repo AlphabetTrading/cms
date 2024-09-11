@@ -16,8 +16,7 @@ abstract class PurchaseOrderDataSource {
   });
 
   Future<DataState<String>> createPurchaseOrder(
-      {required CreatePurchaseOrderParamsModel
-          createPurchaseOrderParamsModel});
+      {required CreatePurchaseOrderParamsModel createPurchaseOrderParamsModel});
 
   Future<DataState<PurchaseOrderModel>> getPurchaseOrderDetails(
       {required String params});
@@ -113,15 +112,18 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
     ''';
 
     List<Map<String, dynamic>> purchaseOrderMaterialsMap =
-      createPurchaseOrderParamsModel.purchaseOrderMaterials
+        createPurchaseOrderParamsModel.purchaseOrderMaterials
             .map((purchaseOrderMaterial) {
+      final isProforma = createPurchaseOrderParamsModel.isProforma;
       return {
         "quantity": purchaseOrderMaterial.quantity,
         "unitPrice": purchaseOrderMaterial.unitPrice,
         "totalPrice": purchaseOrderMaterial.totalPrice,
-        "materialRequestItemId": purchaseOrderMaterial.materialRequestItemId,
-        "proformaId": purchaseOrderMaterial.proformaId,
-        "remark": purchaseOrderMaterial.remark,
+        if (isProforma) "proformaId": purchaseOrderMaterial.proformaId ?? "",
+        if (!isProforma)
+          "materialRequestItemId":
+              purchaseOrderMaterial.materialRequestItemId ?? "",
+        "remark": purchaseOrderMaterial.remark ?? "",
       };
     }).toList();
 
@@ -152,7 +154,6 @@ query GetPurchaseOrderById($getPurchaseOrderByIdId: String!) {
     } catch (e) {
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
-
   }
 
   @override

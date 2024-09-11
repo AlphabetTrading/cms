@@ -31,7 +31,7 @@ class RoutePaths {
   static const String materialReceiving = 'material_receiving';
  
   // purchase order
-  static const String purchaseOrder = 'purchase_order';
+  static const String purchaseOrders = 'purchase_order';
   static const String purchaseOrderCreate = 'create';
   static const String purchaseOrderDetails = ':purchaseOrderId';
   static const String purchaseOrderEdit = 'edit/:purchaseOrderId';
@@ -95,7 +95,7 @@ class RouteNames {
   static const String materialReceivingEdit = 'material_receiving_edit';
 
   // purchase order
-  static const String purchaseOrder = 'purchase_order';
+  static const String purchaseOrders = 'purchase_order';
   static const String purchaseOrderCreate = 'purchase_order_create';
   static const String purchaseOrderDetails = 'purchase_order_details';
   static const String purchaseOrderEdit = 'purchase_order_edit';

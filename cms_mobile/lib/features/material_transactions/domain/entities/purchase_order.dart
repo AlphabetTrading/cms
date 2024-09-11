@@ -3,9 +3,7 @@ import 'package:cms_mobile/features/authentication/domain/entities/user_entity.d
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
+import 'package:cms_mobile/features/projects/domain/entities/project.dart';
 import 'package:equatable/equatable.dart';
 
 class PurchaseOrderEntity extends Equatable {
@@ -17,6 +15,7 @@ class PurchaseOrderEntity extends Equatable {
   final String? preparedById;
   final UserEntity? preparedBy;
   final String? projectId;
+  final ProjectEntity? project;
   final String? serialNumber;
   final PurchaseOrderStatus? status;
   final double? subTotal;
@@ -33,6 +32,7 @@ class PurchaseOrderEntity extends Equatable {
     required this.items,
     required this.preparedById,
     required this.preparedBy,
+    required this.project,
     required this.projectId,
     required this.serialNumber,
     required this.status,
@@ -51,6 +51,7 @@ class PurchaseOrderEntity extends Equatable {
         items,
         preparedById,
         preparedBy,
+        project,
         projectId,
         serialNumber,
         status,
@@ -139,6 +140,7 @@ class PurchaseOrderItemEntity extends Equatable {
 
 class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
     extends Equatable {
+  final bool isProforma;
   final String projectId;
   final String preparedById;
   final double subTotal;
@@ -146,6 +148,7 @@ class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
   final List<T> purchaseOrderMaterials;
 
   const CreatePurchaseOrderParamsEntity({
+    required this.isProforma,
     required this.projectId,
     required this.preparedById,
     required this.purchaseOrderMaterials,
@@ -154,7 +157,8 @@ class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
   });
 
   @override
-  List<Object?> get props => [preparedById, projectId, purchaseOrderMaterials];
+  List<Object?> get props =>
+      [isProforma, projectId, purchaseOrderMaterials, vat, subTotal];
 }
 
 class EditPurchaseOrderParamsEntity<T extends PurchaseOrderEntity>
@@ -193,8 +197,11 @@ class PurchaseOrderEntityListWithMeta {
 }
 
 class PurchaseOrderMaterialEntity extends Equatable {
+  final bool? isProforma;
   final String? materialRequestItemId;
+  final MaterialRequestItem? materialRequestItem;
   final String? proformaId;
+  final MaterialProformaEntity? proforma;
   final double quantity;
   final String? remark;
   final double unitPrice;
@@ -202,8 +209,11 @@ class PurchaseOrderMaterialEntity extends Equatable {
 
   const PurchaseOrderMaterialEntity(
       {this.remark,
+      this.isProforma,
       this.materialRequestItemId,
+      this.materialRequestItem,
       this.proformaId,
+      this.proforma,
       required this.unitPrice,
       required this.totalPrice,
       required this.quantity});
@@ -212,8 +222,11 @@ class PurchaseOrderMaterialEntity extends Equatable {
   List<Object?> get props => [
         remark,
         quantity,
+        isProforma,
         materialRequestItemId,
+        materialRequestItem,
         proformaId,
+        proforma,
         unitPrice,
         totalPrice,
       ];
