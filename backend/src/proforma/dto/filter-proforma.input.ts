@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Prisma } from '@prisma/client';
+import { ApprovalStatus, Prisma } from '@prisma/client';
 import { DateTimeFilter } from 'src/common/filter/date-filter';
 import { FilterProjectInput } from 'src/project/dto/filter-project.input';
 
@@ -16,6 +16,9 @@ export class FilterProformaInput {
 
   @Field(() => String, { nullable: true })
   materialRequestItemId?: string;
+
+  @Field(() => [ApprovalStatus], { nullable: true })
+  status?: ApprovalStatus[];
 
   @Field(() => DateTimeFilter, { nullable: true })
   createdAt?: DateTimeFilter;

@@ -40,10 +40,9 @@ export class ProformaResolver {
     let approverIds: string[] = [];
 
     if (filterProformaInput?.projectId) {
-      const approvers =
-        await this.proformaService.getProformaApprovers(
-          filterProformaInput.projectId,
-        );
+      const approvers = await this.proformaService.getProformaApprovers(
+        filterProformaInput.projectId,
+      );
       approverIds = approvers.flatMap((approver) =>
         approver.ProjectUsers.map((projectUser) => projectUser.userId),
       );
@@ -61,6 +60,11 @@ export class ProformaResolver {
           OR: [
             {
               materialRequestItemId: filterProformaInput?.materialRequestItemId,
+            },
+            {
+              status: {
+                in: filterProformaInput?.status,
+              },
             },
           ],
         },
@@ -172,14 +176,11 @@ export class ProformaResolver {
       return this.proformaService.approveProforma(
         proformaId,
         user.id,
-        selectedProformaItemId
+        selectedProformaItemId,
       );
     } catch (e) {
-      console.log(e)
-      throw new BadRequestException(
-        e.message || 'Error approving proforma!',
-      );
+      console.log(e);
+      throw new BadRequestException(e.message || 'Error approving proforma!');
     }
   }
-
 }

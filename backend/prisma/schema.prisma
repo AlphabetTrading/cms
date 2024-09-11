@@ -200,7 +200,7 @@ model ProformaItem {
   totalPrice       Float
   remark           String?
   photos           String[]
-  Proforma         Proforma? @relation(fields: [proformaId], references: [id], name: "items")
+  Proforma         Proforma? @relation(fields: [proformaId], references: [id], name: "items", onUpdate: Cascade, onDelete: Cascade)
   proformaId       String?
   SelectedProforma Proforma? @relation(name: "selectedProformaItem")
 
@@ -257,7 +257,7 @@ model PurchaseOrderItem {
   totalPrice            Float
   remark                String?
   purchaseOrderId       String
-  PurchaseOrder         PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], name: "items")
+  PurchaseOrder         PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], name: "items", onUpdate: Cascade, onDelete: Cascade)
   MaterialReceiveItem   MaterialReceiveItem[]
 
   createdAt DateTime @default(now())
@@ -365,7 +365,7 @@ model MaterialReceiveVoucher {
 model MaterialReceiveItem {
   id                       String                 @id @default(uuid())
   purchaseOrderItemId      String
-  purchaseOrderItem        PurchaseOrderItem      @relation(fields: [purchaseOrderItemId], references: [id], onDelete: Cascade)
+  purchaseOrderItem        PurchaseOrderItem      @relation(fields: [purchaseOrderItemId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   receivedQuantity         Float
   unloadingCost            Float
   loadingCost              Float
@@ -415,7 +415,7 @@ model MaterialTransferItem {
   unitCost                  Float
   totalCost                 Float
   remark                    String?
-  MaterialTransferVoucher   MaterialTransferVoucher? @relation(fields: [materialTransferVoucherId], references: [id])
+  MaterialTransferVoucher   MaterialTransferVoucher? @relation(fields: [materialTransferVoucherId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   materialTransferVoucherId String?
 
   createdAt DateTime @default(now())
