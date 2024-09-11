@@ -217,9 +217,37 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
   }
 
   @override
-  Future<DataState<String>> deletePurchaseOrder({required String materialId}) {
-    // TODO: implement deletePurchaseOrder
-    throw UnimplementedError();
+  Future<DataState<String>> deletePurchaseOrder(
+      {required String materialId}) async {
+    const String _deletePurchaseOrderMutation = r'''
+      mutation DeletePurchaseOrder($deletePurchaseOrderId: String!) {
+        deletePurchaseOrder(id: $deletePurchaseOrderId) {
+          id
+        }
+      }
+    ''';
+
+    final MutationOptions options = MutationOptions(
+      document: gql(_deletePurchaseOrderMutation),
+      variables: {"deletePurchaseOrderId": materialId},
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `PurchaseOrderModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['deletePurchaseOrder']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 
   @override

@@ -1,6 +1,9 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_event.dart';
@@ -17,7 +20,6 @@ import 'package:cms_mobile/features/material_transactions/presentations/widgets/
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 class CreatePurchaseOrderPage extends StatelessWidget {
@@ -35,23 +37,17 @@ class CreatePurchaseOrderPage extends StatelessWidget {
               context.goNamed(RouteNames.purchaseOrders);
               BlocProvider.of<PurchaseOrderLocalBloc>(context)
                   .add(const ClearPurchaseOrderMaterialsLocal());
-              Fluttertoast.showToast(
-                  msg: "Purchase Order Created",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 3,
-                  backgroundColor: Color.fromARGB(255, 1, 135, 23),
-                  textColor: Colors.white,
-                  fontSize: 16.0);
+              BlocProvider.of<PurchaseOrderBloc>(context).add(
+                GetPurchaseOrdersEvent(
+                    filterPurchaseOrderInput: FilterPurchaseOrderInput(),
+                    orderBy: OrderByPurchaseOrderInput(createdAt: "desc"),
+                    paginationInput: PaginationInput(skip: 0, take: 20),
+                    mine: false),
+              );
+              showStatusMessage(Status.SUCCESS, "Purchase Order Created");
             } else if (state is CreatePurchaseOrderFailed) {
-              Fluttertoast.showToast(
-                  msg: "Create Purchase Order Failed",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 3,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
+              showStatusMessage(
+                  Status.FAILED, "Unable to Create Purchase Order");
             }
           },
           builder: (context, state) {
@@ -163,7 +159,6 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                                     proformaId: e.proformaId,
                                   );
                                 }).toList();
-                                debugPrint("Mapped Materials: $materials");
                                 context.read<PurchaseOrderBloc>().add(
                                     CreatePurchaseOrderEvent(
                                         createPurchaseOrderParamsEntity:
@@ -184,9 +179,6 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                                                 vat: vat,
                                                 purchaseOrderMaterials:
                                                     materials)));
-
-                                debugPrint(
-                                    "CreatePurchaseOrderEvent triggered");
                               },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),

@@ -184,7 +184,6 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
       create: (context) => sl<PurchaseOrderDeleteCubit>(),
       child: BlocBuilder<PurchaseOrderBloc, PurchaseOrderState>(
         builder: (_, state) {
-          debugPrint('PurchaseOrderBlocBuilder state: $state');
           if (state is PurchaseOrderInitial) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -192,7 +191,6 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
           }
 
           if (state is PurchaseOrderLoading) {
-            debugPrint('PurchaseOrderBlocBuilder state: loading');
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -305,7 +303,10 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
                       )),
                   PopupMenuItem(
                     onTap: () {
-                      print('Item 2');
+                      context
+                          .read<PurchaseOrderDeleteCubit>()
+                          .onPurchaseOrderDelete(
+                              purchaseOrderId: purchaseOrder.id ?? "");
                     },
                     child: const ListTile(
                       leading: Icon(Icons.delete, color: Colors.red),
