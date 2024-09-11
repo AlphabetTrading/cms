@@ -239,12 +239,9 @@ input CreateProjectUserInput {
 
 input CreatePurchaseOrderInput {
   approvedById: String
-  grandTotal: Float
   items: [CreatePurchaseOrderItemInput!]!
   preparedById: String!
   projectId: String!
-  subTotal: Float!
-  vat: Float
 }
 
 input CreatePurchaseOrderItemInput {
@@ -601,6 +598,7 @@ input FilterProformaInput {
   materialRequestItemId: String
   project: FilterProjectInput
   projectId: String
+  status: [ApprovalStatus!]
   updatedAt: DateTimeFilter
 }
 
@@ -1710,14 +1708,11 @@ input UpdateProjectUserInput {
 
 input UpdatePurchaseOrderInput {
   approvedById: String
-  grandTotal: Float
   id: String!
   items: [UpdatePurchaseOrderItemInput!]!
   preparedById: String
   projectId: String
   status: ApprovalStatus
-  subTotal: Float
-  vat: Float
 }
 
 input UpdatePurchaseOrderItemInput {

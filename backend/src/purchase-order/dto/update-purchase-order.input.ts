@@ -18,18 +18,6 @@ export class UpdatePurchaseOrderInput {
   items?: UpdatePurchaseOrderItemInput[];
 
   @IsOptional()
-  @Field(() => Number, { nullable: true })
-  subTotal?: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  vat?: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  grandTotal?: number;
-
-  @IsOptional()
   @Field(() => String, { nullable: true })
   preparedById?: string;
 

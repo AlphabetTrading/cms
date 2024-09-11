@@ -13,18 +13,6 @@ export class CreatePurchaseOrderInput {
   items: CreatePurchaseOrderItemInput[];
 
   @IsNotEmpty()
-  @Field(() => Number)
-  subTotal: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  vat?: number;
-
-  @IsOptional()
-  @Field(() => Number, { nullable: true })
-  grandTotal?: number;
-
-  @IsNotEmpty()
   @Field(() => String)
   preparedById: string;
 

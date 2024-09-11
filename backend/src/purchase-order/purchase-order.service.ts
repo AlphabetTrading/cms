@@ -32,9 +32,16 @@ export class PurchaseOrderService {
     const serialNumber =
       'PO/' + currentSerialNumber.toString().padStart(4, '0');
 
+    const subTotal = createPurchaseOrder.items.reduce(
+      (sum, item) => sum + item.totalPrice,
+      0,
+    );
     const createdPurchaseOrder = await this.prisma.purchaseOrder.create({
       data: {
         ...createPurchaseOrder,
+        subTotal: subTotal,
+        vat: Number((subTotal * 0.15).toFixed(2)),
+        grandTotal: Number((subTotal * 1.15).toFixed(2)),
         serialNumber: serialNumber,
         items: {
           create: createPurchaseOrder.items.map((item) => ({
@@ -531,8 +538,8 @@ export class PurchaseOrderService {
                 </tr>
                 <tr>
                   <td colspan="6" class="col-cost" style="text-align: right; border: none;">Grand Total</td>
-                  <td class="col-cost-money">${purchaseOrder?.grandTotal.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(purchaseOrder?.grandTotal.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${purchaseOrder?.grandTotal?.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(purchaseOrder?.grandTotal?.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                   <td></td>
                 </tr>
               </tfoot>
