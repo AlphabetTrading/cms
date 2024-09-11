@@ -506,10 +506,10 @@ export class PurchaseOrderService {
                       : `${item.proforma.materialRequestItem.productVariant.unitOfMeasure}`
                   }</td>
                   <td class="col-quantity">${item.quantity}</td>
-                  <td class="col-cost-money">${item.unitPrice.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(item.unitPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
-                  <td class="col-cost-money">${item.totalPrice.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(item.totalPrice.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${item.unitPrice?.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(item.unitPrice?.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${item.totalPrice?.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(item.totalPrice?.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                   <td class="col-remark">${item.remark || ''}</td>
                 </tr>
                 `,
@@ -519,20 +519,20 @@ export class PurchaseOrderService {
               <tfoot>
                 <tr>
                   <td colspan="6" class="col-cost" style="text-align: right; border: none; ">Sub Total</td>
-                  <td class="col-cost-money">${purchaseOrder.subTotal.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(purchaseOrder.subTotal.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${purchaseOrder.subTotal?.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(purchaseOrder.subTotal?.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                   <td></td>
                 </tr>
                 <tr>
                   <td colspan="6" class="col-cost" style="text-align: right; border: none;">15% VAT</td>
-                  <td class="col-cost-money">${purchaseOrder.vat.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(purchaseOrder.vat.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${purchaseOrder.vat?.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(purchaseOrder.vat?.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                   <td></td>
                 </tr>
                 <tr>
                   <td colspan="6" class="col-cost" style="text-align: right; border: none;">Grand Total</td>
-                  <td class="col-cost-money">${purchaseOrder.grandTotal.toLocaleString().split('.')[0]}</td>
-                  <td class="col-cost-cent">${(purchaseOrder.grandTotal.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
+                  <td class="col-cost-money">${purchaseOrder?.grandTotal.toLocaleString().split('.')[0]}</td>
+                  <td class="col-cost-cent">${(purchaseOrder?.grandTotal.toString().split('.')[1] || '00').padEnd(2, '0')}</td>
                   <td></td>
                 </tr>
               </tfoot>
