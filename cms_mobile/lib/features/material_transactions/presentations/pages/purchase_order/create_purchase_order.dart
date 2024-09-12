@@ -135,13 +135,6 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                                 localState.purchaseOrderMaterials!.isEmpty)
                             ? null
                             : () {
-                                double subTotal =
-                                    localState.purchaseOrderMaterials!.fold(0,
-                                        (sum, item) => sum + item.totalPrice);
-
-                                double vatPercentage = 0.15;
-                                double vat = subTotal * vatPercentage;
-
                                 bool isProforma = true;
                                 final materials =
                                     localState.purchaseOrderMaterials!.map((e) {
@@ -173,8 +166,6 @@ class CreatePurchaseOrderPage extends StatelessWidget {
                                                         .user
                                                         ?.id ??
                                                     USER_ID,
-                                                subTotal: subTotal,
-                                                vat: vat,
                                                 purchaseOrderMaterials:
                                                     materials)));
                               },

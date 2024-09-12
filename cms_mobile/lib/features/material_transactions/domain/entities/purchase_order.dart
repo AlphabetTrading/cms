@@ -143,8 +143,6 @@ class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
   final bool isProforma;
   final String projectId;
   final String preparedById;
-  final double subTotal;
-  final double vat;
   final List<T> purchaseOrderMaterials;
 
   const CreatePurchaseOrderParamsEntity({
@@ -152,13 +150,11 @@ class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
     required this.projectId,
     required this.preparedById,
     required this.purchaseOrderMaterials,
-    required this.subTotal,
-    required this.vat,
   });
 
   @override
   List<Object?> get props =>
-      [isProforma, projectId, purchaseOrderMaterials, vat, subTotal];
+      [isProforma, projectId, purchaseOrderMaterials];
 }
 
 class EditPurchaseOrderParamsEntity<T extends PurchaseOrderEntity>

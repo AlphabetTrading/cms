@@ -195,8 +195,6 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
         "createPurchaseOrderInput": {
           "preparedById": createPurchaseOrderParamsModel.preparedById,
           "projectId": createPurchaseOrderParamsModel.projectId,
-          "subTotal": createPurchaseOrderParamsModel.subTotal,
-          "vat": createPurchaseOrderParamsModel.vat,
           "items": purchaseOrderMaterialsMap
         }
       },

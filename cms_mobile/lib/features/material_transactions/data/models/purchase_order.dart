@@ -219,12 +219,8 @@ class CreatePurchaseOrderParamsModel
     required String projectId,
     required List<PurchaseOrderMaterialModel> purchaseOrderMaterials,
     required String preparedById,
-    required double subTotal,
-    required double vat,
   }) : super(
             isProforma: isProforma,
-            subTotal: subTotal,
-            vat: vat,
             preparedById: preparedById,
             projectId: projectId,
             purchaseOrderMaterials: purchaseOrderMaterials);
@@ -235,8 +231,6 @@ class CreatePurchaseOrderParamsModel
         projectId,
         preparedById,
         purchaseOrderMaterials,
-        subTotal,
-        vat
       ];
 
   factory CreatePurchaseOrderParamsModel.fromEntity(
@@ -245,8 +239,6 @@ class CreatePurchaseOrderParamsModel
         isProforma: entity.isProforma,
         projectId: entity.projectId,
         preparedById: entity.preparedById,
-        subTotal: entity.subTotal,
-        vat: entity.vat,
         purchaseOrderMaterials: entity.purchaseOrderMaterials
             .map((material) => PurchaseOrderMaterialModel(
                   quantity: material.quantity,
