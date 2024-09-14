@@ -1,9 +1,7 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
-import 'package:cms_mobile/core/utils/ids.dart';
 
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_transfer/material_transfer_remote_data_source.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_state.dart';
@@ -18,7 +16,6 @@ import 'package:cms_mobile/features/products/domain/entities/get_products_input.
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
-import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:flutter/material.dart';

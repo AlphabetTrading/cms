@@ -2,6 +2,8 @@ import 'package:cms_mobile/app.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/login/log_in_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_bloc.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/detailed_expense_stats/detailed_expense_stats_bloc.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/detailed_stock_stats/detailed_stock_stats_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/daily_site_datas_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
@@ -51,6 +53,12 @@ void main() async {
                   sl<ProjectBloc>()..add(const LoadProjects())),
           BlocProvider<LoginBloc>(
             create: (context) => sl<LoginBloc>(),
+          ),
+          BlocProvider<DetailedExpenseStatsBloc>(
+            create: (context) => sl<DetailedExpenseStatsBloc>(),
+          ),
+          BlocProvider<DetailedStockStatsBloc>(
+            create: (context) => sl<DetailedStockStatsBloc>(),
           ),
           BlocProvider<MaterialRequestBloc>(
             create: (context) => sl<MaterialRequestBloc>(),

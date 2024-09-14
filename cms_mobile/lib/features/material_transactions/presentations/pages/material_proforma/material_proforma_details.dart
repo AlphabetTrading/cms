@@ -1,8 +1,6 @@
 // boilerplate
 
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
 import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
@@ -78,7 +76,7 @@ class _MaterialProformaDetailsPageState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 32),
                       decoration: ShapeDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),

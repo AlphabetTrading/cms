@@ -319,7 +319,7 @@ class _PurchaseOrdersPageState extends State<PurchaseOrdersPage> {
             ],
           ),
           Text(
-            DateFormat.yMMMMd().format(purchaseOrder.createdAt!),
+            DateFormat.yMMMMd().format(purchaseOrder.createdAt),
             style: const TextStyle(
               color: Color(0xFF637587),
               fontSize: 12,

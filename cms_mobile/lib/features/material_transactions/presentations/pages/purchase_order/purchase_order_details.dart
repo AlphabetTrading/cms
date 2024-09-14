@@ -1,6 +1,5 @@
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/details/details_cubit.dart';
 import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
 import 'package:cms_mobile/injection_container.dart';
@@ -71,7 +70,7 @@ class _PurchaseOrderDetailsPageState extends State<PurchaseOrderDetailsPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 32),
                         decoration: ShapeDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
@@ -90,7 +89,7 @@ class _PurchaseOrderDetailsPageState extends State<PurchaseOrderDetailsPage> {
                                 title: 'Date',
                                 value: purchaseOrder?.createdAt != null
                                     ? DateFormat('MMMM dd, yyyy HH:mm')
-                                        .format(purchaseOrder!.createdAt!)
+                                        .format(purchaseOrder!.createdAt)
                                     : 'N/A'),
                             SizedBox(height: 12),
                             TransactionInfoItem(

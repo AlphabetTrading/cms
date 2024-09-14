@@ -71,7 +71,7 @@ class _MaterialRequestDetailsPageState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 32),
                         decoration: ShapeDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),

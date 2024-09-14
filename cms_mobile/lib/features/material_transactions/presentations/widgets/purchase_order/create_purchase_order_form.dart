@@ -1,5 +1,3 @@
-import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
-import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_event.dart';
@@ -8,10 +6,8 @@ import 'package:cms_mobile/features/material_transactions/presentations/cubit/pu
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/purchase_order/create_purchase_order_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/purchase_order/create_purchase_order_proforma.dart';
 
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
-import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';

@@ -1,6 +1,5 @@
 //state
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/delete_milestone.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

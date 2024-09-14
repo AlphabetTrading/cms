@@ -13,8 +13,12 @@ import 'package:cms_mobile/features/home/data/repository/material_transactions_r
 import 'package:cms_mobile/features/home/domain/repository/dashboard_repository.dart';
 import 'package:cms_mobile/features/home/domain/repository/material_transaction_repository.dart';
 import 'package:cms_mobile/features/home/domain/usecases/get_dashboard_stats.dart';
+import 'package:cms_mobile/features/home/domain/usecases/get_detailed_expense_stats.dart';
+import 'package:cms_mobile/features/home/domain/usecases/get_detailed_stock_stats.dart';
 import 'package:cms_mobile/features/home/domain/usecases/get_material_transactions.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_bloc.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/detailed_expense_stats/detailed_expense_stats_bloc.dart';
+import 'package:cms_mobile/features/home/presentation/bloc/detailed_stock_stats/detailed_stock_stats_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/material_transactions/material_transactions_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/daily_site_data/daily_site_data_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_proformas/material_proforma_remote_data_source.dart';
@@ -402,6 +406,18 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetDetailedExpenseStatsUseCase>(
+    () => GetDetailedExpenseStatsUseCase(
+      sl<DashboardRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetDetailedStockStatsUseCase>(
+    () => GetDetailedStockStatsUseCase(
+      sl<DashboardRepository>(),
+    ),
+  );
+
   // material request
   sl.registerLazySingleton<GetMaterialRequestUseCase>(
     () => GetMaterialRequestUseCase(
@@ -730,6 +746,14 @@ Future<void> initializeDependencies() async {
   // dashboard
   sl.registerFactory<DashboardBloc>(
     () => DashboardBloc(sl<GetDashboardUseCase>()),
+  );
+
+  sl.registerFactory<DetailedExpenseStatsBloc>(
+    () => DetailedExpenseStatsBloc(sl<GetDetailedExpenseStatsUseCase>()),
+  );
+
+  sl.registerFactory<DetailedStockStatsBloc>(
+    () => DetailedStockStatsBloc(sl<GetDetailedStockStatsUseCase>()),
   );
 
   // material transaction

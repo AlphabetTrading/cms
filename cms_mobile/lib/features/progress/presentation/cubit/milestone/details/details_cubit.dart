@@ -1,9 +1,7 @@
-import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/usecases/get_milestone_details.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class MilestoneDetailsState extends Equatable {

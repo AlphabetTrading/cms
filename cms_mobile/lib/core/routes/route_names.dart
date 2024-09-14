@@ -4,6 +4,8 @@ class RoutePaths {
   static const String forgotPassword = 'forgotPassword';
   static const String resetPassword = 'resetPassword';
   static const String home = '/';
+  static const String detailedExpenseStats = 'detailedExpenseStats';
+  static const String detailedStockStats = 'detailedStockStats';
   static const String items = 'items/:warehouseId';
 
   // material request
@@ -29,7 +31,7 @@ class RoutePaths {
   static const String materialReceivingEdit = 'edit';
   static const String materialReceivingDetails = ':materialReceivingId';
   static const String materialReceiving = 'material_receiving';
- 
+
   // purchase order
   static const String purchaseOrders = 'purchase_order';
   static const String purchaseOrderCreate = 'create';
@@ -48,7 +50,6 @@ class RoutePaths {
   static const String materialProformaDetails = ':materialProformaId';
   static const String materialProformaEdit = 'edit/:materialProformaId';
 
-
   // daily site data
   static const String dailySiteData = 'daily_site_data';
   static const String dailySiteDataCreate = 'create';
@@ -63,6 +64,8 @@ class RoutePaths {
 
 class RouteNames {
   static const String home = 'home';
+  static const String detailedExpenseStats = 'detailedExpenseStats';
+  static const String detailedStockStats = 'detailedStockStats';
   static const String details = 'details';
   static const String login = 'login';
   static const String signup = 'signup';
@@ -100,7 +103,6 @@ class RouteNames {
   static const String purchaseOrderDetails = 'purchase_order_details';
   static const String purchaseOrderEdit = 'purchase_order_edit';
 
-
   // material return
   static const String materialReturnCreate = 'material_return_create';
   static const String materialReturnDetails = 'material_return_details';
@@ -118,10 +120,8 @@ class RouteNames {
   static const String dailySiteDataCreate = 'daily_site_data_create';
   static const String dailySiteDataDetails = 'daily_site_data_details';
   static const String dailySiteDataEdit = 'daily_site_data_edit';
-  
 
   //progress
   static const String milestoneDetails = 'milestone_details';
   static const String taskDetails = 'task_details';
-
 }

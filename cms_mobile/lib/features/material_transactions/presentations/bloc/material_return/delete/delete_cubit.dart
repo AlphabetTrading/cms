@@ -1,7 +1,6 @@
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/delete_material_return.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //state

@@ -1,3 +1,4 @@
+import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:equatable/equatable.dart';
 
 class DashboardEntity extends Equatable {
@@ -51,5 +52,69 @@ class ExpenditureEntity extends Equatable {
         totalItemCost,
         totalLaborCost,
         totalTransportationCost
+      ];
+}
+
+class DetailedExpenseStatsEntity extends Equatable {
+  final double? totalItemCost;
+  final double? totalItemCount;
+  final List<SingleSpendingTransactionEntity>? spendingHistory;
+
+  const DetailedExpenseStatsEntity({
+    required this.totalItemCost,
+    required this.totalItemCount,
+    required this.spendingHistory,
+  });
+
+  @override
+  List<Object?> get props => [
+        totalItemCost,
+        totalItemCount,
+        spendingHistory,
+      ];
+}
+
+class SingleSpendingTransactionEntity extends Equatable {
+  final DateTime? date;
+  final double? itemCost;
+  final double? quantity;
+  final ProductVariantEntity? productVariant;
+  final String? productVariantId;
+
+  const SingleSpendingTransactionEntity(
+      {required this.date,
+      required this.itemCost,
+      required this.quantity,
+      required this.productVariant,
+      required this.productVariantId});
+
+  @override
+  List<Object?> get props => [
+        date,
+        itemCost,
+        quantity,
+        productVariant,
+        productVariantId,
+      ];
+}
+
+class DetailedStockStatsEntity extends Equatable {
+  final double? totalItemBought;
+  final double? totalItemLost;
+  final double? totalItemUsed;
+  final double? totalItemWasted;
+
+  const DetailedStockStatsEntity(
+      {required this.totalItemBought,
+      required this.totalItemLost,
+      required this.totalItemUsed,
+      required this.totalItemWasted});
+
+  @override
+  List<Object?> get props => [
+        totalItemLost,
+        totalItemBought,
+        totalItemUsed,
+        totalItemWasted,
       ];
 }

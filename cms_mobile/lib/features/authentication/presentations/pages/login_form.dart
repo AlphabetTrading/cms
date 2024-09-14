@@ -207,7 +207,7 @@ class _MyLoginFormState extends State<LoginForm> {
                           horizontal: 16,
                           vertical: 20,
                         ),
-                        hintText: "phoneNumberPlaceholder".tr(),
+                        hintText: tr("phoneNumberPlaceholder"),
                         focusedBorder: InputBorder.none,
                         border: InputBorder.none,
                       ),

@@ -2,6 +2,8 @@ import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/authentication/presentations/pages/login_page.dart';
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
+import 'package:cms_mobile/features/home/presentation/pages/dashboard/detailed_expense_stats.dart';
+import 'package:cms_mobile/features/home/presentation/pages/dashboard/detailed_stats.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/create_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/daily_site_data_details.dart';
@@ -73,6 +75,21 @@ class AppRouter {
             return const HomePage();
           },
           routes: <RouteBase>[
+            GoRoute(
+              name: RouteNames.detailedExpenseStats,
+              path: RoutePaths.detailedExpenseStats,
+              builder: (BuildContext context, GoRouterState state) {
+                return DetailedStats();
+                // return DetailedExpenseStatsPage();
+              },
+            ),
+            GoRoute(
+              name: RouteNames.detailedStockStats,
+              path: RoutePaths.detailedStockStats,
+              builder: (BuildContext context, GoRouterState state) {
+                return DetailedExpenseStatsPage();
+              },
+            ),
             GoRoute(
               name: RouteNames.milestoneDetails,
               path: RoutePaths.milestoneDetails,

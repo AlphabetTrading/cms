@@ -1,10 +1,8 @@
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
-import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
 import 'package:cms_mobile/features/progress/presentation/widgets/task_form.dart';
 import 'package:cms_mobile/features/progress/presentation/widgets/tasks_list.dart';
-import 'package:cms_mobile/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,7 +46,7 @@ class _TaskSectionState extends State<TaskSection>
             decoration: BoxDecoration(
                 color: tabController.index == idx
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.surfaceVariant,
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(15)))
       ],
     );

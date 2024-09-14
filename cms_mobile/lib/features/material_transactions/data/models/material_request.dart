@@ -3,7 +3,6 @@ import 'package:cms_mobile/features/material_transactions/data/models/product_va
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
-import 'package:flutter/material.dart';
 
 class MaterialRequestModel extends MaterialRequestEntity {
   const MaterialRequestModel({
