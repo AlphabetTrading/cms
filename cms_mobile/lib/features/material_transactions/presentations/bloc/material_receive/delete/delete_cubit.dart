@@ -3,50 +3,53 @@ import 'package:equatable/equatable.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class MaterialReceiveDeleteState extends Equatable {
-  const MaterialReceiveDeleteState();
+abstract class DeleteMaterialReceiveState extends Equatable {
+  const DeleteMaterialReceiveState();
 
   @override
   List<Object> get props => [];
 }
 
-class MaterialReceiveDeleteInitial extends MaterialReceiveDeleteState {}
+class DeleteMaterialReceiveInitial extends DeleteMaterialReceiveState {}
 
-class MaterialReceiveDeleteLoading extends MaterialReceiveDeleteState {}
+class DeleteMaterialReceiveLoading extends DeleteMaterialReceiveState {}
 
-class MaterialReceiveDeleteSuccess extends MaterialReceiveDeleteState {
-  const MaterialReceiveDeleteSuccess();
+class DeleteMaterialReceiveSuccess extends DeleteMaterialReceiveState {
+  const DeleteMaterialReceiveSuccess();
 }
 
-class MaterialReceiveDeleteFailed extends MaterialReceiveDeleteState {
+class DeleteMaterialReceiveFailed extends DeleteMaterialReceiveState {
   final String error;
 
-  const MaterialReceiveDeleteFailed({required this.error});
+  const DeleteMaterialReceiveFailed({required this.error});
 
   @override
   List<Object> get props => [error];
 }
 
-class MaterialReceiveDeleteEvent {
+class DeleteMaterialReceiveEvent {
   final String materialReceiveId;
 
-  MaterialReceiveDeleteEvent({required this.materialReceiveId});
+  DeleteMaterialReceiveEvent({required this.materialReceiveId});
 }
 
-class MaterialReceiveDeleteCubit extends Cubit<MaterialReceiveDeleteState> {
+class DeleteMaterialReceiveCubit extends Cubit<DeleteMaterialReceiveState> {
   final DeleteMaterialReceiveUseCase _materialReceiveDeleteUseCase;
 
-  MaterialReceiveDeleteCubit(this._materialReceiveDeleteUseCase)
-      : super(MaterialReceiveDeleteInitial());
+  DeleteMaterialReceiveCubit(this._materialReceiveDeleteUseCase)
+      : super(DeleteMaterialReceiveInitial());
 
-  void onMaterialReceiveDelete({required String materialReceiveId}) async {
-    emit(MaterialReceiveDeleteLoading());
+  void onDeleteMaterialReceive({required String materialReceiveId}) async {
+    // print('DeleteMaterialReceiveCubit ${materialReceiveId}');
+    emit(DeleteMaterialReceiveLoading());
     final dataState =
         await _materialReceiveDeleteUseCase(params: materialReceiveId);
     if (dataState is DataSuccess) {
-      emit(MaterialReceiveDeleteSuccess());
+    // print('DeleteMaterialReceiveCubit Success');
+      emit(DeleteMaterialReceiveSuccess());
     } else if (dataState is DataFailed) {
-      emit(MaterialReceiveDeleteFailed(
+    // print('DeleteMaterialReceiveCubit Failed');
+      emit(DeleteMaterialReceiveFailed(
           error: dataState.error?.errorMessage ??
               'Failed to delete material issue '));
     }

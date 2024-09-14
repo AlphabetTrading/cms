@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ class MaterialReturnModel extends MaterialReturnEntity {
   const MaterialReturnModel({
     required String super.id,
     required String super.serialNumber,
-    WarehouseModel? super.receivingStore,
+    WarehouseModel? super.receivingWarehouseStore,
     List<MaterialReturnItemModel>? super.items,
     super.returnedById,
     UserModel? super.returnedBy,
@@ -26,9 +27,6 @@ class MaterialReturnModel extends MaterialReturnEntity {
     return MaterialReturnModel(
       id: json['id'],
       serialNumber: json['serialNumber'],
-      receivingStore: json['receivingStore'] != null
-          ? WarehouseModel.fromJson(json['receivingStore'])
-          : null,
       items: json['items']
           .map<MaterialReturnItemModel>(
               (item) => MaterialReturnItemModel.fromJson(item))
@@ -41,6 +39,7 @@ class MaterialReturnModel extends MaterialReturnEntity {
       receivedBy: json['receivedBy'] != null
           ? UserModel.fromJson(json['receivedBy'])
           : null,
+      receivingWarehouseStore:  json['receivingWarehouseStore']!=null?WarehouseModel.fromJson(json['receivingWarehouseStore']):null,
       status: toMaterialReturnStatus(json['status']),
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
@@ -59,6 +58,8 @@ class MaterialReturnItemModel extends MaterialReturnItem {
     super.remark,
     super.materialReturnVoucherId,
     super.productVariantId,
+    super.productVariant,
+    super.issueVoucher,
   });
 
   factory MaterialReturnItemModel.fromJson(Map<String, dynamic> json) {
@@ -66,12 +67,13 @@ class MaterialReturnItemModel extends MaterialReturnItem {
       id: json['id'],
       issueVoucherId: json['issueVoucherId'],
       unitOfMeasure: json['unitOfMeasure'],
-      quantityReturned: json['quantityReturned'],
-      unitCost: json['unitCost'],
-      totalCost: json['totalCost'],
+      quantityReturned: json['quantity']!=null?(json['quantity'] as num).toDouble():null,
+      unitCost: json['unitCost']!=null?(json['unitCost'] as num).toDouble():null,
+      totalCost: json['totalCost'] != null?(json['totalCost'] as num).toDouble():null,
       remark: json['remark'],
       materialReturnVoucherId: json['materialReturnVoucherId'],
       productVariantId: json['productVariantId'],
+      productVariant:json['productVariant']!=null?ProductVariantModel.fromJson(json['productVariant']):null,
     );
   }
 

@@ -51,7 +51,7 @@ class MaterialTransactionMaterialItem extends StatelessWidget {
           ),
           title: Text(title),
           subtitle: Text(subtitle),
-          trailing: PopupMenuButton<String>(
+          trailing: onEdit!=null&& onDelete!=null?PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
                 onTap: onEdit,
@@ -59,7 +59,7 @@ class MaterialTransactionMaterialItem extends StatelessWidget {
               ),
               PopupMenuItem<String>(onTap: onDelete, child: const Text('Delete')),
             ],
-          ),
+          ):null,
         ),
       ),
     );

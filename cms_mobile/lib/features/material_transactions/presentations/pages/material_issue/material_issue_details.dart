@@ -142,8 +142,8 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
                                 'Issued Quantity: ${materialIssueMaterial.quantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}',
                             iconSrc:
                                 'assets/icons/transactions/light/material_issues.svg',
-                            onDelete: () {},
-                            onEdit: () {},
+                            onDelete: null,
+                            onEdit: null,
                             onOpen: () {
                               showModalBottomSheet(
                                 context: context,

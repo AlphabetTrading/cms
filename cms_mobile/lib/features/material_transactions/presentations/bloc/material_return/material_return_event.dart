@@ -40,12 +40,6 @@ class DeleteMaterialReturn extends MaterialReturnEvent {
   const DeleteMaterialReturn(this.id);
 }
 
-class CreateMaterialReturnEvent extends MaterialReturnEvent {
-  final CreateMaterialReturnParamsEntity createMaterialReturnParamsEntity;
-
-  const CreateMaterialReturnEvent(
-      {required this.createMaterialReturnParamsEntity});
-}
 
 class UpdateMaterialReturnEvent extends MaterialReturnEvent {
   final String id;

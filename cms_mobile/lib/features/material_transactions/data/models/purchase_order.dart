@@ -48,7 +48,7 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
   }
 
   factory PurchaseOrderModel.fromJson(Map<String, dynamic> json) {
-    debugPrint('PurchaseOrderModel.fromJson: $json');
+    // debugPrint('PurchaseOrderModel.fromJson: $json');
     final items = json['items'] != null
         ? json['items']
             .map<PurchaseOrderItemModel>(

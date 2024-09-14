@@ -1,9 +1,11 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/delete_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_event.dart';
@@ -63,105 +65,129 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
           );
     });
 
-    return Scaffold(
-      appBar: _buildAppbar(context),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            context.goNamed(RouteNames.materialReceivingCreate);
-          },
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
+    return BlocProvider(
+      create: (context) =>
+          DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
+      child: Scaffold(
+        appBar: _buildAppbar(context),
+        bottomSheet: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
+            onPressed: () {
+              context.goNamed(RouteNames.materialReceivingCreate);
+            },
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+            ),
+            child: const Text('Create Material Receive'),
           ),
-          child: const Text('Create Material Receive'),
         ),
-      ),
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                      onChanged: (query) {
-                        debugPrint('Search query: $query');
-                        searchQuery.add(query);
-                      },
-                    ),
+        body: BlocListener<DeleteMaterialReceiveCubit, DeleteMaterialReceiveState>(
+           listener: (context, state) {
+          if (state is DeleteMaterialReceiveSuccess) {
+            print("De;ete Successssssssssssssssssssss;");
+            showStatusMessage(Status.SUCCESS, "Material Receive deleted successfully");
+            context.read<MaterialReceiveBloc>().add(
+                  GetMaterialReceives(
+                    filterMaterialReceiveInput: FilterMaterialReceiveInput(),
+                    orderBy: OrderByMaterialReceiveInput(createdAt: "desc"),
+                    paginationInput: PaginationInput(skip: 0, take: 10),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _showCustomPopupMenu(context);
-                  },
-                  icon: SvgPicture.asset(
-                    "assets/icons/common/filter.svg",
-                    height: 25,
-                    width: 25,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ToggleButtons(
-                    onPressed: (index) {
-                      setState(() {
-                        debugPrint("Selected index: $index");
-                        if (index == 0) {
-                          selectedMineFilter = false;
-                        } else if (index == 1) {
-                          selectedMineFilter = true;
-                        }
+                );
+          }else if (state is DeleteMaterialReceiveFailed) {
+            print("De;ete Failedddddddddddddddddddddd;");
 
-                        context.read<MaterialReceiveBloc>().add(
-                              GetMaterialReceives(
-                                filterMaterialReceiveInput:
-                                    FilterMaterialReceiveInput(),
-                                orderBy: OrderByMaterialReceiveInput(
-                                    createdAt: "desc"),
-                                paginationInput:
-                                    PaginationInput(skip: 0, take: 20),
-                                mine: selectedMineFilter,
-                              ),
-                            );
-                      });
-                    },
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    constraints: const BoxConstraints(
-                      minHeight: 40.0,
-                      minWidth: 80.0,
+            showStatusMessage(Status.FAILED, state.error);
+          }
+        },
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Search',
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (query) {
+                            debugPrint('Search query: $query');
+                            searchQuery.add(query);
+                          },
+                        ),
+                      ),
                     ),
-                    isSelected: [
-                      !selectedMineFilter,
-                      selectedMineFilter
-                    ],
-                    children: const [
-                      Text('All'),
-                      Text('Mine'),
-                    ]),
+                    IconButton(
+                      onPressed: () {
+                        _showCustomPopupMenu(context);
+                      },
+                      icon: SvgPicture.asset(
+                        "assets/icons/common/filter.svg",
+                        height: 25,
+                        width: 25,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ToggleButtons(
+                        onPressed: (index) {
+                          setState(() {
+                            debugPrint("Selected index: $index");
+                            if (index == 0) {
+                              selectedMineFilter = false;
+                            } else if (index == 1) {
+                              selectedMineFilter = true;
+                            }
+
+                            context.read<MaterialReceiveBloc>().add(
+                                  GetMaterialReceives(
+                                    filterMaterialReceiveInput:
+                                        FilterMaterialReceiveInput(),
+                                    orderBy: OrderByMaterialReceiveInput(
+                                        createdAt: "desc"),
+                                    paginationInput:
+                                        PaginationInput(skip: 0, take: 20),
+                                    mine: selectedMineFilter,
+                                  ),
+                                );
+                          });
+                        },
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        constraints: const BoxConstraints(
+                          minHeight: 40.0,
+                          minWidth: 80.0,
+                        ),
+                        isSelected: [
+                          !selectedMineFilter,
+                          selectedMineFilter
+                        ],
+                        children: const [
+                          Text('All'),
+                          Text('Mine'),
+                        ]),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                _buildBody(context),
+                const SizedBox(
+                  height: 10,
+                ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            _buildBody(context),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -174,9 +200,8 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
   }
 
   _buildBody(BuildContext context) {
-    return BlocProvider<MaterialReceiveDeleteCubit>(
-      create: (context) => sl<MaterialReceiveDeleteCubit>(),
-      child: BlocBuilder<MaterialReceiveBloc, MaterialReceiveState>(
+    return 
+     BlocBuilder<MaterialReceiveBloc, MaterialReceiveState>(
         builder: (_, state) {
           debugPrint('MaterialRequestBlocBuilder state: $state');
           if (state is MaterialReceiveInitial) {
@@ -197,10 +222,10 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
 
             return state.materialReceives!.items.isNotEmpty
                 ? Expanded(
-                    child: BlocListener<MaterialReceiveDeleteCubit,
-                        MaterialReceiveDeleteState>(
+                    child: BlocListener<DeleteMaterialReceiveCubit,
+                        DeleteMaterialReceiveState>(
                       listener: (context, state) {
-                        if (state is MaterialReceiveDeleteSuccess) {
+                        if (state is DeleteMaterialReceiveSuccess) {
                           context.read<MaterialReceiveBloc>().add(
                                 GetMaterialReceives(
                                   filterMaterialReceiveInput:
@@ -254,8 +279,7 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
 
           return const SizedBox();
         },
-      ),
-    );
+      );
   }
 
   _buildIssueListItem(
@@ -288,23 +312,24 @@ class _MaterialReceivingPageState extends State<MaterialReceivingPage> {
               PopupMenuButton(
                 color: Theme.of(context).colorScheme.surface,
                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                      onTap: () {
-                        context.goNamed(RouteNames.materialReceivingEdit,
-                            pathParameters: {
-                              'materialReceiveId': materialReceive.id.toString()
-                            });
-                      },
-                      child: const ListTile(
-                        leading: Icon(Icons.edit, color: Colors.blue),
-                        title:
-                            Text('Edit', style: TextStyle(color: Colors.blue)),
-                      )),
+                  // PopupMenuItem(
+                  //     onTap: () {
+                  //       context.goNamed(RouteNames.materialReceivingEdit,
+                  //           pathParameters: {
+                  //             'materialReceiveId': materialReceive.id.toString()
+                  //           });
+                  //     },
+                  //     child: const ListTile(
+                  //       leading: Icon(Icons.edit, color: Colors.blue),
+                  //       title:
+                  //           Text('Edit', style: TextStyle(color: Colors.blue)),
+                  //     )),
                   PopupMenuItem(
                     onTap: () {
+                      print("tapped");
                       context
-                          .read<MaterialReceiveDeleteCubit>()
-                          .onMaterialReceiveDelete(
+                          .read<DeleteMaterialReceiveCubit>()
+                          .onDeleteMaterialReceive(
                               materialReceiveId: materialReceive.id ?? "");
                     },
                     child: const ListTile(

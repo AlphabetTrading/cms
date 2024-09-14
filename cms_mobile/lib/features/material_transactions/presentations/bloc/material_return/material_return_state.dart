@@ -34,15 +34,3 @@ class MaterialReturnEmpty extends MaterialReturnState {
   const MaterialReturnEmpty();
 }
 
-class CreateMaterialReturnLoading extends MaterialReturnState {
-  const CreateMaterialReturnLoading();
-}
-
-class CreateMaterialReturnSuccess extends MaterialReturnState {
-  const CreateMaterialReturnSuccess();
-}
-
-class CreateMaterialReturnFailed extends MaterialReturnState {
-  const CreateMaterialReturnFailed({required Failure error})
-      : super(error: error);
-}

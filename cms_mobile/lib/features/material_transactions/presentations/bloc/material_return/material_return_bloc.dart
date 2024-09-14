@@ -15,7 +15,6 @@ class MaterialReturnBloc
       this._createMaterialReturnUseCase, this._materialReturnUseCase)
       : super(const MaterialReturnInitial()) {
     on<GetMaterialReturns>(onGetMaterialReturns);
-    on<CreateMaterialReturnEvent>(onCreateMaterialReturn);
   }
 
   void onGetMaterialReturns(
@@ -39,18 +38,4 @@ class MaterialReturnBloc
     }
   }
 
-  void onCreateMaterialReturn(CreateMaterialReturnEvent event,
-      Emitter<MaterialReturnState> emit) async {
-    emit(const CreateMaterialReturnLoading());
-    final dataState = await _createMaterialReturnUseCase(
-        params: event.createMaterialReturnParamsEntity);
-
-    if (dataState is DataSuccess) {
-      emit(const CreateMaterialReturnSuccess());
-    }
-
-    if (dataState is DataFailed) {
-      emit(CreateMaterialReturnFailed(error: dataState.error!));
-    }
-  }
 }

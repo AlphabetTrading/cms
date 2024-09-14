@@ -48,8 +48,7 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReceiveMutation),
       variables: {
-        "createMaterialReceiveInput":
-            createMaterialReceiveParamsModel.toJson()
+        "createMaterialReceiveInput": createMaterialReceiveParamsModel.toJson()
       },
     );
 
@@ -102,7 +101,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
     }
     serialNumber
     status
-    receiveedBy {
+    receivedBy {
       id
       fullName
       email
@@ -263,6 +262,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
         .query(
       QueryOptions(
         document: gql(fetchMaterialReceiveQuery),
+        fetchPolicy: FetchPolicy.noCache,
         variables: {
           'filterMaterialRecieveInput': filterInput,
           'orderBy': orderBy ?? {},
@@ -288,18 +288,21 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
   }
 
   static const String _deleteMaterialReceivingMutation = r'''
-  mutation DeleteMaterialReceiving($deleteMaterialReceivingId: String!) {
-  deleteMaterialReceiving(id: $deleteMaterialReceivingId) {
+
+mutation DeleteMaterialReceive($deleteMaterialReceiveId: String!) {
+  deleteMaterialReceive(id: $deleteMaterialReceiveId) {
     id
   }
-}''';
+}
+ ''';
 
   @override
   Future<DataState<String>> deleteMaterialReceive(
       {required String materialReceiveId}) async {
+    print('In delete Material receive data source ${materialReceiveId}');
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMaterialReceivingMutation),
-      variables: {"deleteMaterialReceivingId": materialReceiveId},
+      variables: {"deleteMaterialReceiveId": materialReceiveId},
     );
 
     try {
@@ -309,9 +312,9 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
         return DataFailed(
             ServerFailure(errorMessage: result.exception.toString()));
       }
-
+      // print('Delete material receive: ${result.data}');
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['deleteMaterialReceiving']['id'];
+      final String id = result.data!['deleteMaterialReceive']['id'];
 
       return DataSuccess(id);
     } catch (e) {

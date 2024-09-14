@@ -22,6 +22,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/pages/ma
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return/create_material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/material_return/material_return_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_order/create_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/purchase_order/purchase_order_details.dart';
@@ -262,6 +263,13 @@ class AppRouter {
                   name: RouteNames.materialReturnCreate,
                   path: RoutePaths.materialReturnCreate,
                   builder: (context, state) => const CreateMaterialReturnPage(),
+                ),
+                GoRoute(
+                  name: RouteNames.materialReturnDetails,
+                  path: RoutePaths.materialReturnDetails,
+                  builder: (context, state) => MaterialReturnDetailsPage(
+                    materialReturnId: state.pathParameters['materialReturnId']!,
+                  ),
                 ),
               ],
             ),

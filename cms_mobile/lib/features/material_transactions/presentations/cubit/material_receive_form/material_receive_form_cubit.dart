@@ -1,4 +1,5 @@
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_receive_form/material_receive_form_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_receive/create_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_receive/create_material_receive_form.dart';
@@ -89,7 +90,7 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
   }
             
 
-  void materialChanged(IssueVoucherMaterialEntity materialEntity) {
+  void materialChanged(PurchaseOrderItemEntity materialEntity) {
     final MaterialDropdown materialDropdown =
         MaterialDropdown.dirty(materialEntity.productVariant?.id ?? "");
 
@@ -109,9 +110,9 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
     );
   }
 
-  void purchaseOrderChanged(MaterialIssueEntity materialIssueEntity) {
+  void purchaseOrderChanged(PurchaseOrderEntity purchaseOrderEntity) {
     final PurchaseOrderDropdown materialIssueDropdown =
-        PurchaseOrderDropdown.dirty(materialIssueEntity.id!);
+        PurchaseOrderDropdown.dirty(purchaseOrderEntity.id);
 
     emit(
       state.copyWith(
