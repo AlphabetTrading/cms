@@ -15,7 +15,7 @@ class ProductVariantModel extends ProductVariantEntity {
   }) : super(unitOfMeasure: UnitOfMeasure.kg);
 
   factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("ProductVariantModel.fromJson: ${json}");
+    // debugPrint("ProductVariantModel.fromJson: ${json}");
 
     final ProductVariantModel productVariantModel = ProductVariantModel(
       id: json['id'],

@@ -148,13 +148,13 @@ class CreateMaterialReceiveParamsEntity<T extends MaterialReceiveMaterialEntity>
 
 class MaterialReceiveItemEntity extends Equatable {
   final String id;
-  final String materialReceiveVoucherId;
-  final String purchaseOrderItemId;
-  final double loadingCost;
-  final double transportationCost;
-  final double unloadingCost;
-  final String remark;
-  final double receivedQuantity;
+  final String? materialReceiveVoucherId;
+  final String? purchaseOrderItemId;
+  final double? loadingCost;
+  final double? transportationCost;
+  final double? unloadingCost;
+  final String? remark;
+  final double? receivedQuantity;
   final PurchaseOrderItemEntity? purchaseOrderItem;
 
   const MaterialReceiveItemEntity({

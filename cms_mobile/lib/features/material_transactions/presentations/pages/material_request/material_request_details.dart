@@ -138,8 +138,8 @@ class _MaterialRequestDetailsPageState
                                   'Requested Quantity: ${materialRequestMaterial.quantity} ${productVariant?.unitOfMeasure}',
                               iconSrc:
                                   'assets/icons/transactions/light/material_requests.svg',
-                              onDelete: () {},
-                              onEdit: () {},
+                              onDelete: null,
+                              onEdit: null,
                               onOpen: () {
                                 showModalBottomSheet(
                                   context: context,

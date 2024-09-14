@@ -2,6 +2,7 @@ import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
@@ -13,7 +14,7 @@ class MaterialReturnEntity extends Equatable {
   final String? serialNumber;
   final MaterialReturnStatus? status;
 
-  final WarehouseEntity? receivingStore;
+  final WarehouseEntity? receivingWarehouseStore;
   final List<MaterialReturnItem>? items;
   final String? returnedById;
   final UserEntity? returnedBy;
@@ -26,7 +27,7 @@ class MaterialReturnEntity extends Equatable {
   const MaterialReturnEntity({
     this.id,
     this.serialNumber,
-    this.receivingStore,
+    this.receivingWarehouseStore,
     this.items,
     this.returnedById,
     this.returnedBy,
@@ -60,7 +61,7 @@ class MaterialReturnEntity extends Equatable {
     return MaterialReturnEntity(
       id: id ?? this.id,
       serialNumber: serialNumber ?? this.serialNumber,
-      receivingStore: receivingStore ?? this.receivingStore,
+      receivingWarehouseStore: receivingWarehouseStore ?? this.receivingWarehouseStore,
       items: items ?? this.items,
       returnedById: returnedById ?? this.returnedById,
       returnedBy: returnedBy ?? this.returnedBy,
@@ -78,7 +79,7 @@ class MaterialReturnEntity extends Equatable {
       serialNumber: json['serialNumber'],
       status: MaterialReturnStatus.values
           .firstWhere((e) => e.toString() == json['status']),
-      receivingStore: WarehouseEntity.fromJson(json['receivingWarehouseStore']),
+      receivingWarehouseStore: WarehouseEntity.fromJson(json['receivingWarehouseStore']),
       items: json['items']
           .map<MaterialReturnItem>((item) => MaterialReturnItem.fromJson(item))
           .toList(),
@@ -95,7 +96,7 @@ class MaterialReturnEntity extends Equatable {
     return {
       'id': id,
       'serialNumber': serialNumber,
-      'receivingStore': receivingStore,
+      'receivingWarehouseStore': receivingWarehouseStore,
       'items': items?.map((e) => e.toJson()).toList(),
       'returnedById': returnedById,
       'returnedBy': returnedBy?.toJson(),
@@ -118,6 +119,7 @@ class MaterialReturnItem extends Equatable {
   final double? totalCost;
   final String? remark;
   final String? productVariantId;
+  final ProductVariantEntity? productVariant;
   final String? materialReturnVoucherId;
   final MaterialReturnEntity? materialReturnVoucher;
 
@@ -133,6 +135,7 @@ class MaterialReturnItem extends Equatable {
     this.materialReturnVoucherId,
     this.materialReturnVoucher,
     this.productVariantId,
+    this.productVariant,
   });
 
   @override

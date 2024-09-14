@@ -167,7 +167,6 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
 
       final materialIssue =
           MaterialIssueModel.fromJson(response.data!['getMaterialIssueById']);
-      print(response.data!['getMaterialIssueById']);
 
       return DataSuccess(materialIssue);
     });
@@ -205,6 +204,7 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
   @override
   Future<DataState<String>> deleteMaterialIssue(
       {required String materialIssueId}) async {
+        
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMaterialIssueMutation),
       variables: {"deleteMaterialIssueId": materialIssueId},
@@ -354,8 +354,7 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
       // debugPrint('fetchMaterialIssuesQuery: $issues');
       final meta = response.data!['getMaterialIssues']["meta"];
       final items = issues.map((e) => MaterialIssueModel.fromJson(e)).toList();
-      debugPrint(
-          '******************Successfully converted to MaterialIssueModel: $items');
+
       return DataSuccess(
         MaterialIssueListWithMeta(
           items: items,

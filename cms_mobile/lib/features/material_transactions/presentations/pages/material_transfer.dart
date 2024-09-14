@@ -332,19 +332,19 @@ class _MaterialTransferPageState extends State<MaterialTransferPage> {
               PopupMenuButton(
                 color: Theme.of(context).colorScheme.surface,
                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                      onTap: () {
-                        context.goNamed(RouteNames.materialTransferEdit,
-                            pathParameters: {
-                              'materialTransferId':
-                                  materialTransfer.id.toString()
-                            });
-                      },
-                      child: const ListTile(
-                        leading: Icon(Icons.edit, color: Colors.blue),
-                        title:
-                            Text('Edit', style: TextStyle(color: Colors.blue)),
-                      )),
+                  // PopupMenuItem(
+                  //     onTap: () {
+                  //       context.goNamed(RouteNames.materialTransferEdit,
+                  //           pathParameters: {
+                  //             'materialTransferId':
+                  //                 materialTransfer.id.toString()
+                  //           });
+                  //     },
+                  //     child: const ListTile(
+                  //       leading: Icon(Icons.edit, color: Colors.blue),
+                  //       title:
+                  //           Text('Edit', style: TextStyle(color: Colors.blue)),
+                  //     )),
                   PopupMenuItem(
                     onTap: () {
                       context

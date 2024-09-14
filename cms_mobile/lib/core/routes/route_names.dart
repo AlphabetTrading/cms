@@ -29,7 +29,7 @@ class RoutePaths {
   // material receiving
   static const String materialReceivingCreate = 'create';
   static const String materialReceivingEdit = 'edit';
-  static const String materialReceivingDetails = ':materialReceivingId';
+  static const String materialReceivingDetails = ':materialReceiveId';
   static const String materialReceiving = 'material_receiving';
 
   // purchase order

@@ -144,8 +144,8 @@ class _MaterialTransferDetailsPageState
                                 'Issued Quantity: ${materialTransferMaterial.quantityTransferred} ${productVariant?.unitOfMeasure}',
                             iconSrc:
                                 'assets/icons/transactions/light/material_issues.svg',
-                            onDelete: () {},
-                            onEdit: () {},
+                            onDelete:null,
+                            onEdit: null,
                             onOpen: () {
                               showModalBottomSheet(
                                 context: context,

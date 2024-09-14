@@ -48,7 +48,7 @@ class PurchaseOrderModel extends PurchaseOrderEntity {
   }
 
   factory PurchaseOrderModel.fromJson(Map<String, dynamic> json) {
-    debugPrint('PurchaseOrderModel.fromJson: $json');
+    // debugPrint('PurchaseOrderModel.fromJson: $json');
     final items = json['items'] != null
         ? json['items']
             .map<PurchaseOrderItemModel>(
@@ -123,7 +123,8 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
 
   factory PurchaseOrderItemModel.fromJson(Map<String, dynamic> json) {
     return PurchaseOrderItemModel(
-      id: json['id'],
+      id: json
+      ['id'],
       materialRequestItemId: json['materialRequestItemId'],
       materialRequestItem: json['materialRequestItem'] != null
           ? MaterialRequestItemModel.fromJson(json['materialRequestItem'])
@@ -141,8 +142,8 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
           ? (json['totalPrice'] as num).toDouble()
           : 0,
       remark: json['remark'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt']!=null?DateTime.parse(json['createdAt']):null,
+      updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
     );
   }
 
@@ -159,8 +160,8 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
       "remark": remark,
       "totalPrice": totalPrice,
       "unitPrice": unitPrice,
-      "createdAt": createdAt.toIso8601String(),
-      "updatedAt": updatedAt.toIso8601String(),
+      "createdAt": createdAt?.toIso8601String(),
+      "updatedAt": updatedAt?.toIso8601String(),
     };
   }
 }

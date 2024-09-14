@@ -31,6 +31,14 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
     _client = client;
   }
 
+    static const String _deleteMaterialReturnMutation = r'''
+    mutation DeleteMaterialReturn($deleteMaterialReturnId: String!) {
+      deleteMaterialReturn(id: $deleteMaterialReturnId) {
+        id
+      }
+    }
+''';
+
   // Override the function in the implementation class
   @override
   Future<DataState<String>> createMaterialReturn(
@@ -48,7 +56,7 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReturnMutation),
       variables: {
-        "createMaterialReturnInput":createMaterialReturnParamsModel.toJson(),
+        "createMaterialReturnInput": createMaterialReturnParamsModel.toJson(),
       },
       fetchPolicy: FetchPolicy.noCache,
     );
@@ -170,7 +178,7 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
             }
             returnedById
             serialNumber
-            status
+             status
             updatedAt
             receivingWarehouseStore {
               createdAt
@@ -206,6 +214,7 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
 
     final QueryOptions options = QueryOptions(
       document: gql(fetchMaterialReturnsQuery),
+      fetchPolicy: FetchPolicy.noCache,
       variables: {
         "filterMaterialReturnInput": filterInput,
         "orderByMaterialReturnInput": orderBy?.toJson(),
@@ -234,16 +243,111 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
 
   @override
   Future<DataState<String>> deleteMaterialReturn(
-      {required String materialReturnId}) {
-    // TODO: implement deleteMaterialReturn
-    throw UnimplementedError();
+      {required String materialReturnId}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_deleteMaterialReturnMutation),
+      variables: {"deleteMaterialReturnId": materialReturnId},
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['deleteMaterialReturn']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 
   @override
   Future<DataState<MaterialReturnModel>> getMaterialReturnDetails(
       {required String params}) {
-    // TODO: implement getMaterialReturnDetails
-    throw UnimplementedError();
+    String fetchMaterialReturnDetailsQuery = r'''
+
+query GetMaterialReturnById($getMaterialReturnByIdId: String!) {
+  getMaterialReturnById(id: $getMaterialReturnByIdId) {
+    id
+    createdAt
+    updatedAt
+    status
+    serialNumber
+    receivingWarehouseStore {
+      id
+      name
+    }
+    returnedBy {
+      createdAt
+      email
+      fullName
+      id
+      phoneNumber
+      role
+      updatedAt
+    }
+    receivedBy {
+      id
+      phoneNumber
+      role
+      updatedAt
+      fullName
+      email
+      createdAt
+    }
+    items {
+      id
+      createdAt
+      updatedAt
+      unitCost
+      totalCost
+      remark
+      quantity
+      issueVoucher {
+        id
+        serialNumber
+      }
+      productVariant {
+        id
+        variant
+        unitOfMeasure
+        product {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(fetchMaterialReturnDetailsQuery),
+      variables: {"getMaterialReturnByIdId": params},
+      fetchPolicy: FetchPolicy.noCache,
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final materialIssue =
+          MaterialReturnModel.fromJson(response.data!['getMaterialReturnById']);
+
+      return DataSuccess(materialIssue);
+    });
   }
 }
 

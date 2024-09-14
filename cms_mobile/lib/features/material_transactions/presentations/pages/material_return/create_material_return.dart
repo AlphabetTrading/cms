@@ -1,8 +1,13 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_return/material_return_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_state.dart';
@@ -17,6 +22,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/widgets/
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -38,48 +44,38 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
     BlocProvider.of<WarehouseBloc>(context).add(const GetWarehousesEvent());
   }
 
-  _buildOnCreateSuccess(BuildContext context) {
-    context.goNamed(RouteNames.materialReturn);
-    BlocProvider.of<MaterialReturnLocalBloc>(context)
-        .add(const ClearMaterialReturnMaterialsLocal());
-    Fluttertoast.showToast(
-        msg: "Material Return Created",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: Color.fromARGB(255, 1, 135, 23),
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
-
-  _buildOnCreateFailed(BuildContext context) {
-    Fluttertoast.showToast(
-        msg: "Create Material Return Failed",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final materialReturnFormCubit = context.watch<MaterialReturnFormCubit>();
     // final warehouseDropdown = materialReturnFormCubit.state.warehouseDropdown;
-    return BlocProvider(
-      create: (context) => MaterialReturnWarehouseFormCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => MaterialReturnWarehouseFormCubit(),
+        ),
+        BlocProvider<CreateMaterialReturnCubit>(
+          create: (context) => sl<CreateMaterialReturnCubit>(),
+        ),
+      ],
       child: BlocBuilder<MaterialReturnLocalBloc, MaterialReturnLocalState>(
         builder: (localContext, localState) {
           return BlocBuilder<MaterialReturnWarehouseFormCubit,
                   MaterialReturnWarehouseFormState>(
               builder: (warehouseFormContext, warehouseFormState) {
-            return BlocConsumer<MaterialReturnBloc, MaterialReturnState>(
+            return BlocConsumer<CreateMaterialReturnCubit,
+                CreateMaterialReturnState>(
               listener: (returnContext, returnState) {
                 if (returnState is CreateMaterialReturnSuccess) {
-                  _buildOnCreateSuccess(returnContext);
+                 
+                  showStatusMessage(Status.SUCCESS, "Material Return Created");
+                  context.read<MaterialReturnBloc>().add(GetMaterialReturns(
+                        filterMaterialReturnInput: FilterMaterialReturnInput(),
+                        orderBy: OrderByMaterialReturnInput(createdAt: "desc"),
+                        paginationInput: PaginationInput(skip: 0, take: 20),
+                      ));
+                  context.pop();
                 } else if (returnState is CreateMaterialReturnFailed) {
-                  _buildOnCreateFailed(returnContext);
+                  showStatusMessage(Status.FAILED, returnState.error);
                 }
               },
               builder: (returnContext, returnState) {
@@ -152,7 +148,7 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
   _buildButtons(
       BuildContext context,
       MaterialReturnLocalState localState,
-      MaterialReturnState state,
+      CreateMaterialReturnState state,
       MaterialReturnWarehouseFormCubit warehouseForm) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -195,32 +191,32 @@ class _CreateMaterialReturnPageState extends State<CreateMaterialReturnPage> {
               : () {
                   warehouseForm.onSubmit();
                   if (warehouseForm.state.isValid) {
-                    context.read<MaterialReturnBloc>().add(
-                          CreateMaterialReturnEvent(
-                            createMaterialReturnParamsEntity:
-                                CreateMaterialReturnParamsEntity(
-                              projectId: context
-                                      .read<ProjectBloc>()
-                                      .state
-                                      .selectedProjectId ??
-                                  "",
-                              receivingWarehouseStoreId:
-                                  warehouseForm.state.warehouseDropdown.value,
-                              returnedById:
-                                  context.read<AuthBloc>().state.user?.id ??
-                                      USER_ID,
-                              // warehouseStoreId: "",
+                    context
+                        .read<CreateMaterialReturnCubit>()
+                        .onCreateMaterialReturn(
+                          createMaterialReturnParamsEntity:
+                              CreateMaterialReturnParamsEntity(
+                            projectId: context
+                                    .read<ProjectBloc>()
+                                    .state
+                                    .selectedProjectId ??
+                                "",
+                            receivingWarehouseStoreId:
+                                warehouseForm.state.warehouseDropdown.value,
+                            returnedById:
+                                context.read<AuthBloc>().state.user?.id ??
+                                    USER_ID,
+                            // warehouseStoreId: "",
 
-                              materialReturnMaterials:
-                                  localState.materialReturnMaterials!
-                                      .map((e) => MaterialReturnMaterialEntity(
-                                            issueVoucherId: e.issueVoucherId,
-                                            quantity: e.quantity,
-                                            remark: e.remark,
-                                            material: e.material,
-                                          ))
-                                      .toList(),
-                            ),
+                            materialReturnMaterials:
+                                localState.materialReturnMaterials!
+                                    .map((e) => MaterialReturnMaterialEntity(
+                                          issueVoucherId: e.issueVoucherId,
+                                          quantity: e.quantity,
+                                          remark: e.remark,
+                                          material: e.material,
+                                        ))
+                                    .toList(),
                           ),
                         );
                   }

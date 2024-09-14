@@ -34,7 +34,7 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
   }
 
   factory MaterialReceiveModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("MaterialReceiveModel.fromJson: $json");
+    // debugPrint("MaterialReceiveModel.fromJson: $json");
 
     return MaterialReceiveModel(
         id: json['id'],
@@ -71,8 +71,8 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
         updatedAt: json['updatedAt'] != null
             ? DateTime.parse(json['updatedAt'])
             : null,
-        warehouse: json['warehouseStore'] != null
-            ? WarehouseModel.fromJson(json['warehouseStore'])
+        warehouse: json['WarehouseStore'] != null
+            ? WarehouseModel.fromJson(json['WarehouseStore'])
             : null);
   }
 
@@ -166,17 +166,20 @@ class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
       required super.transportationCost,
       required super.purchaseOrderItem,
       required super.receivedQuantity,
-      super.remark
-      });
+      super.remark});
+              
+        
+       
+        
 
   Map<String, dynamic> toJson() {
     return {
-      'purchaseOrderItemId': purchaseOrderItem,
+      'purchaseOrderItemId': purchaseOrderItem?.id,
       'transportationCost': transportationCost,
       'loadingCost': loadingCost,
       'unloadingCost': unloadingCost,
       'receivedQuantity': receivedQuantity,
-      // 'remark': remark
+      'remark': remark
     };
   }
 
@@ -213,17 +216,25 @@ class MaterialReceiveItemModel extends MaterialReceiveItemEntity {
   });
 
   factory MaterialReceiveItemModel.fromJson(Map<String, dynamic> json) {
-    debugPrint("MaterialReceiveItemModel.fromJson: $json");
+    // debugPrint("MaterialReceiveItemModel.fromJson: $json");
 
     return MaterialReceiveItemModel(
       id: json['id'],
       materialReceiveVoucherId: json['materialReceiveVoucherId'],
       purchaseOrderItemId: json['purchaseOrderItemId'],
-      loadingCost: json['loadingCost'],
-      transportationCost: json['transportationCost'],
-      unloadingCost: json['unloadingCost'],
+      loadingCost: json['loadingCost'] != null
+          ? (json['loadingCost'] as num).toDouble()
+          : null,
+      transportationCost: json['transportationCost'] != null
+          ? (json['transportationCost'] as num).toDouble()
+          : null,
+      unloadingCost: json['unloadingCost'] != null
+          ? (json['unloadingCost'] as num).toDouble()
+          : null,
       remark: json['remark'] ?? '',
-      receivedQuantity: json['receivedQuantity'],
+      receivedQuantity: json['receivedQuantity'] != null
+          ? (json['receivedQuantity'] as num).toDouble()
+          : null,
       purchaseOrderItem: json['purchaseOrderItem'] != null
           ? PurchaseOrderItemModel.fromJson(json['purchaseOrderItem'])
           : null,
@@ -254,6 +265,8 @@ class CreateMaterialReceiveParamsModel
     required super.receivingStoreId,
   });
 
+
+
   Map<String, dynamic> toJson() {
     return {
       "preparedById": preparedById,
@@ -274,7 +287,8 @@ class CreateMaterialReceiveParamsModel
         receivingStoreId: entity.receivingStoreId,
         materialReceiveMaterials: entity.materialReceiveMaterials
             .map((e) => MaterialReceiveMaterialModel(
-                purchaseOrderItem: e.purchaseOrderItem as PurchaseOrderItemModel,
+                purchaseOrderItem:
+                    e.purchaseOrderItem as PurchaseOrderItemModel,
                 transportationCost: e.transportationCost,
                 loadingCost: e.loadingCost,
                 unloadingCost: e.unloadingCost,

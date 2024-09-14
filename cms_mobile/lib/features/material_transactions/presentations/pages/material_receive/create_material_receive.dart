@@ -1,9 +1,14 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/create/create_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_state.dart';
@@ -37,20 +42,6 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
     BlocProvider.of<WarehouseBloc>(context).add(const GetWarehousesEvent());
   }
 
-  _buildOnCreateSuccess(BuildContext context) {
-    context.goNamed(RouteNames.materialReceiving);
-    BlocProvider.of<MaterialReceiveLocalBloc>(context)
-        .add(const ClearMaterialReceiveMaterialsLocal());
-    Fluttertoast.showToast(
-        msg: "Material Receive Created",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 3,
-        backgroundColor: Color.fromARGB(255, 1, 135, 23),
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     // final materialReceiveFormCubit = context.watch<MaterialReceiveFormCubit>();
@@ -76,17 +67,22 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
                 CreateMaterialReceiveState>(
               listener: (receivingContext, receivingState) {
                 if (receivingState is CreateMaterialReceiveSuccess) {
-                  _buildOnCreateSuccess(receivingContext);
+                  showStatusMessage(
+                    Status.SUCCESS,
+                    "Material Receive Created",
+                  );
+                  context.read<MaterialReceiveBloc>().add(GetMaterialReceives(
+                        filterMaterialReceiveInput:
+                            FilterMaterialReceiveInput(),
+                        orderBy: OrderByMaterialReceiveInput(createdAt: "desc"),
+                        paginationInput: PaginationInput(skip: 0, take: 20),
+                      ));
+                      context.pop();
                 } else if (receivingState is CreateMaterialReceiveFailed) {
-          
-                  Fluttertoast.showToast(
-                      msg: receivingState.error,
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 3,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
+                  showStatusMessage(
+                    Status.FAILED,
+                    "Create Material Receive Failed",
+                  );
                 }
               },
               builder: (receivingContext, receivingState) {

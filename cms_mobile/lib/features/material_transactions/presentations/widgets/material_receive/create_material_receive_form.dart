@@ -10,8 +10,11 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/pur
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_receive_form/material_receive_form_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/form_info_item.dart';
+import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
@@ -86,12 +89,8 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
 
               PurchaseOrderItemEntity? selectedMaterial =
                   materialDropdown.value != ""
-                      ? materials?.firstWhere((element) =>
-                          element.materialRequestItem?.productVariantId ==
-                              materialDropdown.value ||
-                          element.proforma?.materialRequestItem
-                                  ?.productVariantId ==
-                              materialDropdown.value)
+                      ? materials?.firstWhereOrNull(
+                          (element) => element.id == materialDropdown.value)
                       : null;
 
               return Column(
@@ -124,7 +123,7 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                   const SizedBox(
                     height: 10,
                   ),
-                  //material issue materials
+
                   CustomDropdown(
                     initialSelection: selectedMaterial,
                     onSelected: (dynamic value) {
@@ -134,8 +133,9 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                     dropdownMenuEntries: materials
                             ?.map((e) => DropdownMenuEntry<
                                     PurchaseOrderItemEntity>(
-                                label: "${e.materialRequestItem?.productVariant?.product?.name} - ${e.materialRequestItem?.productVariant?.variant}" ??
-                                    "${e.proforma?.materialRequestItem?.productVariant?.product?.name} - ${e.proforma?.materialRequestItem?.productVariant?.variant}",
+                                label: e.materialRequestItem != null
+                                    ? "${e.materialRequestItem?.productVariant?.product?.name} - ${e.materialRequestItem?.productVariant?.variant}"
+                                    : "${e.proforma?.materialRequestItem?.productVariant?.product?.name} - ${e.proforma?.materialRequestItem?.productVariant?.variant}",
                                 value: e))
                             .toList() ??
                         [],
@@ -150,34 +150,42 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                     height: 10,
                   ),
 
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //   children: [
-                  //     FormInfoItem(
-                  //         title: "Unit",
-                  //         value: unitOfMeasureDisplay(
-                  //             selectedMaterial?.productVariant?.unitOfMeasure)),
-                  //     FormInfoItem(
-                  //         title: "Quantity Issued",
-                  //         value:
-                  //             selectedMaterial?.quantity?.toString() ?? "N/A"),
-                  //   ],
-                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FormInfoItem(
+                          title: "Unit",
+                          value: selectedMaterial?.materialRequestItem != null
+                              ? unitOfMeasureDisplay(selectedMaterial
+                                  ?.materialRequestItem
+                                  ?.productVariant
+                                  ?.unitOfMeasure)
+                              : unitOfMeasureDisplay(selectedMaterial
+                                  ?.proforma
+                                  ?.materialRequestItem
+                                  ?.productVariant
+                                  ?.unitOfMeasure)),
+                      FormInfoItem(
+                          title: "Quantity Purchased",
+                          value:
+                              selectedMaterial?.quantity?.toString() ?? "N/A"),
+                    ],
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  // Row(
-                  //   children: [
-                  //     FormInfoItem(
-                  //         title: "Unit Cost",
-                  //         value:
-                  //             selectedPurchaseOrder?.warehouseStore?.name ?? "N/A"),
-                  //     FormInfoItem(
-                  //         title: "Total Quantity Purchased",
-                  //         value:
-                  //             selectedMaterial?.unitCost.toString() ?? "N/A"),
-                  //   ],
-                  // ),
+                  Row(
+                    children: [
+                      FormInfoItem(
+                          title: "Unit Cost",
+                          value:
+                              selectedMaterial?.unitPrice.toString() ?? "N/A"),
+                      FormInfoItem(
+                          title: "Total cost",
+                          value:
+                              selectedMaterial?.totalPrice.toString() ?? "N/A"),
+                    ],
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -231,6 +239,9 @@ class _CreateMaterialReceiveFormState extends State<CreateMaterialReceiveForm> {
                               materialReceiveFormCubit.transportationChanged,
                           errorMessage: transportationField.errorMessage,
                         ),
+                      ),
+                      const SizedBox(
+                        width: 20,
                       ),
 
                       Flexible(

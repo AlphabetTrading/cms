@@ -285,18 +285,18 @@ class _MaterialRequestsPageState extends State<MaterialRequestsPage> {
               PopupMenuButton(
                 color: Theme.of(context).colorScheme.surface,
                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                      onTap: () {
-                        context.goNamed(RouteNames.materialRequestEdit,
-                            pathParameters: {
-                              'materialRequestId': materialRequest.id.toString()
-                            });
-                      },
-                      child: const ListTile(
-                        leading: Icon(Icons.edit, color: Colors.blue),
-                        title:
-                            Text('Edit', style: TextStyle(color: Colors.blue)),
-                      )),
+                  // PopupMenuItem(
+                  //     onTap: () {
+                  //       context.goNamed(RouteNames.materialRequestEdit,
+                  //           pathParameters: {
+                  //             'materialRequestId': materialRequest.id.toString()
+                  //           });
+                  //     },
+                  //     child: const ListTile(
+                  //       leading: Icon(Icons.edit, color: Colors.blue),
+                  //       title:
+                  //           Text('Edit', style: TextStyle(color: Colors.blue)),
+                  //     )),
                   PopupMenuItem(
                     onTap: () {
                       context

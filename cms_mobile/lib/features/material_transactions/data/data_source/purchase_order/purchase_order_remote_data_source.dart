@@ -285,6 +285,32 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
               grandTotal
               id
               items {
+                materialRequestItem {
+                  productVariant {
+                        id
+                        unitOfMeasure
+                        variant
+                        product {
+                          id
+                          name
+                        }
+                  }
+              }
+              proforma{
+              id
+              materialRequestItem {
+                  productVariant {
+                        id
+                        unitOfMeasure
+                        variant
+                        product {
+                          id
+                          name
+                        }
+                  }
+              }
+              }
+           
                 createdAt
                 id
                 materialRequestItemId

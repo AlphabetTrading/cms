@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class WarehouseEntity extends Equatable {
   final String id;
   final String name;
-  final String location;
+  final String? location;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -21,13 +21,13 @@ class WarehouseEntity extends Equatable {
   List<Object?> get props => [id, name, location];
 
 
-  factory WarehouseEntity.fromJson(Map<String, dynamic> map) {
+  factory WarehouseEntity.fromJson(Map<String, dynamic> json) {
     return WarehouseEntity(
-      id: map['id'],
-      name: map['name'],
-      location: map['location'],
-      createdAt: DateTime.parse(map['createdAt']),
-      updatedAt: DateTime.parse(map['updatedAt']),
+      id: json['id'],
+      name: json['name'],
+      location: json['location'],
+      createdAt: json['createdAt']!=null?DateTime.parse(json['createdAt']):null,
+      updatedAt: json['updatedAt']!=null?DateTime.parse(json['updatedAt']):null,
     );
   }
 

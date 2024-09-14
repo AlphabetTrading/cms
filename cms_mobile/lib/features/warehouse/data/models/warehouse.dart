@@ -16,10 +16,10 @@ class WarehouseModel extends WarehouseEntity {
       location: map['location'] ?? "",
       createdAt: map["createdAt"] != null
           ? DateTime.parse(map['createdAt'])
-          : DateTime.now(),
+          : null,
       updatedAt: map["updatedAt"] != null
           ? DateTime.parse(map['updatedAt'])
-          : DateTime.now(),
+          : null,
     );
   }
 

@@ -67,6 +67,7 @@ class _CreateMaterialProformaPageState
             listener: (createProformaContext, createProformaState) {
               if (createProformaState is CreateMaterialProformaSuccess) {
                 context.goNamed(RouteNames.materialProforma);
+          
                 showStatusMessage(Status.SUCCESS, "Proforma Created");
               } else if (createProformaState is CreateMaterialProformaFailed) {
                 showStatusMessage(Status.FAILED, createProformaState.error);

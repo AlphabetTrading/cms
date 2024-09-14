@@ -1,16 +1,20 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_return/material_return_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/delete_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/material_return_state.dart';
+import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,107 +69,130 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
           );
     });
 
-    return Scaffold(
-      appBar: _buildAppbar(context),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: () {
-            context.goNamed(RouteNames.materialReturnCreate);
-          },
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(50),
+    return BlocProvider(
+      create: (context) =>
+          DeleteMaterialReturnCubit(sl<DeleteMaterialReturnUseCase>()),
+      child: BlocListener<DeleteMaterialReturnCubit, DeleteMaterialReturnState>(
+        listener: (context, state) {
+          if (state is DeleteMaterialReturnSuccess) {
+              showStatusMessage(Status.SUCCESS, "Material Return deleted successfully");
+            context.read<MaterialReturnBloc>().add(
+                  GetMaterialReturns(
+                    filterMaterialReturnInput: FilterMaterialReturnInput(),
+                    orderBy: OrderByMaterialReturnInput(createdAt: "desc"),
+                    paginationInput: PaginationInput(skip: 0, take: 10),
+                  ),
+                );
+
+          }
+          else if (state is DeleteMaterialReturnFailed) {
+            showStatusMessage(Status.FAILED, state.error);
+          }
+        },
+        child: Scaffold(
+          appBar: _buildAppbar(context),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                context.goNamed(RouteNames.materialReturnCreate);
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+              ),
+              child: const Text('Create Material Return'),
+            ),
           ),
-          child: const Text('Create Material Return'),
-        ),
-      ),
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
-        child: Column(
-          children: [
-            Row(
+          body: Container(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 70),
+            child: Column(
               children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Search',
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (query) {
+                            debugPrint('Search query: $query');
+                            searchQuery.add(query);
+                          },
+                        ),
                       ),
-                      onChanged: (query) {
-                        debugPrint('Search query: $query');
-                        searchQuery.add(query);
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _showCustomPopupMenu(context);
                       },
+                      icon: SvgPicture.asset(
+                        "assets/icons/common/filter.svg",
+                        height: 25,
+                        width: 25,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                IconButton(
-                  onPressed: () {
-                    _showCustomPopupMenu(context);
-                  },
-                  icon: SvgPicture.asset(
-                    "assets/icons/common/filter.svg",
-                    height: 25,
-                    width: 25,
-                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // toggle button for filter all, and my issues
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ToggleButtons(
+                        onPressed: (index) {
+                          setState(() {
+                            debugPrint("Selected index: $index");
+                            if (index == 0) {
+                              selectedMineFilter = false;
+                            } else if (index == 1) {
+                              selectedMineFilter = true;
+                            }
+
+                            context.read<MaterialReturnBloc>().add(
+                                  GetMaterialReturns(
+                                    filterMaterialReturnInput:
+                                        FilterMaterialReturnInput(),
+                                    orderBy: OrderByMaterialReturnInput(
+                                        createdAt: "desc"),
+                                    paginationInput:
+                                        PaginationInput(skip: 0, take: 20),
+                                    mine: selectedMineFilter,
+                                  ),
+                                );
+                          });
+                        },
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        constraints: const BoxConstraints(
+                          minHeight: 40.0,
+                          minWidth: 80.0,
+                        ),
+                        isSelected: [
+                          !selectedMineFilter,
+                          selectedMineFilter
+                        ],
+                        children: const [
+                          Text('All'),
+                          Text('Mine'),
+                        ]),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                _buildBody(context),
+                const SizedBox(
+                  height: 10,
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-
-            // toggle button for filter all, and my issues
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ToggleButtons(
-                    onPressed: (index) {
-                      setState(() {
-                        debugPrint("Selected index: $index");
-                        if (index == 0) {
-                          selectedMineFilter = false;
-                        } else if (index == 1) {
-                          selectedMineFilter = true;
-                        }
-
-                        context.read<MaterialReturnBloc>().add(
-                              GetMaterialReturns(
-                                filterMaterialReturnInput:
-                                    FilterMaterialReturnInput(),
-                                orderBy: OrderByMaterialReturnInput(
-                                    createdAt: "desc"),
-                                paginationInput:
-                                    PaginationInput(skip: 0, take: 20),
-                                mine: selectedMineFilter,
-                              ),
-                            );
-                      });
-                    },
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    constraints: const BoxConstraints(
-                      minHeight: 40.0,
-                      minWidth: 80.0,
-                    ),
-                    isSelected: [
-                      !selectedMineFilter,
-                      selectedMineFilter
-                    ],
-                    children: const [
-                      Text('All'),
-                      Text('Mine'),
-                    ]),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            _buildBody(context),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -272,21 +299,24 @@ class _MaterialReturnsPageState extends State<MaterialReturnsPage> {
               PopupMenuButton(
                 color: Theme.of(context).colorScheme.surface,
                 itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                      onTap: () {
-                        context.goNamed(RouteNames.materialIssueEdit,
-                            pathParameters: {
-                              'materialIssueId': materialReturn.id.toString()
-                            });
-                      },
-                      child: const ListTile(
-                        leading: Icon(Icons.edit, color: Colors.blue),
-                        title:
-                            Text('Edit', style: TextStyle(color: Colors.blue)),
-                      )),
+                  // PopupMenuItem(
+                  //     onTap: () {
+                  //       context.goNamed(RouteNames.materialIssueEdit,
+                  //           pathParameters: {
+                  //             'materialREturnId': materialReturn.id.toString()
+                  //           });
+                  //     },
+                  //     child: const ListTile(
+                  //       leading: Icon(Icons.edit, color: Colors.blue),
+                  //       title:
+                  //           Text('Edit', style: TextStyle(color: Colors.blue)),
+                  //     )),
                   PopupMenuItem(
                     onTap: () {
-                      print('Item 2');
+                      context
+                          .read<DeleteMaterialReturnCubit>()
+                          .onMaterialReturnDelete(
+                              materialReturnId: materialReturn.id ?? "");
                     },
                     child: const ListTile(
                       leading: Icon(Icons.delete, color: Colors.red),

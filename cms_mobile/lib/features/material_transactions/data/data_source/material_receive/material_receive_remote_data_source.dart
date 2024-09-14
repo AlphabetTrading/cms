@@ -30,8 +30,8 @@ class MaterialReceiveDataSourceImpl extends MaterialReceiveDataSource {
   }
 
   static const String _createMaterialReceiveMutation = r'''
-mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialReceivingInput!) {
-  createMaterialReceiving(createMaterialReceivingInput: $createMaterialReceivingInput) {
+mutation CreateMaterialReceive($createMaterialReceiveInput: CreateMaterialReceiveInput!) {
+  createMaterialReceive(createMaterialReceiveInput: $createMaterialReceiveInput) {
     id
   }
 }
@@ -48,8 +48,7 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReceiveMutation),
       variables: {
-        "createMaterialReceiveInput":
-            createMaterialReceiveParamsModel.toJson()
+        "createMaterialReceiveInput": createMaterialReceiveParamsModel.toJson()
       },
     );
 
@@ -63,7 +62,7 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
       }
 
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['createMaterialReceiving']['id'];
+      final String id = result.data!['createMaterialReceive']['id'];
 
       return DataSuccess(id);
     } catch (e) {
@@ -79,43 +78,73 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
 query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
   getMaterialReceiveById(id: $getMaterialReceiveByIdId) {
     id
-    items {
+    createdAt
+    approvedBy {
+      email
+      fullName
       id
-      quantity
-      remark
-      productVariant {
-        id
-        createdAt
-        description
-        product {
-          createdAt
-          id
-          name
-          productType
-          updatedAt
-        }
-        productId
-        unitOfMeasure
-        updatedAt
-        variant
-      }
+      phoneNumber
+      role
+      updatedAt
+      createdAt
+    }
+    preparedBy {
+      id
+      fullName
+      email
+      createdAt
+      phoneNumber
+      role
+      updatedAt
     }
     serialNumber
     status
-    receiveedBy {
+    WarehouseStore {
       id
-      fullName
-      email
-      phoneNumber
-      role
+      name
+      location
     }
-    createdAt
-    approvedBy {
-      phoneNumber
+    items {
       id
-      fullName
-      email
-      role
+      loadingCost
+      transportationCost
+      remark
+      receivedQuantity
+      unloadingCost
+      purchaseOrderItem {
+
+             id
+        totalPrice
+        unitPrice
+        quantity
+        materialRequestItem {
+          id
+          productVariant {
+            id
+            variant
+            unitOfMeasure
+            product {
+              id
+              name
+            }
+          }
+        }
+        proforma {
+          id
+          serialNumber
+          materialRequestItem {
+            productVariant {
+              id
+              unitOfMeasure
+              variant
+              product {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -263,6 +292,7 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
         .query(
       QueryOptions(
         document: gql(fetchMaterialReceiveQuery),
+        fetchPolicy: FetchPolicy.noCache,
         variables: {
           'filterMaterialRecieveInput': filterInput,
           'orderBy': orderBy ?? {},
@@ -288,18 +318,21 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
   }
 
   static const String _deleteMaterialReceivingMutation = r'''
-  mutation DeleteMaterialReceiving($deleteMaterialReceivingId: String!) {
-  deleteMaterialReceiving(id: $deleteMaterialReceivingId) {
+
+mutation DeleteMaterialReceive($deleteMaterialReceiveId: String!) {
+  deleteMaterialReceive(id: $deleteMaterialReceiveId) {
     id
   }
-}''';
+}
+ ''';
 
   @override
   Future<DataState<String>> deleteMaterialReceive(
       {required String materialReceiveId}) async {
+    print('In delete Material receive data source ${materialReceiveId}');
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMaterialReceivingMutation),
-      variables: {"deleteMaterialReceivingId": materialReceiveId},
+      variables: {"deleteMaterialReceiveId": materialReceiveId},
     );
 
     try {
@@ -309,9 +342,9 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
         return DataFailed(
             ServerFailure(errorMessage: result.exception.toString()));
       }
-
+      // print('Delete material receive: ${result.data}');
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['deleteMaterialReceiving']['id'];
+      final String id = result.data!['deleteMaterialReceive']['id'];
 
       return DataSuccess(id);
     } catch (e) {
