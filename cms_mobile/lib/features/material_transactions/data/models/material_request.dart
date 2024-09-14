@@ -130,7 +130,7 @@ class MaterialRequestItemModel extends MaterialRequestItem {
     final MaterialRequestItemModel materialRequestItemModel =
         MaterialRequestItemModel(
       id: json['id'],
-      quantity:  (json['quantity'] as num).toDouble(),
+      quantity: json['quantity']!=null? (json['quantity'] as num).toDouble():null,
       productVariantId: json['productVariantId'],
       productVariant: json['productVariant'] != null
           ? ProductVariantModel.fromJson(json['productVariant'])

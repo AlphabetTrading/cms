@@ -77,6 +77,7 @@ class _CreateMaterialReceivePageState extends State<CreateMaterialReceivePage> {
                         orderBy: OrderByMaterialReceiveInput(createdAt: "desc"),
                         paginationInput: PaginationInput(skip: 0, take: 20),
                       ));
+                      context.pop();
                 } else if (receivingState is CreateMaterialReceiveFailed) {
                   showStatusMessage(
                     Status.FAILED,

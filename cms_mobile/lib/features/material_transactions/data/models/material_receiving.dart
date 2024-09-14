@@ -71,8 +71,8 @@ class MaterialReceiveModel extends MaterialReceiveEntity {
         updatedAt: json['updatedAt'] != null
             ? DateTime.parse(json['updatedAt'])
             : null,
-        warehouse: json['warehouseStore'] != null
-            ? WarehouseModel.fromJson(json['warehouseStore'])
+        warehouse: json['WarehouseStore'] != null
+            ? WarehouseModel.fromJson(json['WarehouseStore'])
             : null);
   }
 
@@ -167,15 +167,19 @@ class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
       required super.purchaseOrderItem,
       required super.receivedQuantity,
       super.remark});
+              
+        
+       
+        
 
   Map<String, dynamic> toJson() {
     return {
-      'purchaseOrderItemId': purchaseOrderItem,
+      'purchaseOrderItemId': purchaseOrderItem?.id,
       'transportationCost': transportationCost,
       'loadingCost': loadingCost,
       'unloadingCost': unloadingCost,
       'receivedQuantity': receivedQuantity,
-      // 'remark': remark
+      'remark': remark
     };
   }
 
@@ -260,6 +264,8 @@ class CreateMaterialReceiveParamsModel
     required super.preparedById,
     required super.receivingStoreId,
   });
+
+
 
   Map<String, dynamic> toJson() {
     return {

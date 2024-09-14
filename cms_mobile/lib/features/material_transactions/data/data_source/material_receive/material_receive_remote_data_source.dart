@@ -30,8 +30,8 @@ class MaterialReceiveDataSourceImpl extends MaterialReceiveDataSource {
   }
 
   static const String _createMaterialReceiveMutation = r'''
-mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialReceivingInput!) {
-  createMaterialReceiving(createMaterialReceivingInput: $createMaterialReceivingInput) {
+mutation CreateMaterialReceive($createMaterialReceiveInput: CreateMaterialReceiveInput!) {
+  createMaterialReceive(createMaterialReceiveInput: $createMaterialReceiveInput) {
     id
   }
 }
@@ -62,7 +62,7 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
       }
 
       // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-      final String id = result.data!['createMaterialReceiving']['id'];
+      final String id = result.data!['createMaterialReceive']['id'];
 
       return DataSuccess(id);
     } catch (e) {
@@ -78,43 +78,73 @@ mutation CreateMaterialReceiving($createMaterialReceivingInput: CreateMaterialRe
 query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
   getMaterialReceiveById(id: $getMaterialReceiveByIdId) {
     id
-    items {
+    createdAt
+    approvedBy {
+      email
+      fullName
       id
-      quantity
-      remark
-      productVariant {
-        id
-        createdAt
-        description
-        product {
-          createdAt
-          id
-          name
-          productType
-          updatedAt
-        }
-        productId
-        unitOfMeasure
-        updatedAt
-        variant
-      }
+      phoneNumber
+      role
+      updatedAt
+      createdAt
+    }
+    preparedBy {
+      id
+      fullName
+      email
+      createdAt
+      phoneNumber
+      role
+      updatedAt
     }
     serialNumber
     status
-    receivedBy {
+    WarehouseStore {
       id
-      fullName
-      email
-      phoneNumber
-      role
+      name
+      location
     }
-    createdAt
-    approvedBy {
-      phoneNumber
+    items {
       id
-      fullName
-      email
-      role
+      loadingCost
+      transportationCost
+      remark
+      receivedQuantity
+      unloadingCost
+      purchaseOrderItem {
+
+             id
+        totalPrice
+        unitPrice
+        quantity
+        materialRequestItem {
+          id
+          productVariant {
+            id
+            variant
+            unitOfMeasure
+            product {
+              id
+              name
+            }
+          }
+        }
+        proforma {
+          id
+          serialNumber
+          materialRequestItem {
+            productVariant {
+              id
+              unitOfMeasure
+              variant
+              product {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

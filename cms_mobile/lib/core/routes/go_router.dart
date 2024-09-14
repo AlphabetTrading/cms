@@ -247,7 +247,7 @@ class AppRouter {
                   builder: (BuildContext context, GoRouterState state) {
                     return MaterialReceiveDetailsPage(
                         materialReceiveId:
-                            state.pathParameters['materialReceivingId']!);
+                            state.pathParameters['materialReceiveId']!);
                   },
                 ),
               ],

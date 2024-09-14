@@ -72,8 +72,8 @@ class PurchaseOrderItemEntity extends Equatable {
   final String? remark;
   final double? totalPrice;
   final double? unitPrice;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const PurchaseOrderItemEntity({
     required this.id,
