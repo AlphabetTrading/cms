@@ -1,8 +1,6 @@
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
-import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart';
 

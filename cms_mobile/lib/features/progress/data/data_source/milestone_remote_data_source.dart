@@ -1,5 +1,4 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/progress/data/models/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';

@@ -4,7 +4,6 @@ import 'package:cms_mobile/core/widgets/custom_text_form_field.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_return.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/material_issues_state.dart';

@@ -188,7 +188,7 @@ class CustomAppBar extends PreferredSize {
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(10),
           ),
           child: InkWell(

@@ -117,7 +117,7 @@ class _CustomPopupMenuDialogState extends State<CustomPopupMenuDialog> {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   ),
                   width: MediaQuery.of(context).size.width,
                   padding:

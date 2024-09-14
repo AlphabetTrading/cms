@@ -1,7 +1,6 @@
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/utils/ids.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
-import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_request_local/material_request_local_event.dart';

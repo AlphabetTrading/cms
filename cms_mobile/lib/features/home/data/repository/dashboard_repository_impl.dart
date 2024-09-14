@@ -12,4 +12,17 @@ class DashboardRepositoryImpl extends DashboardRepository {
   Future<DataState<DashboardEntity>> getDashboardStats() {
     return dataSource.getDashboardStats();
   }
+
+  @override
+  Future<DataState<DetailedExpenseStatsEntity>> getDetailedExpenseStats(
+      {required FilterExpenseInput filterExpenseInput}) {
+    return dataSource.getDetailedExpenseStats(
+        filterExpenseInput: filterExpenseInput);
+  }
+
+  @override
+  Future<DataState<DetailedStockStatsEntity>> getDetailedStockStats(
+      {required FilterStockInput filterStockInput}) {
+    return dataSource.getDetailedStockStats(filterStockInput: filterStockInput);
+  }
 }

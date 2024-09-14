@@ -592,7 +592,7 @@ class CreateDailySiteDataParamsModel extends CreateDailySiteDataParamsEntity {
     return {
       'projectId': projectId,
       'preparedById': preparedById,
-      'tasks': tasks?.map((e) => e.toJson()).toList(),
+      'tasks': tasks.map((e) => e.toJson()).toList(),
     };
   }
 

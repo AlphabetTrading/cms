@@ -110,7 +110,7 @@ class MaterialTransferFormCubit extends Cubit<MaterialTransferFormState> {
 
   void materialChanged(WarehouseProductEntity materialEntity) {
     final MaterialDropdown materialDropdown =
-        MaterialDropdown.dirty(materialEntity.productVariant.id!);
+        MaterialDropdown.dirty(materialEntity.productVariant.id);
 
     emit(
       state.copyWith(

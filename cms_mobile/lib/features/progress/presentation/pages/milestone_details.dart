@@ -2,9 +2,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/utils/us
 import 'package:cms_mobile/features/progress/domain/entities/milestone.dart';
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 import 'package:cms_mobile/features/progress/presentation/cubit/milestone/details/details_cubit.dart';
-import 'package:cms_mobile/features/progress/presentation/widgets/milestone_detail_item.dart';
 import 'package:cms_mobile/features/progress/presentation/widgets/tasks_section.dart';
-import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

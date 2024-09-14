@@ -325,7 +325,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                         updateMaterialIssueId: widget.materialIssueId,
                         approved: "approved",
                         approvedById: "approvedById",
-                        warehouseStoreId: warehouseDropdown?.value ?? "",
+                        warehouseStoreId: warehouseDropdown.value ?? "",
                         materialIssueMaterials:
                             localState.materialIssueMaterials!
                                 .map((e) => MaterialIssueMaterialEntity(

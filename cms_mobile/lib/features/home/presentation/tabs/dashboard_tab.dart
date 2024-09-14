@@ -1,3 +1,4 @@
+import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_bloc.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_event.dart';
 import 'package:cms_mobile/features/home/presentation/bloc/dashboard/dashboard_state.dart';
@@ -7,6 +8,7 @@ import 'package:cms_mobile/features/home/presentation/widgets/duration_summary.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class DashboardTabScreen extends StatefulWidget {
@@ -27,7 +29,7 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<DashboardBloc, DashboardState>(
-        builder: (_, state) {
+        builder: (context, state) {
           if (state is DashboardLoading) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -163,7 +165,7 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                                     decoration: ShapeDecoration(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .surfaceVariant,
+                                          .surfaceContainerHighest,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(5)),
@@ -177,16 +179,23 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  Text(
-                                    'View Details',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      context.goNamed(
+                                        RouteNames.detailedExpenseStats,
+                                      );
+                                    },
+                                    child: Text(
+                                      'View Details',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                    ),
+                                  )
                                 ],
                               ),
                               const SizedBox(
@@ -245,7 +254,7 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                                     decoration: ShapeDecoration(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .surfaceVariant,
+                                          .surfaceContainerHighest,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(5)),
@@ -259,16 +268,7 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  Text(
-                                    'View Details',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                  ),
+                                  
                                 ]),
                                 const SizedBox(
                                   height: 5,
@@ -291,13 +291,13 @@ class _DashboardTabScreenState extends State<DashboardTabScreen> {
                                           fontWeight: FontWeight.normal),
                                 ),
                                 Text(
-                                  '${dashboard?.progress}%',
+                                  '${dashboard.progress}%',
                                   style:
                                       Theme.of(context).textTheme.labelMedium,
                                 ),
                                 CustomProgressBar(
                                     progress:
-                                        dashboard?.progress.toDouble() ?? 0),
+                                        dashboard.progress.toDouble() ?? 0),
                               ],
                             )),
                       )

@@ -35,9 +35,9 @@ ThemeData baseTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-        (Set<MaterialState> states) {
-          if (states.contains(MaterialState.disabled)) {
+      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.disabled)) {
             return Colors.grey; // Specify the color for the disabled state
           }
           return Color(0xFF1A80E5); // Use the default value for other states
@@ -45,25 +45,25 @@ ThemeData baseTheme = ThemeData(
       ),
 
       // MaterialStateProperty.all<Color>(Color(0xFF1A80E5)),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      foregroundColor: MaterialStateProperty.all(Colors.white),
-      elevation: MaterialStateProperty.all(0),
+      foregroundColor: WidgetStateProperty.all(Colors.white),
+      elevation: WidgetStateProperty.all(0),
     ),
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      foregroundColor: MaterialStateProperty.all(Color(0xFF1A80E5)),
-      side: MaterialStateProperty.all(BorderSide(
+      foregroundColor: WidgetStateProperty.all(Color(0xFF1A80E5)),
+      side: WidgetStateProperty.all(BorderSide(
         color: Color(0xFF1A80E5),
       )),
     ),
@@ -141,13 +141,11 @@ ThemeData DARK_THEME = baseTheme.copyWith(
     primaryContainer: Color(0x1A1A80E5),
     primary: Color(0xFF1A80E5),
     secondary: Color(0xFF03DAC6),
-    background: Color(0xFF121212),
     surface: Color(0xFF121212),
-    surfaceVariant: Color(0x1A5CAEFF),
+    surfaceContainerHighest: Color(0x1A5CAEFF),
     error: Color(0xFFCF6679),
     onPrimary: Color(0xFF000000),
     onSecondary: Color(0xFF000000),
-    onBackground: Color(0xFFFFFFFF),
     onSurface: Color(0xFFFFFFFF),
     onError: Color(0xFF000000),
     brightness: Brightness.dark,
@@ -200,13 +198,11 @@ ThemeData LIGHT_THEME = baseTheme.copyWith(
     primaryContainer: Color(0x1A1A80E5),
     primary: Color(0xFF1A80E5),
     secondary: Color(0xFF03DAC6),
-    background: Color(0xFFFFFFFF),
     surface: Color(0xFFFFFFFF),
-    surfaceVariant: Color(0x12104A84),
+    surfaceContainerHighest: Color(0x12104A84),
     error: Color(0xFFB00020),
     onPrimary: Color(0xFFFFFFFF),
     onSecondary: Color(0xFF121212),
-    onBackground: Color(0xFF000000),
     onSurface: Color(0xFF121212),
     onError: Color(0xFFFFFFFF),
     brightness: Brightness.light,

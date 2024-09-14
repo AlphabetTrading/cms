@@ -20,7 +20,7 @@ class CustomProgressBar extends StatelessWidget {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(2),
           ),
           child: FractionallySizedBox(

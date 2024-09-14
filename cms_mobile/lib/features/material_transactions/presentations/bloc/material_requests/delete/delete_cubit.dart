@@ -1,7 +1,6 @@
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/delete_material_request.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
-import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class MaterialRequestDeleteState extends Equatable {

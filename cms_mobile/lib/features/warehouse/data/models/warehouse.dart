@@ -1,5 +1,4 @@
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
-import 'package:flutter/material.dart';
 
 class WarehouseModel extends WarehouseEntity {
   const WarehouseModel({
