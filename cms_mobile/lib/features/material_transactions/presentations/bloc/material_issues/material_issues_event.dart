@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 
 abstract class MaterialIssueEvent {
@@ -43,6 +44,12 @@ class UpdateMaterialIssue extends MaterialIssueEvent {
 class DeleteMaterialIssue extends MaterialIssueEvent {
   final String id;
   const DeleteMaterialIssue(this.id);
+}
+
+class ApproveMaterialIssueEvent extends MaterialIssueEvent {
+  final ApproveMaterialIssueStatus decision;
+  final String materialIssueId;
+  const ApproveMaterialIssueEvent(this.decision, this.materialIssueId);
 }
 
 class CreateMaterialIssueEvent extends MaterialIssueEvent {

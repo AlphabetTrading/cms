@@ -60,4 +60,11 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
   Future<DataState<String>> generateMaterialIssuePdf({required String id}) {
     return dataSource.generateMaterialIssuePdf(id: id);
   }
+
+  Future<DataState<String>> approveMaterialIssue(
+      {required ApproveMaterialIssueStatus decision,
+      required String materialIssueId}) {
+    return dataSource.approveMaterialIssue(
+        decision: decision, materialIssueId: materialIssueId);
+  }
 }

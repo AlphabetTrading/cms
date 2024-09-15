@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
@@ -212,4 +213,17 @@ class EditMaterialIssueParamsEntity<T extends MaterialIssueMaterialEntity>
         approvedById,
         materialIssueMaterials
       ];
+}
+
+class ApproveMaterialIssueParamsEntity extends Equatable {
+  final ApproveMaterialIssueStatus decision;
+  final String materialIssueId;
+
+  const ApproveMaterialIssueParamsEntity({
+    required this.decision,
+    required this.materialIssueId,
+  });
+
+  @override
+  List<Object?> get props => [decision, materialIssueId];
 }

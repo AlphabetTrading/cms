@@ -40,6 +40,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/edit_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_data_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_datas.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/approve_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/delete_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/generate_material_issue_pdf.dart';
@@ -533,6 +534,11 @@ Future<void> initializeDependencies() async {
       sl<PurchaseOrderRepository>(),
     ),
   );
+  sl.registerLazySingleton<ApproveMaterialIssueUseCase>(
+    () => ApproveMaterialIssueUseCase(
+      sl<MaterialIssueRepository>(),
+    ),
+  );
   sl.registerLazySingleton<DeleteMaterialRequestUseCase>(
     () => DeleteMaterialRequestUseCase(
       sl<MaterialRequestRepository>(),
@@ -860,8 +866,8 @@ Future<void> initializeDependencies() async {
 
   // material issue
   sl.registerFactory<MaterialIssueBloc>(
-    () => MaterialIssueBloc(
-        sl<GetMaterialIssuesUseCase>(), sl<CreateMaterialIssueUseCase>()),
+    () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>(),
+        sl<CreateMaterialIssueUseCase>(), sl<ApproveMaterialIssueUseCase>()),
   );
 
   sl.registerFactory<MaterialIssueDetailsCubit>(
