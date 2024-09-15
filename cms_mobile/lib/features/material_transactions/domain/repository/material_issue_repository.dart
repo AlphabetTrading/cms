@@ -25,6 +25,7 @@ abstract class MaterialIssueRepository {
       {required String materialIssueId});
 
   Future<DataState<String>> generateMaterialIssuePdf({required String id});
+  
   Future<DataState<String>> approveMaterialIssue(
       {required ApproveMaterialIssueStatus decision,
       required String materialIssueId});

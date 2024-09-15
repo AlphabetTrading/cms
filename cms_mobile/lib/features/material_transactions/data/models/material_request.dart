@@ -210,6 +210,30 @@ class CreateMaterialRequestParamsModel
   }
 }
 
+class ApproveMaterialRequestParamsModel
+    extends ApproveMaterialRequestParamsEntity {
+  const ApproveMaterialRequestParamsModel({
+    required super.decision,
+    required super.materialRequestId,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "decision": decision,
+      "materialRequestId": materialRequestId,
+    };
+  }
+
+  @override
+  List<Object?> get props => [decision, materialRequestId];
+
+  factory ApproveMaterialRequestParamsModel.fromEntity(
+      ApproveMaterialRequestParamsEntity entity) {
+    return ApproveMaterialRequestParamsModel(
+        decision: entity.decision, materialRequestId: entity.materialRequestId);
+  }
+}
+
 String fromMaterialRequestStatus(MaterialRequestStatus? value) {
   if (value == null) {
     return '';
@@ -234,5 +258,30 @@ MaterialRequestStatus toMaterialRequestStatus(String value) {
       return MaterialRequestStatus.declined;
     default:
       throw Exception('Invalid MaterialRequestStatus');
+  }
+}
+
+enum ApproveMaterialRequestStatus { completed, declined }
+
+ApproveMaterialRequestStatus toApproveMaterialRequestStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return ApproveMaterialRequestStatus.completed;
+    case 'DECLINED':
+      return ApproveMaterialRequestStatus.declined;
+    default:
+      throw Exception('Invalid ApproveMaterialRequestStatus');
+  }
+}
+
+String fromApproveMaterialRequestStatus(ApproveMaterialRequestStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case ApproveMaterialRequestStatus.completed:
+      return 'COMPLETED';
+    case ApproveMaterialRequestStatus.declined:
+      return 'DECLINED';
   }
 }

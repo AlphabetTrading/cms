@@ -57,6 +57,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/generate_material_receive_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive_details.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/approve_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/delete_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_request.dart';
@@ -452,6 +453,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<ApproveMaterialRequestUseCase>(
+    () => ApproveMaterialRequestUseCase(
+      sl<MaterialRequestRepository>(),
+    ),
+  );
+
   // material receive
   sl.registerLazySingleton<GetMaterialReceivesUseCase>(
     () => GetMaterialReceivesUseCase(
@@ -822,7 +829,9 @@ Future<void> initializeDependencies() async {
 
   // material request
   sl.registerFactory<MaterialRequestBloc>(() => MaterialRequestBloc(
-      sl<GetMaterialRequestsUseCase>(), sl<CreateMaterialRequestUseCase>()));
+      sl<GetMaterialRequestsUseCase>(),
+      sl<CreateMaterialRequestUseCase>(),
+      sl<ApproveMaterialRequestUseCase>()));
 
   sl.registerLazySingleton<CreateMaterialRequestUseCase>(
     () => CreateMaterialRequestUseCase(
