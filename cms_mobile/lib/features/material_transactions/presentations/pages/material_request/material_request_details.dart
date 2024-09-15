@@ -3,6 +3,18 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/generate_pdf_cubit.dart';
+import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/routes/route_names.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
+import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_requests/material_request_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transactions/material_transactions_event.dart';
 import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
@@ -14,6 +26,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class MaterialRequestDetailsPage extends StatefulWidget {
   final String materialRequestId;
@@ -123,6 +136,11 @@ class _MaterialRequestDetailsPageState
               final requestedBy = materialRequest?.requestedBy;
               final approvedBy = materialRequest?.approvedBy;
               final materialRequestMaterials = materialRequest?.items ?? [];
+              final authUser = context.read<AuthBloc>().state.user;
+
+              final isSpecificUser = authUser?.role == UserRole.STORE_MANAGER;
+              final isPending = materialRequest?.status == MaterialRequestStatus.pending;
+
               return Container(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -151,7 +169,9 @@ class _MaterialRequestDetailsPageState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 32),
                         decoration: ShapeDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
@@ -215,7 +235,7 @@ class _MaterialRequestDetailsPageState
                               title:
                                   '${productVariant?.product?.name} - ${productVariant?.variant}',
                               subtitle:
-                                  'Requested Quantity: ${materialRequestMaterial.quantity} ${productVariant?.unitOfMeasure}',
+                                  'Requested Quantity: ${materialRequestMaterial.quantity} ${productVariant?.unitOfMeasure?.name}',
                               iconSrc:
                                   'assets/icons/transactions/light/material_requests.svg',
                               onDelete: () {},
@@ -251,7 +271,33 @@ class _MaterialRequestDetailsPageState
                             );
                           },
                         ),
-                      )
+                      ),
+                      const SizedBox(height: 24),
+                      BlocListener<MaterialRequestBloc, MaterialRequestState>(
+                          listener: (context, state) {
+                            if (state is ApproveMaterialRequestSuccess) {
+                              showStatusMessage(Status.SUCCESS,
+                                  "Successfully updated material request status");
+                              context.goNamed(RouteNames.materialRequests);
+
+                              BlocProvider.of<MaterialRequestBloc>(context).add(
+                                GetMaterialRequestEvent(
+                                  filterMaterialRequestInput:
+                                      FilterMaterialRequestInput(),
+                                  orderBy: OrderByMaterialRequestInput(
+                                      createdAt: "desc"),
+                                  paginationInput:
+                                      PaginationInput(skip: 0, take: 20),
+                                  mine: false,
+                                ),
+                              );
+                            } else if (state is ApproveMaterialRequestFailed) {
+                              showStatusMessage(Status.FAILED,
+                                  state.error?.errorMessage ?? "");
+                            }
+                          },
+                          child: buildApproveDeclineSection(
+                              context, isPending, materialRequest, state)),
                     ],
                   ),
                 ),
@@ -263,4 +309,83 @@ class _MaterialRequestDetailsPageState
       ),
     );
   }
+}
+
+Widget buildApproveDeclineSection(
+    BuildContext context, isPending, materialRequest, state) {
+  return Column(
+    children: [
+      if (isPending)
+        ElevatedButton(
+          onPressed: state is ApproveMaterialRequestLoading
+              ? null
+              : () {
+                  BlocProvider.of<MaterialRequestBloc>(context).add(
+                    ApproveMaterialRequestEvent(
+                      ApproveMaterialRequestStatus.completed,
+                      materialRequest?.id ?? "",
+                    ),
+                  );
+                },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              state is ApproveMaterialRequestLoading
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                          )),
+                    )
+                  : const SizedBox(),
+              const Text('Approve'),
+            ],
+          ),
+        ),
+      const SizedBox(height: 10),
+      if (isPending)
+        OutlinedButton(
+          onPressed: state is ApproveMaterialRequestLoading
+              ? null
+              : () {
+                  BlocProvider.of<MaterialRequestBloc>(context).add(
+                    ApproveMaterialRequestEvent(
+                      ApproveMaterialRequestStatus.declined,
+                      materialRequest?.id ?? "",
+                    ),
+                  );
+                },
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            side: const BorderSide(color: Colors.red),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              state is ApproveMaterialRequestLoading
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                          )),
+                    )
+                  : const SizedBox(),
+              const Text(
+                'Decline',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+        ),
+    ],
+  );
 }

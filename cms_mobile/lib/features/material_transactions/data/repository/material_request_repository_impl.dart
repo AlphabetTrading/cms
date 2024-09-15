@@ -47,4 +47,12 @@ class MaterialRequestRepositoryImpl extends MaterialRequestRepository {
   Future<DataState<String>> generateMaterialRequestPdf({required String id}) {
     return dataSource.generateMaterialRequestPdf(id: id);
   }
+
+  @override
+  Future<DataState<String>> approveMaterialRequest(
+      {required ApproveMaterialRequestStatus decision,
+      required String materialRequestId}) {
+    return dataSource.approveMaterialRequest(
+        decision: decision, materialRequestId: materialRequestId);
+  }
 }

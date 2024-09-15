@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_requests/material_request_remote_data_source.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 
 abstract class MaterialRequestEvent {
@@ -38,4 +39,10 @@ class UpdateMaterialRequestEvent extends MaterialRequestEvent {
 class DeleteMaterialRequestEvent extends MaterialRequestEvent {
   final String id;
   const DeleteMaterialRequestEvent(this.id);
+}
+
+class ApproveMaterialRequestEvent extends MaterialRequestEvent {
+  final ApproveMaterialRequestStatus decision;
+  final String materialRequestId;
+  const ApproveMaterialRequestEvent(this.decision, this.materialRequestId);
 }

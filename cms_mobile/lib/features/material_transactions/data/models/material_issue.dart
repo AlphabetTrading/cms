@@ -55,8 +55,10 @@ class MaterialIssueModel extends MaterialIssueEntity {
       warehouseStore: json['warehouseStore'] != null
           ? WarehouseModel.fromJson(json['warehouseStore'])
           : null,
-      createdAt: json['createdAt']!= null? DateTime.parse(json['createdAt']):null,
-      updatedAt: json['updatedAt']!= null? DateTime.parse(json['updatedAt']):null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -302,6 +304,30 @@ class EditMaterialIssueParamsModel
   }
 }
 
+class ApproveMaterialIssueParamsModel
+    extends ApproveMaterialIssueParamsEntity {
+  const ApproveMaterialIssueParamsModel({
+    required super.decision,
+    required super.materialIssueId,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "decision": decision,
+      "materialIssueId": materialIssueId,
+    };
+  }
+
+  @override
+  List<Object?> get props => [decision, materialIssueId];
+
+  factory ApproveMaterialIssueParamsModel.fromEntity(
+      ApproveMaterialIssueParamsEntity entity) {
+    return ApproveMaterialIssueParamsModel(
+        decision: entity.decision, materialIssueId: entity.materialIssueId);
+  }
+}
+
 enum MaterialIssueStatus { completed, pending, declined }
 
 MaterialIssueStatus toMaterialIssueStatus(String value) {
@@ -327,6 +353,31 @@ String fromMaterialIssueStatus(MaterialIssueStatus? value) {
     case MaterialIssueStatus.pending:
       return 'PENDING';
     case MaterialIssueStatus.declined:
+      return 'DECLINED';
+  }
+}
+
+enum ApproveMaterialIssueStatus { completed, declined }
+
+ApproveMaterialIssueStatus toApproveMaterialIssueStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return ApproveMaterialIssueStatus.completed;
+    case 'DECLINED':
+      return ApproveMaterialIssueStatus.declined;
+    default:
+      throw Exception('Invalid ApproveMaterialIssueStatus');
+  }
+}
+
+String fromApproveMaterialIssueStatus(ApproveMaterialIssueStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case ApproveMaterialIssueStatus.completed:
+      return 'COMPLETED';
+    case ApproveMaterialIssueStatus.declined:
       return 'DECLINED';
   }
 }

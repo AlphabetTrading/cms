@@ -129,3 +129,17 @@ class CreateMaterialIssueFailed extends MaterialIssueState {
   const CreateMaterialIssueFailed({required Failure error})
       : super(error: error);
 }
+
+
+class ApproveMaterialIssueLoading extends MaterialIssueState {
+  const ApproveMaterialIssueLoading();
+}
+
+class ApproveMaterialIssueSuccess extends MaterialIssueState {
+  const ApproveMaterialIssueSuccess();
+}
+
+class ApproveMaterialIssueFailed extends MaterialIssueState {
+  const ApproveMaterialIssueFailed({required Failure error})
+      : super(error: error);
+}

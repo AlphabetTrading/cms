@@ -1,4 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/approve_material_issue.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
@@ -20,16 +22,18 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
   final GetMaterialIssuesUseCase _materialIssueUseCase;
   final CreateMaterialIssueUseCase _createMaterialIssueUseCase;
+  final ApproveMaterialIssueUseCase _approveMaterialIssueUseCase;
   DateTime? lastUpdated;
 
-  MaterialIssueBloc(
-      this._materialIssueUseCase, this._createMaterialIssueUseCase)
+  MaterialIssueBloc(this._materialIssueUseCase,
+      this._createMaterialIssueUseCase, this._approveMaterialIssueUseCase)
       : super(const MaterialIssueInitial()) {
     on<GetMaterialIssues>(
       onGetMaterialIssues,
       transformer: throttleDroppable(throttleDuration),
     );
     on<CreateMaterialIssueEvent>(onCreateMaterialIssue);
+    on<ApproveMaterialIssueEvent>(onApproveMaterialIssue);
     on<DeleteMaterialIssueEventLocal>(onDeleteMaterialIssue);
   }
 
@@ -125,6 +129,25 @@ class MaterialIssueBloc extends Bloc<MaterialIssueEvent, MaterialIssueState> {
               items: newMyMaterialIssues.items, meta: newMyMaterialIssues.meta),
           materialIssues:
               materialIssues ?? MaterialIssueEntityListWithMeta.empty()));
+    }
+  }
+
+  void onApproveMaterialIssue(
+      ApproveMaterialIssueEvent event, Emitter<MaterialIssueState> emit) async {
+    emit(const ApproveMaterialIssueLoading());
+
+    final dataState = await _approveMaterialIssueUseCase(
+        params: ApproveMaterialIssueParamsModel(
+            decision: event.decision, materialIssueId: event.materialIssueId));
+
+    debugPrint('Response: $dataState');
+    
+    if (dataState is DataSuccess) {
+      emit(const ApproveMaterialIssueSuccess());
+    }
+
+    if (dataState is DataFailed) {
+      emit(ApproveMaterialIssueFailed(error: dataState.error!));
     }
   }
 }

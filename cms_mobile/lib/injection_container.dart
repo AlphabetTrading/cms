@@ -40,6 +40,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/edit_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_data_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_datas.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/approve_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/delete_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/generate_material_issue_pdf.dart';
@@ -56,6 +57,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/generate_material_receive_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive_details.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/approve_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/create_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/delete_material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_request.dart';
@@ -454,6 +456,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<ApproveMaterialRequestUseCase>(
+    () => ApproveMaterialRequestUseCase(
+      sl<MaterialRequestRepository>(),
+    ),
+  );
+
   // material receive
   sl.registerLazySingleton<GetMaterialReceivesUseCase>(
     () => GetMaterialReceivesUseCase(
@@ -534,6 +542,11 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<GeneratePurchaseOrderPdfUseCase>(
     () => GeneratePurchaseOrderPdfUseCase(
       sl<PurchaseOrderRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<ApproveMaterialIssueUseCase>(
+    () => ApproveMaterialIssueUseCase(
+      sl<MaterialIssueRepository>(),
     ),
   );
   sl.registerLazySingleton<DeleteMaterialRequestUseCase>(
@@ -819,7 +832,9 @@ Future<void> initializeDependencies() async {
 
   // material request
   sl.registerFactory<MaterialRequestBloc>(() => MaterialRequestBloc(
-      sl<GetMaterialRequestsUseCase>(), sl<CreateMaterialRequestUseCase>()));
+      sl<GetMaterialRequestsUseCase>(),
+      sl<CreateMaterialRequestUseCase>(),
+      sl<ApproveMaterialRequestUseCase>()));
 
   sl.registerLazySingleton<CreateMaterialRequestUseCase>(
     () => CreateMaterialRequestUseCase(
@@ -863,8 +878,8 @@ Future<void> initializeDependencies() async {
 
   // material issue
   sl.registerFactory<MaterialIssueBloc>(
-    () => MaterialIssueBloc(
-        sl<GetMaterialIssuesUseCase>(), sl<CreateMaterialIssueUseCase>()),
+    () => MaterialIssueBloc(sl<GetMaterialIssuesUseCase>(),
+        sl<CreateMaterialIssueUseCase>(), sl<ApproveMaterialIssueUseCase>()),
   );
 
   sl.registerFactory<MaterialIssueDetailsCubit>(

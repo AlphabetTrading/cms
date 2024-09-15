@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
@@ -63,9 +64,7 @@ class MaterialRequestItem extends Equatable {
     this.updatedAt,
   });
 
-
   // from json
-
 
   // to json
   Map<String, dynamic> toJson() {
@@ -137,4 +136,15 @@ class MaterialRequestEntityListWithMeta {
   });
 }
 
+class ApproveMaterialRequestParamsEntity extends Equatable {
+  final ApproveMaterialRequestStatus decision;
+  final String materialRequestId;
 
+  const ApproveMaterialRequestParamsEntity({
+    required this.decision,
+    required this.materialRequestId,
+  });
+
+  @override
+  List<Object?> get props => [decision, materialRequestId];
+}

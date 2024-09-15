@@ -3,6 +3,7 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/core/utils/get_user_friendly_error_message.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_issue.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -24,6 +25,9 @@ abstract class MaterialIssueDataSource {
   Future<DataState<String>> deleteMaterialIssue(
       {required String materialIssueId});
   Future<DataState<String>> generateMaterialIssuePdf({required String id});
+  Future<DataState<String>> approveMaterialIssue(
+      {required ApproveMaterialIssueStatus decision,
+      required String materialIssueId});
 }
 
 class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
@@ -50,6 +54,14 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
       }
     }
 ''';
+
+  static const String _approveMaterialIssueMutation = r'''
+    mutation ApproveMaterialIssue($decision: ApprovalStatus!, $materialIssueId: String!) {
+      approveMaterialIssue(decision: $decision, materialIssueId: $materialIssueId) {
+        id
+      }
+    }
+  ''';
 
   // Override the function in the implementation class
   @override
@@ -393,6 +405,34 @@ class MaterialIssueDataSourceImpl extends MaterialIssueDataSource {
         ),
       );
     });
+  }
+
+  @override
+  Future<DataState<String>> approveMaterialIssue(
+      {required ApproveMaterialIssueStatus decision,
+      required String materialIssueId}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_approveMaterialIssueMutation),
+      variables: {
+        "decision": fromApproveMaterialIssueStatus(decision),
+        "materialIssueId": materialIssueId,
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        final errorMessage = getUserFriendlyErrorMessage(result.exception!);
+        return DataFailed(ServerFailure(errorMessage: errorMessage));
+      }
+
+      final String id = result.data!['approveMaterialIssue']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }
 
