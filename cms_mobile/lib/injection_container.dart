@@ -63,6 +63,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/delete_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/generate_material_request_pdf.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/generate_material_return_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/get_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/get_material_return_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/create_material_transfer.dart';
@@ -97,6 +98,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/generate_pdf_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
@@ -520,6 +522,12 @@ Future<void> initializeDependencies() async {
       sl<MaterialRequestRepository>(),
     ),
   );
+  sl.registerLazySingleton<GenerateMaterialReturnPdfUseCase>(
+    () => GenerateMaterialReturnPdfUseCase(
+      sl<MaterialReturnRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<GeneratePurchaseOrderPdfUseCase>(
     () => GeneratePurchaseOrderPdfUseCase(
       sl<PurchaseOrderRepository>(),
@@ -832,6 +840,10 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<PurchaseOrderGeneratePdfCubit>(
     () => PurchaseOrderGeneratePdfCubit(sl<GeneratePurchaseOrderPdfUseCase>()),
   );
+  sl.registerFactory<MaterialReturnGeneratePdfCubit>(
+    () =>
+        MaterialReturnGeneratePdfCubit(sl<GenerateMaterialReturnPdfUseCase>()),
+  );
 
   sl.registerFactory<DeleteMaterialIssueCubit>(
     () => DeleteMaterialIssueCubit(sl<DeleteMaterialIssueUseCase>()),
@@ -887,7 +899,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<DeleteMaterialReceiveCubit>(
     () => DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
-
 
   // material return
   sl.registerFactory<MaterialReturnBloc>(
