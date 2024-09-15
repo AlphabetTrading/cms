@@ -1,5 +1,5 @@
-import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
-import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/daily_site_data_edit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/widgets/daily_site_data/create_daily_site_data_form.dart';
 import 'package:equatable/equatable.dart';
 
 enum FormStatus { invalid, valid, validating }
@@ -32,57 +32,33 @@ class DailySiteDataFormState extends Equatable {
   final bool isValid;
   final FormStatus formStatus;
   final QuantityField quantityField;
+  final UnitDropdown unitDropdown;
+  final TaskNameField taskNameField;
   final MaterialDropdown materialDropdown;
-  // final WarehouseDropdown warehouseDropdown;
-  final UseTypeDropdown useTypeDropdown;
-  final SubStructureUseDropdown subStructureUseDropdown;
-  final SuperStructureUseDropdown superStructureUseDropdown;
 
-  // final UnitDropdown unitDropdown;
-  final RemarkField remarkField;
-  final double inStock;
-
-  const DailySiteDataFormState(
-      {this.isValid = false,
-      this.formStatus = FormStatus.invalid,
-      this.quantityField = const QuantityField.pure(),
-      this.materialDropdown = const MaterialDropdown.pure(),
-      // this.warehouseDropdown = const WarehouseDropdown.pure(),
-      this.useTypeDropdown = const UseTypeDropdown.pure(),
-      this.subStructureUseDropdown = const SubStructureUseDropdown.pure(),
-      this.superStructureUseDropdown = const SuperStructureUseDropdown.pure(),
-
-      // this.unitDropdown = const UnitDropdown.pure(),
-      this.remarkField = const RemarkField.pure(),
-      this.inStock = 0.0});
+  const DailySiteDataFormState({
+    this.isValid = false,
+    this.formStatus = FormStatus.invalid,
+    this.quantityField = const QuantityField.pure(),
+    this.unitDropdown = const UnitDropdown.pure(),
+    this.taskNameField = const TaskNameField.pure(),
+    this.materialDropdown = const MaterialDropdown.pure(),
+  });
 
   DailySiteDataFormState copyWith({
     bool? isValid,
     FormStatus? formStatus,
     QuantityField? quantityField,
+    UnitDropdown? unitDropdown,
     MaterialDropdown? materialDropdown,
-    // WarehouseDropdown? warehouseDropdown,
-    UseTypeDropdown? useTypeDropdown,
-    SubStructureUseDropdown? subStructureUseDropdown,
-    SuperStructureUseDropdown? superStructureUseDropdown,
-    // UnitDropdown? unitDropdown,
-    RemarkField? remarkField,
-    double? inStock,
   }) {
     return DailySiteDataFormState(
-        isValid: isValid ?? this.isValid,
-        formStatus: formStatus ?? this.formStatus,
-        quantityField: quantityField ?? this.quantityField,
-        materialDropdown: materialDropdown ?? this.materialDropdown,
-        // warehouseDropdown: warehouseDropdown ?? this.warehouseDropdown,
-        useTypeDropdown: useTypeDropdown ?? this.useTypeDropdown,
-        subStructureUseDropdown:
-            subStructureUseDropdown ?? this.subStructureUseDropdown,
-        superStructureUseDropdown:
-            superStructureUseDropdown ?? this.superStructureUseDropdown,
-        // unitDropdown: unitDropdown ?? this.unitDropdown,
-        remarkField: remarkField ?? this.remarkField,
-        inStock: inStock ?? this.inStock);
+      isValid: isValid ?? this.isValid,
+      formStatus: formStatus ?? this.formStatus,
+      quantityField: quantityField ?? this.quantityField,
+      unitDropdown: unitDropdown ?? this.unitDropdown,
+      materialDropdown: materialDropdown ?? this.materialDropdown,
+    );
   }
 
   @override
@@ -90,13 +66,7 @@ class DailySiteDataFormState extends Equatable {
         isValid,
         formStatus,
         quantityField,
+        unitDropdown,
         materialDropdown,
-        // warehouseDropdown,
-        useTypeDropdown,
-        subStructureUseDropdown,
-        superStructureUseDropdown,
-        // unitDropdown,
-        remarkField,
-        inStock
       ];
 }

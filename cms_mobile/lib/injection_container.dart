@@ -97,6 +97,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/pur
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/cubit/daily_site_data_form/daily_site_data_form_cubit.dart';
 import 'package:cms_mobile/features/products/domain/usecases/get_all_warehouse_products.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_requests/material_request_remote_data_source.dart';
@@ -160,6 +161,8 @@ import 'package:cms_mobile/features/warehouse/domain/usecases/get_warehouses.dar
 import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+
+import 'features/material_transactions/presentations/cubit/daily_site_data_form/daily_site_data_add_material_form_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -846,7 +849,6 @@ Future<void> initializeDependencies() async {
     () => DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
 
-
   // material return
   sl.registerFactory<MaterialReturnBloc>(
     () => MaterialReturnBloc(
@@ -973,6 +975,14 @@ Future<void> initializeDependencies() async {
     () => DeleteDailySiteDataCubit(
       sl<DeleteDailySiteDataUseCase>(),
     ),
+  );
+
+  sl.registerFactory<DailySiteDataFormCubit>(
+    () => DailySiteDataFormCubit(),
+  );
+
+  sl.registerFactory<DailySiteDataAddMaterialFormCubit>(
+    () => DailySiteDataAddMaterialFormCubit(),
   );
 
   // progress
