@@ -21,6 +21,8 @@ abstract class MaterialReturnDataSource {
 
   Future<DataState<MaterialReturnModel>> getMaterialReturnDetails(
       {required String params});
+
+  Future<DataState<String>> generateMaterialReturnPdf({required String id});
 }
 
 class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
@@ -31,7 +33,7 @@ class MaterialReturnDataSourceImpl extends MaterialReturnDataSource {
     _client = client;
   }
 
-    static const String _deleteMaterialReturnMutation = r'''
+  static const String _deleteMaterialReturnMutation = r'''
     mutation DeleteMaterialReturn($deleteMaterialReturnId: String!) {
       deleteMaterialReturn(id: $deleteMaterialReturnId) {
         id
@@ -343,10 +345,39 @@ query GetMaterialReturnById($getMaterialReturnByIdId: String!) {
         );
       }
 
-      final materialIssue =
+      final materialReturn =
           MaterialReturnModel.fromJson(response.data!['getMaterialReturnById']);
 
-      return DataSuccess(materialIssue);
+      return DataSuccess(materialReturn);
+    });
+  }
+
+  @override
+  Future<DataState<String>> generateMaterialReturnPdf({required String id}) {
+    String generateMaterialReturnPdfQuery = r'''
+      query Query($generateMaterialReturnPdfId: String!) {
+        generateMaterialReturnPdf(id: $generateMaterialReturnPdfId)
+      }
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(generateMaterialReturnPdfQuery),
+      variables: {"generateMaterialReturnPdfId": id},
+      fetchPolicy: FetchPolicy.noCache,
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final materialReturnReport = response.data!['generateMaterialReturnPdf'];
+
+      return DataSuccess(materialReturnReport);
     });
   }
 }

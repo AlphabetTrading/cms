@@ -5,7 +5,6 @@ import 'package:cms_mobile/features/material_transactions/data/models/material_i
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_issue.dart';
 
 abstract class MaterialIssueRepository {
-  
   Future<DataState<MaterialIssueListWithMeta>> getMaterialIssues(
     FilterMaterialIssueInput? filterMaterialIssueInput,
     OrderByMaterialIssueInput? orderBy,
@@ -22,5 +21,8 @@ abstract class MaterialIssueRepository {
   Future<DataState<String>> editMaterialIssue(
       {required EditMaterialIssueParamsEntity params});
 
-  Future<DataState<String>> deleteMaterialIssue({required String materialIssueId});
+  Future<DataState<String>> deleteMaterialIssue(
+      {required String materialIssueId});
+
+  Future<DataState<String>> generateMaterialIssuePdf({required String id});
 }

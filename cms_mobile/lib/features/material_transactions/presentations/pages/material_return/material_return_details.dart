@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
@@ -9,6 +14,9 @@ import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MaterialReturnDetailsPage extends StatefulWidget {
   final String materialReturnId;
@@ -16,6 +24,22 @@ class MaterialReturnDetailsPage extends StatefulWidget {
   @override
   State<MaterialReturnDetailsPage> createState() =>
       _MaterialReturnDetailsPageState();
+}
+
+Future<void> saveAndOpenPdf(String base64String) async {
+  try {
+    Uint8List bytes = base64Decode(base64String);
+
+    final directory = await getTemporaryDirectory();
+    final path = '${directory.path}/Material Return.pdf';
+
+    final file = File(path);
+    await file.writeAsBytes(bytes);
+
+    await OpenFile.open(path);
+  } catch (e) {
+    print('Error: $e');
+  }
 }
 
 class _MaterialReturnDetailsPageState extends State<MaterialReturnDetailsPage> {
@@ -28,12 +52,68 @@ class _MaterialReturnDetailsPageState extends State<MaterialReturnDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Material Return Details")),
-      body: BlocProvider<MaterialReturnDetailsCubit>(
-        create: (context) => sl<MaterialReturnDetailsCubit>()
-          ..onGetMaterialReturnDetails(materialReturnId: widget.materialReturnId),
-        child:
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<MaterialReturnDetailsCubit>()
+            ..onGetMaterialReturnDetails(
+                materialReturnId: widget.materialReturnId),
+        ),
+        BlocProvider(create: (context) => sl<MaterialReturnGeneratePdfCubit>()),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Material Return Details"),
+          actions: [
+            BlocConsumer<MaterialReturnGeneratePdfCubit,
+                MaterialReturnGeneratePdfState>(
+              listener: (context, state) {
+                if (state is MaterialReturnGeneratePdfSuccess) {
+                  // Show success message and handle PDF opening
+                  Fluttertoast.showToast(
+                    msg: "PDF download started",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                  );
+                  // Open or save PDF as required
+                  saveAndOpenPdf(state.materialReturn);
+                } else if (state is MaterialReturnGeneratePdfFailed) {
+                  // Show error message
+                  Fluttertoast.showToast(
+                    msg: "Failed to generate PDF: ${state.error}",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                  );
+                }
+              },
+              builder: (context, state) {
+                // Popup menu with the option to generate PDF
+                return PopupMenuButton(
+                  onSelected: (value) {
+                    if (value == 'generate_pdf') {
+                      // Trigger PDF generation
+                      context
+                          .read<MaterialReturnGeneratePdfCubit>()
+                          .onGetMaterialReturnGeneratePdf(
+                              materialReturnId: widget.materialReturnId);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'generate_pdf',
+                      child: Text('Generate PDF'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+        body:
             BlocBuilder<MaterialReturnDetailsCubit, MaterialReturnDetailsState>(
           builder: (context, state) {
             if (state is MaterialReturnDetailsLoading) {
@@ -105,10 +185,12 @@ class _MaterialReturnDetailsPageState extends State<MaterialReturnDetailsPage> {
                           TransactionInfoItem(
                               title: 'Received by',
                               value: receivedBy?.fullName ?? 'N/A'),
-                                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           TransactionInfoItem(
                               title: 'Receiving Warehouse',
-                              value:materialReturn?.receivingWarehouseStore?.name ?? 'N/A'),
+                              value: materialReturn
+                                      ?.receivingWarehouseStore?.name ??
+                                  'N/A'),
                         ],
                       ),
                     ),
@@ -140,7 +222,6 @@ class _MaterialReturnDetailsPageState extends State<MaterialReturnDetailsPage> {
                           final productVariant =
                               materialReturnMaterial.productVariant;
                           return MaterialTransactionMaterialItem(
-                   
                             title:
                                 '${productVariant?.product?.name} - ${productVariant?.variant}',
                             subtitle:
@@ -164,12 +245,10 @@ class _MaterialReturnDetailsPageState extends State<MaterialReturnDetailsPage> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                 
-                            
                                         ProductDetail(
                                             title: "Returned Quantity",
                                             value:
-                                                '${materialReturnMaterial.quantityReturned} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure) }'),
+                                                '${materialReturnMaterial.quantityReturned} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}'),
                                         const SizedBox(
                                           height: 10,
                                         ),

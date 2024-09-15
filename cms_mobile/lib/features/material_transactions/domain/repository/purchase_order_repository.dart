@@ -15,6 +15,8 @@ abstract class PurchaseOrderRepository {
 
   Future<DataState<String>> deletePurchaseOrder({required String materialId});
 
+  Future<DataState<String>> generatePurchaseOrderPdf({required String id});
+
   Future<DataState<PurchaseOrderEntityListWithMeta>> getPurchaseOrders({
     FilterPurchaseOrderInput? filterPurchaseOrderInput,
     OrderByPurchaseOrderInput? orderBy,
