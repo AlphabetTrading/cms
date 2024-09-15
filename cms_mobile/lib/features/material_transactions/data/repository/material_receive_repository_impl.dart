@@ -14,18 +14,22 @@ class MaterialReceiveRepositoryImpl extends MaterialReceiveRepository {
   @override
   Future<DataState<String>> createMaterialReceive(
       {required CreateMaterialReceiveParamsEntity params}) {
-
     return dataSource.createMaterialReceive(
-      createMaterialReceiveParamsModel:CreateMaterialReceiveParamsModel.fromEntity(params)
-    );
+        createMaterialReceiveParamsModel:
+            CreateMaterialReceiveParamsModel.fromEntity(params));
   }
-    @override
-  Future<DataState<String>> deleteMaterialReceive({required String materialReceiveId}) {
-    return dataSource.deleteMaterialReceive(materialReceiveId:materialReceiveId);
+
+  @override
+  Future<DataState<String>> deleteMaterialReceive(
+      {required String materialReceiveId}) {
+    return dataSource.deleteMaterialReceive(
+        materialReceiveId: materialReceiveId);
   }
-    @override
-  Future<DataState<MaterialReceiveModel>> getMaterialReceiveDetails({required String params}) {
-    return dataSource.getMaterialReceiveDetails(params:params);
+
+  @override
+  Future<DataState<MaterialReceiveModel>> getMaterialReceiveDetails(
+      {required String params}) {
+    return dataSource.getMaterialReceiveDetails(params: params);
   }
 
   @override
@@ -39,10 +43,15 @@ class MaterialReceiveRepositoryImpl extends MaterialReceiveRepository {
       paginationInput: paginationInput,
     );
   }
-  
+
   @override
   Future<DataState<String>> editMaterialReceive({required String params}) {
     // TODO: implement editMaterialReceive
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DataState<String>> generateMaterialReceivePdf({required String id}) {
+    return dataSource.generateMaterialReceivePdf(id: id);
   }
 }

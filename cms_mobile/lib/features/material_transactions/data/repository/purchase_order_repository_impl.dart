@@ -38,6 +38,11 @@ class PurchaseOrderRepositoryImpl extends PurchaseOrderRepository {
   }
 
   @override
+  Future<DataState<String>> generatePurchaseOrderPdf({required String id}) {
+    return dataSource.generatePurchaseOrderPdf(id: id);
+  }
+
+  @override
   Future<DataState<PurchaseOrderEntityListWithMeta>> getPurchaseOrders(
       {FilterPurchaseOrderInput? filterPurchaseOrderInput,
       OrderByPurchaseOrderInput? orderBy,

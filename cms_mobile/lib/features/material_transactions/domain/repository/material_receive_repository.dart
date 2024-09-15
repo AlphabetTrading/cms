@@ -16,8 +16,10 @@ abstract class MaterialReceiveRepository {
   Future<DataState<MaterialReceiveEntity>> getMaterialReceiveDetails(
       {required String params});
 
-  Future<DataState<String>> editMaterialReceive(
-      {required String params});
+  Future<DataState<String>> editMaterialReceive({required String params});
 
-  Future<DataState<String>> deleteMaterialReceive({required String materialReceiveId});
+  Future<DataState<String>> deleteMaterialReceive(
+      {required String materialReceiveId});
+
+  Future<DataState<String>> generateMaterialReceivePdf({required String id});
 }

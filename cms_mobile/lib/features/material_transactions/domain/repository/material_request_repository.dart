@@ -17,4 +17,6 @@ abstract class MaterialRequestRepository {
       {required String params});
   Future<DataState<String>> deleteMaterialRequest(
       {required String materialRequestId});
+
+  Future<DataState<String>> generateMaterialRequestPdf({required String id});
 }

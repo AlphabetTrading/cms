@@ -36,9 +36,15 @@ class MaterialRequestRepositoryImpl extends MaterialRequestRepository {
     );
   }
 
-    @override
-  Future<DataState<String>> deleteMaterialRequest({required String materialRequestId}) {
-    return dataSource.deleteMaterialRequest(materialRequestId:materialRequestId);
+  @override
+  Future<DataState<String>> deleteMaterialRequest(
+      {required String materialRequestId}) {
+    return dataSource.deleteMaterialRequest(
+        materialRequestId: materialRequestId);
   }
-  
+
+  @override
+  Future<DataState<String>> generateMaterialRequestPdf({required String id}) {
+    return dataSource.generateMaterialRequestPdf(id: id);
+  }
 }

@@ -55,4 +55,9 @@ class MaterialIssueRepositoryImpl extends MaterialIssueRepository {
       {required String materialIssueId}) {
     return dataSource.deleteMaterialIssue(materialIssueId: materialIssueId);
   }
+
+  @override
+  Future<DataState<String>> generateMaterialIssuePdf({required String id}) {
+    return dataSource.generateMaterialIssuePdf(id: id);
+  }
 }

@@ -42,6 +42,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_datas.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/delete_material_issue.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/generate_material_issue_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issues.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/create_material_proforma.dart';
@@ -52,6 +53,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_material_proforma_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/create_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/delete_material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/generate_material_receive_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/create_material_request.dart';
@@ -60,6 +62,8 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_request_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/get_material_requests.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/delete_material_return.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_request/generate_material_request_pdf.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/generate_material_return_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/get_material_return.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_return/get_material_return_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/create_material_transfer.dart';
@@ -69,6 +73,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/create_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/delete_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/edit_purchase_order.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/generate_purchase_order_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/get_purchase_order_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/daily_site_datas_bloc.dart';
@@ -76,6 +81,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/dai
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
@@ -83,6 +89,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/delete/delete_cubit.dart';
@@ -90,12 +97,15 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/details/generate_pdf_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_transfer/material_transfers_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_order_local/purchase_order_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/purchase_orders/purchase_order_bloc.dart';
 import 'package:cms_mobile/features/products/domain/usecases/get_all_warehouse_products.dart';
 import 'package:cms_mobile/features/material_transactions/data/data_source/material_issues/material_issue_remote_data_source.dart';
@@ -497,6 +507,32 @@ Future<void> initializeDependencies() async {
       sl<MaterialIssueRepository>(),
     ),
   );
+  sl.registerLazySingleton<GenerateMaterialIssuePdfUseCase>(
+    () => GenerateMaterialIssuePdfUseCase(
+      sl<MaterialIssueRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<GenerateMaterialReceivePdfUseCase>(
+    () => GenerateMaterialReceivePdfUseCase(
+      sl<MaterialReceiveRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<GenerateMaterialRequestPdfUseCase>(
+    () => GenerateMaterialRequestPdfUseCase(
+      sl<MaterialRequestRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<GenerateMaterialReturnPdfUseCase>(
+    () => GenerateMaterialReturnPdfUseCase(
+      sl<MaterialReturnRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GeneratePurchaseOrderPdfUseCase>(
+    () => GeneratePurchaseOrderPdfUseCase(
+      sl<PurchaseOrderRepository>(),
+    ),
+  );
   sl.registerLazySingleton<DeleteMaterialRequestUseCase>(
     () => DeleteMaterialRequestUseCase(
       sl<MaterialRequestRepository>(),
@@ -790,6 +826,24 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialRequestLocalBloc>(
     () => MaterialRequestLocalBloc(),
   );
+  sl.registerFactory<MaterialIssueGeneratePdfCubit>(
+    () => MaterialIssueGeneratePdfCubit(sl<GenerateMaterialIssuePdfUseCase>()),
+  );
+  sl.registerFactory<MaterialReceiveGeneratePdfCubit>(
+    () => MaterialReceiveGeneratePdfCubit(
+        sl<GenerateMaterialReceivePdfUseCase>()),
+  );
+  sl.registerFactory<MaterialRequestGeneratePdfCubit>(
+    () => MaterialRequestGeneratePdfCubit(
+        sl<GenerateMaterialRequestPdfUseCase>()),
+  );
+  sl.registerFactory<PurchaseOrderGeneratePdfCubit>(
+    () => PurchaseOrderGeneratePdfCubit(sl<GeneratePurchaseOrderPdfUseCase>()),
+  );
+  sl.registerFactory<MaterialReturnGeneratePdfCubit>(
+    () =>
+        MaterialReturnGeneratePdfCubit(sl<GenerateMaterialReturnPdfUseCase>()),
+  );
 
   sl.registerFactory<DeleteMaterialIssueCubit>(
     () => DeleteMaterialIssueCubit(sl<DeleteMaterialIssueUseCase>()),
@@ -845,7 +899,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<DeleteMaterialReceiveCubit>(
     () => DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
-
 
   // material return
   sl.registerFactory<MaterialReturnBloc>(

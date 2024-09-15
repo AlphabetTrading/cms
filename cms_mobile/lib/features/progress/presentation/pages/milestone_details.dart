@@ -24,7 +24,7 @@ class _ChartData {
 }
 
 class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
-  late List<_ChartData> data;
+  // late List<_ChartData> data;
   // late TooltipBehavior _tooltip;
 
   @override
@@ -149,20 +149,20 @@ class _MilestoneDetailsPageState extends State<MilestoneDetailsPage> {
                       (element) => element.status == CompletionStatus.COMPLETED)
                   .length ??
               0;
-          data = [
-            _ChartData(
-              'Todo',
-              calculatePercentage(todo, totalTasks),
-            ),
-            _ChartData(
-              'Ongoing',
-              calculatePercentage(ongoing, totalTasks),
-            ),
-            _ChartData(
-              'Completed',
-              calculatePercentage(completed, totalTasks),
-            ),
-          ];
+          // data = [
+          //   _ChartData(
+          //     'Todo',
+          //     calculatePercentage(todo, totalTasks),
+          //   ),
+          //   _ChartData(
+          //     'Ongoing',
+          //     calculatePercentage(ongoing, totalTasks),
+          //   ),
+          //   _ChartData(
+          //     'Completed',
+          //     calculatePercentage(completed, totalTasks),
+          //   ),
+          // ];
 
           return Padding(
             padding:

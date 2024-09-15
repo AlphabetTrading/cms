@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/utils/use_type.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
@@ -9,6 +14,9 @@ import 'package:cms_mobile/injection_container.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MaterialIssueDetailsPage extends StatefulWidget {
   final String materialIssueId;
@@ -16,6 +24,23 @@ class MaterialIssueDetailsPage extends StatefulWidget {
   @override
   State<MaterialIssueDetailsPage> createState() =>
       _MaterialIssueDetailsPageState();
+}
+
+Future<void> saveAndOpenPdf(String base64String) async {
+  try {
+    Uint8List bytes = base64Decode(base64String);
+
+    final directory = await getTemporaryDirectory();
+    final path =
+        '${directory.path}/Material Issue.pdf';
+
+    final file = File(path);
+    await file.writeAsBytes(bytes);
+
+    await OpenFile.open(path);
+  } catch (e) {
+    print('Error: $e');
+  }
 }
 
 class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
@@ -28,13 +53,69 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Material Issue Details")),
-      body: BlocProvider<MaterialIssueDetailsCubit>(
-        create: (context) => sl<MaterialIssueDetailsCubit>()
-          ..onGetMaterialIssueDetails(materialIssueId: widget.materialIssueId),
-        child:
-            BlocBuilder<MaterialIssueDetailsCubit, MaterialIssueDetailsState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<MaterialIssueDetailsCubit>()
+            ..onGetMaterialIssueDetails(
+                materialIssueId: widget.materialIssueId),
+        ),
+        BlocProvider(create: (context) => sl<MaterialIssueGeneratePdfCubit>()),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Material Issue Details"),
+          actions: [
+            BlocConsumer<MaterialIssueGeneratePdfCubit,
+                MaterialIssueGeneratePdfState>(
+              listener: (context, state) {
+                if (state is MaterialIssueGeneratePdfSuccess) {
+                  // Show success message and handle PDF opening
+                  Fluttertoast.showToast(
+                    msg: "PDF download started",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                  );
+                  // Open or save PDF as required
+                  saveAndOpenPdf(state.materialIssue);
+                } else if (state is MaterialIssueGeneratePdfFailed) {
+                  // Show error message
+                  Fluttertoast.showToast(
+                    msg: "Failed to generate PDF: ${state.error}",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                  );
+                }
+              },
+              builder: (context, state) {
+                // Popup menu with the option to generate PDF
+                return PopupMenuButton(
+                  onSelected: (value) {
+                    if (value == 'generate_pdf') {
+                      // Trigger PDF generation
+                      context
+                          .read<MaterialIssueGeneratePdfCubit>()
+                          .onGetMaterialIssueGeneratePdf(
+                              materialIssueId: widget.materialIssueId);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'generate_pdf',
+                      child: Text('Generate PDF'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+        
+        body: BlocBuilder<MaterialIssueDetailsCubit, MaterialIssueDetailsState>(
           builder: (context, state) {
             if (state is MaterialIssueDetailsLoading) {
               return const Center(child: CircularProgressIndicator());

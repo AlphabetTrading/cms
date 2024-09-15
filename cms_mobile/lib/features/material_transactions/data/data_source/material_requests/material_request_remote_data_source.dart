@@ -23,6 +23,7 @@ abstract class MaterialRequestDataSource {
       {required String params});
   Future<DataState<String>> deleteMaterialRequest(
       {required String materialRequestId});
+  Future<DataState<String>> generateMaterialRequestPdf({required String id});
 }
 
 class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
@@ -105,7 +106,7 @@ class MaterialRequestDataSourceImpl extends MaterialRequestDataSource {
       }
         ''';
 
-    final filterInput = filterMaterialRequestInput?.toJson()??{};
+    final filterInput = filterMaterialRequestInput?.toJson() ?? {};
     debugPrint('filterInput: $filterInput');
 
     final selectedProjectId =
@@ -290,6 +291,36 @@ query GetMaterialRequestById($getMaterialRequestByIdId: String!) {
       // In case of any other errors, return a DataFailed state
       return DataFailed(ServerFailure(errorMessage: e.toString()));
     }
+  }
+
+  @override
+  Future<DataState<String>> generateMaterialRequestPdf({required String id}) {
+    String generateMaterialRequestPdfQuery = r'''
+      query Query($generateMaterialRequestPdfId: String!) {
+        generateMaterialRequestPdf(id: $generateMaterialRequestPdfId)
+      }
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(generateMaterialRequestPdfQuery),
+      variables: {"generateMaterialRequestPdfId": id},
+      fetchPolicy: FetchPolicy.noCache,
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final materialRequestReport =
+          response.data!['generateMaterialRequestPdf'];
+
+      return DataSuccess(materialRequestReport);
+    });
   }
 }
 
