@@ -9,6 +9,7 @@ import { PurchaseOrderModule } from 'src/purchase-order/purchase-order.module';
 import { MaterialTransferModule } from 'src/material-transfer/material-transfer.module';
 import { ProformaModule } from 'src/proforma/proforma.module';
 import { DailySiteDataModule } from 'src/daily-site-data/daily-site-data.module';
+import { DailyStockBalanceModule } from 'src/daily-stock-balance/daily-stock-balance.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DailySiteDataModule } from 'src/daily-site-data/daily-site-data.module'
     PurchaseOrderModule,
     ProformaModule,
     DailySiteDataModule,
+    DailyStockBalanceModule
   ],
   providers: [DocumentTransactionResolver, DocumentTransactionService],
   exports: [DocumentTransactionService],
