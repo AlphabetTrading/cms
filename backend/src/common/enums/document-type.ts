@@ -6,5 +6,6 @@ export enum DocumentType {
   MATERIAL_TRANSFER = 'material_transfer',
   PURCHASE_ORDER = 'purchase_order',
   PROFORMA = 'proforma',
-  DAILY_SITE_DATA = 'daily_site_data'
+  DAILY_SITE_DATA = 'daily_site_data',
+  DAILY_STOCK_BALANCE = 'daily_stock_balance',
 }

@@ -6,6 +6,8 @@ import { DailyStockBalance } from './model/daily-stock-balance.model';
 import { DailyStockBalanceItem } from './model/daily-stock-balance-item.model';
 import * as pdf from 'html-pdf';
 import { format } from 'date-fns';
+import { DocumentTransaction } from 'src/document-transaction/model/document-transaction-model';
+import { DocumentType } from 'src/common/enums/document-type';
 
 @Injectable()
 export class DailyStockBalanceService {
@@ -150,6 +152,18 @@ export class DailyStockBalanceService {
       ...dailyStockBalance,
       changes: JSON.parse(dailyStockBalance.changes as any),
     };
+  }
+
+  async getDailyStockBalanceCountByStatus(): Promise<any> {
+    const counts = { COMPLETED: 0, DECLINED: 0, PENDING: 0 };
+
+    const documentTransaction = new DocumentTransaction();
+    documentTransaction.approvedCount = counts.COMPLETED;
+    documentTransaction.declinedCount = counts.DECLINED;
+    documentTransaction.pendingCount = counts.PENDING;
+    documentTransaction.type = DocumentType.DAILY_STOCK_BALANCE;
+
+    return documentTransaction;
   }
 
   async count(where?: Prisma.DailyStockBalanceWhereInput): Promise<number> {

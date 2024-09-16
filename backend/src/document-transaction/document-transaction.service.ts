@@ -10,6 +10,7 @@ import { DocumentTransaction } from './model/document-transaction-model';
 import { UserRole } from '@prisma/client';
 import { DailySiteDataService } from 'src/daily-site-data/daily-site-data.service';
 import { ProformaService } from 'src/proforma/proforma.service';
+import { DailyStockBalanceService } from 'src/daily-stock-balance/daily-stock-balance.service';
 
 @Injectable()
 export class DocumentTransactionService {
@@ -23,6 +24,7 @@ export class DocumentTransactionService {
     private readonly purchaseOrderService: PurchaseOrderService,
     private readonly proformaService: ProformaService,
     private readonly dailySiteDataService: DailySiteDataService,
+    private readonly dailyStockBalanceService: DailyStockBalanceService,
   ) {}
   async getAllDocumentsStatus(
     userId: string,
@@ -189,35 +191,35 @@ export class DocumentTransactionService {
         },
       });
 
-    const materialTransfers =
-      await this.materialTransferService.getMaterialTransfersCountByStatus({
-        where: {
-          AND: [
-            {
-              projectId: projectId,
-            },
-            {
-              OR: [
-                {
-                  approvedById: userId,
-                },
-                {
-                  preparedById: userId,
-                },
-                ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
-                  userId,
-                )
-                  ? [
-                      {
-                        projectId: projectId,
-                      },
-                    ]
-                  : []),
-              ],
-            },
-          ],
-        },
-      });
+    // const materialTransfers =
+    //   await this.materialTransferService.getMaterialTransfersCountByStatus({
+    //     where: {
+    //       AND: [
+    //         {
+    //           projectId: projectId,
+    //         },
+    //         {
+    //           OR: [
+    //             {
+    //               approvedById: userId,
+    //             },
+    //             {
+    //               preparedById: userId,
+    //             },
+    //             ...(materialReceiveRequestTransferPurchaseApproversIds.includes(
+    //               userId,
+    //             )
+    //               ? [
+    //                   {
+    //                     projectId: projectId,
+    //                   },
+    //                 ]
+    //               : []),
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //   });
 
     const purchaseOrders =
       await this.purchaseOrderService.getPurchaseOrderCountByStatus({
@@ -310,15 +312,19 @@ export class DocumentTransactionService {
       },
     });
 
+    const dailyStockBalances =
+      await this.dailyStockBalanceService.getDailyStockBalanceCountByStatus();
+
     return [
       materialIssues,
       materialReceives,
       materialRequests,
       materialReturns,
-      materialTransfers,
+      // materialTransfers,
       purchaseOrders,
       proformas,
       dailySiteDatas,
+      dailyStockBalances,
     ];
   }
 }
