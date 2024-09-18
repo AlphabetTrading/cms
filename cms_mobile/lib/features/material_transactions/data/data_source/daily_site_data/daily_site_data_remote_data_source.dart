@@ -23,6 +23,7 @@ abstract class DailySiteDataDataSource {
       {required EditDailySiteDataParamsModel editDailySiteDataParamsModel});
   Future<DataState<String>> deleteDailySiteData(
       {required String dailySiteDataId});
+  Future<DataState<String>> generateDailySiteDataPdf({required String id});
 }
 
 class DailySiteDataDataSourceImpl extends DailySiteDataDataSource {
@@ -192,6 +193,35 @@ class DailySiteDataDataSourceImpl extends DailySiteDataDataSource {
       print(response.data!['getDailySiteDataById']);
 
       return DataSuccess(dailySiteData);
+    });
+  }
+
+  @override
+  Future<DataState<String>> generateDailySiteDataPdf({required String id}) {
+    String generateDailySiteDataPdfQuery = r'''
+      query Query($generateDailySiteDataPdfId: String!) {
+        generateDailySiteDataPdf(id: $generateDailySiteDataPdfId)
+      }
+    ''';
+
+    return _client
+        .query(QueryOptions(
+      document: gql(generateDailySiteDataPdfQuery),
+      variables: {"generateDailySiteDataPdfId": id},
+      fetchPolicy: FetchPolicy.noCache,
+    ))
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
+
+      final dailySiteDataReport = response.data!['generateDailySiteDataPdf'];
+
+      return DataSuccess(dailySiteDataReport);
     });
   }
 

@@ -20,7 +20,7 @@ class DailySiteDataInputList extends StatelessWidget {
       itemCount: dailySiteDatas.length,
       itemBuilder: (context, index) {
         final dailySiteData = dailySiteDatas[index];
-        final productVariant = dailySiteData.material!.productVariant;
+        final productVariant = dailySiteData.tasks!.productVariant;
         return MaterialTransactionMaterialItem(
           title: '${productVariant.product!.name} - ${productVariant.variant}',
           subtitle:

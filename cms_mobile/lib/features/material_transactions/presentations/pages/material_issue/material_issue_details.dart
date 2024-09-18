@@ -42,8 +42,7 @@ Future<void> saveAndOpenPdf(String base64String) async {
     Uint8List bytes = base64Decode(base64String);
 
     final directory = await getTemporaryDirectory();
-    final path =
-        '${directory.path}/Material Issue.pdf';
+    final path = '${directory.path}/Material Issue.pdf';
 
     final file = File(path);
     await file.writeAsBytes(bytes);
@@ -125,7 +124,6 @@ class _MaterialIssueDetailsPageState extends State<MaterialIssueDetailsPage> {
             ),
           ],
         ),
-        
         body: BlocBuilder<MaterialIssueDetailsCubit, MaterialIssueDetailsState>(
           builder: (context, state) {
             if (state is MaterialIssueDetailsLoading) {

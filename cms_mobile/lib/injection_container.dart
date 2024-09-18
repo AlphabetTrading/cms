@@ -38,6 +38,7 @@ import 'package:cms_mobile/features/material_transactions/domain/repository/purc
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/create_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/delete_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/edit_daily_site_data.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/generate_daily_site_data_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_data_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/daily_site_data/get_daily_site_datas.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/approve_material_issue.dart';
@@ -81,6 +82,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/purcha
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/daily_site_datas_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data/details/generate_pdf_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/daily_site_data_local/daily_site_data_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issue_local/material_issue_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_issues/details/generate_pdf_cubit.dart';
@@ -544,6 +546,12 @@ Future<void> initializeDependencies() async {
       sl<PurchaseOrderRepository>(),
     ),
   );
+  sl.registerLazySingleton<GenerateDailySiteDataPdfUseCase>(
+    () => GenerateDailySiteDataPdfUseCase(
+      sl<DailySiteDataRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<ApproveMaterialIssueUseCase>(
     () => ApproveMaterialIssueUseCase(
       sl<MaterialIssueRepository>(),
@@ -861,6 +869,9 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<MaterialReturnGeneratePdfCubit>(
     () =>
         MaterialReturnGeneratePdfCubit(sl<GenerateMaterialReturnPdfUseCase>()),
+  );
+  sl.registerFactory<DailySiteDataGeneratePdfCubit>(
+    () => DailySiteDataGeneratePdfCubit(sl<GenerateDailySiteDataPdfUseCase>()),
   );
 
   sl.registerFactory<DeleteMaterialIssueCubit>(

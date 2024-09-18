@@ -65,6 +65,11 @@ class DailySiteDataRepositoryImpl extends DailySiteDataRepository {
       mine: mine,
     );
   }
+
+  @override
+  Future<DataState<String>> generateDailySiteDataPdf({required String id}) {
+    return dataSource.generateDailySiteDataPdf(id: id);
+  }
 }
 
  // @override

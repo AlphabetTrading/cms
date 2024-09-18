@@ -7,6 +7,7 @@ import 'package:cms_mobile/features/home/presentation/pages/dashboard/detailed_s
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/create_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/daily_site_data_details.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/daily_site_data_task_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/create_material_issue.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/material_issue/material_issue_edit.dart';
@@ -365,6 +366,17 @@ class AppRouter {
                     return DailySiteDataDetailsPage(
                         dailySiteDataId:
                             state.pathParameters['dailySiteDataId']!);
+                  },
+                ),
+                GoRoute(
+                  name: RouteNames.dailySiteDataTaskDetails,
+                  path: RoutePaths.dailySiteDataTaskDetails,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return DailySiteDataTaskDetailsPage(
+                        dailySiteDataId:
+                            state.pathParameters['dailySiteDataId']!,
+                        dailySiteDataTaskId:
+                            state.pathParameters['dailySiteDataTaskId']!);
                   },
                 ),
               ],

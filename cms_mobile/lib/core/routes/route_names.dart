@@ -54,12 +54,13 @@ class RoutePaths {
   static const String dailySiteData = 'daily_site_data';
   static const String dailySiteDataCreate = 'create';
   static const String dailySiteDataDetails = ':dailySiteDataId';
+  static const String dailySiteDataTaskDetails =
+      ':dailySiteDataId/:dailySiteDataTaskId';
   static const String dailySiteDataEdit = 'edit/:dailySiteDataId';
 
   //milestone
   static const String milestoneDetails = 'milestones/:milestoneId';
   static const String taskDetails = 'task';
-
 }
 
 class RouteNames {
@@ -119,6 +120,7 @@ class RouteNames {
   static const String dailySiteData = 'daily_site_data';
   static const String dailySiteDataCreate = 'daily_site_data_create';
   static const String dailySiteDataDetails = 'daily_site_data_details';
+  static const String dailySiteDataTaskDetails = 'daily_site_data_task_details';
   static const String dailySiteDataEdit = 'daily_site_data_edit';
 
   //progress

@@ -5,7 +5,6 @@ import 'package:cms_mobile/features/material_transactions/data/models/daily_site
 import 'package:cms_mobile/features/material_transactions/domain/entities/daily_site_data.dart';
 
 abstract class DailySiteDataRepository {
-  
   Future<DataState<DailySiteDataListWithMeta>> getDailySiteDatas({
     FilterDailySiteDataInput? filterDailySiteDataInput,
     OrderByDailySiteDataInput? orderBy,
@@ -24,4 +23,6 @@ abstract class DailySiteDataRepository {
 
   Future<DataState<String>> deleteDailySiteData(
       {required String dailySiteDataId});
+
+  Future<DataState<String>> generateDailySiteDataPdf({required String id});
 }
