@@ -210,6 +210,34 @@ class MaterialDetailEntity extends Equatable {
     this.updatedAt,
   });
 
+  // fromJson
+  factory MaterialDetailEntity.fromJson(Map<String, dynamic> json) {
+    return MaterialDetailEntity(
+      id: json['id'],
+      dailySiteDataTaskId: json['dailySiteDataTaskId'],
+      productVariantId: json['productVariantId'],
+      productVariant: json['productVariant'],
+      quantityUsed: json['quantityUsed'],
+      quantityWasted: json['quantityWasted'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
+  }
+
+  // toJson
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'dailySiteDataTaskId': dailySiteDataTaskId,
+      'productVariantId': productVariantId,
+      'productVariant': productVariant,
+      'quantityUsed': quantityUsed,
+      'quantityWasted': quantityWasted,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
+
   @override
   List<Object?> get props => [
         id,
@@ -344,4 +372,3 @@ class EditDailySiteDataParamsEntity<T extends SiteTaskEntity>
   List<Object?> get props =>
       [updateDailySiteDataId, approved, approvedById, tasks];
 }
-

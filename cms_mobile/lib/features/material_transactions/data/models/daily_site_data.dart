@@ -305,6 +305,7 @@
 
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 
@@ -332,9 +333,11 @@ class DailySiteDataModel extends DailySiteDataEntity {
       projectId: json['projectId'],
       status: json['status'],
       date: DateTime.parse(json['date']),
-      tasks: json['tasks']
-          .map<SiteTaskEntity>((task) => SiteTaskModel.fromJson(task))
-          .toList(),
+      tasks: json['tasks'] != null
+          ? json['tasks']
+              .map<SiteTaskEntity>((task) => SiteTaskModel.fromJson(task))
+              .toList()
+          : null,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       approvedBy: json['approvedBy'] != null
@@ -400,6 +403,7 @@ class SiteTaskModel extends SiteTaskEntity {
     super.executedQuantity,
     super.unit,
     super.laborDetails,
+    super.materialDetails,
   });
 
   factory SiteTaskModel.fromJson(Map<String, dynamic> json) {
@@ -407,14 +411,21 @@ class SiteTaskModel extends SiteTaskEntity {
       id: json['id'],
       dailySiteDataId: json['dailySiteDataId'],
       description: json['description'],
-      executedQuantity: json['executedQuantity'],
+      executedQuantity: json['executedQuantity'] != null
+          ? (json['executedQuantity'] as num).toDouble()
+          : 0,
       unit: json['unit'],
       laborDetails: json['laborDetails']
-          .map<LaborDetailEntity>((labor) => LaborDetailModel.fromJson(labor))
+          .map<LaborDetailModel>((labor) => LaborDetailModel.fromJson(labor))
+          .toList(),
+      materialDetails: json['materialDetails']
+          .map<MaterialDetailModel>(
+              (material) => MaterialDetailModel.fromJson(material))
           .toList(),
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -423,6 +434,7 @@ class SiteTaskModel extends SiteTaskEntity {
       'executedQuantity': executedQuantity,
       'unit': unit,
       'laborDetails': laborDetails?.map((e) => e.toJson()).toList(),
+      'materialDetails': materialDetails?.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -434,7 +446,8 @@ class SiteTaskModel extends SiteTaskEntity {
       description,
       executedQuantity,
       unit,
-      laborDetails
+      laborDetails,
+      materialDetails
     ];
   }
 }
@@ -456,17 +469,22 @@ class LaborDetailModel extends LaborDetailEntity {
     print("LaborDetailModel.fromJson: $json");
     return LaborDetailModel(
       id: json['id'],
-      quantity: json['quantity'],
+      quantity:
+          json['quantity'] != null ? (json['quantity'] as num).toDouble() : 0,
       trade: json['trade'],
-      morning: json['morning'],
-      afternoon: json['afternoon'],
-      overtime: json['overtime'],
+      morning:
+          json['morning'] != null ? (json['morning'] as num).toDouble() : 0,
+      afternoon:
+          json['afternoon'] != null ? (json['afternoon'] as num).toDouble() : 0,
+      overtime:
+          json['overtime'] != null ? (json['overtime'] as num).toDouble() : 0,
       dailySiteDataTaskId: json['dailySiteDataTaskId'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -515,10 +533,14 @@ class MaterialDetailModel extends MaterialDetailEntity {
       dailySiteDataTaskId: json['dailySiteDataTaskId'],
       productVariantId: json['productVariantId'],
       productVariant: json['productVariant'] != null
-          ? ProductVariantEntity.fromJson(json['productVariant'])
+          ? ProductVariantModel.fromJson(json['productVariant'])
           : null,
-      quantityUsed: json['quantityUsed'],
-      quantityWasted: json['quantityWasted'],
+      quantityUsed: json['quantityUsed'] != null
+          ? (json['quantityUsed'] as num).toDouble()
+          : 0,
+      quantityWasted: json['quantityWasted'] != null
+          ? (json['quantityWasted'] as num).toDouble()
+          : 0,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
