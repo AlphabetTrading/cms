@@ -1,3 +1,5 @@
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/approve_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/edit_material_receiving.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
@@ -37,23 +39,24 @@ class EditMaterialReceiveEvent {
 
 //cubit
 class EditMaterialReceiveCubit extends Cubit<EditMaterialReceiveState> {
-  final EditMaterialReceiveUseCase _editMaterialReceiveUseCase;
+  final EditMaterialReceiveUseCase editMaterialReceiveUseCase;
+  final ApproveMaterialReceiveUseCase approveMaterialReceiveUseCase;
 
-  EditMaterialReceiveCubit(this._editMaterialReceiveUseCase)
+
+  EditMaterialReceiveCubit({required this.editMaterialReceiveUseCase, required this.approveMaterialReceiveUseCase})
       : super(EditMaterialReceiveInitial());
 
-  void onEditMaterialReceive(
-      {required String
-          editMaterialReceiveParamsEntity}) async {
+  void onApproveMaterialReceive(
+      {required ApproveMaterialReceiveParamsEntity params}) async {
     emit(EditMaterialReceiveLoading());
-    final dataState = await _editMaterialReceiveUseCase(
-        params: editMaterialReceiveParamsEntity);
+    final dataState = await approveMaterialReceiveUseCase(
+        params: params);
     if (dataState is DataSuccess) {
       emit(EditMaterialReceiveSuccess());
     } else if (dataState is DataFailed) {
       emit(EditMaterialReceiveFailed(
           error: dataState.error?.errorMessage ??
-              'Failed to edit material issue '));
+              'Failed to edit material receive'));
     }
   }
 }

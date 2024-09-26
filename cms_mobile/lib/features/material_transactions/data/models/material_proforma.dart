@@ -119,10 +119,10 @@ class MaterialProformaItemModel extends MaterialProformaItemEntity {
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      photos: List<String>.from(json['photos']),
-      quantity: (json['quantity'] as num).toDouble(),
-      unitPrice: (json['unitPrice'] as num).toDouble(),
-      totalPrice: (json['totalPrice'] as num).toDouble(),
+      photos:json['photos']!=null? List<String>.from(json['photos']):[],
+      quantity:json['quantity'] != null? (json['quantity'] as num).toDouble():null,
+      unitPrice: json['unitPrice'] != null?(json['unitPrice'] as num).toDouble():null,
+      totalPrice: json['totalPrice'] != null?(json['totalPrice'] as num).toDouble():null,
       remark: json['remark'],
       vendor: json['vendor'],
     );
@@ -256,6 +256,27 @@ class EditMaterialProformaParamsModel
             .toList());
   }
 }
+
+class ApproveMaterialProformaParamsModel
+    extends ApproveMaterialProformaParamsEntity {
+  const ApproveMaterialProformaParamsModel({required super.proformaId, required super.selectedProformaItemId});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'proformaId': proformaId,
+      'selectedProformaItemId': selectedProformaItemId,
+    };
+  }
+
+  factory ApproveMaterialProformaParamsModel.fromEntity(
+      ApproveMaterialProformaParamsEntity entity) {
+    return ApproveMaterialProformaParamsModel(
+      proformaId: entity.proformaId,
+      selectedProformaItemId: entity.selectedProformaItemId,
+        );
+  }
+}
+
 
 enum MaterialProformaStatus { completed, pending, declined }
 

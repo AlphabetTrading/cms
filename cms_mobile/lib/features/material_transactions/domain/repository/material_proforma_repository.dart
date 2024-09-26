@@ -26,4 +26,7 @@ abstract class MaterialProformaRepository {
 
   Future<DataState<List<MaterialProformaEntity>>> getAllMaterialProformas(
       FilterMaterialProformaInput? filterMaterialProformaInput);
+
+  Future<DataState<String>> approveMaterialProforma(
+      {required ApproveMaterialProformaParamsEntity params});
 }

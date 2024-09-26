@@ -1,10 +1,14 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/routes/route_names.dart';
 import 'package:cms_mobile/core/widgets/custom-dropdown.dart';
 import 'package:cms_mobile/core/widgets/status_message.dart';
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/data/data_source/material_proformas/material_proforma_remote_data_source.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_request.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/create/create_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/material_requests_state.dart';
@@ -66,8 +70,17 @@ class _CreateMaterialProformaPageState
               CreateMaterialProformaState>(
             listener: (createProformaContext, createProformaState) {
               if (createProformaState is CreateMaterialProformaSuccess) {
+                context.read<MaterialProformaBloc>().add(
+                      GetMaterialProformas(
+                        filterMaterialProformaInput:
+                            FilterMaterialProformaInput(),
+                        orderBy:
+                            OrderByMaterialProformaInput(createdAt: "desc"),
+                        paginationInput: PaginationInput(skip: 0, take: 20),
+                      ),
+                    );
+
                 context.goNamed(RouteNames.materialProforma);
-          
                 showStatusMessage(Status.SUCCESS, "Proforma Created");
               } else if (createProformaState is CreateMaterialProformaFailed) {
                 showStatusMessage(Status.FAILED, createProformaState.error);
@@ -214,12 +227,12 @@ class _CreateMaterialProformaPageState
         ),
         const SizedBox(height: 10),
         ElevatedButton(
-          onPressed: (materialProformaMaterials.isEmpty || state is CreateMaterialProformaLoading)
+          onPressed: (materialProformaMaterials.isEmpty ||
+                  state is CreateMaterialProformaLoading)
               ? null
               : () {
                   proformaMainFrom.onSubmit();
                   if (proformaMainFrom.state.isValid) {
-                        
                     context
                         .read<CreateMaterialProformaCubit>()
                         .onCreateMaterialProforma(

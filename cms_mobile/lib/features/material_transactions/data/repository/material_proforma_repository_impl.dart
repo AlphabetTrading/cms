@@ -63,4 +63,9 @@ class MaterialProformaRepositoryImpl extends MaterialProformaRepository {
     return dataSource.fetchAllMaterialProformas(
         filterMaterialProformaInput: filterMaterialProformaInput);
   }
+
+  @override
+  Future<DataState<String>> approveMaterialProforma({required ApproveMaterialProformaParamsEntity params}) {
+    return dataSource.approveMaterialProforma(params:ApproveMaterialProformaParamsModel.fromEntity(params));
+  }
 }

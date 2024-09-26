@@ -2,8 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/widgets/status_message.dart';
+import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/approval_status.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/generate_pdf_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/edit/edit_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_transaction_material_item.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/transaction_info_item.dart';
 import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
@@ -13,6 +21,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -55,267 +64,391 @@ class _MaterialReceiveDetailsPageState
         ),
         BlocProvider(
             create: (context) => sl<MaterialReceiveGeneratePdfCubit>()),
+        BlocProvider(create: (context) => sl<EditMaterialReceiveCubit>())
       ],
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Material Receive Details"),
-          actions: [
-            BlocConsumer<MaterialReceiveGeneratePdfCubit,
-                MaterialReceiveGeneratePdfState>(
-              listener: (context, state) {
-                if (state is MaterialReceiveGeneratePdfSuccess) {
-                  // Show success message and handle PDF opening
-                  Fluttertoast.showToast(
-                    msg: "PDF download started",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                  );
-                  // Open or save PDF as required
-                  saveAndOpenPdf(state.materialReceive);
-                } else if (state is MaterialReceiveGeneratePdfFailed) {
-                  // Show error message
-                  Fluttertoast.showToast(
-                    msg: "Failed to generate PDF: ${state.error}",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                  );
-                }
-              },
+      child: BlocConsumer<EditMaterialReceiveCubit, EditMaterialReceiveState>(
+        listener: (context, editState) {
+          if (editState is EditMaterialReceiveSuccess) {
+            // Show success message
+            showStatusMessage(
+                Status.SUCCESS, "Material Receive updated successfully");
+            // Refresh the page
+            context.read<MaterialReceiveBloc>().add(GetMaterialReceives(
+                  filterMaterialReceiveInput: FilterMaterialReceiveInput(),
+                  orderBy: OrderByMaterialReceiveInput(createdAt: "desc"),
+                  paginationInput: PaginationInput(skip: 0, take: 20),
+                ));
+            context.pop();
+          } else if (editState is EditMaterialReceiveFailed) {
+            // Show error message
+            showStatusMessage(Status.FAILED, editState.error);
+          }
+        },
+        builder: (context, editState) {
+          return Scaffold(
+            bottomSheet: BlocBuilder<MaterialReceiveDetailsCubit,
+                MaterialReceiveDetailsState>(
               builder: (context, state) {
-                // Popup menu with the option to generate PDF
-                return PopupMenuButton(
-                  onSelected: (value) {
-                    if (value == 'generate_pdf') {
-                      // Trigger PDF generation
-                      context
-                          .read<MaterialReceiveGeneratePdfCubit>()
-                          .onGetMaterialReceiveGeneratePdf(
-                              materialReceiveId: widget.materialReceiveId);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'generate_pdf',
-                      child: Text('Generate PDF'),
-                    ),
-                  ],
-                );
+                if (state is MaterialReceiveDetailsSuccess &&
+                    state.materialReceive?.status ==
+                        ApprovalStatus.PENDING.name) {
+                  return _buildApproveDeclineSection(
+                      context, widget.materialReceiveId, editState);
+                }
+                return const SizedBox();
               },
             ),
-          ],
-        ),
-        body: BlocBuilder<MaterialReceiveDetailsCubit,
-            MaterialReceiveDetailsState>(
-          builder: (context, state) {
-            if (state is MaterialReceiveDetailsLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is MaterialReceiveDetailsFailed) {
-              return Center(child: Text(state.error));
-            }
-            if (state is MaterialReceiveDetailsSuccess) {
-              final materialReceive = state.materialReceive;
-              final project = materialReceive?.project;
-              final preparedBy = materialReceive?.preparedBy;
-              final approvedBy = materialReceive?.approvedBy;
-              final materialReceiveMaterials = materialReceive?.items ?? [];
+            appBar: AppBar(
+              title: const Text("Material Receive Details"),
+              actions: [
+                BlocConsumer<MaterialReceiveGeneratePdfCubit,
+                    MaterialReceiveGeneratePdfState>(
+                  listener: (context, state) {
+                    if (state is MaterialReceiveGeneratePdfSuccess) {
+                      // Show success message and handle PDF opening
+                      Fluttertoast.showToast(
+                        msg: "PDF download started",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                      );
+                      // Open or save PDF as required
+                      saveAndOpenPdf(state.materialReceive);
+                    } else if (state is MaterialReceiveGeneratePdfFailed) {
+                      // Show error message
+                      Fluttertoast.showToast(
+                        msg: "Failed to generate PDF: ${state.error}",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    // Popup menu with the option to generate PDF
+                    return PopupMenuButton(
+                      onSelected: (value) {
+                        if (value == 'generate_pdf') {
+                          // Trigger PDF generation
+                          context
+                              .read<MaterialReceiveGeneratePdfCubit>()
+                              .onGetMaterialReceiveGeneratePdf(
+                                  materialReceiveId: widget.materialReceiveId);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'generate_pdf',
+                          child: Text('Generate PDF'),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+            body: BlocBuilder<MaterialReceiveDetailsCubit,
+                MaterialReceiveDetailsState>(
+              builder: (context, state) {
+                if (state is MaterialReceiveDetailsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is MaterialReceiveDetailsFailed) {
+                  return Center(child: Text(state.error));
+                }
+                if (state is MaterialReceiveDetailsSuccess) {
+                  final materialReceive = state.materialReceive;
+                  final project = materialReceive?.project;
+                  final preparedBy = materialReceive?.preparedBy;
+                  final approvedBy = materialReceive?.approvedBy;
+                  final materialReceiveMaterials = materialReceive?.items ?? [];
 
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       children: [
-                        Text(
-                          "Material Receiving Info",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Material Receiving Info",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                            Expanded(
+                              child: Divider(),
+                            )
+                          ],
                         ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 32),
+                          decoration: ShapeDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TransactionInfoItem(
+                                  title: 'Project',
+                                  value: project?.name ?? 'N/A'),
+                              SizedBox(height: 12),
+                              TransactionInfoItem(
+                                  title: 'Material Receiving Number',
+                                  value:
+                                      materialReceive?.serialNumber ?? 'N/A'),
+                              SizedBox(height: 12),
+                              TransactionInfoItem(
+                                  title: 'Date',
+                                  value: materialReceive?.createdAt != null
+                                      ? DateFormat('MMMM dd, yyyy HH:mm')
+                                          .format(materialReceive!.createdAt!)
+                                      : 'N/A'),
+                              SizedBox(height: 12),
+                              TransactionInfoItem(
+                                  title: 'Status',
+                                  value: materialReceive?.status ?? 'N/A'),
+                              SizedBox(height: 12),
+                              TransactionInfoItem(
+                                  title: 'Approved by',
+                                  value: approvedBy?.fullName ?? 'N/A'),
+                              SizedBox(height: 12),
+                              TransactionInfoItem(
+                                  title: 'Prepared by',
+                                  value: preparedBy?.fullName ?? 'N/A'),
+                              SizedBox(height: 12),
+                              TransactionInfoItem(
+                                  title: 'Receiving Warehouse',
+                                  value: materialReceive?.warehouse?.name ??
+                                      'N/A'),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Materials List",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                            const Expanded(
+                              child: Divider(),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 24),
                         Expanded(
-                          child: Divider(),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 32),
-                      decoration: ShapeDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TransactionInfoItem(
-                              title: 'Project', value: project?.name ?? 'N/A'),
-                          SizedBox(height: 12),
-                          TransactionInfoItem(
-                              title: 'Material Receiving Number',
-                              value: materialReceive?.serialNumber ?? 'N/A'),
-                          SizedBox(height: 12),
-                          TransactionInfoItem(
-                              title: 'Date',
-                              value: materialReceive?.createdAt != null
-                                  ? DateFormat('MMMM dd, yyyy HH:mm')
-                                      .format(materialReceive!.createdAt!)
-                                  : 'N/A'),
-                          SizedBox(height: 12),
-                          TransactionInfoItem(
-                              title: 'Status',
-                              value: materialReceive?.status ?? 'N/A'),
-                          SizedBox(height: 12),
-                          TransactionInfoItem(
-                              title: 'Approved by',
-                              value: approvedBy?.fullName ?? 'N/A'),
-                          SizedBox(height: 12),
-                          TransactionInfoItem(
-                              title: 'Prepared by',
-                              value: preparedBy?.fullName ?? 'N/A'),
-                          SizedBox(height: 12),
-                          TransactionInfoItem(
-                              title: 'Receiving Warehouse',
-                              value: materialReceive?.warehouse?.name ?? 'N/A'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Materials List",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                        ),
-                        const Expanded(
-                          child: Divider(),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: materialReceiveMaterials.length,
-                        itemBuilder: (context, index) {
-                          final materialReceiveMaterial =
-                              materialReceiveMaterials[index];
-                          final productVariant = materialReceiveMaterial
-                                      .purchaseOrderItem?.materialRequestItem ==
-                                  null
-                              ? materialReceiveMaterial
-                                  .purchaseOrderItem
-                                  ?.proforma
-                                  ?.materialRequestItem
-                                  ?.productVariant
-                              : materialReceiveMaterial.purchaseOrderItem
-                                  ?.materialRequestItem?.productVariant;
-                          return MaterialTransactionMaterialItem(
-                            title:
-                                '${productVariant?.product?.name} - ${productVariant?.variant}',
-                            subtitle:
-                                'Received Quantity: ${materialReceiveMaterial.receivedQuantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}',
-                            iconSrc:
-                                'assets/icons/transactions/light/material_requests.svg',
-                            onDelete: null,
-                            onEdit: null,
-                            onOpen: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) => Padding(
-                                  padding: const EdgeInsets.all(32.0),
-                                  child: Wrap(children: [
-                                    Column(
-                                      children: [
-                                        ProductDetail(
-                                            title: "Name",
-                                            value:
-                                                '${productVariant?.product?.name} - ${productVariant?.variant}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Received Quantity",
-                                            value:
-                                                '${materialReceiveMaterial.receivedQuantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Purchased Quantity",
-                                            value:
-                                                '${materialReceiveMaterial.purchaseOrderItem?.quantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Unit Price",
-                                            value:
-                                                '${materialReceiveMaterial.purchaseOrderItem?.unitPrice}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Total Price",
-                                            value:
-                                                '${materialReceiveMaterial.purchaseOrderItem?.totalPrice}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Loading Cost",
-                                            value:
-                                                '${materialReceiveMaterial.loadingCost}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Unloading Cost",
-                                            value:
-                                                '${materialReceiveMaterial.unloadingCost}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        ProductDetail(
-                                            title: "Transportation Cost",
-                                            value:
-                                                '${materialReceiveMaterial.transportationCost}'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    )
-                                  ]),
-                                ),
+                          child: ListView.builder(
+                            itemCount: materialReceiveMaterials.length,
+                            itemBuilder: (context, index) {
+                              final materialReceiveMaterial =
+                                  materialReceiveMaterials[index];
+                              final productVariant = materialReceiveMaterial
+                                          .purchaseOrderItem
+                                          ?.materialRequestItem ==
+                                      null
+                                  ? materialReceiveMaterial
+                                      .purchaseOrderItem
+                                      ?.proforma
+                                      ?.materialRequestItem
+                                      ?.productVariant
+                                  : materialReceiveMaterial.purchaseOrderItem
+                                      ?.materialRequestItem?.productVariant;
+                              return MaterialTransactionMaterialItem(
+                                title:
+                                    '${productVariant?.product?.name} - ${productVariant?.variant}',
+                                subtitle:
+                                    'Received Quantity: ${materialReceiveMaterial.receivedQuantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}',
+                                iconSrc:
+                                    'assets/icons/transactions/light/material_requests.svg',
+                                onDelete: null,
+                                onEdit: null,
+                                onOpen: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => Padding(
+                                      padding: const EdgeInsets.all(32.0),
+                                      child: Wrap(children: [
+                                        Column(
+                                          children: [
+                                            ProductDetail(
+                                                title: "Name",
+                                                value:
+                                                    '${productVariant?.product?.name} - ${productVariant?.variant}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Received Quantity",
+                                                value:
+                                                    '${materialReceiveMaterial.receivedQuantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Purchased Quantity",
+                                                value:
+                                                    '${materialReceiveMaterial.purchaseOrderItem?.quantity} ${unitOfMeasureDisplay(productVariant?.unitOfMeasure)}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Unit Price",
+                                                value:
+                                                    '${materialReceiveMaterial.purchaseOrderItem?.unitPrice}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Total Price",
+                                                value:
+                                                    '${materialReceiveMaterial.purchaseOrderItem?.totalPrice}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Loading Cost",
+                                                value:
+                                                    '${materialReceiveMaterial.loadingCost}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Unloading Cost",
+                                                value:
+                                                    '${materialReceiveMaterial.unloadingCost}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            ProductDetail(
+                                                title: "Transportation Cost",
+                                                value:
+                                                    '${materialReceiveMaterial.transportationCost}'),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        )
+                                      ]),
+                                    ),
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                      ),
-                    )
-                  ],
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  _buildApproveDeclineSection(
+      BuildContext context, materialReceiveId, EditMaterialReceiveState state) {
+    return Padding(
+      padding: EdgeInsets.all(6),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: state is EditMaterialReceiveLoading
+                ? null
+                : () {
+              
+                    BlocProvider.of<EditMaterialReceiveCubit>(context)
+                        .onApproveMaterialReceive(
+                            params: ApproveMaterialReceiveParamsEntity(
+                      materialReceiveId: materialReceiveId,
+                      decision: ApprovalStatus.COMPLETED,
+                    ));
+
+                  },
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                state is EditMaterialReceiveLoading 
+                    ? const Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                            )),
+                      )
+                    : const SizedBox(),
+                const Text('Approve'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton(
+            onPressed: state is EditMaterialReceiveLoading
+                ? null
+                : () {
+                    
+                    BlocProvider.of<EditMaterialReceiveCubit>(context)
+                        .onApproveMaterialReceive(
+                            params: ApproveMaterialReceiveParamsEntity(
+                      materialReceiveId: materialReceiveId,
+                      decision: ApprovalStatus.DECLINED,
+                    ));
+                  },
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              side: const BorderSide(color: Colors.red),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                state is EditMaterialReceiveLoading 
+                    ? const Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                            )),
+                      )
+                    : const SizedBox(),
+                const Text(
+                  'Decline',
+                  style: TextStyle(color: Colors.red),
                 ),
-              );
-            }
-            return const SizedBox();
-          },
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

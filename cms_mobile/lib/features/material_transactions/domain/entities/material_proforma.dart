@@ -63,11 +63,11 @@ class MaterialProformaItemEntity extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final List<String> photos;
-  final double quantity;
-  final double unitPrice;
-  final double totalPrice;
+  final double? quantity;
+  final double? unitPrice;
+  final double? totalPrice;
   final String? remark;
-  final String vendor;
+  final String? vendor;
 
   const MaterialProformaItemEntity(
       {required this.id,
@@ -201,4 +201,16 @@ class EditMaterialProformaParamsEntity<T extends MaterialProformaMaterialEntity>
         approvedById,
         materialProformaMaterials
       ];
+}
+class ApproveMaterialProformaParamsEntity extends Equatable{
+  final String proformaId;
+  final String selectedProformaItemId;
+
+  const ApproveMaterialProformaParamsEntity({
+    required this.proformaId,
+    required this.selectedProformaItemId,
+  });
+
+  @override
+  List<Object?> get props => [proformaId, selectedProformaItemId];
 }

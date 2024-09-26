@@ -1,7 +1,9 @@
 import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/core/utils/get_user_friendly_error_message.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_receiving.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/approval_status.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -20,8 +22,9 @@ abstract class MaterialReceiveDataSource {
       {required String params});
   Future<DataState<String>> deleteMaterialReceive(
       {required String materialReceiveId});
-  Future<DataState<String>> generateMaterialReceivePdf(
-      {required String id});
+  Future<DataState<String>> generateMaterialReceivePdf({required String id});
+  Future<DataState<String>> approveMaterialReceive(
+      {required ApproveMaterialReceiveParamsModel params});
 }
 
 class MaterialReceiveDataSourceImpl extends MaterialReceiveDataSource {
@@ -40,13 +43,19 @@ mutation CreateMaterialReceive($createMaterialReceiveInput: CreateMaterialReceiv
 
   ''';
 
+  static const String _approveMaterialReceiveMutation = r'''
+mutation ApproveMaterialReceive($decision: ApprovalStatus!, $materialReceiveId: String!) {
+  approveMaterialReceive(decision: $decision, materialReceiveId: $materialReceiveId) {
+    id
+  }
+}
+
+''';
+
   @override
   Future<DataState<String>> createMaterialReceive(
       {required CreateMaterialReceiveParamsModel
           createMaterialReceiveParamsModel}) async {
-    print(
-        "createMaterialReceivingParamsModel: $createMaterialReceiveParamsModel");
-
     final MutationOptions options = MutationOptions(
       document: gql(_createMaterialReceiveMutation),
       variables: {
@@ -56,7 +65,6 @@ mutation CreateMaterialReceive($createMaterialReceiveInput: CreateMaterialReceiv
 
     try {
       final QueryResult result = await _client.mutate(options);
-      print(result);
 
       if (result.hasException) {
         return DataFailed(
@@ -166,9 +174,6 @@ query GetMaterialReceiveById($getMaterialReceiveByIdId: String!) {
           ),
         );
       }
-
-      print("****************************");
-      print(response.data!['getMaterialReceiveById']);
       final materialReceive = MaterialReceiveModel.fromJson(
           response.data!['getMaterialReceiveById']);
 
@@ -331,7 +336,6 @@ mutation DeleteMaterialReceive($deleteMaterialReceiveId: String!) {
   @override
   Future<DataState<String>> deleteMaterialReceive(
       {required String materialReceiveId}) async {
-    print('In delete Material receive data source ${materialReceiveId}');
     final MutationOptions options = MutationOptions(
       document: gql(_deleteMaterialReceivingMutation),
       variables: {"deleteMaterialReceiveId": materialReceiveId},
@@ -383,5 +387,29 @@ mutation DeleteMaterialReceive($deleteMaterialReceiveId: String!) {
 
       return DataSuccess(materialReceiveReport);
     });
+  }
+
+  @override
+  Future<DataState<String>> approveMaterialReceive(
+      {required ApproveMaterialReceiveParamsModel params}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_approveMaterialReceiveMutation),
+      variables: params.toJson(),
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        final errorMessage = getUserFriendlyErrorMessage(result.exception!);
+        return DataFailed(ServerFailure(errorMessage: errorMessage));
+      }
+
+      final String id = result.data!['approveMaterialReceive']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }

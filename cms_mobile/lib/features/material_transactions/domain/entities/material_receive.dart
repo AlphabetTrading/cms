@@ -1,5 +1,6 @@
 import 'package:cms_mobile/core/entities/meta.dart';
 import 'package:cms_mobile/features/authentication/domain/entities/user_entity.dart';
+import 'package:cms_mobile/features/material_transactions/domain/entities/approval_status.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/product_variant.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/use_type.dart';
@@ -184,3 +185,16 @@ class MaterialReceiveItemEntity extends Equatable {
 }
 
 class MaterialReceiveVoucherEntity {}
+
+class ApproveMaterialReceiveParamsEntity extends Equatable{
+  final String materialReceiveId;
+  final ApprovalStatus decision;
+
+  const ApproveMaterialReceiveParamsEntity({
+    required this.materialReceiveId,
+    required this.decision,
+  });
+
+  @override
+  List<Object?> get props => [materialReceiveId, decision];
+}
