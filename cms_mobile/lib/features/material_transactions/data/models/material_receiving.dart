@@ -167,10 +167,6 @@ class MaterialReceiveMaterialModel extends MaterialReceiveMaterialEntity {
       required super.purchaseOrderItem,
       required super.receivedQuantity,
       super.remark});
-              
-        
-       
-        
 
   Map<String, dynamic> toJson() {
     return {
@@ -264,8 +260,6 @@ class CreateMaterialReceiveParamsModel
     required super.preparedById,
     required super.receivingStoreId,
   });
-
-
 
   Map<String, dynamic> toJson() {
     return {
@@ -371,5 +365,24 @@ String fromMaterialReceiveStatus(MaterialReceiveStatus? value) {
       return 'PENDING';
     case MaterialReceiveStatus.declined:
       return 'DECLINED';
+  }
+}
+
+class ApproveMaterialReceiveParamsModel
+    extends ApproveMaterialReceiveParamsEntity {
+  const ApproveMaterialReceiveParamsModel(
+      {required super.materialReceiveId, required super.decision});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'materialReceiveId': materialReceiveId,
+      'decision': decision.name,
+    };
+  }
+
+  factory ApproveMaterialReceiveParamsModel.fromEntity(
+      ApproveMaterialReceiveParamsEntity entity) {
+    return ApproveMaterialReceiveParamsModel(
+        materialReceiveId: entity.materialReceiveId, decision: entity.decision);
   }
 }

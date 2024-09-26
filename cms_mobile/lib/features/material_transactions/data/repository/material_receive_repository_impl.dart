@@ -11,7 +11,6 @@ class MaterialReceiveRepositoryImpl extends MaterialReceiveRepository {
   MaterialReceiveRepositoryImpl({required this.dataSource});
 
   @override
-  @override
   Future<DataState<String>> createMaterialReceive(
       {required CreateMaterialReceiveParamsEntity params}) {
     return dataSource.createMaterialReceive(
@@ -50,8 +49,15 @@ class MaterialReceiveRepositoryImpl extends MaterialReceiveRepository {
     throw UnimplementedError();
   }
 
+  
+
   @override
   Future<DataState<String>> generateMaterialReceivePdf({required String id}) {
     return dataSource.generateMaterialReceivePdf(id: id);
+  }
+  
+  @override
+  Future<DataState<String>> approveMaterialReceive({required ApproveMaterialReceiveParamsEntity params}) {
+    return dataSource.approveMaterialReceive(params:ApproveMaterialReceiveParamsModel.fromEntity(params));
   }
 }

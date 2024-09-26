@@ -20,12 +20,14 @@ class DailySiteDataInputList extends StatelessWidget {
       itemCount: dailySiteDatas.length,
       itemBuilder: (context, index) {
         final dailySiteData = dailySiteDatas[index];
-        final productVariant = dailySiteData.tasks!.productVariant;
+        // final productVariant = dailySiteData.tasks!.productVariant;
         return MaterialTransactionMaterialItem(
-          title: '${productVariant.product!.name} - ${productVariant.variant}',
-          subtitle:
-              'Amount: ${dailySiteData.quantity} ${dailySiteData.material!.productVariant.unitOfMeasure}',
-          iconSrc: productVariant.product?.iconSrc,
+          // title: '${productVariant.product!.name} - ${productVariant.variant}',
+          // subtitle:
+          //     'Amount: ${dailySiteData.quantity} ${dailySiteData.material!.productVariant.unitOfMeasure}',
+          title:"",
+          subtitle: "",
+          // iconSrc: productVariant.product?.iconSrc,
           onDelete: () => BlocProvider.of<DailySiteDataLocalBloc>(context)
               .add(DeleteDailySiteDataMaterialLocal(index)),
           onEdit: () => showModalBottomSheet(

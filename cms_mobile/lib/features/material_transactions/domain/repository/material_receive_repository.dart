@@ -22,4 +22,7 @@ abstract class MaterialReceiveRepository {
       {required String materialReceiveId});
 
   Future<DataState<String>> generateMaterialReceivePdf({required String id});
+
+  Future<DataState<String>> approveMaterialReceive(
+      {required ApproveMaterialReceiveParamsEntity params});
 }

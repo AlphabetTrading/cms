@@ -3,6 +3,7 @@ import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/core/utils/get_user_friendly_error_message.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/material_proforma.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,9 @@ abstract class MaterialProformaDataSource {
 
   Future<DataState<List<MaterialProformaEntity>>> fetchAllMaterialProformas(
       {FilterMaterialProformaInput? filterMaterialProformaInput});
+
+  Future<DataState<String>> approveMaterialProforma(
+      {required ApproveMaterialProformaParamsModel params});
 }
 
 class MaterialProformaDataSourceImpl extends MaterialProformaDataSource {
@@ -54,6 +58,15 @@ mutation CreateProforma($createProformaInput: CreateProformaInput!) {
   }
 }
 ''';
+
+  static const String _approveMaterialProformaMutation = r'''
+mutation ApproveProforma($proformaId: String!, $selectedProformaItemId: String!) {
+  approveProforma(proformaId: $proformaId, selectedProformaItemId: $selectedProformaItemId) {
+    id
+  }
+}
+  
+  ''';
 
   static const String _uploadFiles = r'''
 mutation UploadFiles($files: [Upload!]!) {
@@ -121,6 +134,9 @@ mutation UploadFiles($files: [Upload!]!) {
 query GetProformaById($getProformaByIdId: String!) {
   getProformaById(id: $getProformaByIdId) {
     id
+        selectedProformaItem {
+      id
+    }
         materialRequestItem {
       id
       quantity
@@ -389,7 +405,6 @@ query GetProformaById($getProformaByIdId: String!) {
           "mine": mine ?? false,
         },
         fetchPolicy: FetchPolicy.noCache,
-        
       ),
     )
         .then((response) {
@@ -407,8 +422,7 @@ query GetProformaById($getProformaByIdId: String!) {
       final meta = response.data!['getProformas']["meta"];
       final items =
           issues.map((e) => MaterialProformaModel.fromJson(e)).toList();
-      debugPrint(
-          '******************Successfully converted to MaterialProformaModel: $items');
+
       return DataSuccess(
         MaterialProformaListWithMeta(
           items: items,
@@ -495,6 +509,30 @@ query GetProformaById($getProformaByIdId: String!) {
           '******************Successfully converted to MaterialProformaModel: $items');
       return DataSuccess(items);
     });
+  }
+
+  @override
+  Future<DataState<String>> approveMaterialProforma(
+      {required ApproveMaterialProformaParamsModel params}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_approveMaterialProformaMutation),
+      variables: params.toJson(),
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        final errorMessage = getUserFriendlyErrorMessage(result.exception!);
+        return DataFailed(ServerFailure(errorMessage: errorMessage));
+      }
+
+      final String id = result.data!['approveProforma']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }
 

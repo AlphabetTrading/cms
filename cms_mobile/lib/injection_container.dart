@@ -47,14 +47,17 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/generate_material_issue_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issue_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_issue/get_material_issues.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/approve_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/create_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/delete_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/edit_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_all_material_proformas.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_material_proforma.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_proforma/get_material_proforma_details.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/approve_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/create_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/delete_material_receive.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/edit_material_receiving.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/generate_material_receive_pdf.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_receiving/get_material_receive_details.dart';
@@ -89,11 +92,13 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/details/details_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_proforma/material_proforma_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/create/create_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/delete/delete_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/details_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/details/generate_pdf_cubit.dart';
+import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/edit/edit_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive/material_receive_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_receive_local/material_receive_local_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_requests/delete/delete_cubit.dart';
@@ -488,6 +493,16 @@ Future<void> initializeDependencies() async {
       sl<MaterialReceiveRepository>(),
     ),
   );
+    sl.registerLazySingleton<ApproveMaterialReceiveUseCase>(
+    () => ApproveMaterialReceiveUseCase(
+      sl<MaterialReceiveRepository>(),
+    ),
+  );
+    sl.registerLazySingleton<EditMaterialReceiveUseCase>(
+    () => EditMaterialReceiveUseCase(
+      sl<MaterialReceiveRepository>(),
+    ),
+  );
 
   // dashboard
   sl.registerLazySingleton<GetDashboardUseCase>(
@@ -596,6 +611,11 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<DeleteMaterialProformaUseCase>(
     () => DeleteMaterialProformaUseCase(
+      sl<MaterialProformaRepository>(),
+    ),
+  );
+    sl.registerLazySingleton<ApproveMaterialProformaUseCase>(
+    () => ApproveMaterialProformaUseCase(
       sl<MaterialProformaRepository>(),
     ),
   );
@@ -928,6 +948,13 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<DeleteMaterialReceiveCubit>(
     () => DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
+  
+  sl.registerFactory<EditMaterialReceiveCubit>(
+    () => EditMaterialReceiveCubit(
+      approveMaterialReceiveUseCase:  sl<ApproveMaterialReceiveUseCase>(),
+      editMaterialReceiveUseCase: sl<EditMaterialReceiveUseCase>(),
+     ),
+  );
 
   // material return
   sl.registerFactory<MaterialReturnBloc>(
@@ -1030,6 +1057,12 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<CreateMaterialProformaCubit>(
     () => CreateMaterialProformaCubit(
       sl<CreateMaterialProformaUseCase>(),
+    ),
+  );
+    sl.registerFactory<EditMaterialProformaCubit>(
+    () => EditMaterialProformaCubit(
+      editMaterialProformaUseCase: sl<EditMaterialProformaUseCase>(),
+      approveMaterialProformaUseCase: sl<ApproveMaterialProformaUseCase>(),
     ),
   );
 
