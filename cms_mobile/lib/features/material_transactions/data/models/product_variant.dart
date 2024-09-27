@@ -6,13 +6,13 @@ class ProductVariantModel extends ProductVariantEntity {
   const ProductVariantModel({
     required super.id,
     super.description,
-    UnitOfMeasure? unitOfMeasure,
+    super.unitOfMeasure,
     super.variant,
     super.productId,
     ProductModel? super.product,
     required super.createdAt,
     required super.updatedAt,
-  }) : super(unitOfMeasure: UnitOfMeasure.kg);
+  });
 
   factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
     // debugPrint("ProductVariantModel.fromJson: ${json}");

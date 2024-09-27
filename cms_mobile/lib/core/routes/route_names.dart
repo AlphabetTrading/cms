@@ -7,6 +7,7 @@ class RoutePaths {
   static const String detailedExpenseStats = 'detailedExpenseStats';
   static const String detailedStockStats = 'detailedStockStats';
   static const String items = 'items/:warehouseId';
+  static const String warehouseDetails = 'warehouseDetails/:warehouseId';
 
   // material request
   static const String materialRequests = 'material_requests';
@@ -73,6 +74,7 @@ class RouteNames {
   static const String forgotPassword = 'forgotPassword';
   static const String resetPassword = 'resetPassword';
   static const String items = 'items';
+  static const String warehouseDetails = 'warehouseDetails';
 
   // material request
   static const String materialRequests = 'material_requests';

@@ -1,3 +1,4 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/warehouse/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
@@ -9,7 +10,15 @@ class WarehouseRepositoryImpl implements WarehouseRepository {
   WarehouseRepositoryImpl({required this.dataSource});
 
   @override
-  Future<DataState<List<WarehouseEntity>>> getWarehouses() {
-    return dataSource.fetchWarehouses();
+  Future<DataState<List<WarehouseEntity>>> getWarehouses(
+    FilterWarehouseStoreInput? filterWarehouseStoreInput,
+    OrderByWarehouseStoreInput? orderBy,
+    PaginationInput? paginationInput,
+  ) {
+    return dataSource.fetchWarehouses(
+      filterWarehouseStoreInput: filterWarehouseStoreInput,
+      orderBy: orderBy,
+      paginationInput: paginationInput,
+    );
   }
 }

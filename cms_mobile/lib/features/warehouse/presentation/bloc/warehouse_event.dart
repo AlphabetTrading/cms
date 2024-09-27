@@ -7,7 +7,13 @@ sealed class WarehouseEvent extends Equatable {
   List<Object> get props => [];
 }
 
-
 class GetWarehousesEvent extends WarehouseEvent {
-  const GetWarehousesEvent();
+  final FilterWarehouseStoreInput? filterWarehouseStoreInput;
+  final OrderByWarehouseStoreInput? orderBy;
+  final PaginationInput? paginationInput;
+  const GetWarehousesEvent({
+    this.filterWarehouseStoreInput,
+    this.orderBy,
+    this.paginationInput,
+  });
 }
