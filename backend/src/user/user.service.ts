@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { PasswordService } from 'src/auth/password.service';
-import { User, UserRole } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import { CreateOwnerInput } from './dto/create-owner.input';
 import { v4 as uuidv4 } from 'uuid';
 import { RegistrationInput } from 'src/auth/dto/registration.input';
@@ -109,8 +109,13 @@ export class UserService {
     }
   }
 
-  async findUsers(): Promise<User[]> {
+  async findUsers({
+    where,
+  }: {
+    where?: Prisma.UserWhereInput;
+  }): Promise<User[]> {
     return await this.prisma.user.findMany({
+      where,
       include: {
         company: true,
       },

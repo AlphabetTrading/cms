@@ -9,7 +9,9 @@ import { CreateOwnerInput } from './dto/create-owner.input';
 import { RegistrationInput } from 'src/auth/dto/registration.input';
 import { UserEntity } from 'src/common/decorators';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
+import { FilterUserDocumentsInput } from './dto/filter-user-documents.input';
+import { Prisma } from '@prisma/client';
 // import { UserEntity } from 'src/common/decorators';
 
 @UseGuards(GqlAuthGuard)
@@ -45,8 +47,50 @@ export class UserResolver {
   }
 
   @Query(() => [User])
-  async getUsers() {
-    return this.userService.findUsers();
+  async getUsers(
+    @Args('filterUserInput', {
+      type: () => FilterUserDocumentsInput,
+      nullable: true,
+    })
+    filterUserInput?: FilterUserDocumentsInput,
+  ) {
+    const where: Prisma.UserWhereInput = {
+      AND: [
+        {
+          id: filterUserInput?.id,
+        },
+        {
+          OR: [
+            {
+              companyId: filterUserInput.companyId,
+            },
+            {
+              fullName: filterUserInput?.fullName,
+            },
+            {
+              role: {
+                in: filterUserInput?.role,
+              },
+            },
+            {
+              email: filterUserInput?.email,
+            },
+            {
+              phoneNumber: filterUserInput?.phoneNumber,
+            },
+          ],
+        },
+        {
+          createdAt: filterUserInput?.createdAt,
+        },
+      ],
+    };
+
+    try {
+      return await this.userService.findUsers({ where });
+    } catch (e) {
+      throw new BadRequestException('Error loading users!');
+    }
   }
 
   @Query(() => User)
