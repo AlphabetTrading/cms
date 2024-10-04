@@ -4,6 +4,7 @@ import 'package:cms_mobile/features/authentication/presentations/pages/login_pag
 import 'package:cms_mobile/features/home/presentation/pages/HomePage.dart';
 import 'package:cms_mobile/features/home/presentation/pages/dashboard/detailed_expense_stats.dart';
 import 'package:cms_mobile/features/home/presentation/pages/dashboard/detailed_stats.dart';
+import 'package:cms_mobile/features/home/presentation/widgets/warehouse-detail.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/create_daily_site_data.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/pages/daily_site_data/daily_site_data_details.dart';
@@ -108,6 +109,15 @@ class AppRouter {
                   TaskEntity task = state.extra as TaskEntity; //
                   return TaskDetails(task: task);
                 }),
+            GoRoute(
+              name: RouteNames.warehouseDetails,
+              path: RoutePaths.warehouseDetails,
+              builder: (BuildContext context, GoRouterState state) {
+                return WarehouseDetailPage(
+                  warehouseId: state.pathParameters['warehouseId']!,
+                );
+              },
+            ),
             GoRoute(
               name: RouteNames.items,
               path: RoutePaths.items,

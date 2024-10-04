@@ -12,7 +12,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/pur
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_receive_form/material_receive_form_cubit.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/common/form_info_item.dart';
 import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

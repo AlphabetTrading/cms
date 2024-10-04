@@ -17,7 +17,7 @@ import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart
 import 'package:cms_mobile/features/products/presentation/bloc/product_event.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -131,7 +131,7 @@ class _MaterialTransferCreatePageState
                                             .warehouses
                                             ?.map((e) => DropdownMenuEntry<
                                                     WarehouseEntity>(
-                                                label: e.name, value: e))
+                                                label: e.name ?? "", value: e))
                                             .toList() ??
                                         [],
                                     enableFilter: false,

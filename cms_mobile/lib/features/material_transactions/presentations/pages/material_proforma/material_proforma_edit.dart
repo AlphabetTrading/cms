@@ -18,7 +18,7 @@ import 'package:cms_mobile/features/material_transactions/presentations/widgets/
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/create_material_issue_form.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/material_issue/material_issue_input_list.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -218,7 +218,7 @@ class _MaterialIssueEditPageState extends State<MaterialIssueEditPage> {
                                                     ?.map((e) =>
                                                         DropdownMenuEntry<
                                                                 WarehouseEntity>(
-                                                            label: e.name,
+                                                            label: e.name ?? "",
                                                             value: e))
                                                     .toList() ??
                                                 [],

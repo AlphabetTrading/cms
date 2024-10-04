@@ -23,7 +23,8 @@ class ProductVariantEntity extends Equatable {
       required this.productId});
 
   @override
-  List<Object?> get props => [id, description, variant, productId];
+  List<Object?> get props =>
+      [id, description, variant, productId, product, unitOfMeasure];
 
   ProductVariantEntity copyWith({
     String? id,
@@ -73,6 +74,4 @@ class ProductVariantEntity extends Equatable {
       'updatedAt': updatedAt,
     };
   }
-
-  
 }

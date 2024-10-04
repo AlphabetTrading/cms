@@ -1,16 +1,9 @@
+import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
+import 'package:cms_mobile/features/user/data/data_source/remote_data_source.dart';
 
 abstract class UserRepository {
-  // Future<DataState<String>> createUser(
-  //     {required CreateUserParamsEntity params});
-  
-  // Future<DataState<UserEntityListWithMeta>> getUsers(
-  //     {required GetUsersParamsEntity params});
-
-  // Future<DataState<UserEntity>> getUserDetails(
-  //     {required String params});
-
-  // Future<DataState<String>> editUser(
-  //     {required EditUserParamsEntity params});
-
-  // Future<DataState<String>> deleteUser({required String userId});
+  Future<DataState<List<UserModel>>> getUsers(
+    FilterUserInput? filterUserInput,
+  );
 }

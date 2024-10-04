@@ -5,15 +5,18 @@ import 'package:cms_mobile/features/material_transactions/domain/entities/materi
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:cms_mobile/features/progress/domain/entities/task.dart';
 import 'package:cms_mobile/features/projects/domain/entities/project.dart';
+import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:equatable/equatable.dart';
 
 enum UserRole {
+  ADMIN,
   CLIENT,
   PROJECT_MANAGER,
   CONSULTANT,
   SITE_MANAGER,
   PURCHASE,
   STORE_MANAGER,
+  OWNER
 }
 
 class UserEntity extends Equatable {
@@ -24,6 +27,7 @@ class UserEntity extends Equatable {
   final UserRole role;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final CompanyEntity? company;
   final List<PurchaseOrderEntity>? purchaseOrders;
   final List<PurchaseOrderEntity>? purchaseOrdersApproved;
   final List<MaterialIssueEntity>? materialIssueVouchers;
@@ -49,6 +53,7 @@ class UserEntity extends Equatable {
     required this.phoneNumber,
     required this.fullName,
     required this.role,
+    this.company,
     this.createdAt,
     this.updatedAt,
     this.purchaseOrders,
@@ -74,6 +79,7 @@ class UserEntity extends Equatable {
         phoneNumber,
         fullName,
         role,
+        company,
         createdAt,
         updatedAt,
         purchaseOrders,
@@ -104,6 +110,7 @@ class UserEntity extends Equatable {
       phoneNumber: json['phoneNumber'],
       fullName: json['fullName'],
       role: userRoleFromJson(json['role']),
+      company: json['company'],
       purchaseOrders: json['purchaseOrders'],
       purchaseOrdersApproved: json['purchaseOrdersApproved'],
       materialIssueVouchers: json['materialIssueVouchers'],
@@ -129,6 +136,7 @@ class UserEntity extends Equatable {
       'email': email,
       'phoneNumber': phoneNumber,
       'fullName': fullName,
+      'company': company,
       'role': userRoleToJson(role),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
@@ -150,8 +158,57 @@ class UserEntity extends Equatable {
   }
 }
 
+class CompanyEntity extends Equatable {
+  final String? id;
+  final String? name;
+  final String? address;
+  final String? contactInfo;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? ownerId;
+  final UserEntity? owner;
+  final List<UserEntity>? employees;
+  final List<ProjectEntity>? projects;
+  final List<WarehouseEntity>? warehouseStores;
+
+  const CompanyEntity({
+    required this.id,
+    this.name,
+    this.address,
+    this.contactInfo,
+    this.ownerId,
+    this.owner,
+    this.employees,
+    this.projects,
+    this.warehouseStores,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  @override
+  List<Object?> get props {
+    return [
+      id,
+      name,
+      address,
+      contactInfo,
+      ownerId,
+      owner,
+      employees,
+      projects,
+      warehouseStores,
+      createdAt,
+      updatedAt,
+    ];
+  }
+}
+
 UserRole userRoleFromJson(String role) {
   switch (role) {
+    case 'ADMIN':
+      return UserRole.ADMIN;
+    case 'OWNER':
+      return UserRole.OWNER;
     case 'CLIENT':
       return UserRole.CLIENT;
     case 'PROJECT_MANAGER':
@@ -171,6 +228,10 @@ UserRole userRoleFromJson(String role) {
 
 String userRoleToJson(UserRole role) {
   switch (role) {
+    case UserRole.ADMIN:
+      return 'ADMIN';
+    case UserRole.OWNER:
+      return 'OWNER';
     case UserRole.CLIENT:
       return 'CLIENT';
     case UserRole.PROJECT_MANAGER:

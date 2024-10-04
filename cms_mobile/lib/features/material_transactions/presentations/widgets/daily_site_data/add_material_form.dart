@@ -5,7 +5,7 @@ import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/products/domain/entities/product.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_bloc.dart';
 import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';

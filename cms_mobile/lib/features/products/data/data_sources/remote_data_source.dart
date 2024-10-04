@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/products/data/models/product.dart';
 import 'package:cms_mobile/features/products/domain/entities/get_products_input.dart';
+import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class ProductDataSource {
@@ -62,8 +63,8 @@ class ProductDataSourceImpl extends ProductDataSource {
           ),
         );
       }
+
       final requests = response.data!['getWarehouseProducts']['items'] as List;
-      // print(requests.map((e) => WarehouseProductModel.fromJson(e)).toList());
       return DataSuccess(
           requests.map((e) => WarehouseProductModel.fromJson(e)).toList());
     });
@@ -90,8 +91,8 @@ class ProductDataSourceImpl extends ProductDataSource {
     }
   }
 }''';
-    final response = await _client
-        .query(QueryOptions(document: gql(fetchAllStockProductsQuery), variables: {
+    final response = await _client.query(
+        QueryOptions(document: gql(fetchAllStockProductsQuery), variables: {
       'projectId': '2cf44029-fe54-4e91-a031-f8fd7c65bce5',
     }));
 

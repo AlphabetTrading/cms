@@ -1,9 +1,17 @@
+import 'package:cms_mobile/core/entities/pagination.dart';
+import 'package:cms_mobile/core/entities/string_filter.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class WarehouseDataSource {
-  Future<DataState<List<WarehouseModel>>> fetchWarehouses();
+  Future<DataState<List<WarehouseModel>>> fetchWarehouses({
+    FilterWarehouseStoreInput? filterWarehouseStoreInput,
+    OrderByWarehouseStoreInput? orderBy,
+    PaginationInput? paginationInput,
+  });
+  Future<DataState<String>> createWarehouse(
+      {required CreateWarehouseParamsModel createWarehouseParamsModel});
 }
 
 class WarehouseDataSourceImpl extends WarehouseDataSource {
@@ -13,8 +21,19 @@ class WarehouseDataSourceImpl extends WarehouseDataSource {
     _client = client;
   }
 
+  static const String _createWarehouseMutation = r'''
+    mutation CreateWarehouse($createWarehouseInput: CreateWarehouseInput!) {
+      createWarehouse(createWarehouseInput: $createWarehouseInput) {
+        id
+      }
+    }
+  ''';
+
   @override
-  Future<DataState<List<WarehouseModel>>> fetchWarehouses() async {
+  Future<DataState<List<WarehouseModel>>> fetchWarehouses(
+      {FilterWarehouseStoreInput? filterWarehouseStoreInput,
+      OrderByWarehouseStoreInput? orderBy,
+      PaginationInput? paginationInput}) async {
     String fetchWarehousesQuery;
 
     fetchWarehousesQuery = r'''
@@ -36,13 +55,19 @@ class WarehouseDataSourceImpl extends WarehouseDataSource {
       }
     ''';
 
+    dynamic filterInput = filterWarehouseStoreInput != null
+        ? filterWarehouseStoreInput.toJson()
+        : {};
+
     final response = await _client.query(QueryOptions(
-        document: gql(fetchWarehousesQuery),
-        variables: {
-          "filterWarehouseStoreInput": {},
-          "orderBy": {},
-          "paginationInput": {}
-        }));
+      document: gql(fetchWarehousesQuery),
+      variables: {
+        "filterWarehouseStoreInput": filterInput,
+        "orderBy": orderBy ?? {},
+        "paginationInput": paginationInput ?? {}
+      },
+      // fetchPolicy: FetchPolicy.noCache,
+    ));
 
     if (response.hasException) {
       return DataFailed(
@@ -56,5 +81,82 @@ class WarehouseDataSourceImpl extends WarehouseDataSource {
 
     return DataSuccess(
         requests.map((e) => WarehouseModel.fromJson(e)).toList());
+  }
+
+  @override
+  Future<DataState<String>> createWarehouse(
+      {required CreateWarehouseParamsModel
+          createWarehouseParamsModel}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_createWarehouseMutation),
+      variables: {
+        "createWarehouseInput": createWarehouseParamsModel.toJson()
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['createWarehouse']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
+  }
+}
+
+class FilterWarehouseStoreInput {
+  final StringFilter? createdAt;
+  final StringFilter? company;
+  final String? companyId;
+  final StringFilter? location;
+  final StringFilter? name;
+  final String? id;
+
+  FilterWarehouseStoreInput(
+      {this.createdAt,
+      this.company,
+      this.companyId,
+      this.location,
+      this.name,
+      this.id});
+
+  Map<String, dynamic> toJson() {
+    // include the property if it is only not null
+    return {
+      if (company != null)
+        'company': {
+          'name': company!.toJson(),
+        },
+      if (companyId != null) 'companyId': companyId,
+      if (createdAt != null) 'createdAt': createdAt,
+      if (name != null) 'name': name,
+      if (location != null) 'location': location,
+      if (id != null) 'id': id,
+    };
+  }
+}
+
+class OrderByWarehouseStoreInput {
+  final String? createdAt;
+  final String? location;
+  final String? name;
+
+  OrderByWarehouseStoreInput({this.createdAt, this.location, this.name});
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (createdAt != null) "createdAt": createdAt,
+      if (name != null) "name": name,
+      if (location != null) "location": location,
+    };
   }
 }
