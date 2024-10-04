@@ -16,7 +16,7 @@ import 'package:cms_mobile/features/products/presentation/bloc/product_event.dar
 import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/widgets/empty_list.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -174,7 +174,8 @@ class _MaterialTransferEditPageState extends State<MaterialTransferEditPage> {
                               listener: (issueContext, issueState) {
                                 if (issueState is EditMaterialTransferSuccess) {
                                   _buildOnEditSuccess(issueContext);
-                                } else if (issueState is EditMaterialTransferFailed) {
+                                } else if (issueState
+                                    is EditMaterialTransferFailed) {
                                   _buildOnEditFailed(issueContext);
                                 }
                               },
@@ -217,7 +218,7 @@ class _MaterialTransferEditPageState extends State<MaterialTransferEditPage> {
                                                     ?.map((e) =>
                                                         DropdownMenuEntry<
                                                                 WarehouseEntity>(
-                                                            label: e.name,
+                                                            label: e.name ?? "",
                                                             value: e))
                                                     .toList() ??
                                                 [],
@@ -342,7 +343,6 @@ class _MaterialTransferEditPageState extends State<MaterialTransferEditPage> {
                   //                   ))
                   //               .toList(),
                   //     ));
-                
                 },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size.fromHeight(50),

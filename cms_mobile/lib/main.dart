@@ -25,7 +25,10 @@ import 'package:cms_mobile/features/material_transactions/presentations/bloc/mat
 import 'package:cms_mobile/features/material_transactions/presentations/bloc/material_return_local/material_return_local_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_event.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/user/presentation/bloc/user_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_local/warehouse_local_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/cubit/warehouse_form/warehouse_form_cubit.dart';
 import 'package:cms_mobile/injection_container.dart';
 import 'package:cms_mobile/simple_bloc_observer.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -111,11 +114,20 @@ void main() async {
           BlocProvider<WarehouseBloc>(
             create: (context) => sl<WarehouseBloc>(),
           ),
+          BlocProvider<WarehouseLocalBloc>(
+            create: (context) => sl<WarehouseLocalBloc>(),
+          ),
+          BlocProvider<UserBloc>(
+            create: (context) => sl<UserBloc>(),
+          ),
           BlocProvider<ProductBloc>(
             create: (context) => sl<ProductBloc>(),
           ),
           BlocProvider<PurchaseOrderBloc>(
             create: (context) => sl<PurchaseOrderBloc>(),
+          ),
+          BlocProvider<WarehouseFormCubit>(
+            create: (context) => sl<WarehouseFormCubit>(),
           ),
           BlocProvider<MilestonesCubit>(
             create: (context) => sl<MilestonesCubit>(),

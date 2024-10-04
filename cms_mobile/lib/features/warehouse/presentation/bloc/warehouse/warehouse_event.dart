@@ -17,3 +17,9 @@ class GetWarehousesEvent extends WarehouseEvent {
     this.paginationInput,
   });
 }
+
+class CreateWarehouseEvent extends WarehouseEvent {
+  final CreateWarehouseParamsEntity createWarehouseParamsEntity;
+
+  const CreateWarehouseEvent({required this.createWarehouseParamsEntity});
+}

@@ -173,11 +173,19 @@ import 'package:cms_mobile/features/projects/presentations/bloc/details/details_
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
 import 'package:cms_mobile/features/material_transactions/presentations/cubit/material_return_form/material_return_form_cubit.dart';
 import 'package:cms_mobile/features/theme/bloc/theme_bloc.dart';
+import 'package:cms_mobile/features/user/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/user/data/repository/user_repository_impl.dart';
+import 'package:cms_mobile/features/user/domain/repository/user_repository.dart';
+import 'package:cms_mobile/features/user/domain/usecases/get_users_usecase.dart';
+import 'package:cms_mobile/features/user/presentation/bloc/user_bloc.dart';
 import 'package:cms_mobile/features/warehouse/data/data_source/remote_data_source.dart';
 import 'package:cms_mobile/features/warehouse/data/repository/warehouse_repository_impl.dart';
 import 'package:cms_mobile/features/warehouse/domain/repository/warehouse_repository.dart';
+import 'package:cms_mobile/features/warehouse/domain/usecases/create_warehouse.dart';
 import 'package:cms_mobile/features/warehouse/domain/usecases/get_warehouses.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_local/warehouse_local_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/cubit/warehouse_form/warehouse_form_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -197,6 +205,13 @@ Future<void> initializeDependencies() async {
   // authentication
   sl.registerLazySingleton<AuthenticationRemoteDataSource>(
     () => AuthenticationRemoteDataSourceImpl(
+      client: sl<GraphQLClient>(),
+    ),
+  );
+
+  // user
+  sl.registerLazySingleton<UserDataSource>(
+    () => UserDataSourceImpl(
       client: sl<GraphQLClient>(),
     ),
   );
@@ -311,6 +326,11 @@ Future<void> initializeDependencies() async {
       () => AuthenticationRepositoryImpl(
             dataSource: sl<AuthenticationRemoteDataSource>(),
           ));
+
+  // user
+  sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
+        dataSource: sl<UserDataSource>(),
+      ));
 
   // dashboard
   sl.registerLazySingleton<DashboardRepository>(
@@ -433,6 +453,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<GetUsersUseCase>(
+    () => GetUsersUseCase(
+      sl<UserRepository>(),
+    ),
+  );
+
   sl.registerLazySingleton<GetDetailedExpenseStatsUseCase>(
     () => GetDetailedExpenseStatsUseCase(
       sl<DashboardRepository>(),
@@ -493,12 +519,12 @@ Future<void> initializeDependencies() async {
       sl<MaterialReceiveRepository>(),
     ),
   );
-    sl.registerLazySingleton<ApproveMaterialReceiveUseCase>(
+  sl.registerLazySingleton<ApproveMaterialReceiveUseCase>(
     () => ApproveMaterialReceiveUseCase(
       sl<MaterialReceiveRepository>(),
     ),
   );
-    sl.registerLazySingleton<EditMaterialReceiveUseCase>(
+  sl.registerLazySingleton<EditMaterialReceiveUseCase>(
     () => EditMaterialReceiveUseCase(
       sl<MaterialReceiveRepository>(),
     ),
@@ -614,7 +640,7 @@ Future<void> initializeDependencies() async {
       sl<MaterialProformaRepository>(),
     ),
   );
-    sl.registerLazySingleton<ApproveMaterialProformaUseCase>(
+  sl.registerLazySingleton<ApproveMaterialProformaUseCase>(
     () => ApproveMaterialProformaUseCase(
       sl<MaterialProformaRepository>(),
     ),
@@ -654,6 +680,12 @@ Future<void> initializeDependencies() async {
   // warehouses & products
   sl.registerLazySingleton<GetWarehousesUseCase>(
     () => GetWarehousesUseCase(
+      sl<WarehouseRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<CreateWarehouseUseCase>(
+    () => CreateWarehouseUseCase(
       sl<WarehouseRepository>(),
     ),
   );
@@ -840,6 +872,11 @@ Future<void> initializeDependencies() async {
     () => LoginBloc(sl<LoginUseCase>()),
   );
 
+  // user
+  sl.registerFactory<UserBloc>(
+    () => UserBloc(sl<GetUsersUseCase>()),
+  );
+
   // dashboard
   sl.registerFactory<DashboardBloc>(
     () => DashboardBloc(sl<GetDashboardUseCase>()),
@@ -948,12 +985,12 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<DeleteMaterialReceiveCubit>(
     () => DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
-  
+
   sl.registerFactory<EditMaterialReceiveCubit>(
     () => EditMaterialReceiveCubit(
-      approveMaterialReceiveUseCase:  sl<ApproveMaterialReceiveUseCase>(),
+      approveMaterialReceiveUseCase: sl<ApproveMaterialReceiveUseCase>(),
       editMaterialReceiveUseCase: sl<EditMaterialReceiveUseCase>(),
-     ),
+    ),
   );
 
   // material return
@@ -981,8 +1018,16 @@ Future<void> initializeDependencies() async {
   // warehouse & products bloc
 
   sl.registerFactory<WarehouseBloc>(
-    () => WarehouseBloc(sl<GetWarehousesUseCase>()),
+    () =>
+        WarehouseBloc(sl<GetWarehousesUseCase>(), sl<CreateWarehouseUseCase>()),
   );
+  sl.registerFactory<WarehouseLocalBloc>(
+    () => WarehouseLocalBloc(),
+  );
+  sl.registerFactory<WarehouseFormCubit>(
+    () => WarehouseFormCubit(),
+  );
+
   sl.registerFactory<ProductBloc>(
     () => ProductBloc(
         sl<GetProductsUseCase>(), sl<GetAllWarehouseProductsUseCase>()),
@@ -1059,7 +1104,7 @@ Future<void> initializeDependencies() async {
       sl<CreateMaterialProformaUseCase>(),
     ),
   );
-    sl.registerFactory<EditMaterialProformaCubit>(
+  sl.registerFactory<EditMaterialProformaCubit>(
     () => EditMaterialProformaCubit(
       editMaterialProformaUseCase: sl<EditMaterialProformaUseCase>(),
       approveMaterialProformaUseCase: sl<ApproveMaterialProformaUseCase>(),

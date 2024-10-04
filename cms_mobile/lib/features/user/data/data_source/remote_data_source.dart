@@ -1,6 +1,13 @@
+import 'package:cms_mobile/core/entities/string_filter.dart';
+import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/features/authentication/data/models/user_model.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 abstract class UserDataSource {
+  Future<DataState<List<UserModel>>> fetchUsers({
+    FilterUserInput? filterUserInput,
+  });
+
   // Future<DataState<String>> createUser(
   //     {required CreateUserParamsModel createUserParamsModel});
 
@@ -48,139 +55,125 @@ mutation UpdateUser($updateUserInput: UpdateUserInput!) {
 }
 ''';
 
-  // Override the function in the implementation class
-  // @override
-  // Future<DataState<String>> createUser(
-  //     {required CreateUserParamsModel createUserParamsModel}) async {
-  //   final MutationOptions options = MutationOptions(
-  //     document: gql(_createUserMutation),
-  //     variables: {"createUserInput": createUserParamsModel.toJson()},
-  //   );
+  @override
+  Future<DataState<List<UserModel>>> fetchUsers({
+    FilterUserInput? filterUserInput,
+  }) async {
+    String fetchUsersQuery;
 
-  //   try {
-  //     final QueryResult result = await _client.mutate(options);
+    fetchUsersQuery = r'''
+      query GetUsers($filterUserInput: FilterUserDocumentsInput) {
+        getUsers(filterUserInput: $filterUserInput) {
+          id
+          fullName
+          phoneNumber
+          email
+          role
+          company {
+            id
+            name
+            address
+            contactInfo
+            createdAt
+            ownerId
+            owner {
+              id
+              fullName
+              email
+              phoneNumber
+              role
+              createdAt
+            }
+            employees {
+              id
+              fullName
+              email
+              phoneNumber
+              role
+              createdAt
+              updatedAt
+            }
+            projects {
+              id
+              name
+              budget
+              createdAt
+              endDate
+              startDate
+              status
+              updatedAt
+              companyId
+            }
+            warehouseStores {
+              companyId
+              createdAt
+              id
+              location
+              name
+              updatedAt
+            }
+          }
+        }
+      }
+    ''';
 
-  //     if (result.hasException) {
-  //       return DataFailed(
-  //           ServerFailure(errorMessage: result.exception.toString()));
-  //     }
+    dynamic filterInput = filterUserInput!.toJson();
+    return _client
+        .query(
+      QueryOptions(
+        document: gql(fetchUsersQuery),
+        variables: {
+          'filterUserInput': filterInput,
+        },
+        fetchPolicy: FetchPolicy.noCache,
+      ),
+    )
+        .then((response) {
+      if (response.hasException) {
+        return DataFailed(
+          ServerFailure(
+            errorMessage: response.exception.toString(),
+          ),
+        );
+      }
 
-  //     // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-  //     final String id = result.data!['createUser']['id'];
+      final users = response.data!['getUsers'] as List;
+      final items = users.map((e) => UserModel.fromJson(e)).toList();
 
-  //     return DataSuccess(id);
-  //   } catch (e) {
-  //     // In case of any other errors, return a DataFailed state
-  //     return DataFailed(ServerFailure(errorMessage: e.toString()));
-  //   }
-  // }
+      return DataSuccess(items);
+    });
+  }
+}
 
-  // @override
-  // Future<DataState<UserModelListWithMeta>> getUsers(
-  //     {required GetUsersParamsEntity params}) {
-  //   String fetchUsersQuery = r'''
+class FilterUserInput {
+  final StringFilter? id;
+  final StringFilter? company;
+  final StringFilter? fullName;
+  final StringFilter? email;
+  final StringFilter? phoneNumber;
+  final List<String>? role;
+  final StringFilter? createdAt;
 
-  //   ''';
+  FilterUserInput(
+      {this.createdAt,
+      this.company,
+      this.email,
+      this.id,
+      this.fullName,
+      this.phoneNumber,
+      this.role});
 
-  //   return _client
-  //       .query(QueryOptions(
-  //     document: gql(fetchUsersQuery),
-  //     fetchPolicy: FetchPolicy.networkOnly
-    
-  //     // variables: {"": params},
-  //   ))
-  //       .then((response) {
-  //     if (response.hasException) {
-  //       return DataFailed(
-  //         ServerFailure(
-  //           errorMessage: response.exception.toString(),
-  //         ),
-  //       );
-  //     }
-  //     final users =
-  //         UserModelListWithMeta.fromJson(response.data!['getUsers']);
-
-  //     return DataSuccess(users);
-  //   });
-  // }
-
-
-  // @override
-  // Future<DataState<UserModel>> getUserDetails(
-  //     {required String params}) {
-  //   String fetchUserDetailsQuery = r'''
-
-  //   ''';
-
-  //   return _client
-  //       .query(QueryOptions(
-  //     document: gql(fetchUserDetailsQuery),
-  //     variables: {"getUserId": params},
-  //   ))
-  //       .then((response) {
-  //     if (response.hasException) {
-  //       return DataFailed(
-  //         ServerFailure(
-  //           errorMessage: response.exception.toString(),
-  //         ),
-  //       );
-  //     }
-
-  //     final user = UserModel.fromJson(response.data!['getUser']);
-
-  //     return DataSuccess(user);
-  //   });
-  // }
-
-  // @override
-  // Future<DataState<String>> editUser(
-  //     {required EditUserParamsModel editUserParamsModel}) async {
-  //   final MutationOptions options = MutationOptions(
-  //     document: gql(_editUserMutation),
-  //     variables: {"updateUserInput": editUserParamsModel.toJson()},
-  //   );
-
-  //   try {
-  //     final QueryResult result = await _client.mutate(options);
-
-  //     if (result.hasException) {
-  //       return DataFailed(
-  //           ServerFailure(errorMessage: result.exception.toString()));
-  //     }
-
-  //     // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-  //     final String id = result.data!['updateUser']['id'];
-
-  //     return DataSuccess(id);
-  //   } catch (e) {
-  //     // In case of any other errors, return a DataFailed state
-  //     return DataFailed(ServerFailure(errorMessage: e.toString()));
-  //   }
-  // }
-
-  // @override
-  // Future<DataState<String>> deleteUser(
-  //     {required String userId}) async {
-  //   final MutationOptions options = MutationOptions(
-  //     document: gql(_deleteUserMutation),
-  //     variables: {"deleteUserId": userId},
-  //   );
-
-  //   try {
-  //     final QueryResult result = await _client.mutate(options);
-
-  //     if (result.hasException) {
-  //       return DataFailed(
-  //           ServerFailure(errorMessage: result.exception.toString()));
-  //     }
-
-  //     // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
-  //     final String id = result.data!['deleteUser']['id'];
-
-  //     return DataSuccess(id);
-  //   } catch (e) {
-  //     // In case of any other errors, return a DataFailed state
-  //     return DataFailed(ServerFailure(errorMessage: e.toString()));
-  //   }
-  // }
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id!.toJson(),
+      if (fullName != null) 'fullName': fullName!.toJson(),
+      if (email != null) 'email': email!.toJson(),
+      if (phoneNumber != null) 'phoneNumber': phoneNumber!.toJson(),
+      if (role != null) 'role': role,
+      if (company != null)
+        'company': {
+          'name': company!.toJson(),
+        },
+    };
+  }
 }

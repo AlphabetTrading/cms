@@ -6,7 +6,7 @@ import 'package:cms_mobile/features/products/presentation/bloc/product_event.dar
 import 'package:cms_mobile/features/products/presentation/bloc/product_state.dart';
 import 'package:cms_mobile/features/products/presentation/utils/unit_of_measure.dart';
 import 'package:cms_mobile/features/products/presentation/widgets/product_detail.dart';
-import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse_bloc.dart';
+import 'package:cms_mobile/features/warehouse/presentation/bloc/warehouse/warehouse_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -18,7 +18,7 @@ class MaterialReceiveWarehouseFormCubit
 
   void warehouseChanged(WarehouseEntity warehouseEntity) {
     final WarehouseDropdown warehouseDropdown =
-        WarehouseDropdown.dirty(warehouseEntity.id);
+        WarehouseDropdown.dirty(warehouseEntity.id ?? "");
     emit(
       state.copyWith(
         warehouseDropdown: warehouseDropdown,
@@ -61,7 +61,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
     double? receivedQuantity,
     String? remark,
   }) : super(MaterialReceiveFormState(
-            receivedQuantityField:NumberField.pure(value:receivedQuantity.toString()),
+            receivedQuantityField:
+                NumberField.pure(value: receivedQuantity.toString()),
             materialDropdown: MaterialDropdown.pure(materialId ?? ""),
             purchaseOrderDropdown:
                 PurchaseOrderDropdown.pure(purchaseOrderItemId ?? ""),
@@ -89,7 +90,6 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
       ),
     );
   }
-            
 
   void materialChanged(PurchaseOrderItemEntity materialEntity) {
     final MaterialDropdown materialDropdown =
@@ -236,7 +236,8 @@ class MaterialReceiveFormCubit extends Cubit<MaterialReceiveFormState> {
         loadingField: NumberField.dirty(state.loadingField.value),
         unloadingField: NumberField.dirty(state.unloadingField.value),
         remarkField: RemarkField.dirty(state.remarkField.value),
-        receivedQuantityField:NumberField.dirty(state.receivedQuantityField.value),
+        receivedQuantityField:
+            NumberField.dirty(state.receivedQuantityField.value),
         isValid: Formz.validate([
           state.transportationField,
           state.loadingField,

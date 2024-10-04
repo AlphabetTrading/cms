@@ -19,7 +19,7 @@ class MaterialTransferWarehouseFormCubit
 
   void warehouseChanged(WarehouseEntity warehouseEntity) {
     final WarehouseDropdown warehouseDropdown =
-        WarehouseDropdown.dirty(warehouseEntity.id);
+        WarehouseDropdown.dirty(warehouseEntity.id ?? "");
 
     emit(
       state.copyWith(

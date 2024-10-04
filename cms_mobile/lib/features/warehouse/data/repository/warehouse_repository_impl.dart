@@ -1,6 +1,7 @@
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
 import 'package:cms_mobile/features/warehouse/data/data_source/remote_data_source.dart';
+import 'package:cms_mobile/features/warehouse/data/models/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/domain/entities/warehouse.dart';
 import 'package:cms_mobile/features/warehouse/domain/repository/warehouse_repository.dart';
 
@@ -20,5 +21,13 @@ class WarehouseRepositoryImpl implements WarehouseRepository {
       orderBy: orderBy,
       paginationInput: paginationInput,
     );
+  }
+
+  @override
+  Future<DataState<String>> createWarehouse(
+      {required CreateWarehouseParamsEntity params}) {
+    return dataSource.createWarehouse(
+        createWarehouseParamsModel:
+            CreateWarehouseParamsModel.fromEntity(params));
   }
 }

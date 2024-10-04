@@ -10,6 +10,8 @@ abstract class WarehouseDataSource {
     OrderByWarehouseStoreInput? orderBy,
     PaginationInput? paginationInput,
   });
+  Future<DataState<String>> createWarehouse(
+      {required CreateWarehouseParamsModel createWarehouseParamsModel});
 }
 
 class WarehouseDataSourceImpl extends WarehouseDataSource {
@@ -18,6 +20,14 @@ class WarehouseDataSourceImpl extends WarehouseDataSource {
   WarehouseDataSourceImpl({required GraphQLClient client}) {
     _client = client;
   }
+
+  static const String _createWarehouseMutation = r'''
+    mutation CreateWarehouse($createWarehouseInput: CreateWarehouseInput!) {
+      createWarehouse(createWarehouseInput: $createWarehouseInput) {
+        id
+      }
+    }
+  ''';
 
   @override
   Future<DataState<List<WarehouseModel>>> fetchWarehouses(
@@ -71,6 +81,35 @@ class WarehouseDataSourceImpl extends WarehouseDataSource {
 
     return DataSuccess(
         requests.map((e) => WarehouseModel.fromJson(e)).toList());
+  }
+
+  @override
+  Future<DataState<String>> createWarehouse(
+      {required CreateWarehouseParamsModel
+          createWarehouseParamsModel}) async {
+    final MutationOptions options = MutationOptions(
+      document: gql(_createWarehouseMutation),
+      variables: {
+        "createWarehouseInput": createWarehouseParamsModel.toJson()
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        return DataFailed(
+            ServerFailure(errorMessage: result.exception.toString()));
+      }
+
+      // Assuming `MaterialRequestModel.fromJson` is a constructor to parse JSON into a model
+      final String id = result.data!['createWarehouse']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      // In case of any other errors, return a DataFailed state
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }
 

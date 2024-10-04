@@ -9,6 +9,9 @@ abstract class WarehouseRepository {
     OrderByWarehouseStoreInput? orderBy,
     PaginationInput? paginationInput,
   );
+  Future<DataState<String>> createWarehouse(
+      {required CreateWarehouseParamsEntity params});
+
   // Future<Warehouse> getWarehouse(String id);
   // Future<void> addWarehouse(Warehouse warehouse);
   // Future<void> updateWarehouse(Warehouse warehouse);
