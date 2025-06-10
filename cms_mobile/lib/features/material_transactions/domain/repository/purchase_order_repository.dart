@@ -17,6 +17,10 @@ abstract class PurchaseOrderRepository {
 
   Future<DataState<String>> generatePurchaseOrderPdf({required String id});
 
+  Future<DataState<String>> approvePurchaseOrder(
+      {required ApprovePurchaseOrderStatus decision,
+      required String purchaseOrderId});
+
   Future<DataState<PurchaseOrderEntityListWithMeta>> getPurchaseOrders({
     FilterPurchaseOrderInput? filterPurchaseOrderInput,
     OrderByPurchaseOrderInput? orderBy,

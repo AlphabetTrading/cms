@@ -123,8 +123,7 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
 
   factory PurchaseOrderItemModel.fromJson(Map<String, dynamic> json) {
     return PurchaseOrderItemModel(
-      id: json
-      ['id'],
+      id: json['id'],
       materialRequestItemId: json['materialRequestItemId'],
       materialRequestItem: json['materialRequestItem'] != null
           ? MaterialRequestItemModel.fromJson(json['materialRequestItem'])
@@ -142,8 +141,10 @@ class PurchaseOrderItemModel extends PurchaseOrderItemEntity {
           ? (json['totalPrice'] as num).toDouble()
           : 0,
       remark: json['remark'],
-      createdAt: json['createdAt']!=null?DateTime.parse(json['createdAt']):null,
-      updatedAt:json['updatedAt']!=null? DateTime.parse(json['updatedAt']):null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -297,6 +298,29 @@ class EditPurchaseOrderParamsModel
   }
 }
 
+class ApprovePurchaseOrderParamsModel extends ApprovePurchaseOrderParamsEntity {
+  const ApprovePurchaseOrderParamsModel({
+    required super.decision,
+    required super.purchaseOrderId,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "decision": decision,
+      "purchaseOrderId": purchaseOrderId,
+    };
+  }
+
+  @override
+  List<Object?> get props => [decision, purchaseOrderId];
+
+  factory ApprovePurchaseOrderParamsModel.fromEntity(
+      ApprovePurchaseOrderParamsEntity entity) {
+    return ApprovePurchaseOrderParamsModel(
+        decision: entity.decision, purchaseOrderId: entity.purchaseOrderId);
+  }
+}
+
 class FilterPurchaseOrderInput {
   final StringFilter? createdAt;
   final StringFilter? approvedBy;
@@ -383,6 +407,31 @@ String fromPurchaseOrderStatus(PurchaseOrderStatus? value) {
     case PurchaseOrderStatus.pending:
       return 'PENDING';
     case PurchaseOrderStatus.declined:
+      return 'DECLINED';
+  }
+}
+
+enum ApprovePurchaseOrderStatus { completed, declined }
+
+ApprovePurchaseOrderStatus toApprovePurchaseOrderStatus(String value) {
+  switch (value) {
+    case 'COMPLETED':
+      return ApprovePurchaseOrderStatus.completed;
+    case 'DECLINED':
+      return ApprovePurchaseOrderStatus.declined;
+    default:
+      throw Exception('Invalid ApprovePurchaseOrderStatus');
+  }
+}
+
+String fromApprovePurchaseOrderStatus(ApprovePurchaseOrderStatus? value) {
+  if (value == null) {
+    return '';
+  }
+  switch (value) {
+    case ApprovePurchaseOrderStatus.completed:
+      return 'COMPLETED';
+    case ApprovePurchaseOrderStatus.declined:
       return 'DECLINED';
   }
 }

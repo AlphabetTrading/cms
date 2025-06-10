@@ -76,6 +76,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/delete_material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/get_material_transfer_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/get_material_transfers.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/approve_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/create_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/delete_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/edit_purchase_order.dart';
@@ -763,6 +764,11 @@ Future<void> initializeDependencies() async {
       sl<PurchaseOrderRepository>(),
     ),
   );
+  sl.registerLazySingleton<ApprovePurchaseOrderUseCase>(
+    () => ApprovePurchaseOrderUseCase(
+      sl<PurchaseOrderRepository>(),
+    ),
+  );
 
   // material return
   sl.registerLazySingleton<GetMaterialReturnUseCase>(
@@ -1043,8 +1049,8 @@ Future<void> initializeDependencies() async {
 
   // purchase order
   sl.registerFactory<PurchaseOrderBloc>(
-    () => PurchaseOrderBloc(
-        sl<GetPurchaseOrdersUseCase>(), sl<CreatePurchaseOrderUseCase>()),
+    () => PurchaseOrderBloc(sl<GetPurchaseOrdersUseCase>(),
+        sl<CreatePurchaseOrderUseCase>(), sl<ApprovePurchaseOrderUseCase>()),
   );
 
   sl.registerFactory<PurchaseOrderLocalBloc>(

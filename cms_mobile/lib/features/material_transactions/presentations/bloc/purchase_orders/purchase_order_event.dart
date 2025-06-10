@@ -31,6 +31,12 @@ class CreatePurchaseOrderEvent extends PurchaseOrderEvent {
       {required this.createPurchaseOrderParamsEntity});
 }
 
+class ApprovePurchaseOrderEvent extends PurchaseOrderEvent {
+  final ApprovePurchaseOrderStatus decision;
+  final String purchaseOrderId;
+  const ApprovePurchaseOrderEvent(this.decision, this.purchaseOrderId);
+}
+
 class UpdatePurchaseOrderEvent extends PurchaseOrderEvent {
   final String id;
   const UpdatePurchaseOrderEvent(this.id);
