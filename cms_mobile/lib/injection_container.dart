@@ -76,6 +76,7 @@ import 'package:cms_mobile/features/material_transactions/domain/usecases/materi
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/delete_material_transfer.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/get_material_transfer_details.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/material_transfer/get_material_transfers.dart';
+import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/approve_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/create_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/delete_purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/usecases/purchase_order/edit_purchase_order.dart';
@@ -493,12 +494,12 @@ Future<void> initializeDependencies() async {
       sl<MaterialReceiveRepository>(),
     ),
   );
-    sl.registerLazySingleton<ApproveMaterialReceiveUseCase>(
+  sl.registerLazySingleton<ApproveMaterialReceiveUseCase>(
     () => ApproveMaterialReceiveUseCase(
       sl<MaterialReceiveRepository>(),
     ),
   );
-    sl.registerLazySingleton<EditMaterialReceiveUseCase>(
+  sl.registerLazySingleton<EditMaterialReceiveUseCase>(
     () => EditMaterialReceiveUseCase(
       sl<MaterialReceiveRepository>(),
     ),
@@ -614,7 +615,7 @@ Future<void> initializeDependencies() async {
       sl<MaterialProformaRepository>(),
     ),
   );
-    sl.registerLazySingleton<ApproveMaterialProformaUseCase>(
+  sl.registerLazySingleton<ApproveMaterialProformaUseCase>(
     () => ApproveMaterialProformaUseCase(
       sl<MaterialProformaRepository>(),
     ),
@@ -728,6 +729,11 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<DeletePurchaseOrderUseCase>(
     () => DeletePurchaseOrderUseCase(
+      sl<PurchaseOrderRepository>(),
+    ),
+  );
+  sl.registerLazySingleton<ApprovePurchaseOrderUseCase>(
+    () => ApprovePurchaseOrderUseCase(
       sl<PurchaseOrderRepository>(),
     ),
   );
@@ -948,12 +954,12 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<DeleteMaterialReceiveCubit>(
     () => DeleteMaterialReceiveCubit(sl<DeleteMaterialReceiveUseCase>()),
   );
-  
+
   sl.registerFactory<EditMaterialReceiveCubit>(
     () => EditMaterialReceiveCubit(
-      approveMaterialReceiveUseCase:  sl<ApproveMaterialReceiveUseCase>(),
+      approveMaterialReceiveUseCase: sl<ApproveMaterialReceiveUseCase>(),
       editMaterialReceiveUseCase: sl<EditMaterialReceiveUseCase>(),
-     ),
+    ),
   );
 
   // material return
@@ -998,8 +1004,8 @@ Future<void> initializeDependencies() async {
 
   // purchase order
   sl.registerFactory<PurchaseOrderBloc>(
-    () => PurchaseOrderBloc(
-        sl<GetPurchaseOrdersUseCase>(), sl<CreatePurchaseOrderUseCase>()),
+    () => PurchaseOrderBloc(sl<GetPurchaseOrdersUseCase>(),
+        sl<CreatePurchaseOrderUseCase>(), sl<ApprovePurchaseOrderUseCase>()),
   );
 
   sl.registerFactory<PurchaseOrderLocalBloc>(
@@ -1059,7 +1065,7 @@ Future<void> initializeDependencies() async {
       sl<CreateMaterialProformaUseCase>(),
     ),
   );
-    sl.registerFactory<EditMaterialProformaCubit>(
+  sl.registerFactory<EditMaterialProformaCubit>(
     () => EditMaterialProformaCubit(
       editMaterialProformaUseCase: sl<EditMaterialProformaUseCase>(),
       approveMaterialProformaUseCase: sl<ApproveMaterialProformaUseCase>(),

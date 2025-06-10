@@ -2,6 +2,7 @@ import 'package:cms_mobile/config/gql.client.dart';
 import 'package:cms_mobile/core/entities/pagination.dart';
 import 'package:cms_mobile/core/models/meta.dart';
 import 'package:cms_mobile/core/resources/data_state.dart';
+import 'package:cms_mobile/core/utils/get_user_friendly_error_message.dart';
 import 'package:cms_mobile/features/material_transactions/data/models/purchase_order.dart';
 import 'package:cms_mobile/features/material_transactions/domain/entities/purchase_order.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,10 @@ abstract class PurchaseOrderDataSource {
   Future<DataState<String>> deletePurchaseOrder({required String materialId});
 
   Future<DataState<String>> generatePurchaseOrderPdf({required String id});
+
+  Future<DataState<String>> approvePurchaseOrder(
+      {required ApprovePurchaseOrderStatus decision,
+      required String purchaseOrderId});
 }
 
 class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
@@ -276,7 +281,6 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
       final purchaseOrderReport = response.data!['generatePurchaseOrderPdf'];
 
       return DataSuccess(purchaseOrderReport);
-      
     });
   }
 
@@ -485,5 +489,40 @@ class PurchaseOrderDataSourceImpl extends PurchaseOrderDataSource {
         ),
       );
     });
+  }
+
+  @override
+  Future<DataState<String>> approvePurchaseOrder(
+      {required ApprovePurchaseOrderStatus decision,
+      required String purchaseOrderId}) async {
+    const String _approvePurchaseOrderMutation = r'''
+      mutation ApprovePurchaseOrder($decision: ApprovalStatus!, $purchaseOrderId: String!) {
+        approvePurchaseOrder(decision: $decision, purchaseOrderId: $purchaseOrderId) {
+          id
+        }
+      }
+    ''';
+    final MutationOptions options = MutationOptions(
+      document: gql(_approvePurchaseOrderMutation),
+      variables: {
+        "decision": fromApprovePurchaseOrderStatus(decision),
+        "purchaseOrderId": purchaseOrderId,
+      },
+    );
+
+    try {
+      final QueryResult result = await _client.mutate(options);
+
+      if (result.hasException) {
+        final errorMessage = getUserFriendlyErrorMessage(result.exception!);
+        return DataFailed(ServerFailure(errorMessage: errorMessage));
+      }
+
+      final String id = result.data!['approvePurchaseOrder']['id'];
+
+      return DataSuccess(id);
+    } catch (e) {
+      return DataFailed(ServerFailure(errorMessage: e.toString()));
+    }
   }
 }

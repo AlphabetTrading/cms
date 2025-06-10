@@ -43,6 +43,14 @@ class PurchaseOrderRepositoryImpl extends PurchaseOrderRepository {
   }
 
   @override
+  Future<DataState<String>> approvePurchaseOrder(
+      {required ApprovePurchaseOrderStatus decision,
+      required String purchaseOrderId}) {
+    return dataSource.approvePurchaseOrder(
+        decision: decision, purchaseOrderId: purchaseOrderId);
+  }
+
+  @override
   Future<DataState<PurchaseOrderEntityListWithMeta>> getPurchaseOrders(
       {FilterPurchaseOrderInput? filterPurchaseOrderInput,
       OrderByPurchaseOrderInput? orderBy,

@@ -153,8 +153,7 @@ class CreatePurchaseOrderParamsEntity<T extends PurchaseOrderMaterialEntity>
   });
 
   @override
-  List<Object?> get props =>
-      [isProforma, projectId, purchaseOrderMaterials];
+  List<Object?> get props => [isProforma, projectId, purchaseOrderMaterials];
 }
 
 class EditPurchaseOrderParamsEntity<T extends PurchaseOrderEntity>
@@ -182,14 +181,39 @@ class EditPurchaseOrderParamsEntity<T extends PurchaseOrderEntity>
       ];
 }
 
-class PurchaseOrderEntityListWithMeta {
+class PurchaseOrderEntityListWithMeta extends Equatable {
   final List<PurchaseOrderEntity> items;
   final MetaEntity meta;
 
-  PurchaseOrderEntityListWithMeta({
+  const PurchaseOrderEntityListWithMeta({
     required this.meta,
     required this.items,
   });
+
+  // empty
+  factory PurchaseOrderEntityListWithMeta.empty() {
+    return const PurchaseOrderEntityListWithMeta(
+      meta: MetaEntity(count: 0, limit: 0, page: 0),
+      items: [],
+    );
+  }
+
+  // copyWith
+  PurchaseOrderEntityListWithMeta copyWith({
+    List<PurchaseOrderEntity>? items,
+    MetaEntity? meta,
+  }) {
+    return PurchaseOrderEntityListWithMeta(
+      items: items ?? this.items,
+      meta: meta ?? this.meta,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        items,
+        meta,
+      ];
 }
 
 class PurchaseOrderMaterialEntity extends Equatable {
@@ -226,4 +250,17 @@ class PurchaseOrderMaterialEntity extends Equatable {
         unitPrice,
         totalPrice,
       ];
+}
+
+class ApprovePurchaseOrderParamsEntity extends Equatable {
+  final ApprovePurchaseOrderStatus decision;
+  final String purchaseOrderId;
+
+  const ApprovePurchaseOrderParamsEntity({
+    required this.decision,
+    required this.purchaseOrderId,
+  });
+
+  @override
+  List<Object?> get props => [decision, purchaseOrderId];
 }
