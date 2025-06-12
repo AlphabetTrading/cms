@@ -117,6 +117,7 @@
 
 import 'package:cms_mobile/features/authentication/presentations/bloc/auth/auth_bloc.dart';
 import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_bloc.dart';
+import 'package:cms_mobile/features/projects/presentations/bloc/projects/project_state.dart';
 import 'package:cms_mobile/features/projects/presentations/widgets/project_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -124,6 +125,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomAppBar extends PreferredSize {
   final GlobalKey<ScaffoldState> scaffoldKey;
+
   const CustomAppBar(
     this.scaffoldKey, {
     super.key,
@@ -136,97 +138,98 @@ class CustomAppBar extends PreferredSize {
 
   @override
   Widget build(BuildContext context) {
-    final selectedProjectId =
-        context.read<ProjectBloc>().state.selectedProjectId;
-    final selectedProject = context
-        .read<ProjectBloc>()
-        .state
-        .projects
-        ?.items
-        .firstWhere((element) => element.id == selectedProjectId);
+    return BlocBuilder<ProjectBloc, ProjectState>(
+        builder: (context, projectState) {
+      final selectedProjectId = projectState.selectedProjectId;
+      final selectedProject = projectState.projects?.items.firstWhere(
+        (element) => element.id == selectedProjectId,
+        // orElse: () => {},
+      );
 
-    final authUser = context.read<AuthBloc>().state.user;
+      return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+        final authUser = authState.user;
 
-    debugPrint('selectedProject: $selectedProject');
-    return AppBar(
-      systemOverlayStyle: const SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-      toolbarHeight: 64,
-      leadingWidth: 200,
-      leading: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(left: 10),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.blue,
-              child: Text(
-                authUser?.fullName.toUpperCase().substring(0, 1) ?? 'N/A',
-                style: const TextStyle(color: Colors.white),
-              ),
+        return AppBar(
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          toolbarHeight: 64,
+          leadingWidth: 200,
+          leading: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(left: 10),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.blue,
+                  child: Text(
+                    authUser?.fullName.toUpperCase().substring(0, 1) ?? 'N/A',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 5),
+                SizedBox(
+                  width: 100,
+                  child: Text(
+                    authUser?.fullName.toUpperCase() ?? "N/A",
+                    style: Theme.of(context).textTheme.labelSmall,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                )
+              ],
             ),
-            const SizedBox(width: 5),
-            SizedBox(
-              width: 100,
-              child: Text(
-                authUser?.fullName.toUpperCase() ?? "N/A",
-                style: Theme.of(context).textTheme.labelSmall,
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                
+          ),
+          actions: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: InkWell(
+                onTap: () {
+                  // scaffoldKey.currentState!.openDrawer();
+                  _showCustomPopupMenu(context);
+                },
+                child: Expanded(
+                  flex: 1,
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    decoration: BoxDecoration(
+                      // color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.blue,
+                          child: Text(
+                            'B',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          selectedProject?.name?.toUpperCase() ?? "N/A",
+                          style: Theme.of(context).textTheme.labelMedium,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               ),
             )
           ],
-        ),
-      ),
-      actions: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: InkWell(
-            onTap: () {
-              // scaffoldKey.currentState!.openDrawer();
-              _showCustomPopupMenu(context);
-            },
-            child: Expanded(
-              flex: 1,
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                decoration: BoxDecoration(
-                  // color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.blue,
-                      child: Text(
-                        'B',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      selectedProject?.name?.toUpperCase() ?? "N/A",
-                      style: Theme.of(context).textTheme.labelMedium,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
-    );
+        );
+      });
+    });
   }
 
   void _showCustomPopupMenu(BuildContext context) {

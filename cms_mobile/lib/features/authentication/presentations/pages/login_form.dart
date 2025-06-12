@@ -133,7 +133,9 @@ class _MyLoginFormState extends State<LoginForm> {
           context.read<AuthBloc>().add(AuthIsSignedIn());
           // sleep for 1 sec and navigate to the home page
           Future.delayed(const Duration(seconds: 1), () {
-            context.goNamed(RouteNames.home);
+            if (mounted) {
+              context.goNamed(RouteNames.home);
+            }
           });
 
           // reset the form
