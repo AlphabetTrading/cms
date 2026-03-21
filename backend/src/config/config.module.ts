@@ -8,7 +8,7 @@ import { ConfigService } from './config.service';
   imports: [
     NestConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '../../.env'
+      envFilePath: ['.env', '../../.env'],
     }),
   ],
   providers: [ConfigService],

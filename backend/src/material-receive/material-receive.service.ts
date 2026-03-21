@@ -79,7 +79,7 @@ export class MaterialReceiveService {
 
   async updateMaterialReceive(
     materialReceiveId: string,
-    updateData: UpdateMaterialReceiveInput,
+    updateData: Omit<UpdateMaterialReceiveInput, 'id'>,
   ): Promise<MaterialReceiveVoucher> {
     const existingMaterialReceive =
       await this.prisma.materialReceiveVoucher.findUnique({
@@ -90,30 +90,35 @@ export class MaterialReceiveService {
       throw new NotFoundException('Material Receive not found');
     }
 
-    const itemUpdateConditions = updateData.items.map((item) => ({
-      listNo: item.listNo,
-    }));
+    const { items, ...scalarFields } = updateData;
 
-    const updatedMaterialReceive =
-      await this.prisma.materialReceiveVoucher.update({
+    if (items?.length) {
+      const updateManyEntries = items.map(
+        ({ purchaseOrderItemId, ...itemData }: any) => ({
+          data: itemData,
+          where: { purchaseOrderItemId } as any,
+        }),
+      );
+
+      return await this.prisma.materialReceiveVoucher.update({
         where: { id: materialReceiveId },
         data: {
-          ...updateData,
-          items: {
-            updateMany: {
-              data: updateData.items,
-              where: {
-                OR: itemUpdateConditions,
-              },
-            },
-          },
+          ...scalarFields,
+          items: { updateMany: updateManyEntries },
         },
         include: {
           items: true,
         },
       });
+    }
 
-    return updatedMaterialReceive;
+    return await this.prisma.materialReceiveVoucher.update({
+      where: { id: materialReceiveId },
+      data: scalarFields,
+      include: {
+        items: true,
+      },
+    });
   }
 
   async deleteMaterialReceive(materialReceiveId: string): Promise<void> {

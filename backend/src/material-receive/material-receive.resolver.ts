@@ -120,14 +120,14 @@ export class MaterialReceiveResolver {
 
   @Mutation(() => MaterialReceiveVoucher)
   async updateMaterialReceive(
-    @Args('id') materialReceiveId: string,
     @Args('updateMaterialReceiveInput')
     updateMaterialReceiveInput: UpdateMaterialReceiveInput,
   ) {
     try {
+      const { id, ...inputWithoutId } = updateMaterialReceiveInput;
       return this.materialReceiveService.updateMaterialReceive(
-        materialReceiveId,
-        updateMaterialReceiveInput,
+        id,
+        inputWithoutId,
       );
     } catch (e) {
       throw new BadRequestException('Error updating material receive!');

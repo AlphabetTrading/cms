@@ -1,28 +1,31 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
-import { CreateMaterialReceiveItemInput } from './create-material-receive-item.input';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class UpdateMaterialReceiveItemInput extends PartialType(
-  CreateMaterialReceiveItemInput,
-) {
+export class UpdateMaterialReceiveItemInput {
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  purchaseOrderItemId?: string;
+
   @Field(() => Number, { nullable: true })
-  listNo?: number;
+  @IsOptional()
+  receivedQuantity?: number;
+
+  @Field(() => Number, { nullable: true })
+  @IsOptional()
+  loadingCost?: number;
+
+  @Field(() => Number, { nullable: true })
+  @IsOptional()
+  unloadingCost?: number;
+
+  @Field(() => Number, { nullable: true })
+  @IsOptional()
+  transportationCost?: number;
 
   @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  description: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  unitOfMeasure: string;
-
-  @Field(() => Number, { nullable: true })
-  quantity: number;
-
-  @Field(() => Number, { nullable: true })
-  unitCost: number;
-
-  @Field(() => Number, { nullable: true })
-  totalCost: number;
+  remark?: string;
 }

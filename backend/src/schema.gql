@@ -427,7 +427,7 @@ type Mutation {
   login(data: LoginInput!): Auth!
   refreshToken(refreshToken: JWT!): Token!
   updateMaterialIssue(id: String!, updateMaterialIssueInput: UpdateMaterialIssueInput!): MaterialIssueVoucher!
-  updateMaterialReceive(id: String!, updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
+  updateMaterialReceive(updateMaterialReceiveInput: UpdateMaterialReceiveInput!): MaterialReceiveVoucher!
   updateMaterialRequest(id: String!, updateMaterialRequestInput: UpdateMaterialRequestInput!): MaterialRequestVoucher!
   updateMaterialReturn(id: String!, updateMaterialReturnInput: UpdateMaterialReturnInput!): MaterialReturnVoucher!
   updateMilestone(id: String!, updateMilestoneInput: UpdateMilestoneInput!): Milestone!
@@ -689,6 +689,7 @@ input UpdateMaterialIssueItemInput {
 }
 
 input UpdateMaterialReceiveInput {
+  id: String!
   approved: Boolean
   approvedById: String
   date: DateTime
@@ -703,12 +704,12 @@ input UpdateMaterialReceiveInput {
 }
 
 input UpdateMaterialReceiveItemInput {
-  description: String
-  listNo: Float
-  quantity: Float
-  totalCost: Float
-  unitCost: Float
-  unitOfMeasure: String
+  loadingCost: Float
+  purchaseOrderItemId: String
+  receivedQuantity: Float
+  remark: String
+  transportationCost: Float
+  unloadingCost: Float
 }
 
 input UpdateMaterialRequestInput {

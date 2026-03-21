@@ -5,6 +5,10 @@ import { UpdateMaterialReceiveItemInput } from './update-material-receive-item.i
 
 @InputType()
 export class UpdateMaterialReceiveInput {
+  @IsString()
+  @Field(() => String)
+  id: string;
+
   @Type(() => Date)
   @Field(() => Date, { nullable: true })
   date: Date;
